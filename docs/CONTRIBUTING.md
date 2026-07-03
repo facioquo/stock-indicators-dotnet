@@ -102,7 +102,7 @@ bash tools/performance/perf.sh reset
 
 That is everything most contributors need. For the baseline set, single-style spot
 checks, CI workflows, and raw BenchmarkDotNet usage, see the
-[benchmarking guide](../tools/performance/benchmarking.md).
+[benchmarking guide](https://github.com/facioquo/stock-indicators-dotnet/blob/main/tools/performance/benchmarking.md).
 
 ## Documentation
 
