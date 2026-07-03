@@ -1,2 +1,3 @@
-# Ignore all JSON baseline files (they can be large)
+# Baseline report files (*.json and *.md) ARE committed on purpose.
+# Only exclude bulky archive exports that may land here.
 *.zip

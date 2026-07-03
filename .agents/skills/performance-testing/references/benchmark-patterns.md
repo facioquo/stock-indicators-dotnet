@@ -142,10 +142,11 @@ Add `[MemoryDiagnoser]` to see allocations:
 
 ## Regression detection workflow
 
-1. Run baseline benchmarks after stable release
-2. Save both baseline formats to `baselines/`:
-   - `Performance.*-report-full.json`
-   - `Performance.*-report-github.md`
-3. Run benchmarks after changes
-4. Compare with `detect-regressions.ps1`
-5. Investigate any > 10% regressions
+Use `perf.sh` (see [benchmarking.md](../../../../tools/performance/benchmarking.md)):
+
+1. Establish baselines after stable, verified perf work: `perf.sh reset`
+   (runs the baseline suite and writes both `-report-full.json` and
+   `-report-github.md` per suite into `baselines/`).
+2. After changes, check with `perf.sh evaluate` (full) or
+   `perf.sh spot <name>` (targeted).
+3. Investigate any regression above the threshold (default 10%).

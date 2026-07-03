@@ -5,10 +5,22 @@
   "version": "2.0.0",
   "inputs": [
     {
-      "id": "perfFilter",
-      "description": "Performance benchmark wildcard filter (e.g., *Sma* or *ToEma*)",
-      "default": "*Sma*",
+      "id": "perfIndicator",
+      "description": "Indicator name fragment for spot check (e.g., Ema, Adx, Macd)",
+      "default": "Ema",
       "type": "promptString"
+    },
+    {
+      "id": "perfStyle",
+      "description": "Style for spot check",
+      "options": [
+        "All",
+        "Series",
+        "Buffer",
+        "Stream"
+      ],
+      "default": "All",
+      "type": "pickString"
     },
     {
       "id": "roslynatorCommand",
@@ -540,13 +552,27 @@
       "problemMatcher": "$msCompile"
     },
     {
-      "label": "Test: Performance (spot check)",
-      "detail": "Quick indicator performance benchmark using filter pattern (e.g., *Sma* matches ToSma, SmaHub, SmaList)",
+      "label": "Perf: Reset baselines",
+      "detail": "Run the full baseline suite and replace committed baselines (~1 hour). Review git diff before committing.",
       "type": "shell",
-      "command": "dotnet run --project Tests.Performance.csproj -c Release -- --filter \"${input:perfFilter}\" --job short --warmupCount 3 --iterationCount 5 --exporters json markdown",
-      "options": {
-        "cwd": "${workspaceFolder}/tools/performance"
-      },
+      "command": "bash tools/performance/perf.sh reset",
+      "group": "test",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Perf: Evaluate against baselines",
+      "detail": "Run the full baseline suite and report regressions/improvements vs committed baselines (~1 hour)",
+      "type": "shell",
+      "command": "bash tools/performance/perf.sh evaluate",
+      "group": "test",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Perf: Spot check (indicator vs baseline)",
+      "detail": "Run one indicator across styles and compare to baselines (e.g., Ema, Adx, Macd)",
+      "type": "shell",
+      "command": "bash tools/performance/perf.sh spot ${input:perfIndicator} ${input:perfStyle}",
+      "group": "test",
       "problemMatcher": "$msCompile"
     },
     {

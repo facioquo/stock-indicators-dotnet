@@ -10,11 +10,21 @@ public static class Program
 
         if (args?.Length == 0)
         {
-            // with no filter, only run these test classes
+            // With no filter, run the official BASELINE SET.
+            // This is the single source of truth for what `perf.ps1 reset`
+            // and `perf.ps1 evaluate` cover. Keep this list in sync with the
+            // $BaselineClasses list in perf.ps1.
             // example: dotnet run -c Release
-            BenchmarkRunner.Run<SeriesIndicators>(config);
-            BenchmarkRunner.Run<BufferIndicators>(config);
-            BenchmarkRunner.Run<StreamIndicators>(config);
+            BenchmarkRunner.Run<SeriesIndicators>(config);   // every indicator, Series style
+            BenchmarkRunner.Run<BufferIndicators>(config);   // every indicator, BufferList style
+            BenchmarkRunner.Run<StreamIndicators>(config);   // every indicator, StreamHub style
+            BenchmarkRunner.Run<Utility>(config);            // shared conversion/utility hot paths
+            BenchmarkRunner.Run<UtilityNullMath>(config);    // null-math helpers
+            BenchmarkRunner.Run<UtilityStdDev>(config);      // standard-deviation helper
+
+            // NOTE: StyleComparison, StreamExternal, and ManualTestDirect are
+            // intentionally NOT baselined. They are ad-hoc diagnostics; run them
+            // explicitly with `-- --filter` when needed.
         }
         else
         {

@@ -1,58 +1,42 @@
 # Performance baselines
 
-This directory stores committed baseline artifacts used for performance review and regression checks.
+Committed BenchmarkDotNet baseline artifacts used for performance regression
+checks. For how to run benchmarks and refresh these files, see the canonical
+[benchmarking guide](../benchmarking.md).
 
 ## What is stored here
 
-For each benchmark class we keep two baseline files:
+Two files per baseline suite:
 
-- `Performance.*-report-full.json` - machine-readable regression input
-- `Performance.*-report-github.md` - human-readable benchmark tables
+- `Performance.<Suite>-report-full.json` — machine-readable (regression input)
+- `Performance.<Suite>-report-github.md` — human-readable tables (committed for review)
 
-The `-github.md` files are intentionally committed for easier review.
+## Baseline set
 
-## Standard baseline refresh
+These suites are the committed baseline (matches the no-arg `dotnet run -c Release`
+default in `Program.cs` and `BASELINE_CLASSES` in `perf.sh`):
 
-After running benchmarks from `tools/performance`:
+- `SeriesIndicators`, `BufferIndicators`, `StreamIndicators` — every indicator, per style
+- `Utility`, `UtilityNullMath`, `UtilityStdDev` — shared hot paths / helpers
 
-```bash
-# Machine-readable baseline files
-cp BenchmarkDotNet.Artifacts/results/Performance.*-report-full.json baselines/
+`StyleComparison`, `StreamExternal`, and `ManualTestDirect` are diagnostics and
+are **not** baselined here.
 
-# Human-readable baseline files
-cp BenchmarkDotNet.Artifacts/results/Performance.*-report-github.md baselines/
-```
+## Refresh and check
 
-PowerShell equivalent:
-
-```powershell
-Copy-Item BenchmarkDotNet.Artifacts/results/Performance.*-report-full.json baselines/
-Copy-Item BenchmarkDotNet.Artifacts/results/Performance.*-report-github.md baselines/
-```
-
-## Regression detection
-
-Run from `tools/performance`:
+Run from the repository root:
 
 ```bash
-# Auto-detect most recent baseline/current files
-pwsh detect-regressions.ps1
+# Regenerate all baseline files (run + copy)
+bash tools/performance/perf.sh reset
 
-# Custom threshold
-pwsh detect-regressions.ps1 -ThresholdPercent 15
-
-# Explicit comparison
-pwsh detect-regressions.ps1 `
-  -BaselineFile baselines/Performance.BufferIndicators-report-full.json `
-  -CurrentFile BenchmarkDotNet.Artifacts/results/Performance.BufferIndicators-report-full.json
+# Compare current results against these baselines
+bash tools/performance/perf.sh evaluate
 ```
-
-Exit codes:
-
-- `0` - no regressions
-- `1` - regressions found
 
 ## Notes
 
-- Historical pre-fix snapshots were retired from this folder; use git history/tags to inspect older baselines.
-- Keep baseline refreshes tied to intentional performance-shifting work or release-gate refreshes.
+- The `-github.md` and `-report-full.json` files are committed on purpose; only
+  `*.zip` archives are git-ignored here.
+- Keep baseline refreshes tied to intentional, verified performance work.
+- Historical pre-fix snapshots were retired; use git history/tags for older baselines.

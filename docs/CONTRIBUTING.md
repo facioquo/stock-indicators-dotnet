@@ -82,42 +82,27 @@ When reviewing PRs with baseline changes, verify the reason is documented, revie
 
 ### Performance benchmarking
 
-Running the performance benchmark application in `Release` mode will produce benchmark performance data.
+Performance (timing) benchmarks run through one script: `tools/performance/perf.sh`.
+Copy/paste these exact commands — run them from the repository root. Do not add
+options; the defaults keep runs comparable to the committed baselines.
+
+Requirements: .NET SDK and [`jq`](https://jqlang.github.io/jq/) (for `evaluate`
+and `spot`).
 
 ```bash
-# from /tools/performance folder
-# run all performance benchmarks (~1 hour)
-dotnet run -c Release
+# Check one indicator against the baselines (fast — use this in your dev loop)
+bash tools/performance/perf.sh spot Ema
 
-# run specific benchmark categories (~15-20 minutes each)
-# NOTE: pass filters after `--` and bar the pattern, otherwise the
-# shell expands globs like *Series* to the matching Perf.*.cs filenames.
-dotnet run -c Release -- --filter "*Series*"
-dotnet run -c Release -- --filter "*Stream*"
-dotnet run -c Release -- --filter "*Buffer*"
+# Run the full suite and report regressions vs baselines (~1 hour)
+bash tools/performance/perf.sh evaluate
 
-# run specific performance benchmark
-dotnet run -c Release -- --filter "*Adx*"
-
-## run with CLI overrides from root
-dotnet run \
---project tools/performance \
---configuration Release \
--- \
---filter "*ToFisher*" \
---job Short \
---warmupCount 3 \
---iterationCount 4
+# Regenerate and replace the committed baselines (~1 hour); review git diff after
+bash tools/performance/perf.sh reset
 ```
 
-#### Performance regression detection
-
-Use the regression detection script to compare results with baseline:
-
-```bash
-# from tools/performance directory
-pwsh detect-regressions.ps1
-```
+That is everything most contributors need. For the baseline set, single-style spot
+checks, CI workflows, and raw BenchmarkDotNet usage, see the
+[benchmarking guide](../tools/performance/benchmarking.md).
 
 ## Documentation
 

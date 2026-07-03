@@ -74,16 +74,15 @@ jobs:
           # Dynamically discover and publish all available report files
           FOUND_REPORTS=false
 
-          # Define report order and display names
+          # Baseline set display names (matches Program.cs no-arg run).
+          # Any other reports found (diagnostics) are appended by the fallback loop.
           declare -A REPORT_NAMES=(
             ["Performance.SeriesIndicators"]="Series Indicators"
-            ["Performance.StreamIndicators"]="Stream Indicators"
             ["Performance.BufferIndicators"]="Buffer Indicators"
-            ["Performance.StyleComparison"]="Style Comparison"
-            ["Performance.StreamExternal"]="Stream External"
+            ["Performance.StreamIndicators"]="Stream Indicators"
             ["Performance.Utility"]="Utilities"
-            ["Performance.UtilityStdDev"]="Utility StdDev"
             ["Performance.UtilityNullMath"]="Utility NullMath"
+            ["Performance.UtilityStdDev"]="Utility StdDev"
           )
 
           # Track processed reports using associative array for O(1) lookup
@@ -92,13 +91,11 @@ jobs:
           # Order of reports to display
           REPORT_ORDER=(
             "Performance.SeriesIndicators"
-            "Performance.StreamIndicators"
             "Performance.BufferIndicators"
-            "Performance.StyleComparison"
-            "Performance.StreamExternal"
+            "Performance.StreamIndicators"
             "Performance.Utility"
-            "Performance.UtilityStdDev"
             "Performance.UtilityNullMath"
+            "Performance.UtilityStdDev"
           )
 
           for REPORT_KEY in "${REPORT_ORDER[@]}"; do
