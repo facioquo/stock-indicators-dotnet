@@ -1,0 +1,1 @@
+namespace FacioQuo.Stock.Indicators;
