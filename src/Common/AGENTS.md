@@ -2,7 +2,7 @@
 
 ## Purpose of this file
 
-This file (AGENTS.md) carries the **operational guidance for AI agents and contributors** editing files in `src/_common/`: framework-level invariants, repo-specific file locations, registration conventions, and boundaries. Its companion [README.md](README.md) carries the **public directory inventory and per-file descriptions** for anyone browsing the source on GitHub. The two files are deliberately non-overlapping — keep behavioral rules here and descriptive inventory there.
+This file (AGENTS.md) carries the **operational guidance for AI agents and contributors** editing files in `src/Common/`: framework-level invariants, repo-specific file locations, registration conventions, and boundaries. Its companion [README.md](README.md) carries the **public directory inventory and per-file descriptions** for anyone browsing the source on GitHub. The two files are deliberately non-overlapping — keep behavioral rules here and descriptive inventory there.
 
 This folder holds the streaming framework (`StreamHub/`, `BufferLists/`), the catalog system (`Catalog/`), core types (`Bars/`, `TradeTicks/`, `Reusable/`, `BarPart/`), and shared utilities.
 
@@ -25,15 +25,15 @@ Skills carry the portable patterns. The sections below carry the repository-spec
 
 Hubs that originate a stream (no upstream provider) bootstrap their base class with an inert `BaseProvider<T>` sentinel. The sentinel:
 
-- Lives at `src/_common/StreamHub/Providers/BaseProvider.cs`
+- Lives at `src/Common/StreamHub/Providers/BaseProvider.cs`
 - Carries no cache (`Results` is `Array.Empty<T>().AsReadOnly()`)
 - Throws on `Subscribe(...)` and is a no-op on `Unsubscribe`/`EndTransmission`
 - Masks `Properties` bit 0 (`0b11111110`) so downstream hubs become proper observers even though the sentinel itself is not
 
 Canonical examples:
 
-- `src/_common/Bars/Bar.StreamHub.cs` — `BarHub` (default IBar source)
-- `src/_common/TradeTicks/TradeTick.StreamHub.cs` — `TradeTickHub` (default ITradeTick source)
+- `src/Common/Bars/BarHub.cs` — `BarHub` (default IBar source)
+- `src/Common/TradeTicks/TradeTickHub.cs` — `TradeTickHub` (default ITradeTick source)
 
 `BaseProvider<T>` is acknowledged in its source comments as a workaround pending a cleaner `StreamSource<T>` root class. Do not extend `BaseProvider<T>` beyond the existing self-rooted sources.
 
@@ -50,7 +50,7 @@ When implementing a new quantizer, prefer extending the aggregator pattern over 
 
 ### Thread safety contract
 
-`StreamHub<TIn, TOut>` (`src/_common/StreamHub/StreamHub.cs`) is thread-safe by holding `CacheLock` (a private `object` monitor) for the duration of every cache-mutating operation. Two invariants matter when subclassing:
+`StreamHub<TIn, TOut>` (`src/Common/StreamHub/StreamHub.cs`) is thread-safe by holding `CacheLock` (a private `object` monitor) for the duration of every cache-mutating operation. Two invariants matter when subclassing:
 
 1. **Observer notification happens inside `CacheLock`.** `Rebuild` and `RemoveAt` call `NotifyObserversOnRebuild` / `NotifyObserversOnPrune` inside the lock specifically to prevent new items from being added between cache mutation and downstream notification. Subclasses must not release the lock before notifying.
 2. **The `_isRebuilding` flag suppresses self-rebuild during `Rebuild`.** While `Rebuild` is replaying provider items through `OnAdd`/`AppendCache`, the flag forces `Act.Add` instead of recursing into another `Rebuild`. Observer cascading is still allowed and desired. Do not bypass this flag from subclass code.
@@ -68,11 +68,11 @@ Implemented by the stateful hubs. The base contract is:
 - Existing cache entries at `[restoreIndex + 1, Count)` have already been removed before this method is invoked
 - The item at the rollback timestamp will be recalculated via normal `ToIndicator` processing — do not re-emit it from `RollbackState`
 
-When adding new hubs, follow the canonical `RollbackState` pattern in `src/_common/StreamHub/StreamHub.cs` and the examples in `references/rollback-patterns.md` of the indicator-stream skill.
+When adding new hubs, follow the canonical `RollbackState` pattern in `src/Common/StreamHub/StreamHub.cs` and the examples in `references/rollback-patterns.md` of the indicator-stream skill.
 
 ## BufferList framework specifics
 
-`BufferList<TResult>` (`src/_common/BufferLists/BufferList.cs`) is a standalone `IReadOnlyList` for synchronous incremental compute. `MaxListSize` enables pruning when long-running. Two interfaces drive incremental adds:
+`BufferList<TResult>` (`src/Common/BufferLists/BufferList.cs`) is a standalone `IReadOnlyList` for synchronous incremental compute. `MaxListSize` enables pruning when long-running. Two interfaces drive incremental adds:
 
 - `IIncrementFromChain` — `Add(DateTime, double)`, `Add(IReusable)`, `Add(IReadOnlyList<IReusable>)` — for chainable single-value indicators
 - `IIncrementFromBar` — `Add(IBar)`, `Add(IReadOnlyList<IBar>)` — for indicators requiring full OHLCV
@@ -81,14 +81,14 @@ The implementation uses the C# `field` keyword in `BufferList.cs`, which is curr
 
 ## Catalog framework specifics
 
-`PopulateCatalog()` in `src/_common/Catalog/Catalog.Listings.cs` registers all indicator listings. Convention enforced by the existing file:
+`PopulateCatalog()` in `src/Common/Catalog/Catalog.Listings.cs` registers all indicator listings. Convention enforced by the existing file:
 
 - Indicators grouped alphabetically by full name
 - Each indicator block has a comment header `// {ABBR} ({Full Name})`
 - Within each block: **Buffer → Series → Stream** registration order
 - Blank line between indicator blocks
 
-Backing field in this repository is `_listings` (private static `List<IndicatorListing>`). The catalog test `tests/indicators/_common/Catalog/Catalog.Metrics.Tests.cs` asserts the exact per-style listing counts — update it when adding or removing a listing.
+Backing field in this repository is `_listings` (private static `List<IndicatorListing>`). The catalog test `tests/Indicators/Common/Catalog/Catalog.Metrics.Tests.cs` asserts the exact per-style listing counts — update it when adding or removing a listing.
 
 ## NaN handling policy
 

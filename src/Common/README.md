@@ -5,19 +5,33 @@ This directory contains shared utilities, base classes, and common patterns used
 ## Directory structure
 
 ```text
-_common/
+Common/
 ├── README.md                       # This file
-├── BinarySettings.cs               # Bitfield settings carried between hubs (Properties)
-├── ISeries.cs                      # Time-stamped record interface
+├── BarPart/                        # CandlePart extraction (Open/High/Low/Close/Volume/HL2/...)
+│   ├── IBarPart.cs
+│   ├── BarPartHub.cs               # BarPartHub streaming hub + ToBarPartHub()
+│   ├── BarPartList.cs              # BarPartList incremental list + ToBarPartList()
+│   ├── BarParts.cs                 # Static partial class (main) — ToBarPart() series
+│   ├── BarParts.Catalog.cs         # Catalog listings (partial)
+│   └── BarParts.Utilities.cs       # Validation and helpers (partial)
+├── Bars/                           # IBar OHLCV bar types, aggregator hub, validation
+│   ├── IBar.cs
+│   ├── Bar.cs                      # Default IBar record
+│   ├── BarD.cs                     # Double-precision internal bar
+│   ├── BarAggregatorHub.cs         # Streaming bar→bar quantization
+│   ├── BarHub.cs                   # BarHub: self-rooted source hub
+│   ├── Bars.Aggregates.cs          # Series-side aggregation (.Aggregate(BarInterval))
+│   ├── Bars.Converters.cs          # Conversions to/from IReusable etc.
+│   └── Bars.Validation.cs
 ├── BufferLists/                    # BufferList incremental processing
 │   ├── BufferList.cs               # Abstract base; MaxListSize pruning; field-keyword usage
-│   ├── BufferList.Utilities.cs     # Rolling Queue.Update / UpdateWithDequeue extensions
+│   ├── BufferListUtilities.cs      # Rolling Queue.Update / UpdateWithDequeue extensions
 │   ├── IIncrementFromChain.cs      # Add(DateTime, double), Add(IReusable), Add(batch)
-│   └── IIncrementFromBar.cs      # Add(IBar), Add(IReadOnlyList<IBar>)
+│   └── IIncrementFromBar.cs        # Add(IBar), Add(IReadOnlyList<IBar>)
 ├── Candles/                        # Candlestick pattern utilities
 │   ├── CandleProperties.cs
 │   ├── CandleResult.cs
-│   └── Candles.Utilities.cs
+│   └── Candlesticks.cs             # Candlestick utility methods
 ├── Catalog/                        # Indicator catalog and metadata (see Catalog/README.md)
 │   ├── Catalog.cs                  # Public API: Catalog.Get(), Catalog.Listings
 │   ├── Catalog.Listings.cs         # PopulateCatalog() — _listings.Add(...) registrations
@@ -29,66 +43,59 @@ _common/
 │       └── Enums/                  # Catalog-specific enums (Style, Category, etc.)
 ├── Enums/                          # Shared enumerations
 │   ├── Act.cs                      # Add / Rebuild action discriminator
+│   ├── BarInterval.cs              # Aggregation interval keys
+│   ├── BarIntervals.cs             # BarInterval ↔ string-code map (ToCode/ToBarInterval)
 │   ├── CandlePart.cs               # Open/High/Low/Close/Volume/HL2/HLC3/OC2/OHL3/OHLC4
 │   ├── Direction.cs
 │   ├── EndType.cs
 │   ├── Match.cs
 │   ├── MaType.cs
-│   ├── OutType.cs
-│   ├── BarInterval.cs               # Aggregation interval keys
-│   └── BarInterval.Codes.cs         # BarInterval ↔ string-code map (ToCode/ToBarInterval)
-├── Generics/                       # Generic utilities
-│   ├── Pruning.cs                  # Cache trimming helpers
-│   ├── Seek.cs                     # IndexOf / IndexGte / IndexBefore extensions
-│   ├── Sorting.cs
-│   ├── StringOut.List.cs
-│   └── StringOut.Type.cs
-├── Math/                           # Numerical utilities
-│   ├── DeMath.cs                   # Decimal math helpers
-│   ├── NullMath.cs                 # Null-safe math (NaN2Null, etc.)
-│   └── Numerical.cs                # Abs, Round, double / decimal conversions
-├── BarPart/                      # CandlePart extraction (Open/High/Low/Close/Volume/HL2/...)
-│   ├── IBarPart.cs
-│   ├── BarPart.BufferList.cs
-│   ├── BarPart.Catalog.cs
-│   ├── BarPart.StaticSeries.cs
-│   ├── BarPart.StreamHub.cs
-│   └── BarPart.Utilities.cs
-├── Bars/                         # IBar OHLCV bar types, aggregator hub, validation
-│   ├── IBar.cs
-│   ├── Bar.cs                    # Default IBar record
-│   ├── BarD.cs                   # Double-precision internal bar
-│   ├── Bar.Aggregates.cs         # Series-side aggregation (.Aggregate(BarInterval))
-│   ├── Bar.AggregatorHub.cs      # Streaming bar→bar quantization (PR #1875)
-│   ├── Bar.Converters.cs         # Conversions to/from IReusable etc.
-│   ├── Bar.Exceptions.cs
-│   ├── Bar.StreamHub.cs          # BarHub: self-rooted source hub
-│   └── Bar.Validation.cs
-├── TradeTicks/                   # ITradeTick raw trade-tick types and hubs
-│   ├── ITradeTick.cs
-│   ├── TradeTick.cs                     # Default ITradeTick record
-│   ├── TradeTick.StreamHub.cs           # TradeTickHub: self-rooted tick source
-│   └── TradeTick.AggregatorHub.cs       # Streaming tick→bar quantization
-├── Reusable/
+│   └── OutType.cs
+├── Exceptions/                     # Custom exceptions
+│   └── InvalidBarsException.cs
+├── Extensions/                     # Extension methods and static utilities
+│   ├── Reusable.cs                 # ToReusable, generic RemoveWarmupPeriods, etc.
+│   ├── Generics/                   # Generic utilities
+│   │   ├── Pruning.cs              # Cache trimming helpers
+│   │   ├── PruningList.cs          # Internal self-pruning list
+│   │   ├── Seeking.cs              # IndexOf / IndexGte / IndexBefore extensions
+│   │   ├── Sorting.cs
+│   │   ├── StringOut.List.cs
+│   │   └── StringOut.Type.cs
+│   └── Math/                       # Numerical utilities
+│       ├── DeMath.cs               # Decimal math helpers
+│       ├── NullMath.cs             # Null-safe math (NaN2Null, etc.)
+│       └── Numerical.cs            # Abs, Round, double / decimal conversions
+├── Interfaces/                     # Core series interfaces
 │   ├── IReusable.cs                # Single-value chainable record interface
-│   ├── Reusable.Utilities.cs       # ToReusable, generic RemoveWarmupPeriods, etc.
+│   └── ISeries.cs                  # Time-stamped record interface
+├── Models/                         # Core models
+│   ├── BinarySettings.cs           # Bitfield settings carried between hubs (Properties)
 │   └── TimeValue.cs                # Concrete IReusable (Timestamp + Value)
 ├── StreamHub/                      # StreamHub base classes and streaming utilities
 │   ├── IStreamHub.cs               # Public hub interface (Add, RemoveAt, RemoveRange, Rebuild, Reinitialize)
 │   ├── IStreamObservable.cs        # Push-side: Subscribe / Unsubscribe / Results
 │   ├── IStreamObserver.cs          # Pull-side: OnAdd / OnRebuild / OnPrune / OnError
 │   ├── IChainProvider.cs           # Marker for IReusable producers
-│   ├── IBarProvider.cs           # Marker for IBar producers
+│   ├── IBarProvider.cs             # Marker for IBar producers
 │   ├── StreamHub.cs                # Abstract base: Cache, CacheLock, _isRebuilding, RollbackState, ToIndicator
 │   ├── StreamHub.Observable.cs     # Observable side: Subscribe, NotifyObserversOn* methods
 │   ├── StreamHub.Observer.cs       # Observer side: OnAdd, OnRebuild, OnPrune entry points
-│   ├── StreamHub.Utilities.cs      # Cache size validation, IndexBefore helpers
+│   ├── StreamHubUtilities.cs       # Cache size validation, IndexBefore helpers
 │   ├── CircularDoubleBuffer.cs     # Fixed-size circular buffer for rolling-window indicators
 │   ├── HubCollection.cs            # Observer list with thread-safe enumeration
+│   ├── RollbackRing.cs             # Rollback state ring buffer
 │   └── Providers/                  # Specialized base classes
 │       ├── BaseProvider.cs         # Inert sentinel for self-rooted hubs (TODO: rename or remove)
+│       ├── IInertProvider.cs       # Inert provider marker interface
 │       ├── ChainHub.cs             # IReusable-output chainable hub
-│       └── BarProvider.cs        # IBar-output source/transformer
+│       └── BarProvider.cs          # IBar-output source/transformer
+├── TradeTicks/                     # ITradeTick raw trade-tick types and hubs
+│   ├── ITradeTick.cs
+│   ├── TradeTick.cs                # Default ITradeTick record
+│   ├── TradeTickAggregatorHub.cs   # Streaming tick→bar quantization
+│   ├── TradeTickHub.cs             # TradeTickHub: self-rooted tick source
+│   └── TradeTicks.cs               # ToTradeTickHub / aggregation extensions
 └── Validation/
     └── UrlSafeAttribute.cs
 ```
@@ -100,7 +107,7 @@ This directory provides foundational infrastructure for all indicator implementa
 - BufferLists/ - Incremental buffer-based indicator processing
 - Candles/ - Candlestick pattern recognition utilities
 - Catalog/ - Indicator metadata and discovery
-- Math/ - Numerical operations and null-safe calculations
+- Extensions/ - Extension methods, generic and numerical utilities
 - StreamHub/ - Real-time streaming indicator base classes
 - Validation/ - Input validation and error handling
 

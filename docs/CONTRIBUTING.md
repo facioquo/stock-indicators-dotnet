@@ -55,9 +55,9 @@ dotnet restore        # restore NuGet packages
 
 ## Testing
 
-- Review the `tests/indicators` folder for examples of unit tests.  Just copy one of these.
+- Review the `tests/Indicators` folder for examples of unit tests.  Just copy one of these.
 - New indicators should be tested against manually calculated, proven, accurate results.  It is helpful to include your manual calculations spreadsheet in the appropriate indicator test folder when [submitting changes](#submitting-changes).
-- Historical Stock Bars are automatically added to unit test methods.  A `Data.Bars.xlsx` Excel file is included in the `tests/_common` folder that is an exact copy of what is used in the unit tests.  Use a copy of this file for your manual calculations to ensure that it is correct.  Do not commit changes to the original file.
+- Historical Stock Bars are automatically added to unit test methods.  A `Data.Quotes.xlsx` Excel file is included in the `tests/Indicators/TestData` folder that is an exact copy of what is used in the unit tests.  Use a copy of this file for your manual calculations to ensure that it is correct.  Do not commit changes to the original file.
 - We expect all unit tests to execute successfully and all Errors and Warning resolved before you submit your code.
 - Failed builds or unit testing will block acceptance of your Pull Request when submitting changes.
 

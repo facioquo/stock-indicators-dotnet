@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Indicators.csproj" />
-    <ProjectReference Include="..\..\tests\indicators\Tests.Indicators.csproj" />
+    <ProjectReference Include="..\..\tests\Indicators\Tests.Indicators.csproj" />
   </ItemGroup>
 
 </Project>

@@ -118,7 +118,7 @@ The following items in `docs/plans/streaming-indicators.plan.md` clarify or exte
 
 - DOC-ARCH-2 — `RollbackState(int)` index contract (clarified; v3.0).
 - DOC-ARCH-3 — `Results` live-view semantics (clarified; v3.0).
-- DOC-ARCH-6 — pragma footprint in `_common/` (recorded; v3.0).
+- DOC-ARCH-6 — pragma footprint in `Common/` (recorded; v3.0).
 - ARCH-V31-1 — retire `BaseProvider<T>`, introduce `StreamSource<T>` (refactor; v3.1).
 - ARCH-V31-5 / ARCH-V31-6 — Rx.NET / `IAsyncEnumerable<T>` adapters (interop; v3.1).
 - ARCH-V31-7 — standardize shared `*.Increment` kernels to ≥80% adoption (refactor; v3.1).

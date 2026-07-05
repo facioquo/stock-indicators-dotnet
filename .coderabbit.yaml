@@ -123,8 +123,8 @@ reviews:
     - "!docs/.vitepress/dist/"   # VitePress build output
     - "!bin/"                # .NET build output
     - "!obj/"                # .NET build intermediate files
-    - "!**/_testdata/**/*.csv"   # Test data
-    - "!**/_testdata/**/*.json"  # Test data
+    - "!**/TestData/**/*.csv"   # Test data
+    - "!**/TestData/**/*.json"  # Test data
     - "!**/*.g.cs"           # Generated source code
     - "!**/*.docx"           # Office Word
     - "!**/*.pptx"           # Office PowerPoint

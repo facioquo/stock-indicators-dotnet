@@ -1,12 +1,29 @@
 # File Reorganization Plan
 
-**Status**: Deferred to v3.1
-**Date**: 2025-12-28 (last substantive content); 2026-05-25 (status/cross-reference refresh)
+**Status**: Non-breaking portion implemented (v3.1); breaking renames deferred to v4
+**Date**: 2025-12-28 (last substantive content); 2026-07-05 (implementation status refresh)
 **Related Issue**: [#1810](https://github.com/facioquo/stock-indicators-dotnet/issues/1810) — Major File Renaming Refactor
 
 **Related plans**: [streaming-indicators.plan.md](streaming-indicators.plan.md) is the v3.0 source of truth and tracks this work in **§J Infrastructure — deferred but listed for context** as the single deferred item. This plan is the detailed catalog of the file/directory renames and naming-convention decisions to execute when v3.1 work begins. It is intentionally **out of scope for v3.0** to avoid churning the codebase during the release-hardening window.
 
 > This plan is out of date in specifics, but notionally correct.
+
+## Implementation status (2026-07-05)
+
+The **non-breaking** portion of this plan is implemented (see #1810 for the tracking issue):
+
+- **Directories**: `src/_common/` → `src/Common/` (with `Interfaces/`, `Models/`, `Exceptions/`, `Extensions/` functional subdirectories); `src/{a-d,e-k,m-r,s-z}/` → `src/Indicators/{A-D,E-K,M-R,S-Z}/`; `tests/indicators` → `tests/Indicators` (with `Base/`, `Common/`, `Precision/`, `TestData/`, `Tools/`); `tests/integration` → `tests/Integration`; `tests/public-api` → `tests/PublicApi`.
+- **File names now match contained type names**: `{Ind}.StreamHub.cs` → `{Ind}Hub.cs`, `{Ind}.BufferList.cs` → `{Ind}List.cs`, `{Ind}.Models.cs` → `{Ind}Result.cs`, `{Ind}.StaticSeries.cs` → `{Ind}.cs` (main partial-class file; `.Utilities`/`.Catalog` remain dot-notation auxiliary files).
+- **Multi-type files split**: `BetaType`, `PivotPointType`, `PivotTrend`, `TradeTicks`, `IndicatorConfigExtensions`, `IInertProvider` each moved to their own file.
+- **Internal-only class renames**: `internal static class StreamHub` → `StreamHubUtilities` (resolves the Task 4.2 conflict without touching public API).
+- **Test classes standardized** (Task 4.11): `{Ind}SeriesTests`, `{Ind}BufferListTests`, `{Ind}HubTests`, `{Ind}CatalogTests`, `{Ind}RegressionTests`, with files renamed to match class names.
+
+The **breaking** remainder ("completely perfect" file/type alignment) is tracked in v4-milestone sub-issues of #1810:
+
+- [#2137](https://github.com/facioquo/stock-indicators-dotnet/issues/2137) — Add `Series` suffix to indicator series classes (Tasks 4.8/4.9)
+- [#2138](https://github.com/facioquo/stock-indicators-dotnet/issues/2138) — Unify McGinley Dynamic type family naming (Task 4.10)
+- [#2139](https://github.com/facioquo/stock-indicators-dotnet/issues/2139) — Rename public extension-method holder classes to `*Extensions` (Tasks 2.2–2.4, 4.1)
+- [#2140](https://github.com/facioquo/stock-indicators-dotnet/issues/2140) — Align result record names with indicator family names (`CorrResult`, `HtlResult`, `MaEnvelopeResult`, `WilliamsResult`)
 
 ---
 

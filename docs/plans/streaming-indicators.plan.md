@@ -82,7 +82,7 @@ Medium-priority enhancements (composite naming E010, MaEnvelopes remaining MA ty
 
 ### C. Infrastructure — deferred but listed for context
 
-- [ ] **File reorganization** — [#1810](https://github.com/facioquo/stock-indicators-dotnet/issues/1810). See [file-reorg.plan.md](file-reorg.plan.md). ~500 file renames, 55–87 hours, deferred to v3.1.
+- [x] **File reorganization** — [#1810](https://github.com/facioquo/stock-indicators-dotnet/issues/1810). See [file-reorg.plan.md](file-reorg.plan.md). Non-breaking portion implemented (directories, ~500 file renames, test class standardization); breaking type renames deferred to v4 sub-issues #2137–#2140.
 
 ### D. Release mechanics — go-live launch checklist
 

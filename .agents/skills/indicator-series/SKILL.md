@@ -7,26 +7,27 @@ description: Implement Series-style batch indicators with mathematical precision
 
 ## File structure
 
-All files live in `src/{category}/{Indicator}/`:
+All files live in `src/Indicators/{category}/{Indicator}/`:
 
 | File | Purpose |
 | ---- | ------- |
-| `{Indicator}.StaticSeries.cs` | Static partial class — `To{Indicator}()` + `To{Indicator}List()` entry points |
-| `{Indicator}.StreamHub.cs` | Hub class (internal ctor) + `To{Indicator}Hub()` extension |
-| `{Indicator}.BufferList.cs` | List class + `To{Indicator}List()` extension |
+| `{Indicator}.cs` | Static partial class (main file) — `To{Indicator}()` series entry point |
+| `{Indicator}Hub.cs` | Hub class (internal ctor) + `To{Indicator}Hub()` extension |
+| `{Indicator}List.cs` | List class + `To{Indicator}List()` extension |
 | `{Indicator}.Catalog.cs` | `CommonListing`, `SeriesListing`, `StreamListing`, `BufferListing` |
-| `{Indicator}.Models.cs` | Result record(s) |
+| `{Indicator}Result.cs` | Result record |
 | `{Indicator}.Utilities.cs` | `Validate()` (internal), `Increment()` (public), `RemoveWarmupPeriods()` |
 | `I{Indicator}.cs` | Parameter interface (parameter properties only; NOT result properties) |
 
-Test files mirror in `tests/indicators/{category}/{Indicator}/`:
+Test files mirror in `tests/Indicators/{category}/{Indicator}/`:
 
-- `{Indicator}.StaticSeries.Tests.cs`
-- `{Indicator}.BufferList.Tests.cs`
-- `{Indicator}.StreamHub.Tests.cs`
-- `{Indicator}.Regression.Tests.cs`
+- `{Indicator}SeriesTests.cs`
+- `{Indicator}BufferListTests.cs`
+- `{Indicator}HubTests.cs`
+- `{Indicator}CatalogTests.cs`
+- `{Indicator}RegressionTests.cs`
 
-Category folders: `a-d`, `e-k`, `m-r`, `s-z` (alphabetical)
+Category folders: `A-D`, `E-K`, `M-R`, `S-Z` (alphabetical)
 
 ## Performance optimization
 
@@ -42,16 +43,16 @@ Some indicators (e.g., ADL) are faster with `List.Add()` — benchmark both.
 
 ## Required implementation
 
-Beyond the `.StaticSeries.cs` file, ensure:
+Beyond the main `{Indicator}.cs` series file, ensure:
 
 - [ ] **Catalog registration**: Create `src/**/{Indicator}.Catalog.cs` and register in `Catalog.Listings.cs`
 - [ ] **Interface file**: Create `src/**/{Indicator}/I{Indicator}.cs` with parameter properties (NOT result properties)
-- [ ] **Unit tests**: Create `tests/indicators/**/{Indicator}.StaticSeries.Tests.cs`
+- [ ] **Unit tests**: Create `tests/Indicators/**/{Indicator}SeriesTests.cs`
   - Inherit from `StaticSeriesTestBase`
   - Verify against manually calculated reference values; assert documented value ranges with `IsBetween` if applicable
 - [ ] **Performance benchmark**: Add to `tools/performance/Perf.Series.cs`
 - [ ] **Public documentation**: Update `docs/indicators/{Indicator}.md`
-- [ ] **Regression baseline tests**: Add to `tests/indicators/**/{Indicator}.Regression.Tests.cs` inheriting from `RegressionTestBase<TResult>` with `[TestCategory("Regression")]` on the class — these compare the full result set to a frozen `*.standard.json` baseline so it can be filtered via `--filter TestCategory=Regression`
+- [ ] **Regression baseline tests**: Add to `tests/Indicators/**/{Indicator}RegressionTests.cs` inheriting from `RegressionTestBase<TResult>` with `[TestCategory("Regression")]` on the class — these compare the full result set to a frozen `*.standard.json` baseline so it can be filtered via `--filter TestCategory=Regression`
 - [ ] **Migration guide**: Update `docs/migration/v3.md` for notable and breaking changes from v2
 
 ## Precision testing
@@ -63,10 +64,10 @@ Beyond the `.StaticSeries.cs` file, ensure:
 
 ## Examples
 
-- Simple: `src/s-z/Sma/Sma.StaticSeries.cs`
-- Exponential smoothing: `src/e-k/Ema/Ema.StaticSeries.cs`
-- Complex multi-stage: `src/a-d/Adx/Adx.StaticSeries.cs`
-- Multi-value results: `src/a-d/Alligator/Alligator.StaticSeries.cs`
+- Simple: `src/Indicators/S-Z/Sma/Sma.cs`
+- Exponential smoothing: `src/Indicators/E-K/Ema/Ema.cs`
+- Complex multi-stage: `src/Indicators/A-D/Adx/Adx.cs`
+- Multi-value results: `src/Indicators/A-D/Alligator/Alligator.cs`
 
 See [references/decision-tree.md](references/decision-tree.md) for result interface selection.
 

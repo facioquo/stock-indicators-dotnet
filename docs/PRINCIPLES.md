@@ -19,7 +19,7 @@ All indicators MUST be mathematically correct, deterministic, and reproducible a
 
 **Formula sourcing hierarchy:**
 
-1. **Primary**: Manual calculation spreadsheets in `tests/indicators/` (all implementations MUST match exactly)
+1. **Primary**: Manual calculation spreadsheets in `tests/Indicators/` (all implementations MUST match exactly)
 2. **Authoritative**: Original creator publications, expert textbooks, reputable institutional specs, cited Wikipedia
 3. **Acceptable**: Third-party implementations citing authoritative sources, community-validated calculators
 4. **Prohibited**: TradingView ([#801](https://github.com/facioquo/stock-indicators-dotnet/discussions/801)), uncited calculators, sources without formula references

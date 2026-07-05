@@ -7,7 +7,7 @@ description: Create and register indicator catalog entries for automation. Use f
 
 ## File
 
-`src/{category}/{Indicator}/{Indicator}.Catalog.cs`
+`src/Indicators/{category}/{Indicator}/{Indicator}.Catalog.cs`
 
 ## Builder pattern
 
@@ -131,7 +131,7 @@ listings.Add(Beta.SeriesListing);
 
 ## Testing
 
-`tests/indicators/{folder}/{Indicator}/{Indicator}.Catalog.Tests.cs`:
+`tests/Indicators/{folder}/{Indicator}/{Indicator}CatalogTests.cs`:
 
 ```csharp
 [TestClass]

@@ -3,7 +3,7 @@
 This repository hosts **Stock Indicators for .NET**, the production source for the <a href="https://www.nuget.org/packages/FacioQuo.Stock.Indicators">FacioQuo.Stock.Indicators</a> NuGet package. The library offers financial market technical analysis indicators with a focus on accuracy, performance, and ergonomics for financial analytics.
 
 - Multi-targets `net10.0`, `net9.0`, and `net8.0` with analyzers enabled for strict code quality.
-- Active development expands streaming indicator support — see [src/_common/AGENTS.md](src/_common/AGENTS.md) for the framework guidance before modifying stateful pipelines (BufferList or StreamHub).
+- Active development expands streaming indicator support — see [src/Common/AGENTS.md](src/Common/AGENTS.md) for the framework guidance before modifying stateful pipelines (BufferList or StreamHub).
 - Documentation at <a href="https://dotnet.stockindicators.dev">dotnet.stockindicators.dev</a> is sourced from the `docs/` content in this repository.
 
 ## Primary directive
@@ -35,11 +35,8 @@ See [PRINCIPLES.md](docs/PRINCIPLES.md) for constitutional philosophy and ration
 ```plaintext
 (root)
 ├── src/                   # Library source code
-│    ├── _common/          # Shared utilities, base classes, and common types
-│    ├── a-d/              # Indicators A-D (alphabetical organization)
-│    ├── e-k/              # Indicators E-K
-│    ├── m-r/              # Indicators M-R
-│    ├── s-z/              # Indicators S-Z
+│    ├── Common/           # Shared utilities, base classes, and common types
+│    ├── Indicators/       # Indicator implementations (A-D, E-K, M-R, S-Z)
 │    └── Indicators.csproj # Main project file
 ├── tests/                 # Unit, integration, performance, and simulation suites
 ├── tools/                 # Performance benchmarks, baselines, and analysis scripts
