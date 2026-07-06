@@ -2,4 +2,11 @@
 root = false
 
 [*.cs]
-dotnet_diagnostic.CS1591.severity = suggestion  # Missing XML comment for public members
+
+# Allow singular 'using' directive
+dotnet_style_namespace_match_folder = false:none
+
+# Maintainability rules (enabled)
+dotnet_diagnostic.CA1501.severity  = warning     # Avoid excessive inheritance
+dotnet_diagnostic.CA1502.severity  = suggestion  # Avoid excessive complexity
+dotnet_diagnostic.CS1591.severity  = suggestion  # Missing XML comment for public members

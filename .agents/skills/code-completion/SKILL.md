@@ -83,9 +83,9 @@ Do not ignore, defer, or suppress warnings.
 
 New or updated indicators require:
 
-- Series: `*.StaticSeries.cs`
+- Series: `{Indicator}.Series.cs` partial class file
 - Catalog: `*.Catalog.cs` + registration
-- Tests: `*.Tests.cs` with full coverage
+- Tests: `*Tests.cs` with full coverage
 - Docs: `docs/indicators/{Name}.md`
 - Regression baseline (if algorithm changed)
 - Performance benchmark (complex indicators)

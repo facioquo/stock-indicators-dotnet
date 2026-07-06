@@ -97,20 +97,20 @@ Replay up to `restoreIndex` (inclusive). The item at the rollback timestamp is r
 
 ## Required implementation
 
-- [ ] Source code: `src/**/{IndicatorName}.StreamHub.cs` file exists
+- [ ] Source code: `src/**/{IndicatorName}Hub.cs` file exists
   - [ ] Uses appropriate provider base (ChainHub or BarProvider)
   - [ ] Validates parameters in constructor; calls Reinitialize() as needed
   - [ ] Implements O(1) state updates; avoids O(n²) recalculation
   - [ ] Overrides RollbackState() when maintaining stateful fields
   - [ ] Overrides ToString() with concise hub name
-- [ ] Unit testing: `tests/indicators/**/{IndicatorName}.StreamHub.Tests.cs` exists
+- [ ] Unit testing: `tests/Library/Indicators/**/{IndicatorName}HubTests.cs` exists
   - [ ] Inherits StreamHubTestBase with correct test interfaces
   - [ ] Comprehensive rollback validation present
   - [ ] Verifies Series parity
 - [ ] **Catalog registration**: Registered in `Catalog.Listings.cs`
 - [ ] **Performance benchmark**: Add to `tools/performance/Perf.Stream.cs`
 - [ ] **Public documentation**: Update `docs/indicators/{IndicatorName}.md`
-- [ ] **Regression tests**: Add to `tests/indicators/**/{IndicatorName}.Regression.Tests.cs`
+- [ ] **Regression tests**: Add to `tests/Library/Indicators/**/{IndicatorName}RegressionTests.cs`
 - [ ] **Migration guide**: Update `docs/migration/v3.md` for notable and breaking changes from v2
 
 ## References

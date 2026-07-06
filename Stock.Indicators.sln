@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configs", "Configs", "{89F9
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Indicators", "src\Indicators.csproj", "{8D0F1781-EDA3-4C51-B05D-D33FF1156E49}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Indicators", "tests\indicators\Tests.Indicators.csproj", "{11CD6C7E-871F-4903-AEAD-58E034C6521D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Indicators", "tests\Library\Tests.Indicators.csproj", "{11CD6C7E-871F-4903-AEAD-58E034C6521D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Performance", "tools\performance\Tests.Performance.csproj", "{3BD4837B-D197-41FD-A286-A3256D0770E1}"
 EndProject
@@ -24,9 +24,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Simulation", "tools\si
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Application", "tools\application\Test.Application.csproj", "{F98B09DA-0E0B-41D1-B7B6-3A40EE6C1DBE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Integration", "tests\integration\Tests.Integration.csproj", "{88C59340-F6C6-497B-A7F3-08ACCC8873EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Integration", "tests\Integration\Tests.Integration.csproj", "{88C59340-F6C6-497B-A7F3-08ACCC8873EE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.PublicApi", "tests\public-api\Tests.PublicApi.csproj", "{D6CF664F-8232-4EE9-B044-CA34A0BA522E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.PublicApi", "tests\PublicApi\Tests.PublicApi.csproj", "{D6CF664F-8232-4EE9-B044-CA34A0BA522E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.DataGenerator", "tools\baselining\Test.DataGenerator.csproj", "{F449BEB0-5A04-6992-4A1F-DE3FFE72A1C6}"
 EndProject
