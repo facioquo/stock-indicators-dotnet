@@ -20,7 +20,7 @@ public static class MgDynamic
         IReadOnlyList<IReusable> source,
         int lookbackPeriods,
         double kFactor = 0.6)
-        => Dynamic.ToDynamic(source, lookbackPeriods, kFactor);
+        => source.ToDynamic(lookbackPeriods, kFactor);
 
     [ExcludeFromCodeCoverage]
     [Obsolete("Rename `MgDynamic` to `Dynamic`.", false)]
@@ -28,7 +28,7 @@ public static class MgDynamic
         IChainProvider<IReusable> chainProvider,
         int lookbackPeriods,
         double kFactor = 0.6)
-        => Dynamic.ToDynamicHub(chainProvider, lookbackPeriods, kFactor);
+        => chainProvider.ToDynamicHub(lookbackPeriods, kFactor);
 
     [ExcludeFromCodeCoverage]
     [Obsolete("Rename `MgDynamic` to `Dynamic`.", false)]
@@ -36,7 +36,7 @@ public static class MgDynamic
         IReadOnlyList<IReusable> source,
         int lookbackPeriods,
         double kFactor = 0.6)
-        => Dynamic.ToDynamicList(source, lookbackPeriods, kFactor);
+        => source.ToDynamicList(lookbackPeriods, kFactor);
 
     [ExcludeFromCodeCoverage]
     [Obsolete("Rename `MgDynamic` to `Dynamic`.", false)]
