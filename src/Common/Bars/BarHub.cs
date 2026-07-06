@@ -47,8 +47,7 @@ public class BarHub
     /// <param name="provider">Bar provider.</param>
     public BarHub(
         IBarProvider<IBar> provider)
-        : base(provider)
-        => Reinitialize();
+        : base(provider) => Reinitialize();
 
     /// <inheritdoc/>
     protected override (IBar result, int index)

@@ -9,8 +9,7 @@ public abstract class BarProvider<TIn, TOut> : StreamHub<TIn, TOut>, IBarProvide
     /// <param name="provider">Streaming data provider.</param>
     internal BarProvider(
         IStreamObservable<TIn> provider
-    ) : base(provider)
-    => Bars = Cache.AsReadOnly();  // instantiate once
+    ) : base(provider) => Bars = Cache.AsReadOnly();  // instantiate once
 
     /// <summary>
     /// Gets the bars as a read-only collection (safe from external mutation).

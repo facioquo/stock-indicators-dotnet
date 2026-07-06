@@ -230,7 +230,7 @@ public class PruningListTests : TestBase
             sut.Add(i);
         }
 
-        IReadOnlyList<int> view = ((IList<int>)sut).AsReadOnly();
+        IReadOnlyList<int> view = sut.AsReadOnly();
 
         // not castable to mutable list
         (view is List<int>).Should().BeFalse();

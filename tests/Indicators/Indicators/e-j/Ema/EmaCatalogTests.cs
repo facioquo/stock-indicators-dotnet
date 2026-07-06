@@ -259,9 +259,8 @@ public class EmaCatalogTests : TestBase
 
         // Test EMA-specific validation - EMA doesn't accept series parameters
         IndicatorListing emaListing = Ema.SeriesListing;
-        Action emaSeriesTest = () => {
-            emaListing.WithParamValue("lookbackPeriods", emaResults); // Wrong type for this parameter
-        };
+        Action emaSeriesTest = ()
+            => emaListing.WithParamValue("lookbackPeriods", emaResults); // Wrong type for this parameter
         emaSeriesTest.Should().Throw<ArgumentException>()
             .WithMessage("*expects an integer value*"); // This will validate type checking
     }

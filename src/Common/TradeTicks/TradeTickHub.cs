@@ -17,7 +17,7 @@ public class TradeTickHub
     /// <param name="maxCacheSize">Maximum in-memory cache size.</param>
     public TradeTickHub(int? maxCacheSize = null)
         : base(new BaseProvider<ITradeTick>(ValidateAndGetMaxCacheSize(maxCacheSize)))
-        => Name = "TRADE-TICK-HUB";
+            => Name = "TRADE-TICK-HUB";
 
     /// <summary>
     /// Validates and returns the max cache size.
