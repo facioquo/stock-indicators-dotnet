@@ -21,7 +21,6 @@ jobs:
   deploy:
     name: Cloudflare Pages
     runs-on: ubuntu-latest
-    if: ${{ !github.event.pull_request.draft }}
     timeout-minutes: 30
     defaults:
       run:
