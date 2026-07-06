@@ -6,7 +6,7 @@ This folder contains the Stock Indicators library source code.
 
 Load the relevant skill before working in this folder. See the skills index in the root [AGENTS.md](../AGENTS.md#skills-for-development).
 
-For the streaming framework and shared types under `_common/` (StreamHub, BufferLists, Catalog, Bars, aggregator hubs, thread-safety contract, `RollbackState` semantics), see [_common/AGENTS.md](_common/AGENTS.md).
+For the streaming framework and shared types under `Common/` (StreamHub, BufferLists, Catalog, Bars, aggregator hubs, thread-safety contract, `RollbackState` semantics), see [Common/AGENTS.md](Common/AGENTS.md).
 
 ## Technical constraints
 
@@ -46,7 +46,7 @@ This library uses non-nullable double types internally for performance, with int
 - NaN propagation - Accept NaN inputs and allow natural propagation
 - State initialization - Use double.NaN for uninitialized state instead of sentinel values
 
-See _common/README.md for complete policy documentation.
+See Common/README.md for complete policy documentation.
 
 ## Series as the canonical reference
 
@@ -59,7 +59,7 @@ See _common/README.md for complete policy documentation.
 
 Indicator result types are `public record` declarations with positional parameters, `Timestamp` first, nullable `double?` for warmup-period values, and `IReusable` implementation when the result is intended to chain into downstream indicators. The reusable value projection is a calculated `Value` property (not a constructor parameter) that calls `.Null2NaN()` so chained NaN propagation behaves predictably.
 
-Canonical reference: `src/e-k/Ema/Ema.Models.cs` (`EmaResult`). When adding a new indicator, mirror this shape — positional record, `Timestamp` first, `[Serializable]` attribute, `[JsonIgnore]` on the chainable `Value` projection, single-line xmldoc per parameter. Multi-output indicators (e.g. Bollinger Bands, MACD) follow the same skeleton with additional positional parameters; only one property maps to `Value` and that property is the one flagged `isReusable: true` in the catalog listing.
+Canonical reference: `src/Indicators/e-j/Ema/EmaResult.cs` (`EmaResult`). When adding a new indicator, mirror this shape — positional record, `Timestamp` first, `[Serializable]` attribute, `[JsonIgnore]` on the chainable `Value` projection, single-line xmldoc per parameter. Multi-output indicators (e.g. Bollinger Bands, MACD) follow the same skeleton with additional positional parameters; only one property maps to `Value` and that property is the one flagged `isReusable: true` in the catalog listing.
 
 ## Cost of a new streamable indicator
 
@@ -68,14 +68,14 @@ A new fully-streamable indicator costs **seven files plus a documentation page**
 | File | Purpose | Size guideline (Ema baseline) |
 | ---- | ------- | ------------------------------ |
 | `I{Name}.cs` | Public interface | ~15 LOC |
-| `{Name}.Models.cs` | Result `record` | ~20 LOC |
+| `{Name}Result.cs` | Result `record` | ~20 LOC |
 | `{Name}.Utilities.cs` | Validation + helpers | ~80 LOC |
-| `{Name}.StaticSeries.cs` | Canonical batch implementation | ~60 LOC |
-| `{Name}.BufferList.cs` | Incremental `BufferList` form | ~120 LOC |
-| `{Name}.StreamHub.cs` | Live `StreamHub` form | ~75 LOC |
+| `{Name}.Series.cs` | Canonical batch implementation | ~60 LOC |
+| `{Name}List.cs` | Incremental `BufferList` form | ~120 LOC |
+| `{Name}Hub.cs` | Live `StreamHub` form | ~75 LOC |
 | `{Name}.Catalog.cs` | Catalog listing builders (Common/Series/Buffer/Stream) | ~45 LOC |
 
-If a new indicator exceeds these guidelines by a wide margin without algorithmic justification, treat the excess as accidental complexity and look for a missing shared kernel (see `Ema.Increment`, `Sma.Average`, `Tr.Increment`, `Atr.Increment` in `_common/`-adjacent siblings). Documentation under `docs/indicators/{Name}.md` and a test set under `tests/indicators/{a-d|e-k|m-r|s-z}/{Name}/*.Tests.cs` are required and have their own budgets.
+If a new indicator exceeds these guidelines by a wide margin without algorithmic justification, treat the excess as accidental complexity and look for a missing shared kernel (see `Ema.Increment`, `Sma.Average`, `Tr.Increment`, `Atr.Increment` in `Common/`-adjacent siblings). Documentation under `docs/indicators/{Name}.md` and a test set under `tests/Library/Indicators/{a-b|c-d|e-j|k-q|r-s|t-z}/{Name}/*Tests.cs` are required and have their own budgets.
 
 ## Boundaries
 

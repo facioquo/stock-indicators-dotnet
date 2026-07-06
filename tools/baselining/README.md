@@ -44,7 +44,7 @@ dotnet run --project tools/baselining -- --help
 
 Baseline files are stored as `{IndicatorName}.Baseline.json` in the same directory as the indicator's test files.
 
-Example location: `tests/indicators/s-z/Sma/Sma.Baseline.json`
+Example location: `tests/Library/Indicators/r-s/Sma/Sma.Baseline.json`
 
 Format:
 

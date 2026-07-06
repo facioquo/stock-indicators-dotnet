@@ -215,4 +215,4 @@ Follow standard StreamHub testing requirements:
 3. Test rollback validation if RollbackState is overridden
 4. Verify Series parity with the compound indicator
 
-**Example**: `tests/indicators/s-z/StochRsi/StochRsi.StreamHub.Tests.cs`
+**Example**: `tests/Library/Indicators/r-s/StochRsi/StochRsiHubTests.cs`

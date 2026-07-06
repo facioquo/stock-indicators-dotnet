@@ -149,11 +149,11 @@ internal static class IndicatorExecutor
     /// <returns>Full path to the baseline file.</returns>
     public static string GetBaselinePath(IndicatorListing listing)
     {
-        // Baselines are stored in _testdata/results/ directory
+        // Baselines are stored in TestData/results/ directory
         // Filename pattern: {uiid-lowercase}.standard.json
         string resultsDir = Path.Combine(
             Directory.GetCurrentDirectory(),
-            "_testdata",
+            "TestData",
             "results");
 
         // Create results directory if it doesn't exist

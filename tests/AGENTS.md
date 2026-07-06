@@ -4,23 +4,23 @@ This folder contains unit tests, public-API convergence tests, and integration t
 
 ## Test organization
 
-- `indicators/` — unit tests for all indicators (Series + BufferList + StreamHub + Catalog + Regression)
-- `integration/` — end-to-end integration tests including `StreamHub.ThreadSafety.Sse.Tests.cs` and `Tests.Integration.csproj`; runs via `tests.integration.runsettings`
+- `Indicators/` — unit tests for all indicators (Series + BufferList + StreamHub + Catalog + Regression)
+- `Integration/` — end-to-end integration tests including `StreamHub.ThreadSafety.Sse.Tests.cs` and `Tests.Integration.csproj`; runs via `tests.integration.runsettings`
 - `other/` — utility tests and cross-cutting helpers
-- `public-api/` — public-API surface tests (`Convergence.*` ensure Series / BufferList / StreamHub agree end-to-end on the public method names; `customizable/`, `indicators/` cover consumer-facing scenarios)
+- `PublicApi/` — public-API surface tests (`Convergence.*` ensure Series / BufferList / StreamHub agree end-to-end on the public method names; `Customizable/`, `Guide/` cover consumer-facing scenarios)
 - `performance/` — placeholder for in-process performance assertions; the BenchmarkDotNet harness and baselines live under `tools/performance/`
 
 ## Commands
 
 ```bash
 # Unit tests only
-dotnet test tests/indicators/ --settings tests/tests.unit.runsettings
+dotnet test tests/Library/ --settings tests/tests.unit.runsettings
 
 # Regression tests only
-dotnet test tests/indicators/ --settings tests/tests.regression.runsettings
+dotnet test tests/Library/ --settings tests/tests.regression.runsettings
 
 # Integration tests only
-dotnet test tests/integration/ --settings tests/tests.integration.runsettings
+dotnet test tests/Integration/ --settings tests/tests.integration.runsettings
 
 # All tests
 dotnet test

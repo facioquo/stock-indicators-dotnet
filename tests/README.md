@@ -12,7 +12,7 @@ dotnet test
 
 ## Unit tests
 
-> `indicators/Tests.Indicators.csproj` unit tests library
+> `Indicators/Tests.Indicators.csproj` unit tests library
 
 Our primary full unit test project covers the entire utility of the library.  In most IDE, you can [manually select](https://learn.microsoft.com/en-us/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file?view=vs-2022#manually-select-the-run-settings-file) the `tests/tests.unit.runsettings` for isolation for local IDE dev/test efficiency, or use the _unload_ approach described above.
 
@@ -75,11 +75,11 @@ public class MyIntegrationTests : TestBase
 
 ### Public API tests
 
-> `public-api/Tests.PublicApi.csproj` E2E library external tests
+> `PublicApi/Tests.PublicApi.csproj` E2E library external tests
 
 ### Live integration tests
 
-> `integration/Tests.Integration.csproj` connected to Live 3rd-party APIs
+> `Integration/Tests.Integration.csproj` connected to Live 3rd-party APIs
 
 ## Linting and code analyzers
 

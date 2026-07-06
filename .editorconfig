@@ -75,11 +75,13 @@ dotnet_style_require_accessibility_modifiers = for_non_interface_members:warning
 dotnet_style_space_around_colon_in_named_argument = true:suggestion
 dotnet_diagnostic.IDE0040.severity = suggestion
 
+# Allow singular 'using' directive
+dotnet_style_namespace_match_folder = false:none
+
 # Expression-level preferences
 dotnet_style_coalesce_expression = true:suggestion
 dotnet_style_collection_initializer = true:suggestion
 dotnet_style_explicit_tuple_names = true:suggestion
-dotnet_style_namespace_match_folder = false:none
 dotnet_style_null_propagation = true:suggestion
 dotnet_style_object_initializer = true:suggestion
 dotnet_style_prefer_auto_properties = true:suggestion
@@ -181,18 +183,18 @@ csharp_prefer_static_local_function = true:suggestion
 
 # Namespace and method preferences
 csharp_style_namespace_declarations = file_scoped:suggestion
-csharp_style_prefer_method_group_conversion = true:silent
-csharp_style_prefer_top_level_statements = true:silent
+csharp_style_prefer_method_group_conversion = true:suggestion
+csharp_style_prefer_top_level_statements = true:suggestion
 csharp_style_prefer_primary_constructors = true:suggestion
 
 # Expression-bodied members
-csharp_style_expression_bodied_constructors = true:silent
-csharp_style_expression_bodied_methods = true:silent
-csharp_style_expression_bodied_operators = true:silent
-csharp_style_expression_bodied_properties = true:silent
-csharp_style_expression_bodied_indexers = true:silent
-csharp_style_expression_bodied_accessors = true:silent
-csharp_style_expression_bodied_lambdas = true:silent
+csharp_style_expression_bodied_constructors = true:suggestion
+csharp_style_expression_bodied_methods = true:suggestion
+csharp_style_expression_bodied_operators = true:suggestion
+csharp_style_expression_bodied_properties = true:suggestion
+csharp_style_expression_bodied_indexers = true:suggestion
+csharp_style_expression_bodied_accessors = true:suggestion
+csharp_style_expression_bodied_lambdas = true:suggestion
 
 # Function preferences
 csharp_style_prefer_local_over_anonymous_function = true:suggestion

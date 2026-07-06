@@ -464,7 +464,7 @@
       "label": "Test: Unit tests",
       "detail": "Run unit tests only (excludes integration and regression tests)",
       "type": "shell",
-      "command": "dotnet test tests/indicators/Tests.Indicators.csproj --no-restore --nologo --settings tests/tests.unit.runsettings",
+      "command": "dotnet test tests/Library/Tests.Indicators.csproj --no-restore --nologo --settings tests/tests.unit.runsettings",
       "group": {
         "kind": "test",
         "isDefault": true
@@ -475,7 +475,7 @@
       "label": "Test: Regression tests",
       "detail": "Run regression tests only (baseline validation)",
       "type": "shell",
-      "command": "dotnet test tests/indicators/Tests.Indicators.csproj --no-restore --nologo --settings tests/tests.regression.runsettings",
+      "command": "dotnet test tests/Library/Tests.Indicators.csproj --no-restore --nologo --settings tests/tests.regression.runsettings",
       "group": "test",
       "problemMatcher": "$msCompile"
     },
@@ -483,7 +483,7 @@
       "label": "Test: Integration",
       "detail": "Run integration tests only (requires external dependencies)",
       "type": "shell",
-      "command": "dotnet test tests/integration/Tests.Integration.csproj --no-restore --nologo && dotnet test tests/public-api/Tests.PublicApi.csproj --no-restore --nologo; test_exit=$?; powershell.exe -NoProfile -Command 'Stop-Process -Name Test.SseServer -Force -ErrorAction SilentlyContinue'; exit $test_exit",
+      "command": "dotnet test tests/Integration/Tests.Integration.csproj --no-restore --nologo && dotnet test tests/PublicApi/Tests.PublicApi.csproj --no-restore --nologo; test_exit=$?; powershell.exe -NoProfile -Command 'Stop-Process -Name Test.SseServer -Force -ErrorAction SilentlyContinue'; exit $test_exit",
       "group": "test",
       "problemMatcher": "$msCompile"
     },

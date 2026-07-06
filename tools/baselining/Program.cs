@@ -38,7 +38,7 @@ internal static class Program
             return 1;
         }
 
-        string testIndicatorsPath = Path.Combine(repoRoot, "tests", "indicators");
+        string testIndicatorsPath = Path.Combine(repoRoot, "tests", "Indicators");
 
         if (!Directory.Exists(testIndicatorsPath))
         {
