@@ -11,7 +11,7 @@ Common/
 │   ├── IBarPart.cs
 │   ├── BarPartHub.cs               # BarPartHub streaming hub + ToBarPartHub()
 │   ├── BarPartList.cs              # BarPartList incremental list + ToBarPartList()
-│   ├── BarParts.cs                 # Static partial class (main) — ToBarPart() series
+│   ├── BarParts.Series.cs          # Static partial class — ToBarPart() series
 │   ├── BarParts.Catalog.cs         # Catalog listings (partial)
 │   └── BarParts.Utilities.cs       # Validation and helpers (partial)
 ├── Bars/                           # IBar OHLCV bar types, aggregator hub, validation
@@ -54,7 +54,6 @@ Common/
 ├── Exceptions/                     # Custom exceptions
 │   └── InvalidBarsException.cs
 ├── Extensions/                     # Extension methods and static utilities
-│   ├── Reusable.cs                 # ToReusable, generic RemoveWarmupPeriods, etc.
 │   ├── Generics/                   # Generic utilities
 │   │   ├── Pruning.cs              # Cache trimming helpers
 │   │   ├── PruningList.cs          # Internal self-pruning list
@@ -66,12 +65,13 @@ Common/
 │       ├── DeMath.cs               # Decimal math helpers
 │       ├── NullMath.cs             # Null-safe math (NaN2Null, etc.)
 │       └── Numerical.cs            # Abs, Round, double / decimal conversions
-├── Interfaces/                     # Core series interfaces
-│   ├── IReusable.cs                # Single-value chainable record interface
-│   └── ISeries.cs                  # Time-stamped record interface
 ├── Models/                         # Core models
 │   ├── BinarySettings.cs           # Bitfield settings carried between hubs (Properties)
 │   └── TimeValue.cs                # Concrete IReusable (Timestamp + Value)
+├── Reusable/                       # Core series interfaces and chainable-value extensions
+│   ├── IReusable.cs                # Single-value chainable record interface
+│   ├── ISeries.cs                  # Time-stamped record interface
+│   └── Reusable.cs                 # ToReusable, generic RemoveWarmupPeriods, etc.
 ├── StreamHub/                      # StreamHub base classes and streaming utilities
 │   ├── IStreamHub.cs               # Public hub interface (Add, RemoveAt, RemoveRange, Rebuild, Reinitialize)
 │   ├── IStreamObservable.cs        # Push-side: Subscribe / Unsubscribe / Results

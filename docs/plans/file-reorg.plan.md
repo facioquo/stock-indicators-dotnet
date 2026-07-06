@@ -12,8 +12,8 @@
 
 The **non-breaking** portion of this plan is implemented (see #1810 for the tracking issue):
 
-- **Directories**: `src/_common/` → `src/Common/` (with `Interfaces/`, `Models/`, `Exceptions/`, `Extensions/` functional subdirectories); `src/{a-d,e-k,m-r,s-z}/` → `src/Indicators/{A-D,E-K,M-R,S-Z}/`; `tests/indicators` → `tests/Indicators` (with `Base/`, `Common/`, `Precision/`, `TestData/`, `Tools/`); `tests/integration` → `tests/Integration`; `tests/public-api` → `tests/PublicApi`.
-- **File names now match contained type names**: `{Ind}.StreamHub.cs` → `{Ind}Hub.cs`, `{Ind}.BufferList.cs` → `{Ind}List.cs`, `{Ind}.Models.cs` → `{Ind}Result.cs`, `{Ind}.StaticSeries.cs` → `{Ind}.cs` (main partial-class file; `.Utilities`/`.Catalog` remain dot-notation auxiliary files).
+- **Directories**: `src/_common/` → `src/Common/` (with `Models/`, `Exceptions/`, `Extensions/` functional subdirectories; `Reusable/` holds the core `ISeries`/`IReusable` interfaces and chainable-value extensions); `src/{a-d,e-k,m-r,s-z}/` → `src/Indicators/{a-b,c-d,e-j,k-q,r-s,t-z}/`; `tests/indicators` → `tests/Indicators` (with `TestBase/`, `Common/`, `Precision/`, `TestData/`, `TestTools/`, and indicator tests under `tests/Indicators/Indicators/{a-b…t-z}/` mirroring `src/Indicators/`); `tests/integration` → `tests/Integration`; `tests/public-api` → `tests/PublicApi`.
+- **File names now match contained type names**: `{Ind}.StreamHub.cs` → `{Ind}Hub.cs`, `{Ind}.BufferList.cs` → `{Ind}List.cs`, `{Ind}.Models.cs` → `{Ind}Result.cs`, `{Ind}.StaticSeries.cs` → `{Ind}.Series.cs` (so every partial-class fragment uses a dot extender: `.Series`, `.Utilities`, `.Catalog`).
 - **Multi-type files split**: `BetaType`, `PivotPointType`, `PivotTrend`, `TradeTicks`, `IndicatorConfigExtensions`, `IInertProvider` each moved to their own file.
 - **Internal-only class renames**: `internal static class StreamHub` → `StreamHubUtilities` (resolves the Task 4.2 conflict without touching public API).
 - **Test classes standardized** (Task 4.11): `{Ind}SeriesTests`, `{Ind}BufferListTests`, `{Ind}HubTests`, `{Ind}CatalogTests`, `{Ind}RegressionTests`, with files renamed to match class names.

@@ -34,4 +34,4 @@ For detailed information about audit checks, fixing patterns, and examples, see:
 
 - **Streaming Plan**: `docs/plans/streaming-indicators.plan.md`
 - **StreamHub Guidelines**: `.github/instructions/indicator-stream.instructions.md`
-- **Canonical Test Pattern**: `tests/Indicators/E-K/Ema/EmaHubTests.cs`
+- **Canonical Test Pattern**: `tests/Indicators/Indicators/e-j/Ema/EmaHubTests.cs`

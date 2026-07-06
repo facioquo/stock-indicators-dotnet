@@ -131,7 +131,7 @@ listings.Add(Beta.SeriesListing);
 
 ## Testing
 
-`tests/Indicators/{folder}/{Indicator}/{Indicator}CatalogTests.cs`:
+`tests/Indicators/Indicators/{folder}/{Indicator}/{Indicator}CatalogTests.cs`:
 
 ```csharp
 [TestClass]

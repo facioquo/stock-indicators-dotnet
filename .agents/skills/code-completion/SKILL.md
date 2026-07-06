@@ -83,7 +83,7 @@ Do not ignore, defer, or suppress warnings.
 
 New or updated indicators require:
 
-- Series: main `{Indicator}.cs` partial class file
+- Series: `{Indicator}.Series.cs` partial class file
 - Catalog: `*.Catalog.cs` + registration
 - Tests: `*Tests.cs` with full coverage
 - Docs: `docs/indicators/{Name}.md`

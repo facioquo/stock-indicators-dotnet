@@ -11,7 +11,7 @@ All files live in `src/Indicators/{category}/{Indicator}/`:
 
 | File | Purpose |
 | ---- | ------- |
-| `{Indicator}.cs` | Static partial class (main file) — `To{Indicator}()` series entry point |
+| `{Indicator}.Series.cs` | Static partial class — `To{Indicator}()` series entry point |
 | `{Indicator}Hub.cs` | Hub class (internal ctor) + `To{Indicator}Hub()` extension |
 | `{Indicator}List.cs` | List class + `To{Indicator}List()` extension |
 | `{Indicator}.Catalog.cs` | `CommonListing`, `SeriesListing`, `StreamListing`, `BufferListing` |
@@ -19,7 +19,7 @@ All files live in `src/Indicators/{category}/{Indicator}/`:
 | `{Indicator}.Utilities.cs` | `Validate()` (internal), `Increment()` (public), `RemoveWarmupPeriods()` |
 | `I{Indicator}.cs` | Parameter interface (parameter properties only; NOT result properties) |
 
-Test files mirror in `tests/Indicators/{category}/{Indicator}/`:
+Test files mirror in `tests/Indicators/Indicators/{category}/{Indicator}/`:
 
 - `{Indicator}SeriesTests.cs`
 - `{Indicator}BufferListTests.cs`
@@ -27,7 +27,7 @@ Test files mirror in `tests/Indicators/{category}/{Indicator}/`:
 - `{Indicator}CatalogTests.cs`
 - `{Indicator}RegressionTests.cs`
 
-Category folders: `A-D`, `E-K`, `M-R`, `S-Z` (alphabetical)
+Category folders: `a-b`, `c-d`, `e-j`, `k-q`, `r-s`, `t-z` (alphabetical)
 
 ## Performance optimization
 
@@ -43,16 +43,16 @@ Some indicators (e.g., ADL) are faster with `List.Add()` — benchmark both.
 
 ## Required implementation
 
-Beyond the main `{Indicator}.cs` series file, ensure:
+Beyond the main `{Indicator}.Series.cs` file, ensure:
 
 - [ ] **Catalog registration**: Create `src/**/{Indicator}.Catalog.cs` and register in `Catalog.Listings.cs`
 - [ ] **Interface file**: Create `src/**/{Indicator}/I{Indicator}.cs` with parameter properties (NOT result properties)
-- [ ] **Unit tests**: Create `tests/Indicators/**/{Indicator}SeriesTests.cs`
+- [ ] **Unit tests**: Create `tests/Indicators/Indicators/**/{Indicator}SeriesTests.cs`
   - Inherit from `StaticSeriesTestBase`
   - Verify against manually calculated reference values; assert documented value ranges with `IsBetween` if applicable
 - [ ] **Performance benchmark**: Add to `tools/performance/Perf.Series.cs`
 - [ ] **Public documentation**: Update `docs/indicators/{Indicator}.md`
-- [ ] **Regression baseline tests**: Add to `tests/Indicators/**/{Indicator}RegressionTests.cs` inheriting from `RegressionTestBase<TResult>` with `[TestCategory("Regression")]` on the class — these compare the full result set to a frozen `*.standard.json` baseline so it can be filtered via `--filter TestCategory=Regression`
+- [ ] **Regression baseline tests**: Add to `tests/Indicators/Indicators/**/{Indicator}RegressionTests.cs` inheriting from `RegressionTestBase<TResult>` with `[TestCategory("Regression")]` on the class — these compare the full result set to a frozen `*.standard.json` baseline so it can be filtered via `--filter TestCategory=Regression`
 - [ ] **Migration guide**: Update `docs/migration/v3.md` for notable and breaking changes from v2
 
 ## Precision testing
@@ -64,10 +64,10 @@ Beyond the main `{Indicator}.cs` series file, ensure:
 
 ## Examples
 
-- Simple: `src/Indicators/S-Z/Sma/Sma.cs`
-- Exponential smoothing: `src/Indicators/E-K/Ema/Ema.cs`
-- Complex multi-stage: `src/Indicators/A-D/Adx/Adx.cs`
-- Multi-value results: `src/Indicators/A-D/Alligator/Alligator.cs`
+- Simple: `src/Indicators/r-s/Sma/Sma.Series.cs`
+- Exponential smoothing: `src/Indicators/e-j/Ema/Ema.Series.cs`
+- Complex multi-stage: `src/Indicators/a-b/Adx/Adx.Series.cs`
+- Multi-value results: `src/Indicators/a-b/Alligator/Alligator.Series.cs`
 
 See [references/decision-tree.md](references/decision-tree.md) for result interface selection.
 

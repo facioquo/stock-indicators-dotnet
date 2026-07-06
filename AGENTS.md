@@ -36,7 +36,7 @@ See [PRINCIPLES.md](docs/PRINCIPLES.md) for constitutional philosophy and ration
 (root)
 ├── src/                   # Library source code
 │    ├── Common/           # Shared utilities, base classes, and common types
-│    ├── Indicators/       # Indicator implementations (A-D, E-K, M-R, S-Z)
+│    ├── Indicators/       # Indicator implementations (a-b … t-z groups)
 │    └── Indicators.csproj # Main project file
 ├── tests/                 # Unit, integration, performance, and simulation suites
 ├── tools/                 # Performance benchmarks, baselines, and analysis scripts

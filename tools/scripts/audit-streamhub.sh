@@ -50,7 +50,7 @@ for hub_file in "${hub_files[@]}"; do
 
     # Convert src path to test path
     if [[ "$dir_path" == src/Indicators/* ]]; then
-        test_file="tests/Indicators/${dir_path#src/Indicators/}/${indicator_name}HubTests.cs"
+        test_file="tests/Indicators/Indicators/${dir_path#src/Indicators/}/${indicator_name}HubTests.cs"
     else
         # Common infrastructure hubs keep the *.Tests.cs suffix pattern,
         # except BarPart which follows the indicator convention
@@ -251,7 +251,7 @@ echo ""
 echo -e "${BLUE}=== T184-T185: Test Base Class Review ===${NC}"
 echo ""
 
-test_base_file="tests/Indicators/Base/StreamHubTestBase.cs"
+test_base_file="tests/Indicators/TestBase/StreamHubTestBase.cs"
 if [[ -f "$test_base_file" ]]; then
     echo -e "${GREEN}✓${NC} StreamHubTestBase exists"
 
