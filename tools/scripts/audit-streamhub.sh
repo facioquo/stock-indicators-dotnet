@@ -48,17 +48,11 @@ for hub_file in "${hub_files[@]}"; do
     indicator_name=$(basename "$hub_file" Hub.cs)
     dir_path=$(dirname "$hub_file")
 
-    # Convert src path to test path
+    # Convert src path to test path (uniform {Name}HubTests.cs convention)
     if [[ "$dir_path" == src/Indicators/* ]]; then
         test_file="tests/Indicators/Indicators/${dir_path#src/Indicators/}/${indicator_name}HubTests.cs"
     else
-        # Common infrastructure hubs keep the *.Tests.cs suffix pattern,
-        # except BarPart which follows the indicator convention
-        test_file="tests/Indicators/Common/${dir_path#src/Common/}/${indicator_name}Hub.Tests.cs"
-        alt_file="tests/Indicators/Common/${dir_path#src/Common/}/${indicator_name}HubTests.cs"
-        if [[ ! -f "$test_file" && -f "$alt_file" ]]; then
-            test_file="$alt_file"
-        fi
+        test_file="tests/Indicators/Common/${dir_path#src/Common/}/${indicator_name}HubTests.cs"
     fi
 
     if [[ -f "$test_file" ]]; then
@@ -91,12 +85,10 @@ echo -e "${BLUE}=== T175-T179: Test Interface Compliance ===${NC}"
 echo ""
 
 # Find all StreamHub test files
-mapfile -t test_files < <(find tests/Indicators \( -name "*HubTests.cs" -o -name "*Hub.Tests.cs" \) ! -name "*AggregatorHub*" | grep -v "PublicApi" | sort)
+mapfile -t test_files < <(find tests/Indicators -name "*HubTests.cs" ! -name "*AggregatorHub*" | sort)
 
 for test_file in "${test_files[@]}"; do
-    indicator_name=$(basename "$test_file" .cs)
-    indicator_name=${indicator_name%HubTests}
-    indicator_name=${indicator_name%Hub.Tests}
+    indicator_name=$(basename "$test_file" HubTests.cs)
 
     # Read the test file to check interfaces
     if [[ -f "$test_file" ]]; then
@@ -177,9 +169,7 @@ echo ""
 
 # Check for comprehensive provider history testing (Add/Remove scenarios)
 for test_file in "${test_files[@]}"; do
-    indicator_name=$(basename "$test_file" .cs)
-    indicator_name=${indicator_name%HubTests}
-    indicator_name=${indicator_name%Hub.Tests}
+    indicator_name=$(basename "$test_file" HubTests.cs)
 
     if [[ -f "$test_file" ]]; then
         # Look for the canonical test method with provider history mutations

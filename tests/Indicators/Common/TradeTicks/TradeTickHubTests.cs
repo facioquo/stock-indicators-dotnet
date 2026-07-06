@@ -1,7 +1,7 @@
 namespace StreamHubs;
 
 [TestClass]
-public class TradeTickStreamHubTests : StreamHubTestBase, ITestTradeTickObserver
+public class TradeTickHubTests : StreamHubTestBase, ITestTradeTickObserver
 {
     [TestMethod]
     public override void ToStringOverride_ReturnsExpectedName()
