@@ -1,116 +1,20 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
 # CodeRabbit config docs: https://docs.coderabbit.ai/reference/configuration
-# Defaults and examples GitHub repo: coderabbitai/awesome-coderabbit
 
-# General settings
-language: "en-US"            # Language for reviews (default: "en-US")
-tone_instructions: ""        # Custom tone for reviews (default: "")
-inheritance: false           # top-level instructions (default: false)
+# This CodeRabbit configuration only included overrides from our
+# organization-level configuration in facioquo/coderabbit .coderabbit.yaml
+inheritance: true
 
-# preview features
-early_access: true           # Enable early-access features (default: false)
-
-# ISSUE ENRICHMENT (preview)
-issue_enrichment:
-  auto_enrich:
-    enabled: false           # Enable auto issue enrichment (default: true)
-  planning:
-    enabled: true            # Enable generating a planning for issues (default: true)
-    auto_planning:
-      enabled: true          # Enable auto-generated plans based on labels (default: true)
-      labels:                # Triggering labels for auto-planning (default: [])
-        - rabbit-plan
-  labeling:
-    auto_apply_labels: false
-    labeling_instructions: []
-
-# REVIEWS
+# REVIEW CONFIGURATION (overrides)
 reviews:
-  profile: "chill"
-  review_status: true
-  commit_status: true
-  fail_commit_status: false
-  request_changes_workflow: false
-  enable_prompt_for_ai_agents: true
-  in_progress_fortune: false
-
-  abort_on_close: true
-  disable_cache: false
-
-  # High level summary of the changes in the PR/MR description or walkthrough.
-  high_level_summary: false
-  high_level_summary_in_walkthrough: false
-  high_level_summary_placeholder: "@coderabbitai summary"
-
-  # Walkthrough
-  collapse_walkthrough: true
-  changed_files_summary: false         # Generate a summary of the changed files in the walkthrough.
-  sequence_diagrams: false             # Generate sequence diagrams in the walkthrough.
-  estimate_code_review_effort: false   # Generate review effort in walkthrough.
-  assess_linked_issues: true           # Assess how well the changes address the linked issues in the walkthrough.
-  related_issues: true                 # Include possibly related issues in the walkthrough.
-  related_prs: true                    # Include possibly related pull requests in the walkthrough.
-  poem: false                          # Generate a poem in the walkthrough comment.
 
   # Automatic review scheduling
   auto_review:
-    enabled: true
-    auto_incremental_review: true      # Review each push (default: true)
+    enabled: false
+    auto_incremental_review: false     # Review each push (default: true)
     drafts: false                      # Review Draft pull requests (default: false)
     base_branches:
       - ".*"
-
-  # Automatic labels
-  # Suggest labels based on the changes in the pull request in the walkthrough.
-  suggested_labels: false
-  auto_apply_labels: false
-
-  # Automatic reviewers
-  # Suggest reviewers based on the changes in the pull request in the walkthrough.
-  suggested_reviewers: false
-  auto_assign_reviewers: false
-
-  # Automatic PR titles
-  auto_title_placeholder: "@coderabbitai"
-  auto_title_instructions: |
-    Use conventional commit with short (<65 chars) sentence case Subject.  See Copilot instructions.
-
-    Title strategy:
-    - Focus on the PRIMARY contribution or most central feature delivered in the PR
-    - Do NOT base the title on the last commit message
-    - Do NOT choose the most verbose or largest change
-    - Identify the core purpose or business value of the PR
-    - Keep titles concise and meaningful
-
-    Requirements:
-    - Use lowercase for type: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert, or plan
-    - Subject must start with an uppercase letter
-    - Keep total title length ≤ 65 characters
-    - Use imperative mood (e.g., "Add feature" not "Added feature")
-
-    Examples:
-    - `feat: Add WebSocket support` (not "Update connection manager")
-    - `fix: Resolve authentication timeout` (not "Fix bug in auth service")
-    - `docs: Improve API examples` (not "Update documentation files")
-    - `chore: Update dependencies` (when that's the sole purpose)
-
-  # Code enhancement features
-  finishing_touches:
-    docstrings:
-      enabled: false         # Generate docstrings for PRs/MRs (default: true)
-    unit_tests:
-      enabled: false         # Generate unit tests for PRs/MRs (default: true)
-
-  # Pre-merge validation checks
-  pre_merge_checks:
-    docstrings:              # Docstring coverage check (default: warning)
-      mode: off
-    description:             # PR description validation (default: warning)
-      mode: off
-    issue_assessment:        # Linked issue assessment (default: warning)
-      mode: off
-    title:                   # PR title validation (default: warning)
-      mode: off
 
   # Files to include/exclude from reviews
   path_filters:
@@ -123,8 +27,8 @@ reviews:
     - "!docs/.vitepress/dist/"   # VitePress build output
     - "!bin/"                # .NET build output
     - "!obj/"                # .NET build intermediate files
-    - "!**/_testdata/**/*.csv"   # Test data
-    - "!**/_testdata/**/*.json"  # Test data
+    - "!**/TestData/**/*.csv"   # Test data
+    - "!**/TestData/**/*.json"  # Test data
     - "!**/*.g.cs"           # Generated source code
     - "!**/*.docx"           # Office Word
     - "!**/*.pptx"           # Office PowerPoint
