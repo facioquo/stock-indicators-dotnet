@@ -1,10 +1,9 @@
-using System.Text.Json.Serialization;
 using FacioQuo.Stock.Indicators;
 
 namespace Custom.Stock.Indicators;
 
 // Custom results class
-// This inherits many of the extension methods, like .RemoveWarmupPeriods()
+// This inherits extension methods, like .RemoveWarmupPeriods()
 public record AtrWmaResult
 (
     DateTime Timestamp,
@@ -12,18 +11,17 @@ public record AtrWmaResult
 ) : IReusable
 {
     /// <inheritdoc/>
-    [JsonIgnore]
     public double Value => AtrWma.Null2NaN();
 }
 
 public static class CustomIndicators
 {
     // Custom ATR WMA calculation
-    public static IReadOnlyList<AtrWmaResult> GetAtrWma(
+    public static IReadOnlyList<AtrWmaResult> ToAtrWma(
         this IReadOnlyList<IBar> bars,
         int lookbackPeriods)
     {
-        // sort quotes and convert to list
+        // sort proce bars (optional)
         List<IBar> barsList = bars
             .OrderBy(x => x.Timestamp)
             .ToList();
