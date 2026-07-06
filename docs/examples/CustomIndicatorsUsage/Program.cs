@@ -10,11 +10,11 @@ using FacioQuo.Stock.Indicators;
 string json = File.ReadAllText("quotes.data.json");
 
 IReadOnlyList<Bar> bars = JsonSerializer
-    .Deserialize<IReadOnlyCollection<Bar>>(json)
+    .Deserialize<IReadOnlyList<Bar>>(json)
     .ToSortedList();
 
 // Calculate 10-period custom AtrWma
-IReadOnlyList<AtrWmaResult> results = bars.GetAtrWma(10);
+IReadOnlyList<AtrWmaResult> results = bars.ToAtrWma(10);
 
 // Show results
 Console.WriteLine("ATR WMA Results ---------------------------");
