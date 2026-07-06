@@ -15,8 +15,8 @@ builder.Logging.AddFilter(
     LogLevel.Warning);
 
 // Add native .NET 10 OpenAPI support
-builder.Services.AddOpenApi(options => {
-    options.AddDocumentTransformer((document, _, _) => {
+builder.Services.AddOpenApi(options
+    => options.AddDocumentTransformer((document, _, _) => {
         document.Info = new() {
             Title = "SSE Bar Server",
             Version = "v1",
@@ -24,8 +24,7 @@ builder.Services.AddOpenApi(options => {
         };
 
         return Task.CompletedTask;
-    });
-});
+    }));
 
 WebApplication app = builder.Build();
 

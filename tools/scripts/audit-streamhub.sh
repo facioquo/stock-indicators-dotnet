@@ -27,7 +27,7 @@ echo ""
 
 # Find all StreamHub implementations
 echo -e "${BLUE}Finding StreamHub implementations...${NC}"
-mapfile -t hub_files < <(find src -name "*.StreamHub.cs" | sort)
+mapfile -t hub_files < <(find src/Indicators src/Common/BarPart src/Common/Bars src/Common/TradeTicks -name "*Hub.cs" ! -name "*AggregatorHub.cs" | sort)
 total_hubs=${#hub_files[@]}
 
 echo -e "Found ${GREEN}${total_hubs}${NC} StreamHub implementations"
@@ -44,12 +44,16 @@ echo ""
 
 # Check each implementation has corresponding test
 for hub_file in "${hub_files[@]}"; do
-    # Extract indicator name from path
-    indicator_name=$(basename "$hub_file" .StreamHub.cs)
+    # Extract indicator name from path (strip "Hub.cs" suffix)
+    indicator_name=$(basename "$hub_file" Hub.cs)
     dir_path=$(dirname "$hub_file")
 
-    # Convert src path to test path
-    test_file="tests/indicators/${dir_path#src/}/$indicator_name.StreamHub.Tests.cs"
+    # Convert src path to test path (uniform {Name}HubTests.cs convention)
+    if [[ "$dir_path" == src/Indicators/* ]]; then
+        test_file="tests/Library/Indicators/${dir_path#src/Indicators/}/${indicator_name}HubTests.cs"
+    else
+        test_file="tests/Library/Common/${dir_path#src/Common/}/${indicator_name}HubTests.cs"
+    fi
 
     if [[ -f "$test_file" ]]; then
         total_tests=$((total_tests + 1))
@@ -81,10 +85,10 @@ echo -e "${BLUE}=== T175-T179: Test Interface Compliance ===${NC}"
 echo ""
 
 # Find all StreamHub test files
-mapfile -t test_files < <(find tests -name "*.StreamHub.Tests.cs" | grep -v "public-api" | sort)
+mapfile -t test_files < <(find tests/Library -name "*HubTests.cs" ! -name "*AggregatorHub*" | sort)
 
 for test_file in "${test_files[@]}"; do
-    indicator_name=$(basename "$test_file" .StreamHub.Tests.cs)
+    indicator_name=$(basename "$test_file" HubTests.cs)
 
     # Read the test file to check interfaces
     if [[ -f "$test_file" ]]; then
@@ -165,7 +169,7 @@ echo ""
 
 # Check for comprehensive provider history testing (Add/Remove scenarios)
 for test_file in "${test_files[@]}"; do
-    indicator_name=$(basename "$test_file" .StreamHub.Tests.cs)
+    indicator_name=$(basename "$test_file" HubTests.cs)
 
     if [[ -f "$test_file" ]]; then
         # Look for the canonical test method with provider history mutations
@@ -237,7 +241,7 @@ echo ""
 echo -e "${BLUE}=== T184-T185: Test Base Class Review ===${NC}"
 echo ""
 
-test_base_file="tests/indicators/_base/StreamHubTestBase.cs"
+test_base_file="tests/Library/TestBase/StreamHubTestBase.cs"
 if [[ -f "$test_base_file" ]]; then
     echo -e "${GREEN}✓${NC} StreamHubTestBase exists"
 

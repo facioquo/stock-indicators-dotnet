@@ -43,7 +43,7 @@ Chosen option: **3 — Dual-track BufferList + StreamHub**, because it is the on
 - **Good**: the StreamHub layer can ship advanced features (rollback, late-arrival, cache pruning, fault tracking, multi-output cascades) without dragging that complexity into the batch-warmup path that callers don't need.
 - **Good**: Series remains the canonical oracle; both incremental surfaces are validated against it. A bug surfaces in exactly one place even when it affects all three.
 - **Bad**: every streamable indicator pays for two implementations. ~78 indicators × 2 implementation files = ~156 files of per-indicator code. This is the maintenance tax.
-- **Bad**: the discoverability surface doubles. Every indicator's doc page carries a "BufferList" section and a "StreamHub" section; every test class has a `*.BufferList.Tests.cs` and `*.StreamHub.Tests.cs` sibling.
+- **Bad**: the discoverability surface doubles. Every indicator's doc page carries a "BufferList" section and a "StreamHub" section; every test class has a `*BufferListTests.cs` and `*HubTests.cs` sibling.
 - **Bad**: contributors must understand both surfaces' invariants. The streaming swarm review surfaced that documenting `RollbackState(int)` semantics and `Results` live-view semantics required explicit ADR-adjacent work (DOC-ARCH-2, DOC-ARCH-3 in the streaming plan) to keep contributors aligned.
 
 ### Confirmation
@@ -118,7 +118,7 @@ The following items in `docs/plans/streaming-indicators.plan.md` clarify or exte
 
 - DOC-ARCH-2 — `RollbackState(int)` index contract (clarified; v3.0).
 - DOC-ARCH-3 — `Results` live-view semantics (clarified; v3.0).
-- DOC-ARCH-6 — pragma footprint in `_common/` (recorded; v3.0).
+- DOC-ARCH-6 — pragma footprint in `Common/` (recorded; v3.0).
 - ARCH-V31-1 — retire `BaseProvider<T>`, introduce `StreamSource<T>` (refactor; v3.1).
 - ARCH-V31-5 / ARCH-V31-6 — Rx.NET / `IAsyncEnumerable<T>` adapters (interop; v3.1).
 - ARCH-V31-7 — standardize shared `*.Increment` kernels to ≥80% adoption (refactor; v3.1).
