@@ -56,6 +56,16 @@ public static class CustomIndicators
         this IReadOnlyList<IBar> bars,
         int lookbackPeriods)
     {
+        // Validate parameters
+        ArgumentNullException.ThrowIfNull(bars);
+        
+        if (lookbackPeriods <= 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(lookbackPeriods),
+                "Lookback periods must be greater than 0.");
+        }
+
         // sort proce bars (optional)
         List<IBar> barsList = bars
             .OrderBy(x => x.Timestamp)
