@@ -55,14 +55,10 @@ Common/
 │   └── InvalidBarsException.cs
 ├── Extensions/                     # Extension methods and static utilities
 │   ├── Generics/                   # Generic utilities
-│   │   ├── Pruning.cs              # Obsolete shim, use PruningExtensions
 │   │   ├── PruningExtensions.cs    # Cache trimming helpers
 │   │   ├── PruningList.cs          # Internal self-pruning list
-│   │   ├── Seeking.cs              # Obsolete shim, use SeekingExtensions
 │   │   ├── SeekingExtensions.cs    # IndexOf / IndexGte / IndexBefore extensions
-│   │   ├── Sorting.cs              # Obsolete shim, use SortingExtensions
 │   │   ├── SortingExtensions.cs
-│   │   ├── StringOut.cs            # Obsolete shim, use StringOutExtensions
 │   │   ├── StringOutExtensions.List.cs
 │   │   └── StringOutExtensions.Type.cs
 │   └── Math/                       # Numerical utilities
@@ -75,7 +71,6 @@ Common/
 ├── Reusable/                       # Core series interfaces and chainable-value extensions
 │   ├── IReusable.cs                # Single-value chainable record interface
 │   ├── ISeries.cs                  # Time-stamped record interface
-│   ├── Reusable.cs                 # Obsolete shim, use ReusableExtensions
 │   └── ReusableExtensions.cs       # ToReusable, generic RemoveWarmupPeriods, etc.
 ├── StreamHub/                      # StreamHub base classes and streaming utilities
 │   ├── IStreamHub.cs               # Public hub interface (Add, RemoveAt, RemoveRange, Rebuild, Reinitialize)
