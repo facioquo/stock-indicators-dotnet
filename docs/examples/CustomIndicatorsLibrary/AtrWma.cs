@@ -21,7 +21,7 @@ public static class CustomIndicators
         this IReadOnlyList<IBar> bars,
         int lookbackPeriods)
     {
-        // sort proce bars (optional)
+        // sort price bars (optional)
         List<IBar> barsList = bars
             .OrderBy(x => x.Timestamp)
             .ToList();
