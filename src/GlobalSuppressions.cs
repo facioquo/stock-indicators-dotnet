@@ -33,3 +33,10 @@ using System.Diagnostics.CodeAnalysis;
     Justification = "Temporary, during deprecation period.",
     Scope = "member",
     Target = "~P:FacioQuo.Stock.Indicators.ISeries.Date")]
+
+[assembly: SuppressMessage(
+    "Naming",
+    "CA1724:Type names should not match namespaces",
+    Justification = "Chosen deliberately (issue #2138 Option A) to unify the McGinley Dynamic type family under the `Dynamic` name; the `System.Dynamic` namespace is not otherwise referenced by this library.",
+    Scope = "type",
+    Target = "~T:FacioQuo.Stock.Indicators.Dynamic")]

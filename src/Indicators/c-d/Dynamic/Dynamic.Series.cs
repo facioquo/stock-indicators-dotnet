@@ -3,7 +3,7 @@ namespace FacioQuo.Stock.Indicators;
 /// <summary>
 /// McGinley Dynamic indicator.
 /// </summary>
-public static partial class MgDynamic
+public static partial class Dynamic
 {
     /// <summary>
     /// Converts a list of source data to McGinley Dynamic results.

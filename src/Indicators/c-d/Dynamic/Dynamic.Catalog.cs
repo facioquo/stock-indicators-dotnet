@@ -1,6 +1,6 @@
 namespace FacioQuo.Stock.Indicators;
 
-public static partial class MgDynamic
+public static partial class Dynamic
 {
     /// <summary>
     /// Dynamic Common Base Listing

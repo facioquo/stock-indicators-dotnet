@@ -274,9 +274,9 @@ public static partial class Catalog
         _listings.Add(Mfi.StreamListing);
 
         // McGinley Dynamic
-        _listings.Add(MgDynamic.BufferListing);
-        _listings.Add(MgDynamic.SeriesListing);
-        _listings.Add(MgDynamic.StreamListing);
+        _listings.Add(Dynamic.BufferListing);
+        _listings.Add(Dynamic.SeriesListing);
+        _listings.Add(Dynamic.StreamListing);
 
         // OBV (On Balance Volume)
         _listings.Add(Obv.BufferListing);

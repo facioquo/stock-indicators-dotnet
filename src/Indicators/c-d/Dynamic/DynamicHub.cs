@@ -11,7 +11,7 @@ public class DynamicHub
         int lookbackPeriods,
         double kFactor = 0.6) : base(provider)
     {
-        MgDynamic.Validate(lookbackPeriods, kFactor);
+        Dynamic.Validate(lookbackPeriods, kFactor);
         LookbackPeriods = lookbackPeriods;
         KFactor = kFactor;
         Name = $"DYNAMIC({lookbackPeriods},{kFactor})";
@@ -47,7 +47,7 @@ public class DynamicHub
 
         // calculate dynamic
         double prevDyn = Cache[i - 1].Dynamic ?? ProviderCache[i - 1].Value;
-        double dyn = MgDynamic.Increment(
+        double dyn = Dynamic.Increment(
             LookbackPeriods,
             KFactor,
             newVal: item.Value,
@@ -62,7 +62,7 @@ public class DynamicHub
     }
 }
 
-public static partial class MgDynamic
+public static partial class Dynamic
 {
     /// <summary>
     /// Creates a Dynamic streaming hub from a chain provider.
