@@ -40,7 +40,7 @@ public static class CustomIndicators
         List<AtrWmaResult> results = new(barsList.Count);
 
         // perform pre-requisite calculations to get ATR values
-        List<AtrResult> atrResults = bars
+        List<AtrResult> atrResults = barsList
             .ToAtr(lookbackPeriods)
             .ToList();
 
