@@ -30,6 +30,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Indicators.csproj" />
-    <ProjectReference Include="..\Indicators\Tests.Indicators.csproj" />
+    <ProjectReference Include="..\Library\Tests.Indicators.csproj" />
   </ItemGroup>
 </Project>

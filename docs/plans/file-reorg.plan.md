@@ -12,7 +12,7 @@
 
 The **non-breaking** portion of this plan is implemented (see #1810 for the tracking issue):
 
-- **Directories**: `src/_common/` → `src/Common/` (with `Models/`, `Exceptions/`, `Extensions/` functional subdirectories; `Reusable/` holds the core `ISeries`/`IReusable` interfaces and chainable-value extensions); `src/{a-d,e-k,m-r,s-z}/` → `src/Indicators/{a-b,c-d,e-j,k-q,r-s,t-z}/`; `tests/indicators` → `tests/Indicators` (with `TestBase/`, `Common/`, `Precision/`, `TestData/`, `TestTools/`, and indicator tests under `tests/Indicators/Indicators/{a-b…t-z}/` mirroring `src/Indicators/`); `tests/integration` → `tests/Integration`; `tests/public-api` → `tests/PublicApi`.
+- **Directories**: `src/_common/` → `src/Common/` (with `Models/`, `Exceptions/`, `Extensions/` functional subdirectories; `Reusable/` holds the core `ISeries`/`IReusable` interfaces and chainable-value extensions); `src/{a-d,e-k,m-r,s-z}/` → `src/Indicators/{a-b,c-d,e-j,k-q,r-s,t-z}/`; `tests/Library` → `tests/Library` (with `TestBase/`, `Common/`, `Precision/`, `TestData/`, `TestTools/`, and indicator tests under `tests/Library/Indicators/{a-b…t-z}/` mirroring `src/Indicators/`); `tests/integration` → `tests/Integration`; `tests/public-api` → `tests/PublicApi`.
 - **File names now match contained type names**: `{Ind}.StreamHub.cs` → `{Ind}Hub.cs`, `{Ind}.BufferList.cs` → `{Ind}List.cs`, `{Ind}.Models.cs` → `{Ind}Result.cs`, `{Ind}.StaticSeries.cs` → `{Ind}.Series.cs` (so every partial-class fragment uses a dot extender: `.Series`, `.Utilities`, `.Catalog`).
 - **Multi-type files split**: `BetaType`, `PivotPointType`, `PivotTrend`, `TradeTicks`, `IndicatorConfigExtensions`, `IInertProvider` each moved to their own file.
 - **Internal-only class renames**: `internal static class StreamHub` → `StreamHubUtilities` (resolves the Task 4.2 conflict without touching public API).
@@ -254,12 +254,12 @@ Follow these conventions for all file naming:
   - Create parent `Indicators/` directory and move all under it
 
 - [ ] Task 3.4: Reorganize test directories
-  - Rename `tests/indicators/` → `tests/Indicators/`
-  - Rename `tests/indicators/_base/` → `tests/Indicators/Base/`
-  - Rename `tests/indicators/_common/` → `tests/Indicators/Common/`
-  - Rename `tests/indicators/_precision/` → `tests/Indicators/Precision/`
-  - Rename `tests/indicators/_testdata/` → `tests/Indicators/TestData/`
-  - Rename `tests/indicators/_tools/` → `tests/Indicators/Tools/`
+  - Rename `tests/Library/` → `tests/Library/`
+  - Rename `tests/Library/_base/` → `tests/Library/Base/`
+  - Rename `tests/Library/_common/` → `tests/Library/Common/`
+  - Rename `tests/Library/_precision/` → `tests/Library/Precision/`
+  - Rename `tests/Library/_testdata/` → `tests/Library/TestData/`
+  - Rename `tests/Library/_tools/` → `tests/Library/Tools/`
   - Rename `tests/public-api/` → `tests/PublicApi/`
   - Update test namespaces to follow new directory structure
 
@@ -654,7 +654,7 @@ Analysis of "Dynamic" (McGinley Dynamic) and "ConnorsRsi" indicators reveals sys
 | `Dynamic.BufferList.cs` | - | `DynamicList` | ✓ Match |
 | `IDynamic.cs` | - | `IDynamic` | ✓ Match |
 
-**Test files** (`tests/indicators/a-d/Dynamic/`):
+**Test files** (`tests/Library/a-d/Dynamic/`):
 
 | File name | Test class name | Issue |
 | --------- | --------------- | ----- |
@@ -683,7 +683,7 @@ Analysis of "Dynamic" (McGinley Dynamic) and "ConnorsRsi" indicators reveals sys
 | `ConnorsRsi.BufferList.cs` | - | `ConnorsRsiList` | ✓ Match |
 | `IConnorsRsi.cs` | - | `IConnorsRsi` | ✓ Match |
 
-**Test files** (`tests/indicators/a-d/ConnorsRsi/`):
+**Test files** (`tests/Library/a-d/ConnorsRsi/`):
 
 | File name | Test class name | Issue |
 | --------- | --------------- | ----- |

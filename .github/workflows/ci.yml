@@ -65,7 +65,7 @@ jobs:
 
       - name: Build (package tests)
         run: >
-          dotnet build tests/Indicators/Tests.Indicators.csproj
+          dotnet build tests/Library/Tests.Indicators.csproj
           --configuration Release
           --property:ContinuousIntegrationBuild=true
           -warnAsError
@@ -89,7 +89,7 @@ jobs:
 
       - name: Test indicators
         run: >
-          dotnet test tests/Indicators/Tests.Indicators.csproj
+          dotnet test tests/Library/Tests.Indicators.csproj
           --configuration Release
           --settings tests/tests.unit.runsettings
           --results-directory ./test-results/unit
@@ -182,7 +182,7 @@ jobs:
 
       - name: Test regression baselines
         run: >
-          dotnet test tests/Indicators/Tests.Indicators.csproj
+          dotnet test tests/Library/Tests.Indicators.csproj
           --configuration Release
           --settings tests/tests.regression.runsettings
           --results-directory ./test-results/regression

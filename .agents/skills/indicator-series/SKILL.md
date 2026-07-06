@@ -19,7 +19,7 @@ All files live in `src/Indicators/{category}/{Indicator}/`:
 | `{Indicator}.Utilities.cs` | `Validate()` (internal), `Increment()` (public), `RemoveWarmupPeriods()` |
 | `I{Indicator}.cs` | Parameter interface (parameter properties only; NOT result properties) |
 
-Test files mirror in `tests/Indicators/Indicators/{category}/{Indicator}/`:
+Test files mirror in `tests/Library/Indicators/{category}/{Indicator}/`:
 
 - `{Indicator}SeriesTests.cs`
 - `{Indicator}BufferListTests.cs`
@@ -47,12 +47,12 @@ Beyond the main `{Indicator}.Series.cs` file, ensure:
 
 - [ ] **Catalog registration**: Create `src/**/{Indicator}.Catalog.cs` and register in `Catalog.Listings.cs`
 - [ ] **Interface file**: Create `src/**/{Indicator}/I{Indicator}.cs` with parameter properties (NOT result properties)
-- [ ] **Unit tests**: Create `tests/Indicators/Indicators/**/{Indicator}SeriesTests.cs`
+- [ ] **Unit tests**: Create `tests/Library/Indicators/**/{Indicator}SeriesTests.cs`
   - Inherit from `StaticSeriesTestBase`
   - Verify against manually calculated reference values; assert documented value ranges with `IsBetween` if applicable
 - [ ] **Performance benchmark**: Add to `tools/performance/Perf.Series.cs`
 - [ ] **Public documentation**: Update `docs/indicators/{Indicator}.md`
-- [ ] **Regression baseline tests**: Add to `tests/Indicators/Indicators/**/{Indicator}RegressionTests.cs` inheriting from `RegressionTestBase<TResult>` with `[TestCategory("Regression")]` on the class — these compare the full result set to a frozen `*.standard.json` baseline so it can be filtered via `--filter TestCategory=Regression`
+- [ ] **Regression baseline tests**: Add to `tests/Library/Indicators/**/{Indicator}RegressionTests.cs` inheriting from `RegressionTestBase<TResult>` with `[TestCategory("Regression")]` on the class — these compare the full result set to a frozen `*.standard.json` baseline so it can be filtered via `--filter TestCategory=Regression`
 - [ ] **Migration guide**: Update `docs/migration/v3.md` for notable and breaking changes from v2
 
 ## Precision testing

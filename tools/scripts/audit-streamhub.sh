@@ -50,9 +50,9 @@ for hub_file in "${hub_files[@]}"; do
 
     # Convert src path to test path (uniform {Name}HubTests.cs convention)
     if [[ "$dir_path" == src/Indicators/* ]]; then
-        test_file="tests/Indicators/Indicators/${dir_path#src/Indicators/}/${indicator_name}HubTests.cs"
+        test_file="tests/Library/Indicators/${dir_path#src/Indicators/}/${indicator_name}HubTests.cs"
     else
-        test_file="tests/Indicators/Common/${dir_path#src/Common/}/${indicator_name}HubTests.cs"
+        test_file="tests/Library/Common/${dir_path#src/Common/}/${indicator_name}HubTests.cs"
     fi
 
     if [[ -f "$test_file" ]]; then
@@ -85,7 +85,7 @@ echo -e "${BLUE}=== T175-T179: Test Interface Compliance ===${NC}"
 echo ""
 
 # Find all StreamHub test files
-mapfile -t test_files < <(find tests/Indicators -name "*HubTests.cs" ! -name "*AggregatorHub*" | sort)
+mapfile -t test_files < <(find tests/Library -name "*HubTests.cs" ! -name "*AggregatorHub*" | sort)
 
 for test_file in "${test_files[@]}"; do
     indicator_name=$(basename "$test_file" HubTests.cs)
@@ -241,7 +241,7 @@ echo ""
 echo -e "${BLUE}=== T184-T185: Test Base Class Review ===${NC}"
 echo ""
 
-test_base_file="tests/Indicators/TestBase/StreamHubTestBase.cs"
+test_base_file="tests/Library/TestBase/StreamHubTestBase.cs"
 if [[ -f "$test_base_file" ]]; then
     echo -e "${GREEN}✓${NC} StreamHubTestBase exists"
 

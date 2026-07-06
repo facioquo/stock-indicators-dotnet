@@ -81,12 +81,12 @@ public override void Clear()
   - [ ] Two constructors: primary + chaining via `: this(...) => Add(...);`
   - [ ] Uses `BufferListUtilities.Update()` or `UpdateWithDequeue()`
   - [ ] `Clear()` resets results and all internal buffers
-- [ ] Unit testing: `tests/Indicators/Indicators/**/{IndicatorName}BufferListTests.cs` exists
+- [ ] Unit testing: `tests/Library/Indicators/**/{IndicatorName}BufferListTests.cs` exists
   - [ ] Inherits `BufferListTestBase` and implements correct test interface
   - [ ] All required abstract + interface methods implemented
   - [ ] Verifies equivalence with Series results
 - [ ] **Catalog registration**: Registered in `Catalog.Listings.cs`
 - [ ] **Performance benchmark**: Add to `tools/performance/Perf.Buffer.cs`
 - [ ] **Public documentation**: Update `docs/indicators/{IndicatorName}.md`
-- [ ] **Regression tests**: Add to `tests/Indicators/Indicators/**/{IndicatorName}RegressionTests.cs`
+- [ ] **Regression tests**: Add to `tests/Library/Indicators/**/{IndicatorName}RegressionTests.cs`
 - [ ] **Migration guide**: Update `docs/migration/v3.md` for notable and breaking changes from v2

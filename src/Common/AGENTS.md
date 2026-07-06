@@ -88,7 +88,7 @@ The implementation uses the C# `field` keyword in `BufferList.cs`, which is curr
 - Within each block: **Buffer → Series → Stream** registration order
 - Blank line between indicator blocks
 
-Backing field in this repository is `_listings` (private static `List<IndicatorListing>`). The catalog test `tests/Indicators/Common/Catalog/Catalog.Metrics.Tests.cs` asserts the exact per-style listing counts — update it when adding or removing a listing.
+Backing field in this repository is `_listings` (private static `List<IndicatorListing>`). The catalog test `tests/Library/Common/Catalog/Catalog.Metrics.Tests.cs` asserts the exact per-style listing counts — update it when adding or removing a listing.
 
 ## NaN handling policy
 

@@ -14,10 +14,10 @@ This folder contains unit tests, public-API convergence tests, and integration t
 
 ```bash
 # Unit tests only
-dotnet test tests/Indicators/ --settings tests/tests.unit.runsettings
+dotnet test tests/Library/ --settings tests/tests.unit.runsettings
 
 # Regression tests only
-dotnet test tests/Indicators/ --settings tests/tests.regression.runsettings
+dotnet test tests/Library/ --settings tests/tests.regression.runsettings
 
 # Integration tests only
 dotnet test tests/Integration/ --settings tests/tests.integration.runsettings
