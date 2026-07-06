@@ -7,6 +7,8 @@ inheritance: true
 
 # REVIEW CONFIGURATION (overrides)
 reviews:
+  review_status: false
+  commit_status: false
 
   # Automatic review scheduling
   auto_review:
