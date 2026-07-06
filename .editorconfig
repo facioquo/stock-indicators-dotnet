@@ -98,7 +98,7 @@ dotnet_style_predefined_type_for_locals_parameters_members = true:suggestion  # 
 
 # Collection expression preferences
 dotnet_style_prefer_collection_expression = true:suggestion
-dotnet_diagnostic.IDE0305.severity = true:suggestion                          # Exclude collection expression for fluent APIs
+dotnet_diagnostic.IDE0305.severity = none  # Exclude collection expression for fluent APIs
 
 csharp_space_between_square_brackets = false
 csharp_space_between_empty_square_brackets = false

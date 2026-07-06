@@ -1,0 +1,9 @@
+# Code metrics thresholds for Microsoft.CodeAnalysis quality rules.
+# Format: RuleId: Threshold
+#
+# CA1502 (avoid excessive complexity) fires when cyclomatic complexity
+# exceeds the threshold. The library's hottest streaming paths
+# (ConnorsRsiHub, StochHub) are inherently branchy state machines that
+# peak at 45 today; 50 keeps the rule active as a regression backstop
+# without flagging established, numerically-verified implementations.
+CA1502: 50
