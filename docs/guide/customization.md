@@ -30,7 +30,7 @@ public record AtrWmaResult : IReusable
     public DateTime Timestamp { get; init; }
     public double? AtrWma { get; init; }
     
-    // Required for IReusable interface (enables chaining)
+    // Identify value to propagate in chains
     double IReusable.Value => AtrWma.Null2NaN();
 }
 ```
@@ -66,14 +66,8 @@ public static class CustomIndicators
                 "Lookback periods must be greater than 0.");
         }
 
-        // Sort bars
+        // Sort bars (optional)
         IReadOnlyList<IBar> barsList = bars.ToSortedList();
-
-        // Check for sufficient bars
-        if (barsList.Count < lookbackPeriods)
-        {
-            return [];
-        }
 
         // Initialize results
         List<AtrWmaResult> results = new(barsList.Count);
@@ -85,11 +79,7 @@ public static class CustomIndicators
         for (int i = 0; i < barsList.Count; i++)
         {
             IBar q = barsList[i];
-
-            AtrWmaResult r = new()
-            {
-                Timestamp = q.Timestamp
-            };
+            double? atrWma;
 
             // Calculate only after warmup period
             if (i >= lookbackPeriods - 1)
@@ -109,13 +99,14 @@ public static class CustomIndicators
                     }
                 }
 
-                r = r with 
-                { 
-                    AtrWma = sumAtr != 0 ? sumWma / sumAtr : null 
-                };
+                atrWma = sumAtr != 0 ? sumWma / sumAtr : null 
             }
+            else atrWma = null
 
-            results.Add(r);
+            results.Add(new AtrWmaResult {
+                Timestamp = q.Timestamp,
+                AtrWma = atrWma
+            });
         }
 
         return results;
