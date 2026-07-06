@@ -68,11 +68,11 @@ A new fully-streamable indicator costs **seven files plus a documentation page**
 | File | Purpose | Size guideline (Ema baseline) |
 | ---- | ------- | ------------------------------ |
 | `I{Name}.cs` | Public interface | ~15 LOC |
-| `{Name}.Models.cs` | Result `record` | ~20 LOC |
+| `{Name}Result.cs` | Result `record` | ~20 LOC |
 | `{Name}.Utilities.cs` | Validation + helpers | ~80 LOC |
-| `{Name}.StaticSeries.cs` | Canonical batch implementation | ~60 LOC |
-| `{Name}.BufferList.cs` | Incremental `BufferList` form | ~120 LOC |
-| `{Name}.StreamHub.cs` | Live `StreamHub` form | ~75 LOC |
+| `{Name}.Series.cs` | Canonical batch implementation | ~60 LOC |
+| `{Name}List.cs` | Incremental `BufferList` form | ~120 LOC |
+| `{Name}Hub.cs` | Live `StreamHub` form | ~75 LOC |
 | `{Name}.Catalog.cs` | Catalog listing builders (Common/Series/Buffer/Stream) | ~45 LOC |
 
 If a new indicator exceeds these guidelines by a wide margin without algorithmic justification, treat the excess as accidental complexity and look for a missing shared kernel (see `Ema.Increment`, `Sma.Average`, `Tr.Increment`, `Atr.Increment` in `Common/`-adjacent siblings). Documentation under `docs/indicators/{Name}.md` and a test set under `tests/Indicators/Indicators/{a-b|c-d|e-j|k-q|r-s|t-z}/{Name}/*Tests.cs` are required and have their own budgets.

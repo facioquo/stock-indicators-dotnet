@@ -14,6 +14,10 @@ public static class IndicatorConfigExtensions
     public static ListingExecutionBuilder ToBuilder(this IndicatorConfig config)
     {
         ArgumentNullException.ThrowIfNull(config);
+
+        // not recursive: C# overload resolution binds this call to the
+        // IndicatorConfig.ToBuilder() instance method, which always takes
+        // precedence over this same-named extension method
         return config.ToBuilder();
     }
 
