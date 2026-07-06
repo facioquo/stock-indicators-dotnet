@@ -54,34 +54,28 @@ public static class CustomIndicators
     /// <returns>Collection of AtrWmaResult</returns>
     public static IReadOnlyList<AtrWmaResult> ToAtrWma(
         this IReadOnlyList<IBar> bars,
-        int lookbackPeriods = 10)
+        int lookbackPeriods)
     {
-        // Validate parameters
-        ArgumentNullException.ThrowIfNull(bars);
-        
-        if (lookbackPeriods <= 0)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(lookbackPeriods),
-                "Lookback periods must be greater than 0.");
-        }
+        // sort proce bars (optional)
+        List<IBar> barsList = bars
+            .OrderBy(x => x.Timestamp)
+            .ToList();
 
-        // Sort bars (optional)
-        IReadOnlyList<IBar> barsList = bars.ToSortedList();
-
-        // Initialize results
+        // initialize results
         List<AtrWmaResult> results = new(barsList.Count);
 
-        // Get ATR values (prerequisite indicator)
-        IReadOnlyList<AtrResult> atrResults = barsList.ToAtr(lookbackPeriods);
+        // get pre-requisite ATR values
+        List<AtrResult> atrResults = bars
+            .ToAtr(lookbackPeriods)
+            .ToList();
 
-        // Calculate custom indicator
+        // roll through source values
         for (int i = 0; i < barsList.Count; i++)
         {
-            IBar q = barsList[i];
-            double? atrWma;
+            IBar b = barsList[i];
+            double atrWma = double.NaN;
 
-            // Calculate only after warmup period
+            // only do calculations after uncalculable periods
             if (i >= lookbackPeriods - 1)
             {
                 double sumWma = 0;
@@ -90,23 +84,19 @@ public static class CustomIndicators
                 for (int p = i - lookbackPeriods + 1; p <= i; p++)
                 {
                     double close = (double)barsList[p].Close;
-                    double? atr = atrResults[p].Atr;
+                    double atr = atrResults[p].Atr ?? double.NaN;
 
-                    if (atr.HasValue)
-                    {
-                        sumWma += atr.Value * close;
-                        sumAtr += atr.Value;
-                    }
+                    sumWma += atr * close;
+                    sumAtr += atr;
                 }
 
-                atrWma = sumAtr != 0 ? sumWma / sumAtr : null 
+                atrWma = sumWma / sumAtr;
             }
-            else atrWma = null
 
-            results.Add(new AtrWmaResult {
-                Timestamp = q.Timestamp,
-                AtrWma = atrWma
-            });
+            // add record to results
+            results.Add(new AtrWmaResult(
+                Timestamp: b.Timestamp,
+                AtrWma: atrWma.NaN2Null()));
         }
 
         return results;
