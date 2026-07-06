@@ -8,7 +8,7 @@ public static partial class Gator
     /// <summary>
     /// Removes empty (null) periods from the Gator Oscillator results.
     /// </summary>
-    /// <inheritdoc cref="Reusable.Condense{T}(IReadOnlyList{T})"/>
+    /// <inheritdoc cref="ReusableExtensions.Condense{T}(IReadOnlyList{T})"/>
     public static IReadOnlyList<GatorResult> Condense(
         this IReadOnlyList<GatorResult> results)
     {
@@ -25,7 +25,7 @@ public static partial class Gator
     /// <summary>
     /// Removes the recommended warmup periods from the Gator Oscillator results.
     /// </summary>
-    /// <inheritdoc cref="Reusable.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
     public static IReadOnlyList<GatorResult> RemoveWarmupPeriods(
         this IReadOnlyList<GatorResult> results) => results.Remove(150);
 }

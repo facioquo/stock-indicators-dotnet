@@ -8,7 +8,7 @@ namespace FacioQuo.Stock.Indicators;
 /// <summary>
 /// Provides extension methods for converting ISeries instances to formatted strings.
 /// </summary>
-public static partial class StringOut
+public static partial class StringOutExtensions
 {
     private static readonly CultureInfo invariantCulture = CultureInfo.InvariantCulture;
 

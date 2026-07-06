@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace FacioQuo.Stock.Indicators;
 
 /// <summary>
@@ -6,11 +8,15 @@ namespace FacioQuo.Stock.Indicators;
 public static class IndicatorConfigExtensions
 {
     /// <summary>
-    /// Converts an <see cref="IndicatorConfig"/> to a <see cref="ListingExecutionBuilder"/>.
+    /// Obsolete. Permanently shadowed by the <see cref="IndicatorConfig.ToBuilder"/> instance
+    /// method, which always takes precedence over this same-named extension method. Removal
+    /// tracked in issue #2139.
     /// </summary>
     /// <param name="config">Indicator configuration.</param>
     /// <returns>A <see cref="ListingExecutionBuilder"/>.</returns>
     /// <exception cref="ArgumentNullException">Thrown when config is null.</exception>
+    [ExcludeFromCodeCoverage]
+    [Obsolete("This extension method is permanently shadowed by the `IndicatorConfig.ToBuilder()` instance method and will be removed.", false)]
     public static ListingExecutionBuilder ToBuilder(this IndicatorConfig config)
     {
         ArgumentNullException.ThrowIfNull(config);

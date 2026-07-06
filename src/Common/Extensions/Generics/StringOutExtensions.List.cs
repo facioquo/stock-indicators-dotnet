@@ -6,7 +6,7 @@ namespace FacioQuo.Stock.Indicators;
 /// <summary>
 /// Provides extension methods for converting ISeries lists to formatted strings.
 /// </summary>
-public static partial class StringOut
+public static partial class StringOutExtensions
 {
     // =======================================
     // CONSTANTS
