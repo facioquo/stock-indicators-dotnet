@@ -8,7 +8,7 @@ public static partial class Pvo
     /// <summary>
     /// Removes the recommended warmup periods from the PVO results.
     /// </summary>
-    /// <inheritdoc cref="Reusable.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
     public static IReadOnlyList<PvoResult> RemoveWarmupPeriods(
         this IReadOnlyList<PvoResult> results)
     {

@@ -1,9 +1,9 @@
 namespace FacioQuo.Stock.Indicators;
 
 /// <summary>
-/// Provides utility methods for reusable types.
+/// Provides extension methods for reusable types.
 /// </summary>
-public static class Reusable
+public static class ReusableExtensions
 {
     /// <summary>
     /// Converts a list of bars to a list of reusable types.

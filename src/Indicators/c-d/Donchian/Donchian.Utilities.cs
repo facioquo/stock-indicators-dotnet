@@ -8,7 +8,7 @@ public static partial class Donchian
     /// <summary>
     /// Removes empty (null) periods from the Donchian Channel results.
     /// </summary>
-    /// <inheritdoc cref="Reusable.Condense{T}(IReadOnlyList{T})"/>
+    /// <inheritdoc cref="ReusableExtensions.Condense{T}(IReadOnlyList{T})"/>
     public static IReadOnlyList<DonchianResult> Condense(
         this IReadOnlyList<DonchianResult> results)
     {
@@ -25,7 +25,7 @@ public static partial class Donchian
     /// <summary>
     /// Removes the recommended warmup periods from the Donchian Channel results.
     /// </summary>
-    /// <inheritdoc cref="Reusable.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
     public static IReadOnlyList<DonchianResult> RemoveWarmupPeriods(
         this IReadOnlyList<DonchianResult> results)
     {
