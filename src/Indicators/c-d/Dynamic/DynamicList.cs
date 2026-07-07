@@ -19,7 +19,7 @@ public class DynamicList : BufferList<DynamicResult>, IIncrementFromChain, IDyna
         double kFactor = 0.6
     )
     {
-        Dynamic.Validate(lookbackPeriods, kFactor);
+        MgDynamic.Validate(lookbackPeriods, kFactor);
         LookbackPeriods = lookbackPeriods;
         KFactor = kFactor;
 
@@ -62,7 +62,7 @@ public class DynamicList : BufferList<DynamicResult>, IIncrementFromChain, IDyna
 
         // calculate dynamic
         double prevDyn = _previousDynamic ?? _previousValue;
-        double? dyn = Dynamic.Increment(
+        double? dyn = MgDynamic.Increment(
             LookbackPeriods,
             KFactor,
             newVal: value,
@@ -101,7 +101,7 @@ public class DynamicList : BufferList<DynamicResult>, IIncrementFromChain, IDyna
     }
 }
 
-public static partial class Dynamic
+public static partial class MgDynamic
 {
     /// <summary>
     /// Creates a buffer list for McGinley Dynamic calculations.

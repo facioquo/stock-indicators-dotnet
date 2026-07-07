@@ -3,7 +3,7 @@ namespace FacioQuo.Stock.Indicators;
 /// <summary>
 /// Provides utility methods for McGinley Dynamic calculations.
 /// </summary>
-public static partial class Dynamic
+public static partial class MgDynamic
 {
     /// <summary>
     /// Calculates the increment for the McGinley Dynamic.

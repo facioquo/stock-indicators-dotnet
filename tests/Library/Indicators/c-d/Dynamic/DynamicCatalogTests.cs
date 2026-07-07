@@ -10,7 +10,7 @@ public class DynamicCatalogTests : TestBase
     public void DynamicSeries_InCatalog_ReturnsAllVariants()
     {
         // Act
-        IndicatorListing listing = Dynamic.SeriesListing;
+        IndicatorListing listing = MgDynamic.SeriesListing;
 
         // Assert
         listing.Should().NotBeNull();
@@ -41,7 +41,7 @@ public class DynamicCatalogTests : TestBase
     public void DynamicStream_InCatalog_ReturnsAllVariants()
     {
         // Act
-        IndicatorListing listing = Dynamic.StreamListing;
+        IndicatorListing listing = MgDynamic.StreamListing;
 
         // Assert
         listing.Should().NotBeNull();
@@ -72,7 +72,7 @@ public class DynamicCatalogTests : TestBase
     public void DynamicBuffer_InCatalog_ReturnsAllVariants()
     {
         // Act
-        IndicatorListing listing = Dynamic.BufferListing;
+        IndicatorListing listing = MgDynamic.BufferListing;
 
         // Assert
         listing.Should().NotBeNull();
