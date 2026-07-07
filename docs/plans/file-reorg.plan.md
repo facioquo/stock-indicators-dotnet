@@ -17,12 +17,13 @@ The **non-breaking** portion of this plan is implemented (see #1810 for the trac
 - **Multi-type files split**: `BetaType`, `PivotPointType`, `PivotTrend`, `TradeTicks`, `IndicatorConfigExtensions`, `IInertProvider` each moved to their own file.
 - **Internal-only class renames**: `internal static class StreamHub` → `StreamHubUtilities` (resolves the Task 4.2 conflict without touching public API).
 - **Test classes standardized** (Task 4.11): `{Ind}SeriesTests`, `{Ind}BufferListTests`, `{Ind}HubTests`, `{Ind}CatalogTests`, `{Ind}RegressionTests`, with files renamed to match class names.
+- **Extension-method holder classes introduced** ([#2146](https://github.com/facioquo/stock-indicators-dotnet/issues/2146), Tasks 2.2–2.4): `ReusableExtensions`, `PruningExtensions`, `SeekingExtensions`, `SortingExtensions`, `StringOutExtensions`, `CandlesticksExtensions` added; the legacy `Reusable`, `Pruning`, `Seeking`, `Sorting`, `StringOut`, `Candlesticks` holders now delegate to them via `[Obsolete]` non-extension members, consolidated into `src/Obsolete.V4.cs` (binary- and source-compatible, per the `Obsolete.V3.*` deprecate-then-remove pattern). `IndicatorConfigExtensions.ToBuilder(this IndicatorConfig)` (permanently shadowed by the `IndicatorConfig.ToBuilder()` instance method) is also `[Obsolete]`. `BarIntervals` and `NullMath` were audited and kept as-is (see Task 2.1/2.4).
 
 The **breaking** remainder ("completely perfect" file/type alignment) is tracked in v4-milestone sub-issues of #1810:
 
 - [#2137](https://github.com/facioquo/stock-indicators-dotnet/issues/2137) — Add `Series` suffix to indicator series classes (Tasks 4.8/4.9)
 - [#2138](https://github.com/facioquo/stock-indicators-dotnet/issues/2138) — Unify McGinley Dynamic type family naming (Task 4.10)
-- [#2139](https://github.com/facioquo/stock-indicators-dotnet/issues/2139) — Rename public extension-method holder classes to `*Extensions` (Tasks 2.2–2.4, 4.1)
+- [#2139](https://github.com/facioquo/stock-indicators-dotnet/issues/2139) — Delete the deprecated legacy holder classes now that #2146 has landed (Tasks 2.2–2.4, 4.1)
 - [#2140](https://github.com/facioquo/stock-indicators-dotnet/issues/2140) — Align result record names with indicator family names (`CorrResult`, `HtlResult`, `MaEnvelopeResult`, `WilliamsResult`)
 
 ---
@@ -206,27 +207,38 @@ Follow these conventions for all file naming:
 
 **Priority**: Medium - Most files already follow conventions; verify and fix inconsistencies
 
-- [ ] Task 2.1: Audit static utility classes (no `this` parameters)
-  - Verify `Pruning.cs`, `Seeking.cs`, `Sorting.cs` follow BCL patterns (like `Math.cs`, `File.cs`)
-  - Rename class `Seeking` → match file name if needed
-  - Keep descriptive functional names per Microsoft guidelines
+- [x] Task 2.1: Audit static utility classes (no `this` parameters)
+  - `BarIntervals` kept as-is: its primary API (`TryToBarInterval`) is a non-extension
+    lookup, matching the enum-companion/BCL pattern (like `Enum.TryParse`); the two
+    `this`-parameter convenience methods (`ToCode`, `ToBarInterval`) don't outweigh that.
+  - `Numerical` kept as-is (no `this` parameters; out of scope per issue #2146).
 
-- [ ] Task 2.2: Audit extension method classes (have `this` parameters)
-  - Verify classes with extension methods use `{Type}Extensions` or `{Area}Extensions` pattern
-  - Examples: `StringExtensions.cs`, `ReusableExtensions.cs`, `EnumerableExtensions.cs`
-  - Rename `Reusable.Utilities.cs` → `ReusableExtensions.cs` if it contains extension methods
+- [x] Task 2.2: Audit extension method classes (have `this` parameters) — v3.1, issue #2146
+  - `Reusable` → `ReusableExtensions` (`Common/Reusable/ReusableExtensions.cs`).
+  - `Pruning` → `PruningExtensions` (`Common/Pruning/PruningExtensions.cs`).
+  - `Seeking` → `SeekingExtensions` (`Common/SeekSort/SeekingExtensions.cs`).
+  - `Sorting` → `SortingExtensions` (`Common/SeekSort/SortingExtensions.cs`).
+  - Legacy `Reusable`, `Pruning`, `Seeking`, `Sorting` members converted to `[Obsolete]`
+    non-extension delegates, consolidated into `src/Obsolete.V4.cs`.
 
-- [ ] Task 2.3: Review `StringOut` partial classes
-  - Determine if `StringOut` contains extension methods or static utilities
-  - Keep as `StringOut.cs` if static utility (like `Convert.cs`)
-  - Rename to `StringExtensions.cs` if primarily extension methods
+- [x] Task 2.3: Review `StringOut` partial classes — v3.1, issue #2146
+  - `StringOut` is primarily extension methods: added `StringOutExtensions`
+    (`Common/StringFormatters/StringOutExtensions.List.cs`/`.Type.cs`); legacy `StringOut`
+    members (including `ColloquialTypeName`) converted to `[Obsolete]` delegates in
+    `src/Obsolete.V4.cs`.
 
-- [ ] Task 2.4: Review math utility classes
-  - Keep `NullMath.cs`, `Numerical.cs` as static utilities (follow `Math.cs` pattern)
-  - Verify `DeMath.cs` naming aligns with function
-  - Only use `*Extensions` suffix if they contain extension methods
+- [x] Task 2.4: Review math utility classes — v3.1, issue #2146
+  - `NullMath` kept as-is (maintainer decision, PR #2149 review): despite its members
+    using `this` parameters, `NullMath` stays named for parity with `System.Math`
+    rather than splitting into `NullMathExtensions`.
+  - `Candlesticks`: all-extension-method, so added `CandlesticksExtensions`
+    (`Common/Candles/CandlesticksExtensions.cs`); legacy `Candlesticks` converted to
+    `[Obsolete]` delegates in `src/Obsolete.V4.cs`.
+  - `Numerical`, `DeMath` unaffected (no `this` parameters).
 
-- [ ] Task 2.5: Run targeted tests for affected areas
+- [x] Task 2.5: Run targeted tests for affected areas
+  - Full `Tests.Indicators` and `Tests.PublicApi` suites pass (net10.0) with the new
+    `*Extensions` classes and `[Obsolete]` legacy delegates in place.
 
 ### Phase 3: Directory reorganization
 

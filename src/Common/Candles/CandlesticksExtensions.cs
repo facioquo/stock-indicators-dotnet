@@ -1,9 +1,9 @@
 namespace FacioQuo.Stock.Indicators;
 
 /// <summary>
-/// Utility for candlestick data.
+/// Provides extension methods for candlestick data.
 /// </summary>
-public static class Candlesticks
+public static class CandlesticksExtensions
 {
     /// <summary>
     /// Condenses the list of candle results by filtering out those with no match.

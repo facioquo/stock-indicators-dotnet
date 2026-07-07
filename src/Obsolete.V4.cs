@@ -221,6 +221,31 @@ public static class StringOut
         => StringOutExtensions.ColloquialTypeName(type);
 }
 
+/// <summary>Obsolete. Use <see cref="CandlesticksExtensions"/> instead.</summary>
+public static class Candlesticks
+{
+    /// <summary>Obsolete. Use <see cref="CandlesticksExtensions.Condense(IReadOnlyList{CandleResult})"/> instead.</summary>
+    [ExcludeFromCodeCoverage]
+    [Obsolete($"Use `{nameof(CandlesticksExtensions)}.{nameof(CandlesticksExtensions.Condense)}` instead.", false)]
+    public static IReadOnlyList<CandleResult> Condense(
+        IReadOnlyList<CandleResult> candleResults) => candleResults.Condense();
+
+    /// <summary>Obsolete. Use <see cref="CandlesticksExtensions.ToCandle{TBar}(TBar)"/> instead.</summary>
+    [ExcludeFromCodeCoverage]
+    [Obsolete($"Use `{nameof(CandlesticksExtensions)}.{nameof(CandlesticksExtensions.ToCandle)}` instead.", false)]
+    public static CandleProperties ToCandle<TBar>(
+        TBar bar)
+        where TBar : IBar
+        => bar.ToCandle();
+
+    /// <summary>Obsolete. Use <see cref="CandlesticksExtensions.ToCandles(IReadOnlyList{IBar})"/> instead.</summary>
+    [ExcludeFromCodeCoverage]
+    [Obsolete($"Use `{nameof(CandlesticksExtensions)}.{nameof(CandlesticksExtensions.ToCandles)}` instead.", false)]
+    public static IReadOnlyList<CandleProperties> ToCandles(
+        IReadOnlyList<IBar> bars)
+        => bars.ToCandles();
+}
+
 public static partial class IndicatorConfigExtensions
 {
     /// <summary>
