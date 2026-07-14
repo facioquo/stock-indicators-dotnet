@@ -16,14 +16,14 @@
     </PackageReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <PackageVersion Include="Alpaca.Markets" Version="7.2.0" />
+    <PackageVersion Include="Alpaca.Markets" Version="7.2.2" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <!-- FluentAssertions pinned to v7.x to avoid licensing changes in v8+ -->
     <PackageVersion Include="FluentAssertions" Version="7.2.2" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
     <PackageVersion Include="Microsoft.VisualStudio.TestTools.Analyzers" Version="2.0.0" />
-    <PackageVersion Include="MSTest.TestAdapter" Version="4.2.3" />
-    <PackageVersion Include="MSTest.TestFramework" Version="4.2.3" />
+    <PackageVersion Include="MSTest.TestAdapter" Version="4.3.2" />
+    <PackageVersion Include="MSTest.TestFramework" Version="4.3.2" />
     <PackageVersion Include="Roslynator.Analyzers" Version="4.15.0" />
   </ItemGroup>
 </Project>
