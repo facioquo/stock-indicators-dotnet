@@ -5,21 +5,19 @@ import './custom.scss'
 import Contributors from '../components/Contributors.vue'
 import { setupIndyChartsForVue } from '@facioquo/indy-charts/vue'
 import { DARK_SURFACE, LIGHT_SURFACE } from './chart-theme'
+import { CHART_API_BASE_URL, CHART_API_RESILIENCE } from './chart-api'
 
-const STOCK_CHARTS_API_BASE_URL = 'https://stock-charts-api.azurewebsites.net'
-const STOCK_CHARTS_API_HOST = new URL(STOCK_CHARTS_API_BASE_URL).hostname
+const CHART_API_HOST = new URL(CHART_API_BASE_URL).hostname
 const DEV_PROXY_PATH = '/chart-api-proxy'
 
 // In local development only, rewrite chart-API requests to Vite's
 // `/chart-api-proxy` (see config.mts) so they are forwarded server-side,
-// avoiding CORS — `localhost` is not in the API's allow-list.
+// avoiding CORS — `localhost` is not in the API's allow-list. In production the
+// docs origin IS allow-listed, so requests go straight to the API.
 //
-// In production the docs origin IS allow-listed, so requests go straight to the
-// API. When the API has a transient failure we deliberately do NOTHING here:
-// indy-charts surfaces its own "Chart data is currently unavailable… Retry"
-// state and recovers on reload. Substituting static fixtures or empty arrays
-// (the previous behaviour) masked outages as a misleading, sticky
-// "No chart data is available." empty state.
+// This is purely a dev CORS shim. Transient-failure handling now lives inside
+// indy-charts (auto-retry with backoff + last-good stale cache, configured in
+// chart-api.ts), so the docs no longer compensate for API blips here.
 function installDevApiProxy(): void {
   if (!import.meta.env.DEV) return
   if (typeof window === 'undefined' || typeof window.fetch !== 'function') return
@@ -31,7 +29,7 @@ function installDevApiProxy(): void {
       input instanceof Request ? input.url : String(input),
       window.location.href
     )
-    if (requestUrl.hostname !== STOCK_CHARTS_API_HOST) {
+    if (requestUrl.hostname !== CHART_API_HOST) {
       return originalFetch(input, init)
     }
     return originalFetch(`${DEV_PROXY_PATH}${requestUrl.pathname}${requestUrl.search}`, init)
@@ -49,7 +47,7 @@ export default {
     installDevApiProxy()
 
     setupIndyChartsForVue(app, {
-      api: { baseUrl: STOCK_CHARTS_API_BASE_URL },
+      api: { baseUrl: CHART_API_BASE_URL, ...CHART_API_RESILIENCE },
       defaults: {
         barCount: 250,
         quoteCount: 250,
