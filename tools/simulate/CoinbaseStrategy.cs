@@ -1,6 +1,7 @@
 using System.Globalization;
 using Coinbase.Net.Clients;
 using Coinbase.Net.Objects.Models;
+using CryptoExchange.Net.Objects;
 using CryptoExchange.Net.Objects.Sockets;
 using FacioQuo.Stock.Indicators;
 
@@ -61,7 +62,7 @@ internal sealed class CoinbaseStrategy : IDisposable
             Console.WriteLine($"[CoinbaseStrategy] Connecting to Coinbase WebSocket for {_symbol}");
 
             TaskCompletionSource<bool> completionSource = new();
-            CryptoExchange.Net.Objects.CallResult<UpdateSubscription> subscription;
+            WebSocketResult<UpdateSubscription> subscription;
 
             if (_mode == CoinbaseMode.Ticker)
             {

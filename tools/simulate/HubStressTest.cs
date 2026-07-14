@@ -1,6 +1,7 @@
 using System.Globalization;
 using Coinbase.Net.Clients;
 using Coinbase.Net.Objects.Models;
+using CryptoExchange.Net.Objects;
 using CryptoExchange.Net.Objects.Sockets;
 using FacioQuo.Stock.Indicators;
 
@@ -81,7 +82,7 @@ internal sealed class HubStressTest : IDisposable
         try
         {
             Console.WriteLine("==========================================");
-            Console.WriteLine("  HUB STRESS TEST - PR #1927 / Issue #1925");
+            Console.WriteLine("  HUB STRESS TEST ");
             Console.WriteLine("==========================================");
             Console.WriteLine($"Symbol: {_symbol}");
             Console.WriteLine($"Target bars: {_targetCount}");
@@ -104,7 +105,7 @@ internal sealed class HubStressTest : IDisposable
             Console.WriteLine("[HubStressTest] ⚠️  Trades arrive every few seconds - this tests real async concurrency");
             Console.WriteLine();
 
-            CryptoExchange.Net.Objects.CallResult<UpdateSubscription> subscription =
+            WebSocketResult<UpdateSubscription> subscription =
                 await _socketClient.AdvancedTradeApi
                     .SubscribeToTradeUpdatesAsync(
                         _symbol,
