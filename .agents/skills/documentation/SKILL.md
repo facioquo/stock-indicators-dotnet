@@ -24,7 +24,7 @@ The site is built with [VitePress](https://vitepress.dev) and Vue 3.
 | `docs/.vitepress/config.mts` | Site config — nav, sidebar, metadata |
 | `docs/.vitepress/components/` | Vue components used inside Markdown |
 | `docs/.vitepress/public/assets/` | Static images (webp, optimized) |
-| `docs/.vitepress/public/data/` | Chart JSON files (one per indicator key) |
+| `docs/.vitepress/public/data/chart-api/` | Chart data API — one lowercase-keyed JSON file per indicator, powers `<StockIndicatorChart>` |
 | `docs/guide/getting-started.md` | Get started: install + first call |
 | `docs/guide/index.md` | Guide overview + style comparison |
 | `docs/guide/styles/batch.md` | Batch (Series) style guide |
@@ -49,7 +49,7 @@ pnpm run docs:dev
 
 ## Indicator page structure
 
-Every indicator page at `docs/indicators/{Indicator}.md` follows this section order exactly. Never omit sections; use judgment about which optional elements apply.
+Every indicator page at `docs/indicators/{indicator-slug}.md` (lowercase kebab-case, e.g. `sma.md`, `atr-stop.md`, `stoch-rsi.md`) follows this section order exactly. Never omit sections; use judgment about which optional elements apply.
 
 ### 1. Frontmatter
 
@@ -71,7 +71,9 @@ description: One-sentence description of what the indicator measures.
 Created by Author Name, [Indicator Name](https://en.wikipedia.org/wiki/...) is a brief description of what it measures.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/{id} "Community discussion about this indicator")
 
-<IndicatorChartPanel indicator-key="{IndicatorKey}" />
+<ClientOnly>
+  <StockIndicatorChart indicator="{Indicator}" />
+</ClientOnly>
 ```
 
 Rules:
@@ -79,8 +81,9 @@ Rules:
 - Attribution ("Created by...") is required when a known author exists
 - Include a Wikipedia link when one exists; otherwise link the most authoritative reference
 - Always include the `[[Discuss]]` link using the correct GitHub Discussions URL
-- Include `<IndicatorChartPanel>` when a chart JSON file exists at `docs/.vitepress/public/data/{IndicatorKey}.json`; omit when no chart data exists (e.g., simple primitives or secondary analysis pages)
-- `indicator-key` must match the JSON filename exactly (PascalCase, no extension)
+- Include the chart block when chart data exists at `docs/.vitepress/public/data/chart-api/{indicator-slug}.json` (lowercase); omit when no chart data exists (e.g., simple primitives or secondary analysis pages)
+- `indicator` prop is the indicator's PascalCase key (e.g., `Sma`, `Rsi`) — it does not have to match the lowercase JSON filename literally, but must resolve to it via the chart API
+- Always wrap the component in `<ClientOnly>` — the chart renders client-side only
 
 ### 3. Usage syntax
 
@@ -178,15 +181,15 @@ Adjust the period count and percentage to match the indicator's actual convergen
 ```markdown
 ### Utilities
 
-- [.Condense()](/utilities/results/condense)
-- [.Find(lookupDate)](/utilities/results/find-by-date)
-- [.RemoveWarmupPeriods()](/utilities/results/remove-warmup-periods)
-- [.RemoveWarmupPeriods(removePeriods)](/utilities/results/remove-warmup-periods)
+- [.Condense()](/utilities/results#condense)
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.RemoveWarmupPeriods()](/utilities/results#remove-warmup-periods)
+- [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
 
-See [Utilities and helpers](/utilities/results/) for more information.
+See [Utilities and helpers](/utilities/) for more information.
 ```
 
-Omit `.RemoveWarmupPeriods(removePeriods)` overload when the indicator does not support a custom count.
+Utility links are anchors (`#section`) into the single `docs/utilities/results.md` page, not separate subpages. Omit `.RemoveWarmupPeriods(removePeriods)` overload when the indicator does not support a custom count.
 
 ### 6. Chaining section
 
@@ -302,8 +305,8 @@ Place these immediately after the content they qualify (e.g., after the result t
 
 When an indicator has a secondary analysis variant (e.g., `SmaAnalysis`), create a separate page. Secondary pages:
 
-- Omit the `<IndicatorChartPanel>` (chart lives on the primary page)
-- Begin the H1 body with a cross-link to the primary page: "See also [Simple Moving Average](/indicators/Sma)."
+- Omit the `<StockIndicatorChart>` block (chart lives on the primary page)
+- Begin the H1 body with a cross-link to the primary page: "See also [Simple Moving Average](/indicators/sma)."
 - Include the full Parameters, Response, Chaining, and Streaming sections for the variant
 
 ### Multiple overloads shown together
@@ -342,13 +345,13 @@ Do not create a separate H2 section for the unsupported variant — keep all str
 
 ## Image assets
 
-Chart images for the `<IndicatorChartPanel>` component are rendered from JSON data files at `docs/.vitepress/public/data/{IndicatorKey}.json`. When adding a new indicator:
+Charts render client-side via the `<StockIndicatorChart>` component (from `@facioquo/indy-charts`, registered in `docs/.vitepress/theme/index.ts`), fed by JSON data files at `docs/.vitepress/public/data/chart-api/{indicator-slug}.json` (lowercase). When adding a new indicator:
 
-1. Confirm whether a JSON data file exists for the indicator key
-2. If it exists, add `<IndicatorChartPanel indicator-key="{IndicatorKey}" />` to the page
-3. If it does not exist, omit the chart panel — do not add a placeholder
+1. Confirm whether a chart-api JSON data file exists for the indicator
+2. If it exists, add `<ClientOnly><StockIndicatorChart indicator="{Indicator}" /></ClientOnly>` to the page
+3. If it does not exist, omit the chart block — do not add a placeholder
 
-A second `<IndicatorChartPanel>` mid-page is valid when it illustrates a behaviorally distinct mode of the same indicator (e.g., StdDevChannels with `null` lookback renders differently than a fixed-period run; HtTrendline exposes both a trendline output and a dominant cycle period output). In that case, place the second panel immediately after the prose that introduces the distinct behavior, under its own H2 or H3 heading. Do not add a second panel merely to show the same output at different parameter values.
+A second chart block mid-page is valid when it illustrates a behaviorally distinct mode of the same indicator (e.g., StdDevChannels with `null` lookback renders differently than a fixed-period run; HtTrendline exposes both a trendline output and a dominant cycle period output). In that case, place the second block immediately after the prose that introduces the distinct behavior, under its own H2 or H3 heading. Do not add a second block merely to show the same output at different parameter values.
 
 For static (non-chart) images referenced in prose:
 
@@ -358,9 +361,9 @@ For static (non-chart) images referenced in prose:
 
 ## Checklist: adding a new indicator page
 
-- [ ] Create `docs/indicators/{Indicator}.md` following the page structure above
+- [ ] Create `docs/indicators/{indicator-slug}.md` (lowercase kebab-case) following the page structure above
 - [ ] Frontmatter: `title` and `description` set
-- [ ] H1 block: attribution, reference link, Discuss link, optional chart panel
+- [ ] H1 block: attribution, reference link, Discuss link, optional chart block
 - [ ] Usage syntax: all meaningful overloads shown
 - [ ] Parameters table present (or section omitted if none)
 - [ ] Historical price bars requirements stated

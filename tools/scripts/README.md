@@ -1,6 +1,6 @@
 # StreamHub audit script
 
-Validates StreamHub test coverage, interface compliance, and provider history testing completeness for tasks T173-T185.
+Validates StreamHub test coverage, interface compliance, and provider history testing completeness.
 
 ## Usage
 
@@ -11,10 +11,10 @@ bash tools/scripts/audit-streamhub.sh
 
 ## What it validates
 
-- **T173**: All StreamHub implementations have corresponding test files
-- **T175-T179**: Tests inherit from `StreamHubTestBase` and implement correct observer/provider interfaces
-- **T180-T183**: Tests include comprehensive provider history mutations (Add/Remove operations)
-- **T184-T185**: Test base classes are properly structured
+- All StreamHub implementations have corresponding test files
+- Tests inherit from `StreamHubTestBase` and implement correct observer/provider interfaces
+- Tests include comprehensive provider history mutations (Add/Remove operations)
+- Test base classes are properly structured
 
 ## Exit codes
 
@@ -32,6 +32,5 @@ bash tools/scripts/audit-streamhub.sh
 
 For detailed information about audit checks, fixing patterns, and examples, see:
 
-- **Streaming Plan**: `docs/plans/streaming-indicators.plan.md`
-- **StreamHub Guidelines**: `.github/instructions/indicator-stream.instructions.md`
+- **StreamHub Guidelines**: [.agents/skills/indicator-stream/SKILL.md](../../.agents/skills/indicator-stream/SKILL.md)
 - **Canonical Test Pattern**: `tests/Library/Indicators/e-j/Ema/EmaHubTests.cs`
