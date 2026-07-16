@@ -4,11 +4,9 @@ This folder contains unit tests, public-API convergence tests, and integration t
 
 ## Test organization
 
-- `Indicators/` — unit tests for all indicators (Series + BufferList + StreamHub + Catalog + Regression)
+- `Library/` — unit test project (`Tests.Indicators.csproj`); `Indicators/` holds per-indicator tests (Series + BufferList + StreamHub + Catalog + Regression), plus `Common/` (utility and cross-cutting tests), `Precision/`, `TestBase/`, and `TestTools/`
 - `Integration/` — end-to-end integration tests including `StreamHub.ThreadSafety.Sse.Tests.cs` and `Tests.Integration.csproj`; runs via `tests.integration.runsettings`
-- `other/` — utility tests and cross-cutting helpers
 - `PublicApi/` — public-API surface tests (`Convergence.*` ensure Series / BufferList / StreamHub agree end-to-end on the public method names; `Customizable/`, `Guide/` cover consumer-facing scenarios)
-- `performance/` — placeholder for in-process performance assertions; the BenchmarkDotNet harness and baselines live under `tools/performance/`
 
 ## Commands
 

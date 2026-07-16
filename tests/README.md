@@ -12,7 +12,7 @@ dotnet test
 
 ## Unit tests
 
-> `Indicators/Tests.Indicators.csproj` unit tests library
+> `Library/Tests.Indicators.csproj` unit tests library
 
 Our primary full unit test project covers the entire utility of the library.  In most IDE, you can [manually select](https://learn.microsoft.com/en-us/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file?view=vs-2022#manually-select-the-run-settings-file) the `tests/tests.unit.runsettings` for isolation for local IDE dev/test efficiency, or use the _unload_ approach described above.
 

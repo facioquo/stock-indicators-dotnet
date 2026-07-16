@@ -12,8 +12,8 @@ import {
 } from '@facioquo/indy-charts'
 
 import { DARK_SURFACE, LIGHT_SURFACE } from '../theme/chart-theme'
+import { CHART_API_BASE_URL, CHART_API_RESILIENCE } from '../theme/chart-api'
 
-const API_BASE = 'https://stock-charts-api.azurewebsites.net'
 const BAR_COUNT = 250
 const EMA_FAST_COLOR = '#ff4d8d'
 const EMA_SLOW_COLOR = '#26c6da'
@@ -111,7 +111,7 @@ async function renderCharts(): Promise<void> {
 
     setupIndyCharts()
 
-    const client = createApiClient({ baseUrl: API_BASE })
+    const client = createApiClient({ baseUrl: CHART_API_BASE_URL, ...CHART_API_RESILIENCE })
     const [quotes, listings] = await Promise.all([client.getQuotes(), client.getListings()])
     if (disposed || token !== loadToken) return
 
