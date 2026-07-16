@@ -163,5 +163,5 @@ For streaming and buffer indicators experiencing performance issues, consult:
 
 - Benchmarking guide: [tools/performance/benchmarking.md](../../tools/performance/benchmarking.md) - Running benchmarks, spot checks, and baseline refresh workflow
 - Baselines guide: [tools/performance/baselines/README.md](../../tools/performance/baselines/README.md) - Baseline file conventions and regression checks
-- Active plan: [docs/plans/streaming-indicators.plan.md](../../docs/plans/streaming-indicators.plan.md) - Streaming indicators plan (release gates, test hardening, performance verification)
+- Open streaming work: [GitHub Issues milestone v3.1/v3.2](https://github.com/facioquo/stock-indicators-dotnet/issues?q=is%3Aopen+is%3Aissue+milestone%3Av3.1) - release gates, test hardening, performance verification
 - Project principles: [docs/PRINCIPLES.md](../../docs/PRINCIPLES.md) - Performance First principles

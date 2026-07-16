@@ -2,14 +2,14 @@
 
 ## Overview
 
-This test application is designed to exercise all public interfaces of the **Skender.Stock.Indicators v2** NuGet package. It serves as a comprehensive API validation tool to ensure clean migration paths when transitioning to future package versions (v3+).
+This test application is designed to exercise all public interfaces of the **Skender.Stock.Indicators v2** NuGet package. `FacioQuo.Stock.Indicators` v3 has already shipped; this app preserves a working v2 baseline so its API surface can be compared against the current release (see [Comparing against v3+](#comparing-against-v3) below).
 
 ## Purpose
 
 The primary purposes of this application are:
 
 1. **API Coverage Testing** - Calls every public indicator method and utility function available in v2
-2. **Migration Validation** - Provides a baseline for testing breaking changes when upgrading to v3
+2. **Migration Baseline** - Provides a known-good v2 baseline for comparing against v3+ breaking changes
 3. **Documentation** - Serves as a living example of v2 API usage patterns
 4. **Regression Detection** - Helps identify unexpected behavior changes between versions
 
@@ -77,7 +77,7 @@ The application generates synthetic test data programmatically:
 ### Prerequisites
 
 - .NET 9.0 SDK or later
-- NuGet package: FacioQuo.Stock.Indicators v2
+- NuGet package: Skender.Stock.Indicators v2
 
 ### Build and Run
 
@@ -101,7 +101,7 @@ When run successfully, the application displays:
 
 ```text
 ===========================================
-Testing FacioQuo.Stock.Indicators v2
+Testing Skender.Stock.Indicators v2
 ===========================================
 
 Generating test data...
@@ -146,21 +146,21 @@ The project has:
 - **Warnings NOT treated as errors** - Obsolete warnings are expected during migration testing
 - **Code style enforcement** - Follows repository standards
 
-## Migration to v3
+## Comparing against v3+
 
-When ready to test v3 migration:
+`FacioQuo.Stock.Indicators` v3 has already shipped (the package was renamed from `Skender.Stock.Indicators` at the v3.0 cutover). To compare v2 baseline behavior against the current release:
 
 1. **Create a comparison branch** from this working v2 version
-2. **Update package reference** to v3.x in `Test.Application.csproj`
+2. **Update package reference** to `FacioQuo.Stock.Indicators` (current version) in `Test.Application.csproj`
 3. **Build and identify errors** - Note all breaking changes
-4. **Update code** - Fix breaking changes based on v3 migration guide
+4. **Update code** - Fix breaking changes based on [the v3 migration guide](https://dotnet.stockindicators.dev/migration/v3)
 5. **Compare output** - Ensure results remain mathematically equivalent
 6. **Document differences** - Track API changes for user communication
 
 ## Additional Resources
 
 - [Stock Indicators Documentation](https://dotnet.stockindicators.dev)
-- [v2 NuGet Package](https://www.nuget.org/packages/FacioQuo.Stock.Indicators/2.6.1)
+- [v2 NuGet Package](https://www.nuget.org/packages/Skender.Stock.Indicators/2.7.3)
 - [GitHub Repository](https://github.com/facioquo/stock-indicators-dotnet)
 - [Migration Guides](https://github.com/facioquo/stock-indicators-dotnet/discussions)
 

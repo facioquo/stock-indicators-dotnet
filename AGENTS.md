@@ -41,7 +41,6 @@ See [PRINCIPLES.md](docs/PRINCIPLES.md) for constitutional philosophy and ration
 ├── tests/                 # Unit, integration, performance, and simulation suites
 ├── tools/                 # Performance benchmarks, baselines, and analysis scripts
 ├── docs/                  # Public documentation site (VitePress)
-│    └── plans/            # Active multi-release implementation plans
 └── Stock.Indicators.sln   # Primary solution for src + tests
 ```
 
@@ -130,4 +129,4 @@ Do not add "Co-authored-by" trailers to commit messages.
 
 🚫 Never merge without all quality gates passing — no exceptions for "minor" changes
 
-🚫 Never embed transient or ephemeral plan-item IDs (e.g. `TC001`, `T203`, `G005`, `RG002`) in source files, tests, comments, commit messages, or PR titles. These IDs live in `docs/plans/*.plan.md` only and are pruned once items ship.
+🚫 Never embed transient or ephemeral plan-item IDs (e.g. `TC001`, `T203`, `G005`, `RG002`) in source files, tests, comments, commit messages, or PR titles. Track that kind of work in GitHub Issues instead — reference the issue number, not an internal ID.
