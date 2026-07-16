@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Stock Indicators for .NET documentation",
   "type": "module",
-  "packageManager": "pnpm@11.9.0",
+  "packageManager": "pnpm@11.13.0",
   "engines": {
     "node": ">=24"
   },
@@ -23,7 +23,7 @@
     "vue": "^3.5.39"
   },
   "dependencies": {
-    "@facioquo/indy-charts": "^0.7.0",
+    "@facioquo/indy-charts": "^0.8.0",
     "chart.js": "^4.5.1",
     "chartjs-plugin-annotation": "^3.1.0"
   }

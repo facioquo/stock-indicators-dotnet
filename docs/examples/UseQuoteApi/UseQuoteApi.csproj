@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Alpaca.Markets" Version="7.2.0" />
+    <PackageReference Include="Alpaca.Markets" Version="7.2.2" />
     <PackageReference Include="FacioQuo.Stock.Indicators" Version="3.0.0" PrivateAssets="All" />
   </ItemGroup>
 

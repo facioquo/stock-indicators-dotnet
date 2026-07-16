@@ -16,9 +16,9 @@ dotnet run --project tools/baselining -- --all
 
 This will:
 
-- Discover all StaticSeries indicators from the catalog (currently 84 indicators)
+- Discover all StaticSeries indicators from the catalog
 - Execute each indicator with default parameters using standard test data
-- Generate baseline JSON files colocated with indicator tests
+- Generate baseline JSON files under `tests/Library/TestData/results/`
 - Display progress and summary statistics
 - Complete in approximately 1-2 minutes
 
@@ -42,9 +42,9 @@ dotnet run --project tools/baselining -- --help
 
 ## Baseline File Format
 
-Baseline files are stored as `{IndicatorName}.Baseline.json` in the same directory as the indicator's test files.
+Baseline files are stored as `{uiid-lowercase}.standard.json` under `tests/Library/TestData/results/`, keyed by the indicator's catalog UIID.
 
-Example location: `tests/Library/Indicators/r-s/Sma/Sma.Baseline.json`
+Example location: `tests/Library/TestData/results/sma.standard.json`
 
 Format:
 
@@ -99,7 +99,7 @@ Baselines should be regenerated when:
 
 ## Performance
 
-- Full baseline generation: ~1-2 minutes for 76+ indicators
+- Full baseline generation: ~1-2 minutes for all catalog indicators
 - Single indicator: <5 seconds
 - Parallel execution with `Parallel.ForEach`
 - Memory efficient - processes one indicator at a time

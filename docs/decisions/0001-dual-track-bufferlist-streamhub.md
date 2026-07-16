@@ -44,7 +44,7 @@ Chosen option: **3 — Dual-track BufferList + StreamHub**, because it is the on
 - **Good**: Series remains the canonical oracle; both incremental surfaces are validated against it. A bug surfaces in exactly one place even when it affects all three.
 - **Bad**: every streamable indicator pays for two implementations. ~78 indicators × 2 implementation files = ~156 files of per-indicator code. This is the maintenance tax.
 - **Bad**: the discoverability surface doubles. Every indicator's doc page carries a "BufferList" section and a "StreamHub" section; every test class has a `*BufferListTests.cs` and `*HubTests.cs` sibling.
-- **Bad**: contributors must understand both surfaces' invariants. The streaming swarm review surfaced that documenting `RollbackState(int)` semantics and `Results` live-view semantics required explicit ADR-adjacent work (DOC-ARCH-2, DOC-ARCH-3 in the streaming plan) to keep contributors aligned.
+- **Bad**: contributors must understand both surfaces' invariants. The streaming swarm review surfaced that documenting `RollbackState(int)` semantics and `Results` live-view semantics required explicit ADR-adjacent documentation work (shipped in v3.0) to keep contributors aligned.
 
 ### Confirmation
 
@@ -107,20 +107,20 @@ Stock Indicators for .NET v3 is the first widely-used library in this space to s
 
 ### Sources
 
-- Streaming swarm review (2026-05-24) — Architect F5, Inspector F1, Researcher F3, Researcher F4 personas, captured in `docs/plans/streaming-indicators.plan.md`.
+- Streaming swarm review (2026-05-24) — Architect F5, Inspector F1, Researcher F3, Researcher F4 personas. Originally captured in a now-retired `docs/plans/streaming-indicators.plan.md`; the full write-up is available via git history.
 - Discussion #1018 — community feedback on state rollback (2021–2026).
-- Performance baselines — `tools/performance/baselines/*.json` (dated 2026-02-28; refresh tracked as RG001 in the streaming plan).
-- Increment-kernel adoption metric — ~34 of 160 streaming files (~21%) as of 2026-05-24; target ≥80% (ARCH-V31-7).
+- Performance baselines — `tools/performance/baselines/*.json` (refreshed 2026-06-30).
+- Increment-kernel adoption metric — ~34 of 160 streaming files (~21%) as of 2026-05-24; target ≥80% (tracked in [#2157](https://github.com/facioquo/stock-indicators-dotnet/issues/2157)).
 
-### Related decisions in the streaming plan
+### Related work
 
-The following items in `docs/plans/streaming-indicators.plan.md` clarify or extend this decision without superseding it:
+The following items clarify or extend this decision without superseding it. They were originally itemized in the now-retired streaming plan; the open ones are tracked as GitHub Issues:
 
-- DOC-ARCH-2 — `RollbackState(int)` index contract (clarified; v3.0).
-- DOC-ARCH-3 — `Results` live-view semantics (clarified; v3.0).
-- DOC-ARCH-6 — pragma footprint in `Common/` (recorded; v3.0).
-- ARCH-V31-1 — retire `BaseProvider<T>`, introduce `StreamSource<T>` (refactor; v3.1).
-- ARCH-V31-5 / ARCH-V31-6 — Rx.NET / `IAsyncEnumerable<T>` adapters (interop; v3.1).
-- ARCH-V31-7 — standardize shared `*.Increment` kernels to ≥80% adoption (refactor; v3.1).
+- DOC-ARCH-2 — `RollbackState(int)` index contract (clarified; shipped v3.0).
+- DOC-ARCH-3 — `Results` live-view semantics (clarified; shipped v3.0).
+- DOC-ARCH-6 — pragma footprint in `Common/` (recorded; shipped v3.0).
+- Retire `BaseProvider<T>`, introduce `StreamSource<T>` (refactor) — [#2155](https://github.com/facioquo/stock-indicators-dotnet/issues/2155).
+- Rx.NET / `IAsyncEnumerable<T>` adapters (interop) — [#2156](https://github.com/facioquo/stock-indicators-dotnet/issues/2156).
+- Standardize shared `*.Increment` kernels to ≥80% adoption (refactor) — [#2157](https://github.com/facioquo/stock-indicators-dotnet/issues/2157).
 
 This ADR is the parent document those items hang off; if the dual-track decision is ever reversed, those items are invalidated together.

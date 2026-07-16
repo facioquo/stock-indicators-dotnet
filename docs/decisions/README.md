@@ -13,7 +13,7 @@ Decisions that:
 Decisions that **don't** go here:
 
 - Per-indicator algorithm choices — those live in the indicator's xmldoc and the doc-site page.
-- Release-cycle tactics or task lists — those live in `docs/plans/*.plan.md`.
+- Release-cycle tactics or task lists — those live in GitHub Issues.
 - Tool/CLI conventions — those live in the relevant `AGENTS.md` or skill.
 
 ## File naming
