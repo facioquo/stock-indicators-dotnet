@@ -1,9 +1,9 @@
 namespace FacioQuo.Stock.Indicators;
 
 /// <summary>
-/// Utility for removing and pruning series data.
+/// Provides extension methods for removing and pruning series data.
 /// </summary>
-public static class Pruning
+public static class PruningExtensions
 {
     /// <summary>
     /// Removes a specified number of warmup periods from the beginning of the series.

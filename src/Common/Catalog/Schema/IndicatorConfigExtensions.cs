@@ -3,24 +3,8 @@ namespace FacioQuo.Stock.Indicators;
 /// <summary>
 /// Extension methods for working with indicator configurations.
 /// </summary>
-public static class IndicatorConfigExtensions
+public static partial class IndicatorConfigExtensions
 {
-    /// <summary>
-    /// Converts an <see cref="IndicatorConfig"/> to a <see cref="ListingExecutionBuilder"/>.
-    /// </summary>
-    /// <param name="config">Indicator configuration.</param>
-    /// <returns>A <see cref="ListingExecutionBuilder"/>.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when config is null.</exception>
-    public static ListingExecutionBuilder ToBuilder(this IndicatorConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(config);
-
-        // not recursive: C# overload resolution binds this call to the
-        // IndicatorConfig.ToBuilder() instance method, which always takes
-        // precedence over this same-named extension method
-        return config.ToBuilder();
-    }
-
     /// <summary>
     /// Executes an indicator configuration with the provided bars.
     /// </summary>

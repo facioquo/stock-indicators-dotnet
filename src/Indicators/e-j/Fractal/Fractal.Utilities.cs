@@ -8,7 +8,7 @@ public static partial class Fractal
     /// <summary>
     /// Removes empty (null) periods from the Fractal results.
     /// </summary>
-    /// <inheritdoc cref="Reusable.Condense{T}(IReadOnlyList{T})"/>
+    /// <inheritdoc cref="ReusableExtensions.Condense{T}(IReadOnlyList{T})"/>
     public static IReadOnlyList<FractalResult> Condense(
         this IReadOnlyList<FractalResult> results)
     {

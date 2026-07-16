@@ -8,7 +8,7 @@ public static partial class ForceIndex
     /// <summary>
     /// Removes the recommended warmup periods from the Force Index results.
     /// </summary>
-    /// <inheritdoc cref="Reusable.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
     public static IReadOnlyList<ForceIndexResult> RemoveWarmupPeriods(
         this IReadOnlyList<ForceIndexResult> results)
     {

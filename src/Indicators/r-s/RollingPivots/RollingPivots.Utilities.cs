@@ -8,7 +8,7 @@ public static partial class RollingPivots
     /// <summary>
     /// Removes the recommended warmup periods from the Rolling Pivots results.
     /// </summary>
-    /// <inheritdoc cref="Reusable.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
     public static IReadOnlyList<RollingPivotsResult> RemoveWarmupPeriods(
         this IReadOnlyList<RollingPivotsResult> results)
     {

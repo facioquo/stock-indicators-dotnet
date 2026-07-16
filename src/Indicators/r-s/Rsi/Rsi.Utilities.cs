@@ -8,7 +8,7 @@ public static partial class Rsi
     /// <summary>
     /// Removes the recommended warmup periods from the RSI results.
     /// </summary>
-    /// <inheritdoc cref="Reusable.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
     public static IReadOnlyList<RsiResult> RemoveWarmupPeriods(
         this IReadOnlyList<RsiResult> results)
     {
