@@ -78,8 +78,4 @@
     <PackageReference Include="Roslynator.Analyzers" />
   </ItemGroup>
 
-  <ItemGroup>
-    <AdditionalFiles Include="CodeMetricsConfig.txt" />
-  </ItemGroup>
-
 </Project>
