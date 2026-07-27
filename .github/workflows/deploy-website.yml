@@ -31,7 +31,7 @@ jobs:
         working-directory: docs
 
     environment:
-      name: ${{ github.event_name == 'pull_request' && 'preview' || 'stockindicators.dev' }}
+      name: ${{ github.ref == 'refs/heads/main' && 'stockindicators.dev' || 'preview' }}
       url: ${{ steps.deploy.outputs.pages-deployment-alias-url }}
 
     steps:
