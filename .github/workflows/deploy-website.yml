@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
   packages: read
+  # `deployments`/`pull-requests` let wrangler-action record the Pages
+  # deployment and surface its preview URL on the PR.
+  deployments: write
+  pull-requests: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -27,7 +31,7 @@ jobs:
         working-directory: docs
 
     environment:
-      name: stockindicators.dev
+      name: ${{ github.event_name == 'pull_request' && 'preview' || 'stockindicators.dev' }}
       url: ${{ steps.deploy.outputs.pages-deployment-alias-url }}
 
     steps:
@@ -79,6 +83,9 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # Lets the action open a GitHub Deployment, so the preview URL and
+          # its status surface on the PR instead of only in the job log.
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           command: >
             pages deploy docs/.vitepress/dist
-            --project-name=${{ vars.CLOUDFLARE_PROJECT_NAME }}
+            --project-name=stock-indicators-dotnet
