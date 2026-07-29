@@ -24,4 +24,8 @@ git fetch && git pull
 echo "📦 Restoring .NET packages..."
 dotnet restore
 
+# Write token to your user-level ~/.npmrc (not the project .npmrc)
+echo "📦 Set user scope .npmrc auth..."
+pnpm config set "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}"
+
 echo "✅ Dev environment setup complete!"
