@@ -23,28 +23,6 @@
       "type": "pickString"
     },
     {
-      "id": "roslynatorCommand",
-      "description": "Select command type for Roslynator",
-      "options": [
-        "analyze",
-        "fix"
-      ],
-      "default": "analyze",
-      "type": "pickString"
-    },
-    {
-      "id": "roslynatorSeverity",
-      "description": "Select severity level (depth) for Roslynator action",
-      "options": [
-        "error",
-        "warning",
-        "info",
-        "hidden"
-      ],
-      "default": "hidden",
-      "type": "pickString"
-    },
-    {
       "id": "simulationMode",
       "description": "Select simulation mode (data source)",
       "options": [
@@ -79,8 +57,15 @@
     {
       "id": "barIntervalCode",
       "description": "Bar interval / timestamp spacing (e.g., 1s, 1m, 5m, 1h, 1d)",
+      "options": [
+        "1s",
+        "1m",
+        "5m",
+        "1h",
+        "1d"
+      ],
       "default": "1m",
-      "type": "promptString"
+      "type": "pickString"
     },
     {
       "id": "coinbaseSymbol",
@@ -127,18 +112,13 @@
         "Install: All code dependencies",
         "Install: Chrome for Puppeteer"
       ],
-      "dependsOrder": "parallel",
-      "problemMatcher": [
-        "$msCompile",
-        "$eslint-compact"
-      ]
+      "dependsOrder": "parallel"
     },
     {
       "label": "Git: pull",
       "detail": "Pull latest changes from Git",
       "type": "shell",
-      "command": "git pull || echo 'No remote branch!'",
-      "problemMatcher": []
+      "command": "git pull || echo 'No remote branch!'"
     },
     {
       "label": "Install: .NET tools",
@@ -151,17 +131,20 @@
       "detail": "Restore .NET and NPM packages",
       "dependsOn": [
         "Install: .NET packages",
-        "Install: Node packages"
+        "Install: Node packages",
+        "Install: Chrome for Puppeteer"
       ],
       "dependsOrder": "parallel"
     },
     {
-      "label": "Install: .NET packages",
-      "detail": "Restore NuGet packages for solution",
-      "type": "shell",
-      "command": "dotnet restore && dotnet restore docs/examples && dotnet tool run dotnet-outdated --exclude FluentAssertions",
-      "dependsOn": "Install: .NET tools",
-      "problemMatcher": "$msCompile"
+      "label": "Update: All code dependencies",
+      "detail": "Update (upgrade) .NET and NPM packages",
+      "dependsOn": [
+        "Update: .NET packages",
+        "Update: Node packages",
+        "Install: Chrome for Puppeteer"
+      ],
+      "dependsOrder": "parallel"
     },
     {
       "label": "Install: Chrome for Puppeteer",
@@ -175,18 +158,36 @@
       }
     },
     {
-      "label": "Inspect: .NET packages",
+      "label": "Check: .NET packages",
       "detail": "List outdated NuGet packages in the root solution using dotnet-outdated",
       "type": "shell",
       "command": "dotnet tool run dotnet-outdated --exclude FluentAssertions && dotnet tool run dotnet-outdated docs/examples",
       "dependsOn": "Install: .NET tools"
     },
     {
-      "label": "Update: .NET packages (outdated --upgrade)",
+      "label": "Install: .NET packages",
+      "detail": "Restore NuGet packages for solution",
+      "type": "shell",
+      "command": "dotnet restore && dotnet restore docs/examples && dotnet tool run dotnet-outdated --exclude FluentAssertions",
+      "dependsOn": "Install: .NET tools",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Update: .NET packages",
       "detail": "Upgrade outdated NuGet packages in the root solution using dotnet-outdated",
       "type": "shell",
       "command": "dotnet tool run dotnet-outdated --upgrade --exclude FluentAssertions && dotnet tool run dotnet-outdated --upgrade docs/examples",
       "dependsOn": "Install: .NET tools"
+    },
+    {
+      "label": "Check: Node packages",
+      "detail": "Check for dependency updates in root and all workspace packages",
+      "type": "shell",
+      "command": "pnpm dlx npm-check-updates --deep --peer",
+      "dependsOn": "Install: Node packages",
+      "options": {
+        "cwd": "${workspaceFolder}/docs"
+      },
     },
     {
       "label": "Install: Node packages",
@@ -198,19 +199,10 @@
       }
     },
     {
-      "label": "Check: Node packages",
-      "detail": "Check for dependency updates in root and all workspace packages",
-      "type": "shell",
-      "command": "npx npm-check-updates --deep --peer",
-      "options": {
-        "cwd": "${workspaceFolder}/docs"
-      },
-    },
-    {
       "label": "Update: Node packages",
       "detail": "Update dependencies in root and all workspace packages to latest versions",
       "type": "shell",
-      "command": "npx npm-check-updates --deep --peer --upgrade && pnpm install --config.confirmModulesPurge=false",
+      "command": "pnpm dlx npm-check-updates --deep --peer --upgrade && pnpm install --config.confirmModulesPurge=false",
       "dependsOn": "Install: Node packages",
       "options": {
         "cwd": "${workspaceFolder}/docs"
@@ -247,8 +239,7 @@
       "dependsOn": [
         "Stop: All hosted servers"
       ],
-      "dependsOrder": "sequence",
-      "problemMatcher": []
+      "dependsOrder": "sequence"
     },
     {
       "label": "Clean: Docs (node)",
@@ -258,8 +249,7 @@
       "dependsOn": [
         "Stop: All hosted servers"
       ],
-      "dependsOrder": "sequence",
-      "problemMatcher": []
+      "dependsOrder": "sequence"
     },
     {
       "label": "Clean: Docs (full)",
@@ -333,15 +323,6 @@
       "problemMatcher": "$msCompile"
     },
     {
-      "label": "Lint: .NET Roslynator (custom)",
-      "detail": "Input params for Roslynator action",
-      "type": "shell",
-      "command": "dotnet tool run roslynator ${input:roslynatorCommand} --properties TargetFramework=net10.0 --severity-level ${input:roslynatorSeverity} --verbosity normal",
-      "dependsOn": "Install: .NET tools",
-      "dependsOrder": "sequence",
-      "problemMatcher": "$msCompile"
-    },
-    {
       "label": "Lint: .NET Roslynator (analyze)",
       "detail": "Verify code formatting and style with Roslynator",
       "type": "shell",
@@ -390,7 +371,7 @@
       "label": "Lint: Markdown",
       "detail": "Run markdownlint over documentation",
       "type": "shell",
-      "command": "echo y | npx markdownlint-cli2",
+      "command": "echo y | pnpm dlx markdownlint-cli2",
       "group": "test",
       "problemMatcher": "$markdownlint"
     },
@@ -398,7 +379,7 @@
       "label": "Lint: Markdown (fix)",
       "detail": "Auto-fix markdown formatting issues",
       "type": "shell",
-      "command": "echo y | npx markdownlint-cli2 --fix",
+      "command": "echo y | pnpm dlx markdownlint-cli2 --fix",
       "problemMatcher": "$markdownlint"
     },
     {
@@ -733,12 +714,13 @@
       "problemMatcher": "$msCompile"
     },
     {
-      "label": "Run: Simulation with inputs",
+      "label": "Run: Simulation with inputs (interactive)",
       "detail": "Run simulation with configurable mode, data type, intervals, and count",
       "type": "shell",
       "command": "dotnet run --project tools/simulate/Test.Simulation.csproj -- ${input:simulationMode} ${input:dataType} ${input:deliveryInterval} \"${input:count}\" ${input:barIntervalCode} ${input:coinbaseSymbol}",
       "group": "none",
       "isBackground": true,
+      "dependsOn": "Stop: Simulation hosts",
       "problemMatcher": {
         "pattern": {
           "regexp": "^$"
