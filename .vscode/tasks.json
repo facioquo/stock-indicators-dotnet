@@ -23,13 +23,13 @@
       "type": "pickString"
     },
     {
-      "id": "simulationMode",
-      "description": "Select simulation mode (data source)",
+      "id": "coinbaseMode",
+      "description": "Coinbase feed type: coinbase (klines/candles) or coinbase-ticker (trades)",
       "options": [
-        "sse",
-        "coinbase"
+        "coinbase",
+        "coinbase-ticker"
       ],
-      "default": "sse",
+      "default": "coinbase",
       "type": "pickString"
     },
     {
@@ -71,6 +71,12 @@
       "id": "coinbaseSymbol",
       "description": "Coinbase trading pair (e.g., BTC-USD, ETH-USD)",
       "default": "BTC-USD",
+      "type": "promptString"
+    },
+    {
+      "id": "hubStressMaxCache",
+      "description": "Max BarHub cache size (forces pruning once exceeded)",
+      "default": "200",
       "type": "promptString"
     }
   ],
@@ -714,10 +720,40 @@
       "problemMatcher": "$msCompile"
     },
     {
-      "label": "Run: Simulation with inputs (interactive)",
-      "detail": "Run simulation with configurable mode, data type, intervals, and count",
+      "label": "Run: SSE simulation (with inputs)",
+      "detail": "Run SSE simulation with configurable data type, intervals, and count",
       "type": "shell",
-      "command": "dotnet run --project tools/simulate/Test.Simulation.csproj -- ${input:simulationMode} ${input:dataType} ${input:deliveryInterval} \"${input:count}\" ${input:barIntervalCode} ${input:coinbaseSymbol}",
+      "command": "dotnet run --project tools/simulate/Test.Simulation.csproj -- sse ${input:dataType} ${input:deliveryInterval} \"${input:count}\" ${input:barIntervalCode}",
+      "group": "none",
+      "isBackground": true,
+      "dependsOn": [
+        "Stop: Simulation hosts",
+        "Stop: SseServer hosts"
+      ],
+      "dependsOrder": "sequence",
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^Starting.*simulation",
+          "endsPattern": "^Simulation complete"
+        }
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": true
+      }
+    },
+    {
+      "label": "Run: Coinbase simulation (with inputs)",
+      "detail": "Run live Coinbase WebSocket simulation with configurable feed type, symbol, and count",
+      "type": "shell",
+      "command": "dotnet run --project tools/simulate/Test.Simulation.csproj -- ${input:coinbaseMode} ${input:coinbaseSymbol} \"${input:count}\"",
       "group": "none",
       "isBackground": true,
       "dependsOn": "Stop: Simulation hosts",
@@ -728,7 +764,33 @@
         "background": {
           "activeOnStart": true,
           "beginsPattern": "^Starting.*simulation",
-          "endsPattern": "^Strategy complete|^Stream complete|^Client disconnected"
+          "endsPattern": "^Simulation complete"
+        }
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": true
+      }
+    },
+    {
+      "label": "Run: Hub stress test (with inputs)",
+      "detail": "Stress-test StreamHub pruning/threading using live Coinbase trade data (PR #1927 / Issue #1925)",
+      "type": "shell",
+      "command": "dotnet run --project tools/simulate/Test.Simulation.csproj -- hub-stress ${input:coinbaseSymbol} \"${input:count}\" ${input:hubStressMaxCache}",
+      "group": "none",
+      "isBackground": true,
+      "dependsOn": "Stop: Simulation hosts",
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^Starting.*simulation",
+          "endsPattern": "^Simulation complete"
         }
       },
       "presentation": {
@@ -749,7 +811,11 @@
       },
       "group": "none",
       "isBackground": true,
-      "dependsOn": "Stop: Simulation hosts",
+      "dependsOn": [
+        "Stop: Simulation hosts",
+        "Stop: SseServer hosts"
+      ],
+      "dependsOrder": "sequence",
       "problemMatcher": {
         "pattern": {
           "regexp": "^$"
@@ -757,7 +823,7 @@
         "background": {
           "activeOnStart": true,
           "beginsPattern": "^Starting.*simulation",
-          "endsPattern": "^Strategy complete|^Stream complete|^Client disconnected"
+          "endsPattern": "^Simulation complete"
         }
       },
       "presentation": {
@@ -846,15 +912,9 @@
     },
     {
       "label": "Stop: Simulation hosts",
-      "detail": "Stop dotnet processes running tools/simulate or Test.Simulation",
+      "detail": "Stop dotnet processes running tools/simulate or Test.Simulation (including orphaned dotnet.exe hosts)",
       "type": "shell",
-      "command": "(powershell.exe -NoProfile -Command 'Stop-Process -Name Test.Simulation -Force -ErrorAction SilentlyContinue' && echo '[OK] Simulation hosts successfully stopped') || echo '[INFO] No Simulation server processes found'",
-      "linux": {
-        "command": "(pkill -9 -f 'dotnet.*(Test\\.Simulation|tools/simulate)' 2>/dev/null && echo '[OK] Simulation hosts successfully stopped') || echo '[INFO] No Simulation server processes found'"
-      },
-      "osx": {
-        "command": "(pkill -9 -f 'dotnet.*(Test\\.Simulation|tools/simulate)' 2>/dev/null && echo '[OK] Simulation hosts successfully stopped') || echo '[INFO] No Simulation server processes found'"
-      },
+      "command": "bash tools/scripts/stop-simulation.sh",
       "problemMatcher": [],
       "presentation": {
         "reveal": "always",
@@ -864,15 +924,9 @@
     },
     {
       "label": "Stop: SseServer hosts",
-      "detail": "Stop dotnet/Test.SseServer processes running tools/sse-server or Test.SseServer.exe",
+      "detail": "Stop dotnet/Test.SseServer processes running tools/sse-server or Test.SseServer.exe (including orphaned dotnet.exe hosts)",
       "type": "shell",
-      "command": "(netstat -ano 2>/dev/null | grep -E ':5001\\s' | awk '{print $NF}' | sort -u | xargs -I {} taskkill //PID {} //F 2>/dev/null; powershell.exe -NoProfile -Command 'Stop-Process -Name Test.SseServer -Force -ErrorAction SilentlyContinue' && echo '[OK] SSE Server hosts successfully stopped') || echo '[INFO] No SSE Server server processes found'",
-      "linux": {
-        "command": "((lsof -ti:5001 2>/dev/null | xargs -r kill -9 2>/dev/null); (pkill -9 -f 'dotnet.*(Test\\.SseServer|tools/sse-server)' 2>/dev/null)) && echo '[OK] SSE Server hosts successfully stopped' || echo '[INFO] No SSE Server server processes found'"
-      },
-      "osx": {
-        "command": "((lsof -ti:5001 2>/dev/null | xargs kill -9 2>/dev/null); (pkill -9 -f 'dotnet.*(Test\\.SseServer|tools/sse-server)' 2>/dev/null)) && echo '[OK] SSE Server hosts successfully stopped' || echo '[INFO] No SSE Server server processes found'"
-      },
+      "command": "bash tools/scripts/stop-sseserver.sh",
       "problemMatcher": [],
       "presentation": {
         "reveal": "always",

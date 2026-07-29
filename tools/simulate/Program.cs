@@ -75,3 +75,6 @@ else
         ServerManager.StopServer(serverProcess);
     }
 }
+
+// Sentinel line for the VS Code background task problem matcher (see .vscode/tasks.json endsPattern)
+Console.WriteLine("Simulation complete.");

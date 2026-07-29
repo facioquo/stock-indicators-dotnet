@@ -10,7 +10,7 @@
       "rollForward": false
     },
     "dotnet-outdated-tool": {
-      "version": "4.8.0",
+      "version": "4.8.1",
       "commands": [
         "dotnet-outdated"
       ],
@@ -22,13 +22,6 @@
         "dotnet-gitversion"
       ],
       "rollForward": false
-    },
-    "dotnet-reportgenerator-globaltool": {
-      "version": "5.5.10",
-      "commands": [
-        "reportgenerator"
-      ],
-      "rollForward": true
     }
   }
 }

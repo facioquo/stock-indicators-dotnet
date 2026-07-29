@@ -207,7 +207,7 @@ internal sealed class GoldenCrossStrategy : IDisposable
         Console.WriteLine("==========================================");
         Console.WriteLine();
         Console.WriteLine(
-            "Date/Time           Action    Quantity       Price        P&L/Cost         Balance");
+            "Date/Time         Action  Quantity         Price        P&L/Cost         Balance");
         Console.WriteLine(
             "-------------------------------------------------------------------------------------");
     }
