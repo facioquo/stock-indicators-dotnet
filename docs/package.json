@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Stock Indicators for .NET documentation",
   "type": "module",
-  "packageManager": "pnpm@11.14.0",
+  "packageManager": "pnpm@11.17.0",
   "engines": {
     "node": ">=24"
   },
@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@octokit/rest": "^22.0.1",
-    "@playwright/test": "^1.61.1",
+    "@playwright/test": "^1.62.0",
     "@types/node": "^26",
     "sass-embedded": "^1.100.0",
     "vitepress": "2.0.0-alpha.17",
