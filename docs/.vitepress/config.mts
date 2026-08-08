@@ -59,6 +59,9 @@ export default defineConfig({
     // parse time, ahead of CSS. Light theme instead takes the brief dark flash
     // by design; custom.scss restores light backgrounds via a
     // higher-specificity `html:not(.dark)` rule once the real CSS arrives.
+    // #1b1b1f must track VitePress's dark `--vp-c-bg` (and the theme-color
+    // meta above) — tests/theme-flash.spec.ts cross-checks it against the
+    // body background at runtime.
     ['meta', { name: 'color-scheme', content: 'dark' }],
     ['style', {}, 'html { background-color: #1b1b1f; }'],
     ['meta', { property: 'og:type', content: 'website' }],

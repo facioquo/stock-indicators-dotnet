@@ -27,26 +27,37 @@ test.describe('theme flash on load (#2169)', () => {
 
     // Wait for the head inline style to be parsed, then assert atomically
     // that the canvas is dark while no external stylesheet has landed yet.
+    // The color-scheme meta is checked by DOM presence: it darkens UA
+    // widgets (scrollbars, form controls) pre-CSS without changing the
+    // computed `colorScheme` value, so presence is the only reliable probe.
     await expect
       .poll(
         () =>
           page.evaluate(() => ({
             bg: getComputedStyle(document.documentElement).backgroundColor,
-            externalCssLoaded: [...document.styleSheets].some(s => s.href)
+            externalCssLoaded: [...document.styleSheets].some(s => s.href),
+            hasColorSchemeMeta: !!document.querySelector(
+              'meta[name="color-scheme"][content="dark"]'
+            )
           })),
         { timeout: 3_000 }
       )
-      .toEqual({ bg: DARK_CANVAS, externalCssLoaded: false })
+      .toEqual({ bg: DARK_CANVAS, externalCssLoaded: false, hasColorSchemeMeta: true })
   })
 
   test('default (dark) theme stays dark after full load', async ({ page }) => {
     await page.goto('/', { waitUntil: 'load' })
 
     await expect(page.locator('html')).toHaveClass(/dark/)
-    const bg = await page.evaluate(
-      () => getComputedStyle(document.documentElement).backgroundColor
-    )
-    expect(bg).toBe(DARK_CANVAS)
+    // body's background resolves from VitePress's dark --vp-c-bg; asserting
+    // it matches the inline-style canvas guards against drift if a VitePress
+    // upgrade changes its dark background color.
+    const state = await page.evaluate(() => ({
+      html: getComputedStyle(document.documentElement).backgroundColor,
+      body: getComputedStyle(document.body).backgroundColor
+    }))
+    expect(state.html).toBe(DARK_CANVAS)
+    expect(state.body).toBe(DARK_CANVAS)
   })
 
   test('explicit light preference restores light canvas and controls', async ({ page }) => {
