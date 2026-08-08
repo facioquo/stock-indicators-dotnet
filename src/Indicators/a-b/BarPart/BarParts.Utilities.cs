@@ -5,6 +5,18 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class BarParts
 {
     /// <summary>
+    /// validate the CandlePart selection
+    /// </summary>
+    /// <param name="candlePart">The <see cref="CandlePart" /> element.</param>
+    /// <returns>The validated <paramref name="candlePart"/> value.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when a parameter is out of the valid range</exception>
+    internal static CandlePart Validate(CandlePart candlePart)
+        => Enum.IsDefined(candlePart)
+            ? candlePart
+            : throw new ArgumentOutOfRangeException(
+                nameof(candlePart), candlePart, "Invalid candlePart provided.");
+
+    /// <summary>
     /// convert TBar element to a basic <see cref="TimeValue"/> class
     /// </summary>
     /// <param name="q">Bar to convert</param>

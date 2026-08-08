@@ -11,7 +11,7 @@ public class BarPartHub
         CandlePart candlePart
     ) : base(provider)
     {
-        CandlePartSelection = candlePart;
+        CandlePartSelection = BarParts.Validate(candlePart);
 
         Reinitialize();
     }

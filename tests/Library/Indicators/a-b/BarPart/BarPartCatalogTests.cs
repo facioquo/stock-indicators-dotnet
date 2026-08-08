@@ -7,7 +7,7 @@ namespace Catalogging;
 public class BarPartCatalogTests : TestBase
 {
     [TestMethod]
-    public void BarPartSeriesListing()
+    public void BarPartSeries_InCatalog_ExecutesAndMatchesDirectCall()
     {
         // Arrange
         IReadOnlyList<Bar> bars = Bars;
@@ -41,7 +41,7 @@ public class BarPartCatalogTests : TestBase
     }
 
     [TestMethod]
-    public void BarPartStreamListing()
+    public void BarPartStream_InCatalog_HasExpectedMetadata()
     {
         // Act
         IndicatorListing listing = BarParts.StreamListing;
@@ -52,6 +52,7 @@ public class BarPartCatalogTests : TestBase
         listing.Uiid.Should().Be("BARPART");
         listing.Style.Should().Be(Style.Stream);
         listing.Category.Should().Be(Category.PriceTransform);
+        listing.MethodName.Should().Be("ToBarPartHub");
 
         listing.Parameters.Should().NotBeNull();
         listing.Parameters.Should().HaveCount(1);
@@ -71,7 +72,7 @@ public class BarPartCatalogTests : TestBase
     }
 
     [TestMethod]
-    public void BarPartBufferListing()
+    public void BarPartBuffer_InCatalog_HasExpectedMetadata()
     {
         // Act
         IndicatorListing listing = BarParts.BufferListing;
@@ -82,6 +83,7 @@ public class BarPartCatalogTests : TestBase
         listing.Uiid.Should().Be("BARPART");
         listing.Style.Should().Be(Style.Buffer);
         listing.Category.Should().Be(Category.PriceTransform);
+        listing.MethodName.Should().Be("ToBarPartList");
 
         listing.Parameters.Should().NotBeNull();
         listing.Parameters.Should().HaveCount(1);
@@ -101,7 +103,7 @@ public class BarPartCatalogTests : TestBase
     }
 
     [TestMethod]
-    public void CatalogBrowsingIncludesBarPartSeries()
+    public void CatalogBrowsing_WithBarPartSeries_IncludesBarPartSeries()
     {
         // Act
         IReadOnlyList<IndicatorListing> catalog = Catalog.Get();

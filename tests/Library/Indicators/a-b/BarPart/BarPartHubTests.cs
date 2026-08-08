@@ -136,4 +136,16 @@ public class BarPartHubTests : StreamHubTestBase, ITestBarObserver, ITestChainPr
         BarPartHub hub = new(new BarHub(), CandlePart.Close);
         hub.ToString().Should().Be("BAR-PART(CLOSE)");
     }
+
+    [TestMethod]
+    public void Ctor_InvalidCandlePart_Throws()
+    {
+        BarHub barHub = new();
+
+        Action act = () => _ = barHub.ToBarPartHub((CandlePart)99);
+
+        act.Should().Throw<ArgumentOutOfRangeException>();
+
+        barHub.EndTransmission();
+    }
 }

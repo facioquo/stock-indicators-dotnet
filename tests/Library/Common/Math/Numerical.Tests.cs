@@ -56,6 +56,44 @@ public class Numericals : TestBase
             .ThrowExactly<ArgumentException>();
 
     [TestMethod]
+    public void Slope_AllEqualXValues_ReturnsNaN()
+    {
+        // pins IEEE 754 0/0 = NaN for zero-variance x
+        double[] flatX = [5, 5, 5, 5];
+        double[] anyY = [1, 2, 3, 4];
+
+        double s = Numerical.Slope(flatX, anyY);
+
+        s.Should().Be(double.NaN);
+    }
+
+    [TestMethod]
+    public void Slope_SquaredDeviationUnderflow_ReturnsNaN()
+    {
+        // devX * devX underflows to exactly 0 while devX * devY
+        // does not; without the zero-denominator guard this
+        // returned +Infinity instead of NaN
+        double[] tinyX = [1e-200, -1e-200];
+        double[] hugeY = [1e200, -1e200];
+
+        double s = Numerical.Slope(tinyX, hugeY);
+
+        s.Should().Be(double.NaN);
+    }
+
+    [TestMethod]
+    public void GetDecimalPlaces_LargeIntegerPart_DoesNotOverflow()
+    {
+        // values beyond int.MaxValue (e.g. large volumes)
+        // previously threw OverflowException from an int cast
+        const decimal largeVolume = 3_000_000_000.25m;
+
+        int places = largeVolume.GetDecimalPlaces();
+
+        places.Should().Be(2);
+    }
+
+    [TestMethod]
     public void RoundDownDate()
     {
         TimeSpan interval = BarInterval.OneHour.ToTimeSpan();

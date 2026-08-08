@@ -221,19 +221,22 @@ internal sealed class PruningList<T> : IList<T>, IReadOnlyList<T>
     }
 
     /// <inheritdoc/>
-    public IEnumerator<T> GetEnumerator()
-    {
-        int version = _version;
-        int end = _items.Count;
+    public IEnumerator<T> GetEnumerator() => Enumerate(_version, Count);
 
-        for (int i = _head; i < end; i++)
+    // Captures _version and Count eagerly (at GetEnumerator time, not first
+    // MoveNext) and iterates logical indexes so that prefix reclamation,
+    // which shifts _items and resets _head without a version bump, cannot
+    // skip or repeat elements under an active enumerator.
+    private IEnumerator<T> Enumerate(int version, int count)
+    {
+        for (int index = 0; index < count; index++)
         {
             if (version != _version)
             {
                 throw new InvalidOperationException(ModifiedDuringEnumeration);
             }
 
-            yield return _items[i];
+            yield return _items[_head + index];
         }
 
         if (version != _version)

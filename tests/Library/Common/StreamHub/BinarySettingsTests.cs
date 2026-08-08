@@ -6,7 +6,7 @@ public class BinarySettingsTests : TestBase
     // see Renko Hub tests for inheritance
 
     [TestMethod]
-    public void InitializationDefault()
+    public void Ctor_Default_SetsZeroSettingsAndFullMask()
     {
         BinarySettings sut = new();
         sut.Settings.Should().Be(0);
@@ -14,7 +14,7 @@ public class BinarySettingsTests : TestBase
     }
 
     [TestMethod]
-    public void InitializationPartial()
+    public void Ctor_WithSettingsOnly_UsesDefaultMask()
     {
         BinarySettings sut = new(0);
         sut.Settings.Should().Be(0);
@@ -22,7 +22,7 @@ public class BinarySettingsTests : TestBase
     }
 
     [TestMethod]
-    public void InitializationCustom()
+    public void Ctor_WithSettingsAndMask_SetsBoth()
     {
         BinarySettings sut = new(0b10101010, 0b11001100);
         sut.Settings.Should().Be(0b10101010);
@@ -30,7 +30,7 @@ public class BinarySettingsTests : TestBase
     }
 
     [TestMethod]
-    public void AccessBit()
+    public void Indexer_WithBitPosition_ReturnsExpectedBit()
     {
         BinarySettings sut = new(0b00010001);
 
@@ -46,7 +46,23 @@ public class BinarySettingsTests : TestBase
     }
 
     [TestMethod]
-    public void CombineDefaultMask()
+    public void Indexer_OutOfRangeIndex_Throws()
+    {
+        BinarySettings sut = new(0b00000001);
+
+        // without range validation, shift wraparound
+        // would silently read bit 0 for index 32
+        Action negative = () => _ = sut[-1];
+        Action tooHigh = () => _ = sut[8];
+        Action wrapped = () => _ = sut[32];
+
+        negative.Should().Throw<ArgumentOutOfRangeException>();
+        tooHigh.Should().Throw<ArgumentOutOfRangeException>();
+        wrapped.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [TestMethod]
+    public void Combine_WithDefaultMask_MergesSettings()
     {
         BinarySettings srcSettings = new(0b01101001);
         BinarySettings defSettings = new(0b00000010);
@@ -55,7 +71,7 @@ public class BinarySettingsTests : TestBase
     }
 
     [TestMethod]
-    public void CombineCustomMask()
+    public void Combine_WithCustomMask_ExcludesMaskedBits()
     {
         BinarySettings srcSettings = new(0b01101001, 0b11111110);
         BinarySettings defSettings = new(0b00000010);
@@ -64,31 +80,31 @@ public class BinarySettingsTests : TestBase
     }
 
     [TestMethod]
-    public void Equality()
+    public void Equality_WithSameAndDifferentValues_ComparesCorrectly()
     {
         BinarySettings sut = new();
-        Assert.AreEqual(0b00000000, sut.Settings);
-        Assert.AreEqual(0b11111111, sut.Mask);
+        sut.Settings.Should().Be(0b00000000);
+        sut.Mask.Should().Be(0b11111111);
 
         object obj = new BinarySettings(0b01100010);
         BinarySettings sutA = new(0b01100010);
         BinarySettings sutB = new(0b01100010);
         BinarySettings sutC = new(0b01101010); // different
 
-        Assert.AreEqual(sutA, sutB);
+        sutA.Should().Be(sutB);
 
-        // object equality
-        Assert.IsTrue(obj.Equals(sutA));
-        Assert.IsTrue(sutA.Equals(obj));
+        // object equality, Equals(object) dispatch
+        obj.Equals(sutA).Should().BeTrue();
+        sutA.Equals(obj).Should().BeTrue();
 
-        // struct equality
-        Assert.IsTrue(sutA.Equals(sutB));
-        Assert.IsTrue(sutB.Equals(sutA));
-        Assert.IsFalse(sutB.Equals(sutC));
+        // struct equality, Equals(BinarySettings) overload
+        sutA.Equals(sutB).Should().BeTrue();
+        sutB.Equals(sutA).Should().BeTrue();
+        sutB.Equals(sutC).Should().BeFalse();
 
-        // operator equality
-        Assert.IsTrue(sutA == sutB);
-        Assert.IsFalse(sutA == sutC);
-        Assert.IsTrue(sutB != sutC);
+        // custom operator equality
+        (sutA == sutB).Should().BeTrue();
+        (sutA == sutC).Should().BeFalse();
+        (sutB != sutC).Should().BeTrue();
     }
 }

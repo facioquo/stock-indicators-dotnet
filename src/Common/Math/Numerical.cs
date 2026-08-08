@@ -8,6 +8,18 @@ namespace FacioQuo.Stock.Indicators;
 /// </summary>
 public static class Numerical
 {
+    private static readonly double[] LanczosCoefficients = [
+        0.99999999999980993,
+        676.5203681218851,
+        -1259.1392167224028,
+        771.32342877765313,
+        -176.61502916214059,
+        12.507343278686905,
+        -0.13857109526572012,
+        9.9843695780195716e-6,
+        1.5056327351493116e-7
+    ];
+
     /// <summary>
     /// Calculates the standard deviation of an array of double values.
     /// </summary>
@@ -16,8 +28,7 @@ public static class Numerical
     /// <exception cref="ArgumentNullException">Thrown when the values array is null.</exception>
     public static double StdDev(this double[] values)
     {
-        ArgumentNullException.ThrowIfNull(
-            values, "StdDev values cannot be null.");
+        ArgumentNullException.ThrowIfNull(values);
 
         int n = values.Length;
 
@@ -50,19 +61,22 @@ public static class Numerical
     /// </summary>
     /// <param name="x">Array of x values.</param>
     /// <param name="y">Array of y values.</param>
-    /// <returns>Slope of the best fit line.</returns>
+    /// <returns>
+    /// Slope of the best fit line, or <see cref="double.NaN"/>
+    /// when the x values have zero variance.
+    /// </returns>
     /// <exception cref="ArgumentNullException">Thrown when the x or y array is null.</exception>
     /// <exception cref="ArgumentException">Thrown when the x and y arrays are not the same size.</exception>
     public static double Slope(double[] x, double[] y)
     {
         // validate parameters
-        ArgumentNullException.ThrowIfNull(x, "Slope X values cannot be null.");
-        ArgumentNullException.ThrowIfNull(y, "Slope Y values cannot be null.");
+        ArgumentNullException.ThrowIfNull(x);
+        ArgumentNullException.ThrowIfNull(y);
 
         if (x.Length != y.Length)
         {
             throw new ArgumentException(
-                "Slope X and Y arrays must be the same size.");
+                "Slope X and Y arrays must be the same size.", nameof(y));
         }
 
         int length = x.Length;
@@ -93,7 +107,7 @@ public static class Numerical
             sumSqXy += devX * devY;
         }
 
-        return sumSqXy / sumSqX;
+        return sumSqX != 0 ? sumSqXy / sumSqX : double.NaN;
     }
 
     /// <summary>
@@ -108,17 +122,7 @@ public static class Numerical
             return double.NaN;
         }
 
-        double[] c = [
-            0.99999999999980993,
-            676.5203681218851,
-            -1259.1392167224028,
-            771.32342877765313,
-            -176.61502916214059,
-            12.507343278686905,
-            -0.13857109526572012,
-            9.9843695780195716e-6,
-            1.5056327351493116e-7
-        ];
+        double[] c = LanczosCoefficients;
 
         if (x < 0.5)
         {
@@ -189,13 +193,13 @@ public static class Numerical
         // source: https://stackoverflow.com/a/30205131/4496145
 
         n = Math.Abs(n); // make sure it is positive.
-        n -= (int)n;     // remove the integer part of the number.
+        n -= decimal.Truncate(n); // remove the integer part of the number.
         int decimalPlaces = 0;
         while (n > 0)
         {
             decimalPlaces++;
             n *= 10;
-            n -= (int)n;
+            n -= decimal.Truncate(n);
         }
 
         return decimalPlaces;

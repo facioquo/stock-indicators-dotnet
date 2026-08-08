@@ -64,10 +64,16 @@ public readonly struct BinarySettings(
     /// <summary>
     /// Gets the value of the bit at the specified index.
     /// </summary>
-    /// <param name="index">Index of the bit to get.</param>
+    /// <param name="index">Index of the bit to get, from 0 to 7.</param>
     /// <returns>True if the bit is set; otherwise, false.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when the index is outside the range of 0 to 7.
+    /// </exception>
     public bool this[short index]
-        => (Settings & (1 << index)) != 0;
+        => index is >= 0 and <= 7
+            ? (Settings & (1 << index)) != 0
+            : throw new ArgumentOutOfRangeException(
+                nameof(index), index, "Bit index must be between 0 and 7.");
 
     /// <summary>
     /// Combines the current settings with another <see cref="BinarySettings"/> instance
