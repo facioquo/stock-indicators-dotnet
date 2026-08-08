@@ -3,6 +3,16 @@
  * Supports both light and dark themes with dark as default
  */
 
+/* Light-theme counterpart to the inline dark-canvas style in config.mts
+   (#2169): once the resolved theme class is present, restore light
+   backgrounds and native control styling. Needs the `:not(.dark)`
+   specificity to beat the inline `html { ... }` rule, which comes later
+   in cascade order than this bundled stylesheet. */
+html:not(.dark) {
+  background-color: var(--vp-c-bg);
+  color-scheme: light;
+}
+
 /* Custom styles for better readability */
 .vp-doc {
 
