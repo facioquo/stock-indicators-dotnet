@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Stock Indicators for .NET documentation",
   "type": "module",
-  "packageManager": "pnpm@11.17.0",
+  "packageManager": "pnpm@11.18.0",
   "engines": {
     "node": ">=24"
   },
