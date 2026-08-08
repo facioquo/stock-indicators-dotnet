@@ -65,7 +65,7 @@ public static partial class BarParts
     /// <param name="candlePart">The <see cref="CandlePart" /> element.</param>
     /// <returns>An new <see cref="BarPartHub"/> instance.</returns>
     /// <exception cref="ArgumentNullException">Thrown when the bar provider is null.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when the <paramref name="candlePart"/> invalid.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="candlePart"/> is invalid.</exception>
     public static BarPartHub ToBarPartHub(
         this IBarProvider<IBar> barProvider,
         CandlePart candlePart)

@@ -24,7 +24,8 @@ public class Numericals : TestBase
         => FluentActions
             .Invoking(static () => Numerical.StdDev(null))
             .Should()
-            .ThrowExactly<ArgumentNullException>();
+            .ThrowExactly<ArgumentNullException>()
+            .WithParameterName("values");
 
     [TestMethod]
     public void Slope()
@@ -39,21 +40,24 @@ public class Numericals : TestBase
         => FluentActions
             .Invoking(() => Numerical.Slope(null, _x))
             .Should()
-            .ThrowExactly<ArgumentNullException>();
+            .ThrowExactly<ArgumentNullException>()
+            .WithParameterName("x");
 
     [TestMethod]
     public void SlopeYnull()
         => FluentActions
             .Invoking(() => Numerical.Slope(_x, null))
             .Should()
-            .ThrowExactly<ArgumentNullException>();
+            .ThrowExactly<ArgumentNullException>()
+            .WithParameterName("y");
 
     [TestMethod]
     public void SlopeMismatch()
         => FluentActions
             .Invoking(() => Numerical.Slope(_x, _y))
             .Should()
-            .ThrowExactly<ArgumentException>();
+            .ThrowExactly<ArgumentException>()
+            .WithParameterName("y");
 
     [TestMethod]
     public void Slope_AllEqualXValues_ReturnsNaN()

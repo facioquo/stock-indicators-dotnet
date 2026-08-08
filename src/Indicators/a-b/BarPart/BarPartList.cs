@@ -4,7 +4,7 @@ namespace FacioQuo.Stock.Indicators;
 /// Bar part selection from incremental bars.
 /// </summary>
 /// <param name="candlePart">The <see cref="CandlePart" /> element.</param>
-/// <exception cref="ArgumentOutOfRangeException">Thrown when the <paramref name="candlePart"/> invalid.</exception>
+/// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="candlePart"/> is invalid.</exception>
 public class BarPartList(CandlePart candlePart) : BufferList<TimeValue>, IIncrementFromBar, IBarPart
 {
     /// <summary>
@@ -12,8 +12,8 @@ public class BarPartList(CandlePart candlePart) : BufferList<TimeValue>, IIncrem
     /// </summary>
     /// <param name="candlePart">The <see cref="CandlePart" /> element.</param>
     /// <param name="bars">Aggregate OHLCV price bars, time sorted.</param>
-    /// <exception cref="ArgumentNullException">Thrown when the <paramref name="bars"/> list is null.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when the <paramref name="candlePart"/> invalid.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="bars"/> is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="candlePart"/> is invalid.</exception>
     public BarPartList(CandlePart candlePart, IReadOnlyList<IBar> bars)
         : this(candlePart) => Add(bars);
 
@@ -58,8 +58,8 @@ public static partial class BarParts
     /// </summary>
     /// <param name="bars">Aggregate OHLCV price bars, time sorted.</param>
     /// <param name="candlePart">The <see cref="CandlePart" /> element.</param>
-    /// <exception cref="ArgumentNullException">Thrown when the <paramref name="bars"/> list is null.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when the <paramref name="candlePart"/> invalid.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="bars"/> is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="candlePart"/> is invalid.</exception>
     public static BarPartList ToBarPartList(
         this IReadOnlyList<IBar> bars,
         CandlePart candlePart)
