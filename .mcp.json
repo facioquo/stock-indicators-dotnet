@@ -1,5 +1,5 @@
 {
-  "servers": {
+  "mcpServers": {
     "codacy": {
       "type": "stdio",
       "command": "npx",
