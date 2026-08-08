@@ -158,7 +158,10 @@ public static class Numerical
     /// Converts a BarInterval to a TimeSpan.
     /// </summary>
     /// <param name="barInterval">BarInterval value.</param>
-    /// <returns>Corresponding TimeSpan value.</returns>
+    /// <returns>
+    /// Corresponding TimeSpan value, or <see cref="TimeSpan.Zero"/>
+    /// for <see cref="BarInterval.Month"/> and undefined values.
+    /// </returns>
     public static TimeSpan ToTimeSpan(this BarInterval barInterval)
         => barInterval switch {
             BarInterval.OneMinute => TimeSpan.FromMinutes(1),

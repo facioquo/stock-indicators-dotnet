@@ -2,9 +2,9 @@
 
 ## Purpose of this file
 
-This file (AGENTS.md) carries the **operational guidance for AI agents and contributors** editing files in `src/Common/`: framework-level invariants, repo-specific file locations, registration conventions, and boundaries. Its companion [README.md](README.md) carries the **public directory inventory and per-file descriptions** for anyone browsing the source on GitHub. The two files are deliberately non-overlapping — keep behavioral rules here and descriptive inventory there.
+This file (AGENTS.md) carries the **operational guidance for AI agents and contributors** editing files in `src/Common/`: framework-level invariants, repo-specific file locations, registration conventions, and boundaries. Its companion [README.md](README.md) carries the **folder-level overview and shared policies** (NaN handling, performance pointers) for anyone browsing the source on GitHub. The two files are deliberately non-overlapping — keep behavioral rules here and the descriptive overview there.
 
-This folder holds the streaming framework (`StreamHub/`, `BufferLists/`), the catalog system (`Catalog/`), core types (`Bars/`, `TradeTicks/`, `Reusable/`, `BarPart/`), and shared utilities.
+This folder holds the streaming framework (`StreamHub/`, `BufferLists/`), the catalog system (`Catalog/`), core types (`Bars/`, `TradeTicks/`, `Reusable/`), and shared utilities.
 
 Stateful changes here (cache, rollback, pruning, notification) must preserve the framework invariants documented below. Load the relevant skill first for the portable patterns.
 
