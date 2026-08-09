@@ -8,7 +8,8 @@ namespace FacioQuo.Stock.Indicators;
 /// </summary>
 public static class Numerical
 {
-    private static readonly double[] LanczosCoefficients = [
+    private static ReadOnlySpan<double> LanczosCoefficients =>
+    [
         0.99999999999980993,
         676.5203681218851,
         -1259.1392167224028,
@@ -122,7 +123,7 @@ public static class Numerical
             return double.NaN;
         }
 
-        double[] c = LanczosCoefficients;
+        ReadOnlySpan<double> c = LanczosCoefficients;
 
         if (x < 0.5)
         {

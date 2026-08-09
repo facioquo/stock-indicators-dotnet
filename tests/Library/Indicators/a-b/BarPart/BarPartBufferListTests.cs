@@ -89,6 +89,22 @@ public class BarPartBufferListTests : BufferListTestBase, ITestBarBufferList
     }
 
     [TestMethod]
+    public void BarsCtor_InvalidCandlePart_Throws()
+    {
+        Action act = () => _ = new BarPartList((CandlePart)99, Bars);
+
+        act.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [TestMethod]
+    public void ToBarPartList_InvalidCandlePart_Throws()
+    {
+        Action act = () => _ = Bars.ToBarPartList((CandlePart)99);
+
+        act.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [TestMethod]
     public void InitAccessor_InvalidCandlePart_Throws()
     {
         // object initializers bypass the constructor argument,

@@ -62,7 +62,7 @@ public class Numericals : TestBase
     [TestMethod]
     public void Slope_AllEqualXValues_ReturnsNaN()
     {
-        // pins IEEE 754 0/0 = NaN for zero-variance x
+        // regression: zero-variance x yields NaN (0/0 per IEEE 754)
         double[] flatX = [5, 5, 5, 5];
         double[] anyY = [1, 2, 3, 4];
 

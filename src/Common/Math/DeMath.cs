@@ -351,9 +351,9 @@ internal static class DeMath
         }
 
         // x == -0.0 belongs to the negative half-plane: (±0, -0) -> ±pi
-        if (BitConverter.DoubleToInt64Bits(x) < 0L)
+        if (double.IsNegative(x))
         {
-            return BitConverter.DoubleToInt64Bits(y) < 0L ? -Pi : Pi;
+            return double.IsNegative(y) ? -Pi : Pi;
         }
 
         // Preserve signed-zero for (±0, +0) by returning `y` (will be +0.0 or -0.0)
