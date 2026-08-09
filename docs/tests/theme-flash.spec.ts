@@ -35,6 +35,7 @@ test.describe('theme flash on load (#2169)', () => {
         () =>
           page.evaluate(() => ({
             bg: getComputedStyle(document.documentElement).backgroundColor,
+            bodyBg: getComputedStyle(document.body ?? document.documentElement).backgroundColor,
             externalCssLoaded: [...document.styleSheets].some(s => s.href),
             hasColorSchemeMeta: !!document.querySelector(
               'meta[name="color-scheme"][content="dark"]'
@@ -42,7 +43,7 @@ test.describe('theme flash on load (#2169)', () => {
           })),
         { timeout: 3_000 }
       )
-      .toEqual({ bg: DARK_CANVAS, externalCssLoaded: false, hasColorSchemeMeta: true })
+      .toEqual({ bg: DARK_CANVAS, bodyBg: DARK_CANVAS, externalCssLoaded: false, hasColorSchemeMeta: true })
   })
 
   test('default (dark) theme stays dark after full load', async ({ page }) => {
