@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Roslynator.Analyzers" Version="4.15.0" PrivateAssets="all" />
+    <PackageReference Include="Roslynator.Analyzers" Version="4.16.0" PrivateAssets="all" />
     <PackageReference Include="Skender.Stock.Indicators" Version="2.7.3" PrivateAssets="all" />
     <!-- <ProjectReference Include="..\..\..\src\Indicators.csproj" /> -->
   </ItemGroup>
