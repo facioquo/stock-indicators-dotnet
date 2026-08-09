@@ -11,7 +11,7 @@ public record AtrWmaResult
 ) : IReusable
 {
     /// <inheritdoc/>
-    public double Value => AtrWma.Null2NaN();
+    double IReusable.Value => AtrWma.Null2NaN();
 }
 
 public static class CustomIndicators
@@ -23,7 +23,6 @@ public static class CustomIndicators
     {
         // Validate parameters
         ArgumentNullException.ThrowIfNull(bars);
-        
         if (lookbackPeriods <= 0)
         {
             throw new ArgumentOutOfRangeException(

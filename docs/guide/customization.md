@@ -66,7 +66,7 @@ public static class CustomIndicators
                 "Lookback periods must be greater than 0.");
         }
 
-        // sort proce bars (optional)
+        // sort price bars (optional)
         List<IBar> barsList = bars
             .OrderBy(x => x.Timestamp)
             .ToList();
