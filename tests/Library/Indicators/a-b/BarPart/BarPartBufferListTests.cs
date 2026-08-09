@@ -81,7 +81,43 @@ public class BarPartBufferListTests : BufferListTestBase, ITestBarBufferList
     }
 
     [TestMethod]
-    public void MultipleCandleParts()
+    public void Ctor_InvalidCandlePart_Throws()
+    {
+        Action act = () => _ = new BarPartList((CandlePart)99);
+
+        act.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [TestMethod]
+    public void BarsCtor_InvalidCandlePart_Throws()
+    {
+        Action act = () => _ = new BarPartList((CandlePart)99, Bars);
+
+        act.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [TestMethod]
+    public void ToBarPartList_InvalidCandlePart_Throws()
+    {
+        Action act = () => _ = Bars.ToBarPartList((CandlePart)99);
+
+        act.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [TestMethod]
+    public void InitAccessor_InvalidCandlePart_Throws()
+    {
+        // object initializers bypass the constructor argument,
+        // so the init accessor must validate too
+        Action act = () => _ = new BarPartList(CandlePart.Close) {
+            CandlePartSelection = (CandlePart)99
+        };
+
+        act.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [TestMethod]
+    public void BarsCtor_WithVariousCandleParts_MatchesSeries()
     {
         // Test different candle parts
         IReadOnlyList<TimeValue> openSeries = Bars.ToBarPart(CandlePart.Open);

@@ -15,11 +15,15 @@ public static partial class BarParts
     /// <param name="candlePart">The <see cref="CandlePart" /> element.</param>
     /// <returns>List of <see cref="TimeValue"/> records.</returns>
     /// <remarks>Also available via the <see cref="Use(IReadOnlyList{IBar}, CandlePart)"/> alias.</remarks>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="bars"/> is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="candlePart"/> is invalid.</exception>
     public static IReadOnlyList<TimeValue> ToBarPart(
         this IReadOnlyList<IBar> bars,
         CandlePart candlePart)
     {
         ArgumentNullException.ThrowIfNull(bars);
+        Validate(candlePart);
+
         int length = bars.Count;
         List<TimeValue> result = new(length);
 

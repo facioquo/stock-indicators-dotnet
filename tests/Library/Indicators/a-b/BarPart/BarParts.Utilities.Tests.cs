@@ -1,10 +1,10 @@
 namespace Utilities;
 
 [TestClass]
-public class BarPartBufferListTests : TestBaseWithPrecision
+public class BarPartUtilitiesTests : TestBaseWithPrecision
 {
     [TestMethod]
-    public void ConvertBar()
+    public void ToBarPart_SingleBar_ConvertsAllCandleParts()
     {
         // compose basic data
         TimeValue o = Bars[501].ToBarPart(CandlePart.Open);
@@ -37,7 +37,7 @@ public class BarPartBufferListTests : TestBaseWithPrecision
     }
 
     [TestMethod]
-    public void ConvertList()
+    public void ToBarPart_BarList_ConvertsAllCandleParts()
     {
         // compose data
         IReadOnlyList<TimeValue> o = Bars.ToBarPart(CandlePart.Open);

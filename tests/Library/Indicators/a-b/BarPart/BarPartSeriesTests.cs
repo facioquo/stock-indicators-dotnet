@@ -73,6 +73,16 @@ public class BarPartSeriesTests : StaticSeriesTestBase
     }
 
     [TestMethod]
+    public void ToBarPart_InvalidCandlePart_ThrowsEvenWhenEmpty()
+    {
+        Action withBars = () => _ = Bars.ToBarPart((CandlePart)99);
+        Action withEmpty = () => _ = Nobars.ToBarPart((CandlePart)99);
+
+        withBars.Should().Throw<ArgumentOutOfRangeException>();
+        withEmpty.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [TestMethod]
     public override void NoBars_ReturnsEmpty()
     {
         IReadOnlyList<TimeValue> r0 = Nobars

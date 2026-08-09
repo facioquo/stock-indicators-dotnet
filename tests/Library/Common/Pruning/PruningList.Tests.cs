@@ -221,6 +221,56 @@ public class PruningListTests : TestBase
     }
 
     [TestMethod]
+    public void Enumerate_AcrossNoOpRemoveAllWithActiveHead_YieldsCorrectItems()
+    {
+        PruningList<int> sut = [];
+
+        for (int i = 0; i < 4; i++)
+        {
+            sut.Add(i);
+        }
+
+        // advance the head so a dead prefix exists
+        sut.RemoveAt(0);
+
+        // a no-match RemoveAll reclaims the dead prefix
+        // without a version bump; enumeration must still
+        // yield the correct remaining elements
+        using IEnumerator<int> enumerator = sut.GetEnumerator();
+        enumerator.MoveNext().Should().BeTrue();
+        enumerator.Current.Should().Be(1);
+
+        int removed = sut.RemoveAll(static _ => false);
+        removed.Should().Be(0);
+
+        enumerator.MoveNext().Should().BeTrue();
+        enumerator.Current.Should().Be(2);
+        enumerator.MoveNext().Should().BeTrue();
+        enumerator.Current.Should().Be(3);
+        enumerator.MoveNext().Should().BeFalse();
+    }
+
+    [TestMethod]
+    public void Enumerate_ModifiedBeforeFirstMoveNext_Throws()
+    {
+        PruningList<int> sut = [];
+
+        for (int i = 0; i < 3; i++)
+        {
+            sut.Add(i);
+        }
+
+        // version must be captured at GetEnumerator time,
+        // not deferred to the first MoveNext
+        using IEnumerator<int> enumerator = sut.GetEnumerator();
+        sut.Add(100);
+
+        Action act = () => enumerator.MoveNext();
+
+        act.Should().Throw<InvalidOperationException>();
+    }
+
+    [TestMethod]
     public void AsReadOnly_ReflectsLiveWindowAndIsImmutable()
     {
         PruningList<int> sut = [];

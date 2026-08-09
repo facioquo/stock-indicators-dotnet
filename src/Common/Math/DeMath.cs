@@ -156,7 +156,7 @@ internal static class DeMath
             return double.NaN;
         }
 
-        if (x >= ExpOverflow)
+        if (x > ExpOverflow)
         {
             return double.PositiveInfinity;
         }
@@ -281,7 +281,7 @@ internal static class DeMath
 
         if (x == 0d)
         {
-            return 0d;
+            return x; // preserves signed zero
         }
 
         // Range reduction: atan(x) = sign(x) * (pi/2 - atan(1/|x|)) for |x| > 1
@@ -350,7 +350,13 @@ internal static class DeMath
             return -HalfPi;
         }
 
-        // Preserve signed-zero for (0,0) by returning `y` (will be +0.0 or -0.0)
+        // x == -0.0 belongs to the negative half-plane: (±0, -0) -> ±pi
+        if (double.IsNegative(x))
+        {
+            return double.IsNegative(y) ? -Pi : Pi;
+        }
+
+        // Preserve signed-zero for (±0, +0) by returning `y` (will be +0.0 or -0.0)
         return y;
     }
 

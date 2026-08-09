@@ -13,10 +13,10 @@ public enum OutType
     /// <summary>
     /// Comma-separated values format.
     /// </summary>
-    CSV = 1,
+    Csv = 1,
 
     /// <summary>
     /// JSON format.
     /// </summary>
-    JSON = 2
+    Json = 2
 }
