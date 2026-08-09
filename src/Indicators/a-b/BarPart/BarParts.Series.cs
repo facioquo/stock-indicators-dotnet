@@ -14,7 +14,7 @@ public static partial class BarParts
     /// <param name="bars">Aggregate OHLCV price bars, time sorted.</param>
     /// <param name="candlePart">The <see cref="CandlePart" /> element.</param>
     /// <returns>List of <see cref="TimeValue"/> records.</returns>
-    /// <remarks>This is an alias of <see cref="Use(IReadOnlyList{IBar}, CandlePart)"/></remarks>
+    /// <remarks>Also available via the <see cref="Use(IReadOnlyList{IBar}, CandlePart)"/> alias.</remarks>
     public static IReadOnlyList<TimeValue> ToBarPart(
         this IReadOnlyList<IBar> bars,
         CandlePart candlePart)
@@ -32,7 +32,7 @@ public static partial class BarParts
     }
 
     /// <inheritdoc cref="ToBarPart(IReadOnlyList{IBar}, CandlePart)"/>
-    /// <remarks>This is an alias of <see cref="ToBarPartList(IReadOnlyList{IBar}, CandlePart)"/></remarks>
+    /// <remarks>This is an alias of <see cref="ToBarPart(IReadOnlyList{IBar}, CandlePart)"/></remarks>
     public static IReadOnlyList<TimeValue> Use(
         this IReadOnlyList<IBar> bars,
         CandlePart candlePart)

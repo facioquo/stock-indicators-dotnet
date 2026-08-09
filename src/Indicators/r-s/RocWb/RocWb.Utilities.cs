@@ -8,7 +8,7 @@ public static partial class RocWb
     /// <summary>
     /// Removes the recommended warmup periods from the RocWb results.
     /// </summary>
-    /// <inheritdoc cref="Reusable.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
     public static IReadOnlyList<RocWbResult> RemoveWarmupPeriods(
         this IReadOnlyList<RocWbResult> results)
     {

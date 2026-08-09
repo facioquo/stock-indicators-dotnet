@@ -21,8 +21,8 @@ namespace FacioQuo.Stock.Indicators;
 /// Example of re/setting a specific bit:
 /// <code>
 /// BinarySettings settings = new(0);
-/// settings = settings with { [0] = true  }; // set bit 0 to true
-/// settings = settings with { [1] = false }; // set bit 1 to false
+/// settings = new((byte)(settings.Settings | 0b00000001), settings.Mask); // set bit 0
+/// settings = new((byte)(settings.Settings &amp; 0b11111101), settings.Mask); // clear bit 1
 /// </code>
 ///
 /// As a reminder, bit positions are zero-based:

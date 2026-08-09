@@ -8,7 +8,7 @@ public static partial class ZigZag
     /// <summary>
     /// Removes empty (null) periods from the ZigZag results.
     /// </summary>
-    /// <inheritdoc cref="Reusable.Condense{T}(IReadOnlyList{T})"/>
+    /// <inheritdoc cref="ReusableExtensions.Condense{T}(IReadOnlyList{T})"/>
     public static IReadOnlyList<ZigZagResult> Condense(
         this IReadOnlyList<ZigZagResult> results)
     {

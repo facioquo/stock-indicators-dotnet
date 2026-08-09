@@ -3,7 +3,7 @@ namespace FacioQuo.Stock.Indicators;
 /// <summary>
 /// Provides extension methods for seeking and finding elements in a series.
 /// </summary>
-public static class Seeking
+public static class SeekingExtensions
 {
     /// <summary>
     /// Finds an element in the series by its timestamp.

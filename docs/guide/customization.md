@@ -30,7 +30,7 @@ public record AtrWmaResult : IReusable
     public DateTime Timestamp { get; init; }
     public double? AtrWma { get; init; }
     
-    // Required for IReusable interface (enables chaining)
+    // Identify value to propagate in chains
     double IReusable.Value => AtrWma.Null2NaN();
 }
 ```
@@ -54,7 +54,7 @@ public static class CustomIndicators
     /// <returns>Collection of AtrWmaResult</returns>
     public static IReadOnlyList<AtrWmaResult> ToAtrWma(
         this IReadOnlyList<IBar> bars,
-        int lookbackPeriods = 10)
+        int lookbackPeriods)
     {
         // Validate parameters
         ArgumentNullException.ThrowIfNull(bars);
@@ -66,32 +66,26 @@ public static class CustomIndicators
                 "Lookback periods must be greater than 0.");
         }
 
-        // Sort bars
-        IReadOnlyList<IBar> barsList = bars.ToSortedList();
+        // sort price bars (optional)
+        List<IBar> barsList = bars
+            .OrderBy(x => x.Timestamp)
+            .ToList();
 
-        // Check for sufficient bars
-        if (barsList.Count < lookbackPeriods)
-        {
-            return [];
-        }
-
-        // Initialize results
+        // initialize results
         List<AtrWmaResult> results = new(barsList.Count);
 
-        // Get ATR values (prerequisite indicator)
-        IReadOnlyList<AtrResult> atrResults = barsList.ToAtr(lookbackPeriods);
+        // get pre-requisite ATR values
+        List<AtrResult> atrResults = barsList
+            .ToAtr(lookbackPeriods)
+            .ToList();
 
-        // Calculate custom indicator
+        // roll through source values
         for (int i = 0; i < barsList.Count; i++)
         {
-            IBar q = barsList[i];
+            IBar b = barsList[i];
+            double atrWma = double.NaN;
 
-            AtrWmaResult r = new()
-            {
-                Timestamp = q.Timestamp
-            };
-
-            // Calculate only after warmup period
+            // only do calculations after uncalculable periods
             if (i >= lookbackPeriods - 1)
             {
                 double sumWma = 0;
@@ -100,22 +94,19 @@ public static class CustomIndicators
                 for (int p = i - lookbackPeriods + 1; p <= i; p++)
                 {
                     double close = (double)barsList[p].Close;
-                    double? atr = atrResults[p].Atr;
+                    double atr = atrResults[p].Atr ?? double.NaN;
 
-                    if (atr.HasValue)
-                    {
-                        sumWma += atr.Value * close;
-                        sumAtr += atr.Value;
-                    }
+                    sumWma += atr * close;
+                    sumAtr += atr;
                 }
 
-                r = r with 
-                { 
-                    AtrWma = sumAtr != 0 ? sumWma / sumAtr : null 
-                };
+                atrWma = sumWma / sumAtr;
             }
 
-            results.Add(r);
+            // add record to results
+            results.Add(new AtrWmaResult(
+                Timestamp: b.Timestamp,
+                AtrWma: atrWma.NaN2Null()));
         }
 
         return results;

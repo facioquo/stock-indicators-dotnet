@@ -3,7 +3,7 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class BollingerBands
 {
     // remove recommended periods
-    /// <inheritdoc cref="Reusable.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
     public static IReadOnlyList<BollingerBandsResult> RemoveWarmupPeriods(
         this IReadOnlyList<BollingerBandsResult> results)
     {

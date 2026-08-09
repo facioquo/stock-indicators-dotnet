@@ -3,7 +3,7 @@ namespace FacioQuo.Stock.Indicators;
 /// <summary>
 /// Provides extension methods for sorting a series of elements.
 /// </summary>
-public static class Sorting
+public static class SortingExtensions
 {
     /// <summary>
     /// Sorts the series by their timestamps in ascending order.

@@ -5,11 +5,11 @@ namespace FacioQuo.Stock.Indicators;
 
 /// <summary>
 /// Validates that a string is URL-safe.
+/// </summary>
 /// <remarks>
 /// Note that this will allow nullable strings which may cause other issues,
 /// so nullability should be checked separately if necessary.
 /// </remarks>
-/// </summary>
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
 public sealed partial class UrlSafeAttribute : ValidationAttribute
 {
