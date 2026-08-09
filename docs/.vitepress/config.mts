@@ -64,7 +64,7 @@ export default defineConfig({
     // site's dark theme token. tests/theme-flash.spec.ts cross-checks it
     // against the body background at runtime.
     ['meta', { name: 'color-scheme', content: 'dark' }],
-    ['style', {}, 'html, body { background-color: #1b1b1f; background-color: var(--vp-c-bg); }'],
+    ['style', {}, 'html, body { background-color: var(--vp-c-bg, #1b1b1f); }'],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'Stock Indicators for .NET' }],
     ['meta', { property: 'og:description', content: 'Transform price quotes into trading insights.' }],
