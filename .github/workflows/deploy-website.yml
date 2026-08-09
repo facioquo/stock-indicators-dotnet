@@ -9,10 +9,6 @@ on:
 permissions:
   contents: read
   packages: read
-  # `deployments`/`pull-requests` let wrangler-action record the Pages
-  # deployment and surface its preview URL on the PR.
-  deployments: write
-  pull-requests: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -83,9 +79,12 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          # Lets the action open a GitHub Deployment, so the preview URL and
-          # its status surface on the PR instead of only in the job log.
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          # Do not pass `gitHubToken`: it makes wrangler-action open a second
+          # GitHub Deployment on top of the one the job `environment` already
+          # records, which shows up as a duplicate deployment on the PR.
+          # `--branch` is explicit because `pull_request` checkouts are on a
+          # detached HEAD, which would otherwise alias every PR to `head.`.
           command: >
             pages deploy docs/.vitepress/dist
             --project-name=stock-indicators-dotnet
+            --branch=${{ github.head_ref || github.ref_name }}
