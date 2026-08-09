@@ -72,9 +72,11 @@ test.describe('theme flash on load (#2169)', () => {
     await expect(page.locator('html')).not.toHaveClass(/dark/)
     const state = await page.evaluate(() => ({
       bg: getComputedStyle(document.documentElement).backgroundColor,
+      bodyBg: getComputedStyle(document.body).backgroundColor,
       colorScheme: getComputedStyle(document.documentElement).colorScheme
     }))
     expect(state.bg).toBe(LIGHT_CANVAS)
+    expect(state.bodyBg).toBe(LIGHT_CANVAS)
     expect(state.colorScheme).toBe('light')
   })
 })
