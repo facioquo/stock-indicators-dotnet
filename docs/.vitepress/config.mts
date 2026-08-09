@@ -57,13 +57,14 @@ export default defineConfig({
     // drawn before the external stylesheet loads; without these it defaults to
     // white, flashing light for dark-theme (default) visitors. Both apply at
     // parse time, ahead of CSS. Light theme instead takes the brief dark flash
-    // by design; custom.scss restores light backgrounds via higher-specificity
-    // rules once the real CSS arrives.
-    // #1b1b1f must track VitePress's dark `--vp-c-bg` (and the theme-color
-    // meta above) — tests/theme-flash.spec.ts cross-checks it against the
-    // body background at runtime.
+    // by design; custom.scss restores light backgrounds via more-specific
+    // selectors once the real CSS arrives.
+    // The inline fallback keeps the first frame dark, and `--vp-c-bg` is used
+    // once VitePress's theme CSS has loaded so the value stays aligned with the
+    // site's dark theme token. tests/theme-flash.spec.ts cross-checks it
+    // against the body background at runtime.
     ['meta', { name: 'color-scheme', content: 'dark' }],
-    ['style', {}, 'html, body { background-color: #1b1b1f; }'],
+    ['style', {}, 'html, body { background-color: #1b1b1f; background-color: var(--vp-c-bg); }'],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'Stock Indicators for .NET' }],
     ['meta', { property: 'og:description', content: 'Transform price quotes into trading insights.' }],

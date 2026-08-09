@@ -5,9 +5,9 @@
 
 /* Light-theme counterpart to the inline dark-canvas style in config.mts
    (#2169): once the resolved theme class is present, restore light
-   backgrounds and native control styling. Needs the `:not(.dark)`
-   specificity to beat the inline `html, body { ... }` rule, which comes
-   later in cascade order than this bundled stylesheet. */
+   backgrounds and native control styling. The `:not(.dark)` selector is
+   more specific than the inline `html, body { ... }` rule, so it wins
+   even though the bundled stylesheet loads later. */
 html:not(.dark),
 html:not(.dark) body {
   background-color: var(--vp-c-bg);
