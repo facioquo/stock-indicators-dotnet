@@ -5,13 +5,6 @@
     <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
 
-    <!-- TODO: remove preview features
-         after Roslynator/.NET Roslyn agree
-         on BufferList.cs syntax -->
-    <EnablePreviewFeatures>true</EnablePreviewFeatures>
-    <GenerateRequiresPreviewFeaturesAttribute>false</GenerateRequiresPreviewFeaturesAttribute>
-    <!-- end preview features -->
-
     <AssemblyName>FacioQuo.Stock.Indicators</AssemblyName>
     <RootNamespace>FacioQuo.Stock.Indicators</RootNamespace>
     <NeutralLanguage>en-US</NeutralLanguage>
