@@ -432,7 +432,7 @@ export default defineConfig({
         // Proxy chart API calls to avoid CORS in local development.
         // The browser calls /chart-api-proxy/* and Vite forwards server-side.
         '/chart-api-proxy': {
-          target: 'https://stock-charts-api.azurewebsites.net',
+          target: 'https://charts-api.stockindicators.dev',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/chart-api-proxy/, '')
         }

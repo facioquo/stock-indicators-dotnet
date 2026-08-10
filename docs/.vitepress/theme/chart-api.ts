@@ -14,7 +14,7 @@
 
 import type { ApiClientConfig } from '@facioquo/indy-charts'
 
-export const CHART_API_BASE_URL = 'https://stock-charts-api.azurewebsites.net'
+export const CHART_API_BASE_URL = 'https://charts-api.stockindicators.dev'
 
 /** Note in the dev console when a chart falls back to the last-good cache. */
 function handleStale(context: string): void {
