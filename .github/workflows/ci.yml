@@ -51,9 +51,12 @@ jobs:
 
       - name: Run Roslynator analysis
         # note: this is faster than format check
+        # LangVersion=preview only for Roslynator: its bundled Roslyn (CLI 0.13.0)
+        # still gates the C# 14 field keyword behind preview; the shipped build
+        # (above) compiles it as GA without EnablePreviewFeatures
         run: >
           dotnet tool run roslynator analyze src/Indicators.csproj
-          --properties TargetFramework=net10.0
+          --properties TargetFramework=net10.0 LangVersion=preview
           --severity-level hidden
           --verbosity normal
 
@@ -153,9 +156,12 @@ jobs:
           --property:ContinuousIntegrationBuild=true
 
       - name: Run Roslynator analysis
+        # LangVersion=preview only for Roslynator: its bundled Roslyn (CLI 0.13.0)
+        # still gates the C# 14 field keyword behind preview; the shipped build
+        # compiles it as GA without EnablePreviewFeatures
         run: >
           dotnet tool run roslynator analyze
-          --properties TargetFramework=net10.0
+          --properties TargetFramework=net10.0 LangVersion=preview
           --severity-level hidden
           --verbosity normal
 
