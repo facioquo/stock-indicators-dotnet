@@ -1,6 +1,6 @@
 ---
-status: accepted
 date: 2026-05-26
+last-revised: 2026-08-09
 deciders: Dave Skender (maintainer), AI agent contributors
 consulted: streaming-indicators swarm review (2026-05-24) — Architect, Inspector, Tester, Stercorator, Researcher, Designer, Skills-auditor personas
 informed: library consumers (via `docs/migration/v3.md` and per-indicator doc pages)
