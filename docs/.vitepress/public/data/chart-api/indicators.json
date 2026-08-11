@@ -623,7 +623,7 @@
     ]
   },
   {
-    "name": "Bollinger Bands\u00ae",
+    "name": "Bollinger Bands®",
     "uiid": "BB",
     "legendTemplate": "BB([P1],[P2])",
     "endpoint": "https://charts-api.stockindicators.dev/BB/",
@@ -690,7 +690,7 @@
     ]
   },
   {
-    "name": "Bollinger Bands\u00ae %B",
+    "name": "Bollinger Bands® %B",
     "uiid": "BB-PCTB",
     "legendTemplate": "BB([P1],[P2]) %B",
     "endpoint": "https://charts-api.stockindicators.dev/BB/",
@@ -2532,7 +2532,7 @@
         "displayName": "Step Size",
         "paramName": "accelerationStep",
         "dataType": "number",
-        "minimum": 1e-06,
+        "minimum": 1E-06,
         "maximum": 2500,
         "defaultValue": 0.02
       },
@@ -2540,7 +2540,7 @@
         "displayName": "Max Factor",
         "paramName": "maxAccelerationFactor",
         "dataType": "number",
-        "minimum": 1e-06,
+        "minimum": 1E-06,
         "maximum": 2500,
         "defaultValue": 0.2
       }
