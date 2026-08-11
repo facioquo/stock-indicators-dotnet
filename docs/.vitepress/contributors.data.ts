@@ -39,8 +39,8 @@ export default {
 
       // Get direct contributors
       const { data: directContributors } = await octokit.repos.listContributors({
-        owner: 'DaveSkender',
-        repo: 'Stock.Indicators',
+        owner: 'facioquo',
+        repo: 'stock-indicators-dotnet',
         per_page: 100
       })
 
@@ -62,8 +62,8 @@ export default {
 
       while (hasMore && page <= 10) { // Limit to 10 pages to avoid excessive API calls and build time
         const { data: commits } = await octokit.repos.listCommits({
-          owner: 'DaveSkender',
-          repo: 'Stock.Indicators',
+          owner: 'facioquo',
+          repo: 'stock-indicators-dotnet',
           per_page: 100,
           page
         })

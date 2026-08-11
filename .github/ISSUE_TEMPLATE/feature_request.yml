@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thank you &#128150; for taking the time to make a recommendation for the [`FacioQuo.Stock.Indicators` NuGet library](https://www.nuget.org/packages/FacioQuo.Stock.Indicators)! If you have an idea that you don't want us to track in [our backlog](https://github.com/users/DaveSkender/projects/1), consider posting in our community [discussions](https://github.com/facioquo/stock-indicators-dotnet/discussions).
+        Thank you &#128150; for taking the time to make a recommendation for the [`FacioQuo.Stock.Indicators` NuGet library](https://www.nuget.org/packages/FacioQuo.Stock.Indicators)! If you have an idea that you don't want us to track in [our backlog](https://github.com/orgs/facioquo/projects/27), consider posting in our community [discussions](https://github.com/facioquo/stock-indicators-dotnet/discussions).
   - type: textarea
     id: request
     attributes:
