@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@facioquo/indy-charts':
-        specifier: ^0.9.0
-        version: 0.9.0(chart.js@4.5.1)(chartjs-plugin-annotation@3.1.0(chart.js@4.5.1))(vue@3.5.41)
+        specifier: ^0.9.1
+        version: 0.9.1(chart.js@4.5.1)(chartjs-plugin-annotation@3.1.0(chart.js@4.5.1))(vue@3.5.41)
       chart.js:
         specifier: ^4.5.1
         version: 4.5.1
@@ -224,8 +224,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@facioquo/indy-charts@0.9.0':
-    resolution: {integrity: sha512-Os+KReA5YuTTfRbp11GH1CFk2AxWXbsv/wqXQ0YIW7eDpboY6+I7NSAM4k6WcxVYewkRkN2pwp0vXcJ+NbXxVA==, tarball: https://npm.pkg.github.com/download/@facioquo/indy-charts/0.9.0/4e5d5502baee22505b44c27edf80c2ca6d07c5a2}
+  '@facioquo/indy-charts@0.9.1':
+    resolution: {integrity: sha512-jkoaRi59wWFViJx+WnDxN9zYKURUZuV8bu7QAOrac+dhqWJO3gyNs1G8nOtJya1dsLXBh7+62xKUUqDBorrwIw==, tarball: https://npm.pkg.github.com/download/@facioquo/indy-charts/0.9.1/a0acfdd31fc255ecdf99a57e7c37144dfe400101}
     engines: {node: '>=22'}
     peerDependencies:
       chart.js: ^4.5.1
@@ -1260,7 +1260,7 @@ snapshots:
   '@esbuild/win32-x64@0.28.2':
     optional: true
 
-  '@facioquo/indy-charts@0.9.0(chart.js@4.5.1)(chartjs-plugin-annotation@3.1.0(chart.js@4.5.1))(vue@3.5.41)':
+  '@facioquo/indy-charts@0.9.1(chart.js@4.5.1)(chartjs-plugin-annotation@3.1.0(chart.js@4.5.1))(vue@3.5.41)':
     dependencies:
       chart.js: 4.5.1
       chartjs-adapter-date-fns: 3.0.0(chart.js@4.5.1)(date-fns@4.4.0)

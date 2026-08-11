@@ -99,6 +99,7 @@ export default {
         ForceIndex:      { uiid: 'FORCE',           title: 'Force Index' },
         Fractal:         { uiid: 'Fractal',         title: 'Williams Fractal' },
         Gator:           { uiid: 'GATOR',           title: 'Gator Oscillator' },
+        HeikinAshi:      { uiid: 'HEIKIN-ASHI',     title: 'Heikin-Ashi' },
         HL2:             { uiid: 'HL2',             title: 'Median Price (HL2)' },
         HLC3:            { uiid: 'HLC3',            title: 'Typical Price (HLC3)' },
         Hma:             { uiid: 'Hma',             title: 'Hull Moving Average' },
