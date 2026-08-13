@@ -1,6 +1,10 @@
 # Architecture decision records
 
-This folder holds the project's Architecture Decision Records (ADRs) using the [MADR 4.0](https://adr.github.io/madr/) template.
+This folder holds the project's Architecture Decision Records (ADRs) using the [MADR 4.0](https://adr.github.io/madr/) template, with two deliberate departures from it.
+
+**A record carries no status field, and it is revised in place.** If a record is in this folder on the default branch, it is the decision. Nothing unfinished is committed — an open question stays in its pull request until it is settled, and a rejected alternative belongs in the accepted record's *Considered options*, where a reader sees it against what won.
+
+The reason is the reader. Most readers of this folder are AI coding agents, and an agent that opens a record acts on what it says. A status lifecycle assumes a reader who checks a field, scrolls to the bottom, and follows a link to a successor; that traversal is optional, its omission is silent, and the result is work built on a decision the project already moved past. A field that reads `accepted` on every live record carries no information anyway. Git holds every prior version, so nothing is lost by rewriting a record when the decision changes.
 
 ## What goes here
 
@@ -18,7 +22,7 @@ Decisions that **don't** go here:
 
 ## File naming
 
-`NNNN-kebab-case-title.md` where `NNNN` is a 4-digit sequence starting at `0001`. The number is permanent once assigned; do not renumber when a later ADR supersedes an earlier one — instead set the superseded ADR's `status:` to `superseded by [NNNN](NNNN-...md)`.
+`NNNN-kebab-case-title.md` where `NNNN` is a 4-digit sequence starting at `0001`. The number is permanent once assigned; never renumber and never reallocate a retired number, because citations resolve by number. When a later ADR supersedes an earlier one, reduce the earlier record to a stub — its title, one sentence of what it decided, and a pointer to its replacement — so nothing in it can be acted on. Its shape is the marker.
 
 ## Template
 
@@ -26,8 +30,8 @@ Use MADR 4.0:
 
 ```markdown
 ---
-status: {proposed | accepted | rejected | superseded by [NNNN](NNNN-...md)}
 date: YYYY-MM-DD
+last-revised: YYYY-MM-DD
 deciders: {names or roles}
 consulted: {optional — names or sources}
 informed: {optional — names or sources}

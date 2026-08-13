@@ -28,7 +28,7 @@ async function mockStockChartsApi(page: Page): Promise<void> {
   // is registered first, so every specific route below shadows it. Any indicator
   // endpoint we don't explicitly fixture returns an empty array → the chart
   // reaches the (tolerated) empty state instead of touching the network.
-  await page.route(/stock-charts-api\.azurewebsites\.net\/.+/, (route: Route) =>
+  await page.route(/charts-api\.stockindicators\.dev\/.+/, (route: Route) =>
     route.fulfill({ contentType: 'application/json', body: '[]' })
   )
 

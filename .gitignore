@@ -78,6 +78,7 @@ CLAUDE.local.md
 .tmp/
 .vitepress/cache/
 .vitepress/dist/
+.wrangler/
 _site/
 vendor/
 coverage/

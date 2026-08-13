@@ -28,7 +28,7 @@ features:
   - title: Heikin Ashi
     details: Modified candlestick transform of price based on prior period price for smoothing
     icon:
-      src: /assets/thumbs/_placeholder.svg
+      src: /assets/thumbs/indicators/heikin-ashi.png
     link: /indicators/heikin-ashi
 
   - title: Renko Charts
