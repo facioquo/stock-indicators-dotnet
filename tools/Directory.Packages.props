@@ -19,11 +19,8 @@
     <PackageVersion Include="Alpaca.Markets" Version="7.2.0" />
     <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
     <PackageVersion Include="JKorf.Coinbase.Net" Version="4.4.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
-    <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.11" />
     <PackageVersion Include="Roslynator.Analyzers" Version="4.16.0" />
-    <!-- temp pin for vulnerability in Microsoft.AspNetCore.OpenApi v10.0.10 dependency
-         see https://github.com/advisories/GHSA-v5pm-xwqc-g5wc for details -->
-    <PackageVersion Include="Microsoft.OpenApi" Version="2.8.0" />
   </ItemGroup>
 </Project>

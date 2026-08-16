@@ -32,10 +32,6 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" />
     <PackageReference Include="Roslynator.Analyzers" />
-
-    <!-- temp pin for vulnerability in Microsoft.AspNetCore.OpenApi v10.0.9 dependency
-         see https://github.com/advisories/GHSA-v5pm-xwqc-g5wc for details -->
-    <PackageReference Include="Microsoft.OpenApi" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
