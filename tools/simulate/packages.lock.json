@@ -4,9 +4,9 @@
     "net10.0": {
       "JKorf.Coinbase.Net": {
         "type": "Direct",
-        "requested": "[4.4.0, )",
-        "resolved": "4.4.0",
-        "contentHash": "iw0GRqynjQZXPaVUqUe6TZMYuHlQgtZmlPMrYTMHhAGbWNZYqrShQ6nEWrx0N8pLq6dTZ9/1VkZOSeNvgsIqyA==",
+        "requested": "[4.4.1, )",
+        "resolved": "4.4.1",
+        "contentHash": "ptz3qGIxDn5f1m7oCpJMQJjxAccMB4vdXnTezI6iZjHNN3GxWa55keBbl0mBwRvEK0Ay9m2kZHNLiehF704zuQ==",
         "dependencies": {
           "CryptoExchange.Net": "12.4.0",
           "Microsoft.IdentityModel.JsonWebTokens": "8.15.0"
