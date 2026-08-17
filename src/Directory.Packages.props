@@ -16,7 +16,7 @@
     </PackageReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.301" />
-    <PackageVersion Include="Roslynator.Analyzers" Version="4.16.0" />
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.400" />
+    <PackageVersion Include="Roslynator.Analyzers" Version="4.16.1" />
   </ItemGroup>
 </Project>

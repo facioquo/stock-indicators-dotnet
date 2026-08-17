@@ -18,9 +18,9 @@
   <ItemGroup>
     <PackageVersion Include="Alpaca.Markets" Version="7.2.0" />
     <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
-    <PackageVersion Include="JKorf.Coinbase.Net" Version="4.4.0" />
+    <PackageVersion Include="JKorf.Coinbase.Net" Version="4.4.1" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.11" />
     <PackageVersion Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.11" />
-    <PackageVersion Include="Roslynator.Analyzers" Version="4.16.0" />
+    <PackageVersion Include="Roslynator.Analyzers" Version="4.16.1" />
   </ItemGroup>
 </Project>
