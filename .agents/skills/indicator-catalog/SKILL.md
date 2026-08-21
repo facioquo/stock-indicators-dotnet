@@ -67,6 +67,8 @@ public static partial class Ema
 
 `.WithMethodName()` must be in style-specific listings, NOT in `CommonListing`.
 
+`IndicatorListing.ResultRecordType` is derived from the method name when the listing is built — do not set it by hand and do not add a builder method for it. Naming a method of the wrong style (e.g. `ToEma` on the Buffer listing) makes it report the wrong result shape.
+
 ## Parameter patterns
 
 - `AddParameter<T>()` — primitive value types (typically `int` or `double`)
@@ -74,6 +76,8 @@ public static partial class Ema
 - `AddDateParameter()` — DateTime
 - `AddSeriesParameter()` — `IReadOnlyList<T> where T : IReusable`
 - `minimum` and `maximum` required for all numeric parameters
+- `parameterName` must match the bound method's parameter name exactly — a mismatch makes a catalog-bound caller silently receive the default instead of the value it supplied
+- Declare parameters as an unbroken run in signature order, skipping none in the middle; `ListingExecutor` binds them positionally and picks an overload by argument count
 
 ## Result patterns
 
@@ -128,6 +132,7 @@ listings.Add(Beta.SeriesListing);
 - Wrong indicator method name
 - `isReusable: true` for `ISeries` models
 - Multiple `isReusable: true` results per indicator
+- A `dataName` or `parameterName` that names a member the library does not have
 
 ## Testing
 
@@ -147,3 +152,10 @@ public class EmaCatalogTests : TestBase
     }
 }
 ```
+
+`tests/Library/Common/Catalog/Catalog.Binding.Tests.cs` additionally enforces, for every
+listing in the catalog, that `MethodName` resolves to a real method of the listing's own
+style, that each `dataName` resolves to a property on that method's result record, and
+that each `parameterName` forms a contiguous, in-order run in the signature. A listing
+naming a member the library does not have fails there. It does not check parameter
+*types* or value semantics, so keep writing the per-indicator test.

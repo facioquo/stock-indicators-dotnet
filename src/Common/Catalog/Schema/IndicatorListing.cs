@@ -43,9 +43,21 @@ public record IndicatorListing
     public required IReadOnlyList<IndicatorResult> Results { get; init; }
 
     /// <summary>
-    /// Gets or sets the return type name for the indicator method.
+    /// Gets the name of the result record type returned by the indicator method.
     /// </summary>
-    public string? ReturnType { get; init; }
+    /// <remarks>
+    /// Derived from <see cref="MethodName"/> when the listing is built, so it cannot
+    /// drift from the method it describes. This is the record type, not the method's
+    /// literal return type: it is <c>EmaResult</c> for <c>ToEma</c>, <c>ToEmaList</c>,
+    /// and <c>ToEmaHub</c> alike, even though those return
+    /// <c>IReadOnlyList&lt;EmaResult&gt;</c>, <c>EmaList</c>, and <c>EmaHub</c>
+    /// respectively. It is the record whose properties
+    /// <see cref="IndicatorResult.DataName"/> names. It is <c>null</c> when
+    /// <see cref="MethodName"/> is unset, and can also be <c>null</c> if the method
+    /// cannot be resolved — which trimming or NativeAOT publishing may cause, since
+    /// the derivation reflects over the assembly. Check for <c>null</c> before use.
+    /// </remarks>
+    public string? ResultRecordType { get; init; }
 
     /// <summary>
     /// Gets or sets the method name for automation use cases.

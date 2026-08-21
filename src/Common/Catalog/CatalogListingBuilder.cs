@@ -310,6 +310,7 @@ internal class CatalogListingBuilder
             Parameters = _parameters.Count > 0 ? _parameters : null,
             Results = _results,
             MethodName = _methodName,
+            ResultRecordType = CatalogMethodResolver.GetResultTypeName(_methodName),
             LegendTemplate = GenerateLegendTemplate()
         };
     }

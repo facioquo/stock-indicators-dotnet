@@ -35,28 +35,32 @@ internal static class ListingExecutor
         string methodName = listing.MethodName
             ?? throw new InvalidOperationException("MethodName is required for dynamic execution");
 
-        // Get the assembly containing the indicators
-        Assembly indicatorsAssembly = typeof(Ema).Assembly;
-
-        // Find all static classes in the assembly
-        Type[] types = indicatorsAssembly.GetTypes()
-            .Where(t => t.IsClass && t.IsAbstract && t.IsSealed) // static classes
-            .ToArray();
-
-        List<MethodInfo> methods = [];
-
-        // Search for the method across all static classes
-        foreach (Type type in types)
-        {
-            MethodInfo[] typeMethods = type.GetMethods(BindingFlags.Public | BindingFlags.Static)
-                .Where(m => m.Name == methodName)
-                .ToArray();
-            methods.AddRange(typeMethods);
-        }
+        // Find the method's overloads across the library's static classes
+        List<MethodInfo> methods = CatalogMethodResolver.GetOverloads(methodName).ToList();
 
         if (methods.Count == 0)
         {
-            throw new InvalidOperationException($"Method {methodName} not found");
+            throw new InvalidOperationException($"Method '{methodName}' not found");
+        }
+
+        // Reject overrides that name no catalog parameter. Ignoring them would fall
+        // through to the default below, so the caller would receive a value it did not
+        // ask for, with no indication that its argument was discarded.
+        if (parameters is not null)
+        {
+            foreach (string providedName in parameters.Keys)
+            {
+                if (listing.Parameters?.Any(p => p.ParameterName == providedName) != true)
+                {
+                    string expected = listing.Parameters is { Count: > 0 }
+                        ? string.Join(", ", listing.Parameters.Select(static p => p.ParameterName))
+                        : "(none - this indicator takes no parameters)";
+
+                    throw new InvalidOperationException(
+                        $"Parameter '{providedName}' is not defined for indicator '{listing.Uiid}'. "
+                      + $"Expected one of: {expected}");
+                }
+            }
         }
 
         // Build parameter array using catalog metadata and user overrides
@@ -96,7 +100,7 @@ internal static class ListingExecutor
         }
 
         // Find the method that matches our parameter count
-        MethodInfo? targetMethod = methods.FirstOrDefault(m => m.GetParameters().Length == parameterList.Count) ?? throw new InvalidOperationException($"No {methodName} method found with {parameterList.Count} parameters");
+        MethodInfo? targetMethod = methods.FirstOrDefault(m => m.GetParameters().Length == parameterList.Count) ?? throw new InvalidOperationException($"No '{methodName}' method found with {parameterList.Count} parameters");
 
         // If the method is generic, make it specific for the IBar interface type.
         // Indicator methods that are generic use IBar as the constraint.

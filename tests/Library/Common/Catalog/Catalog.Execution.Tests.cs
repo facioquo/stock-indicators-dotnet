@@ -236,4 +236,48 @@ public class CatalogExecutionTests : TestBase
         Action act = () => bars.ExecuteFromJson<RsiResult>(json);
         act.Should().Throw<InvalidOperationException>().WithMessage("*not found in catalog*");
     }
+
+    [TestMethod]
+    public void ExecuteRejectsUnknownParameterName()
+    {
+        // Arrange
+        IndicatorListing listing = Catalog.Get("EMA", Style.Series);
+        IReadOnlyList<Bar> bars = Bars.Take(50).ToList();
+
+        // Act — a name the listing does not define, e.g. one left over from a
+        // renamed catalog parameter
+        Action act = () => listing
+            .WithParams(new Dictionary<string, object> { ["lookbackPeriodz"] = 10 })
+            .FromSource((IEnumerable<IBar>)bars)
+            .Execute<EmaResult>();
+
+        // Assert — must fail loudly rather than silently substituting the default,
+        // and name the parameters it would have accepted
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("*lookbackPeriodz*is not defined*")
+            .WithMessage("*Expected one of: lookbackPeriods*");
+    }
+
+    [TestMethod]
+    public void ExecuteRejectsUnknownParameterNameOnParameterlessListing()
+    {
+        // Arrange — a listing that declares no parameters at all
+        IndicatorListing listing = Catalog.Get("GATOR", Style.Series);
+        listing.Should().NotBeNull();
+        listing.Parameters.Should().BeNull("this listing declares no parameters");
+
+        IReadOnlyList<Bar> bars = Bars.Take(50).ToList();
+
+        // Act
+        Action act = () => listing
+            .WithParams(new Dictionary<string, object> { ["lookbackPeriods"] = 10 })
+            .FromSource((IEnumerable<IBar>)bars)
+            .Execute<GatorResult>();
+
+        // Assert — the message must say the indicator takes none, not trail off
+        // with an empty list
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("*lookbackPeriods*is not defined*")
+            .WithMessage("*this indicator takes no parameters*");
+    }
 }

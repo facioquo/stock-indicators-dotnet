@@ -25,8 +25,8 @@ public class PmoCatalogTests : TestBase
 
         IndicatorParam timePeriodsParam = listing.Parameters.SingleOrDefault(static p => p.ParameterName == "timePeriods");
         timePeriodsParam.Should().NotBeNull();
-        IndicatorParam smoothingPeriodsParam1 = listing.Parameters.SingleOrDefault(static p => p.ParameterName == "smoothingPeriods");
-        smoothingPeriodsParam1.Should().NotBeNull();
+        IndicatorParam smoothPeriodsParam1 = listing.Parameters.SingleOrDefault(static p => p.ParameterName == "smoothPeriods");
+        smoothPeriodsParam1.Should().NotBeNull();
         IndicatorParam signalPeriodsParam2 = listing.Parameters.SingleOrDefault(static p => p.ParameterName == "signalPeriods");
         signalPeriodsParam2.Should().NotBeNull();
 
@@ -62,8 +62,8 @@ public class PmoCatalogTests : TestBase
 
         IndicatorParam timePeriodsParam = listing.Parameters.SingleOrDefault(static p => p.ParameterName == "timePeriods");
         timePeriodsParam.Should().NotBeNull();
-        IndicatorParam smoothingPeriodsParam1 = listing.Parameters.SingleOrDefault(static p => p.ParameterName == "smoothingPeriods");
-        smoothingPeriodsParam1.Should().NotBeNull();
+        IndicatorParam smoothPeriodsParam1 = listing.Parameters.SingleOrDefault(static p => p.ParameterName == "smoothPeriods");
+        smoothPeriodsParam1.Should().NotBeNull();
         IndicatorParam signalPeriodsParam2 = listing.Parameters.SingleOrDefault(static p => p.ParameterName == "signalPeriods");
         signalPeriodsParam2.Should().NotBeNull();
 
