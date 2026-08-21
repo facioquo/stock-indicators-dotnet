@@ -60,6 +60,24 @@ public record IndicatorListing
     public string? ResultRecordType { get; init; }
 
     /// <summary>
+    /// Gets the name of the result record type returned by the indicator method.
+    /// </summary>
+    /// <remarks>
+    /// Renamed to <see cref="ResultRecordType"/>, which says what the value actually
+    /// is: the result record, not the method's literal return type. This alias keeps
+    /// code written against 3.0.0 compiling and is removed in the next major version.
+    /// It is excluded from serialization so the JSON carries the value once, under
+    /// the new name.
+    /// </remarks>
+    [JsonIgnore]
+    [Obsolete("Renamed to ResultRecordType. This alias is removed in the next major version.")]
+    public string? ReturnType
+    {
+        get => ResultRecordType;
+        init => ResultRecordType = value;
+    }
+
+    /// <summary>
     /// Gets or sets the method name for automation use cases.
     /// </summary>
     public string? MethodName { get; init; }
