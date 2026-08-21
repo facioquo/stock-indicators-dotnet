@@ -1,3 +1,4 @@
+#nullable enable
 using System.Reflection;
 
 namespace Catalogging;
@@ -17,67 +18,26 @@ internal static class CatalogReflection
     private static readonly Assembly IndicatorsAssembly = typeof(Catalog).Assembly;
 
     /// <summary>
-    /// Static classes that host the public indicator extension methods.
-    /// </summary>
-    private static readonly Type[] StaticHosts = IndicatorsAssembly
-        .GetTypes()
-        .Where(static t => t.IsClass && t.IsAbstract && t.IsSealed)
-        .ToArray();
-
-    /// <summary>
     /// Gets every public static overload with the given method name.
     /// </summary>
+    /// <remarks>
+    /// Delegates to the library's own <see cref="CatalogMethodResolver"/> so the tests
+    /// exercise the same resolution the catalog build uses. Re-implementing it here
+    /// would make the derivation tests compare a value against a copy of the function
+    /// that produced it.
+    /// </remarks>
     /// <param name="methodName">Method name from a catalog listing.</param>
     /// <returns>All matching overloads; empty when the name resolves to nothing.</returns>
     internal static IReadOnlyList<MethodInfo> GetOverloads(string methodName)
-        => StaticHosts
-            .SelectMany(static t => t.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly))
-            .Where(m => m.Name == methodName)
-            .ToList();
+        => CatalogMethodResolver.GetOverloads(methodName).ToList();
 
     /// <summary>
     /// Gets the result record type produced by an indicator method, for any style.
     /// </summary>
     /// <param name="method">Indicator method bound to a catalog listing.</param>
-    /// <returns>
-    /// Result record type — <c>EmaResult</c> for all three of
-    /// <c>IReadOnlyList&lt;EmaResult&gt;</c> (Series), <c>EmaList</c> (Buffer),
-    /// and <c>EmaHub</c> (Stream) — or <c>null</c> when it cannot be determined.
-    /// </returns>
-    internal static Type GetResultType(MethodInfo method)
-    {
-        Type returnType = method.ReturnType;
-
-        // Series: IReadOnlyList<TResult>
-        if (returnType.IsGenericType
-         && returnType.GetGenericTypeDefinition() == typeof(IReadOnlyList<>))
-        {
-            return returnType.GetGenericArguments()[0];
-        }
-
-        // Buffer: a BufferList implementing IReadOnlyList<TResult>
-        Type listInterface = returnType
-            .GetInterfaces()
-            .FirstOrDefault(static i => i.IsGenericType
-                                     && i.GetGenericTypeDefinition() == typeof(IReadOnlyList<>));
-
-        if (listInterface != null)
-        {
-            return listInterface.GetGenericArguments()[0];
-        }
-
-        // Stream: a hub deriving from StreamHub<TIn, TOut>
-        for (Type baseType = returnType; baseType != null; baseType = baseType.BaseType)
-        {
-            if (baseType.IsGenericType
-             && baseType.GetGenericTypeDefinition() == typeof(StreamHub<,>))
-            {
-                return baseType.GetGenericArguments()[1]; // TOut
-            }
-        }
-
-        return null;
-    }
+    /// <returns>Result record type, or <c>null</c> when it cannot be determined.</returns>
+    internal static Type? GetResultType(MethodInfo method)
+        => CatalogMethodResolver.GetResultType(method);
 
     /// <summary>
     /// Gets the indicator style implied by a method's return shape.
@@ -101,7 +61,7 @@ internal static class CatalogReflection
             return Style.Series;
         }
 
-        for (Type baseType = returnType; baseType != null; baseType = baseType.BaseType)
+        for (Type? baseType = returnType; baseType is not null; baseType = baseType.BaseType)
         {
             if (baseType.IsGenericType
              && baseType.GetGenericTypeDefinition() == typeof(StreamHub<,>))
@@ -144,6 +104,22 @@ internal static class CatalogReflection
     /// <returns><c>true</c> when the catalog names form a contiguous run.</returns>
     internal static bool IsContiguousRun(string[] catalogNames, string[] methodNames)
         => methodNames.AsSpan().IndexOf(catalogNames.AsSpan()) >= 0;
+
+    /// <summary>
+    /// Finds a public library type by its simple name.
+    /// </summary>
+    /// <remarks>
+    /// Mirrors what a catalog-driven consumer does with a type name it reads from a
+    /// listing: look the type up in the library and reflect over its properties.
+    /// </remarks>
+    /// <param name="typeName">Simple type name, such as <c>EmaResult</c>.</param>
+    /// <returns>The matching public type, or <c>null</c> when there is none.</returns>
+    internal static Type? FindPublicType(string typeName)
+        => string.IsNullOrWhiteSpace(typeName)
+            ? null
+            : IndicatorsAssembly
+                .GetTypes()
+                .FirstOrDefault(t => t.IsPublic && string.Equals(t.Name, typeName, StringComparison.Ordinal));
 
     /// <summary>
     /// Gets a short identity for a listing, for use in failure messages.

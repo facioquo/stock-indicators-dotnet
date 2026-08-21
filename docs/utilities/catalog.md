@@ -67,7 +67,7 @@ Each `IndicatorListing` describes one indicator-and-style combination. This is t
 | `Category` | `Category` | Indicator category (see below) |
 | `Parameters` | `IReadOnlyList<IndicatorParam>?` | Input parameters (`null` when there are none) |
 | `Results` | `IReadOnlyList<IndicatorResult>` | Output fields the indicator produces |
-| `ReturnType` | `string?` | Result type name |
+| `ResultRecordType` | `string?` | Name of the result record the method returns (e.g. `"EmaResult"`), the same for all three styles — the record type, not the method's literal return type (`EmaList` for Buffer, `EmaHub` for Stream). `null` when `MethodName` is unset, or when the method cannot be resolved (possible under trimming or NativeAOT publishing) — check before use |
 | `MethodName` | `string?` | Method name, for automation use cases |
 | `LegendTemplate` | `string` | Legend template for charting |
 
