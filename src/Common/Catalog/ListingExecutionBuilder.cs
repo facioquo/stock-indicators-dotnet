@@ -40,7 +40,9 @@ public class ListingExecutionBuilder
             [parameterName] = value!
         };
 
-        return new ListingExecutionBuilder(BaseListing, newOverrides);
+        return new ListingExecutionBuilder(BaseListing, newOverrides) {
+            _bars = _bars
+        };
     }
 
     /// <summary>
@@ -59,7 +61,9 @@ public class ListingExecutionBuilder
             newOverrides[kvp.Key] = kvp.Value;
         }
 
-        return new ListingExecutionBuilder(BaseListing, newOverrides);
+        return new ListingExecutionBuilder(BaseListing, newOverrides) {
+            _bars = _bars
+        };
     }
 
     /// <summary>

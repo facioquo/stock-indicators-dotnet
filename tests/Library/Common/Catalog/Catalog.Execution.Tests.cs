@@ -280,4 +280,57 @@ public class CatalogExecutionTests : TestBase
             .WithMessage("*lookbackPeriods*is not defined*")
             .WithMessage("*this indicator takes no parameters*");
     }
+
+    [TestMethod]
+    public void FluentBuilderKeepsBarsWhateverTheCallOrder()
+    {
+        IndicatorListing listing = Catalog.Get("EMA", Style.Series);
+        IReadOnlyList<Bar> bars = Bars.Take(50).ToList();
+        IReadOnlyList<EmaResult> expected = bars.ToEma(10);
+
+        // parameters first, then source
+        IReadOnlyList<EmaResult> paramsFirst = listing
+            .WithParamValue("lookbackPeriods", 10)
+            .FromSource((IEnumerable<IBar>)bars)
+            .Execute<EmaResult>();
+
+        // source first, then parameters — the natural fluent order, which used to
+        // drop the bars and throw at Execute
+        IReadOnlyList<EmaResult> sourceFirst = listing
+            .From((IEnumerable<IBar>)bars)
+            .WithParamValue("lookbackPeriods", 10)
+            .Execute<EmaResult>();
+
+        // and via the dictionary overload, which copies state the same way
+        IReadOnlyList<EmaResult> viaDictionary = listing
+            .From((IEnumerable<IBar>)bars)
+            .WithParams(new Dictionary<string, object> { ["lookbackPeriods"] = 10 })
+            .Execute<EmaResult>();
+
+        foreach (IReadOnlyList<EmaResult> actual in new[] { paramsFirst, sourceFirst, viaDictionary })
+        {
+            actual.Should().HaveCount(expected.Count);
+            actual[^1].Ema.Should().Be(expected[^1].Ema);
+        }
+    }
+
+    [TestMethod]
+    public void AmbiguousArityResolvesToTheOverloadThatAcceptsBars()
+    {
+        // ToGator has two arity-one overloads — IReadOnlyList<IReusable> and
+        // IReadOnlyList<AlligatorResult>. Only the first accepts bars, and which one
+        // reflection returns first is unspecified, so selection must not depend on it.
+        IndicatorListing listing = Catalog.Get("GATOR", Style.Series);
+        listing.Should().NotBeNull();
+        listing.Parameters.Should().BeNull("GATOR declares no catalog parameters");
+
+        IReadOnlyList<Bar> bars = Bars.Take(200).ToList();
+
+        IReadOnlyList<GatorResult> viaCatalog = listing.Execute<GatorResult>(bars);
+        IReadOnlyList<GatorResult> direct = bars.ToGator();
+
+        viaCatalog.Should().HaveCount(direct.Count);
+        viaCatalog[^1].Upper.Should().Be(direct[^1].Upper);
+        viaCatalog[^1].Lower.Should().Be(direct[^1].Lower);
+    }
 }
