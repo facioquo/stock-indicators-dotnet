@@ -77,8 +77,6 @@ When adding new hubs, follow the canonical `RollbackState` pattern in `src/Commo
 - `IIncrementFromChain` — `Add(DateTime, double)`, `Add(IReusable)`, `Add(IReadOnlyList<IReusable>)` — for chainable single-value indicators
 - `IIncrementFromBar` — `Add(IBar)`, `Add(IReadOnlyList<IBar>)` — for indicators requiring full OHLCV
 
-The implementation uses the C# `field` keyword in `BufferList.cs`, which is currently why `<EnablePreviewFeatures>true</EnablePreviewFeatures>` remains in `src/Indicators.csproj`.
-
 ## Catalog framework specifics
 
 `PopulateCatalog()` in `src/Common/Catalog/Catalog.Listings.cs` registers all indicator listings. Convention enforced by the existing file:
