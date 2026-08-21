@@ -10,7 +10,7 @@ public static partial class Tr
             .WithName("True Range")
             .WithId("TR")
             .WithCategory(Category.PriceCharacteristic)
-            .AddResult("Tr", "True Range", ResultType.Default, isReusable: true)
+            .AddResult(nameof(TrResult.Tr), "True Range", ResultType.Default, isReusable: true)
             .Build();
 
     /// <summary>

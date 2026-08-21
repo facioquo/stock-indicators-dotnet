@@ -7,7 +7,7 @@ Concise reference for building, discovering, and executing indicator listings.
 Use `IndicatorDefinitionBuilder` inside each indicator’s `*.Catalog.cs` to define metadata once per style:
 
 ```csharp
-internal static readonly IndicatorListing SeriesListing = new IndicatorDefinitionBuilder()
+internal static readonly IndicatorListing SeriesListing = new CatalogListingBuilder()
         .WithName("Exponential Moving Average")
         .WithId("EMA")
         .WithStyle(Style.Series)
@@ -16,7 +16,7 @@ internal static readonly IndicatorListing SeriesListing = new IndicatorDefinitio
         .AddParameter<int>("lookbackPeriods", "Lookback Period",
                 description: "Number of periods for the EMA calculation",
                 isRequired: true, defaultValue: 20, minimum: 2, maximum: 250)
-        .AddResult("Ema", "EMA", ResultType.Default, isReusable: true)
+        .AddResult(nameof(EmaResult.Ema), "EMA", ResultType.Default, isReusable: true)
         .Build();
 ```
 
@@ -27,6 +27,7 @@ Core builder methods: `.WithName`, `.WithId`, `.WithStyle`, `.WithCategory`, `.W
 - Use the same ID across styles (e.g., EMA)
 - Define separate listings: `SeriesListing`, `StreamListing`, `BufferListing`
 - Parameter names must exactly match method signatures
+- Result `dataName` uses `nameof(TResult.Property)` so a renamed result property fails the build
 
 ## Catalog and registry access
 

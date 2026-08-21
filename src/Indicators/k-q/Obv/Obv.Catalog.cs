@@ -10,7 +10,7 @@ public static partial class Obv
             .WithName("On-Balance Volume")
             .WithId("OBV")
             .WithCategory(Category.VolumeBased)
-            .AddResult("Obv", "OBV", ResultType.Default, isReusable: true)
+            .AddResult(nameof(ObvResult.Obv), "OBV", ResultType.Default, isReusable: true)
             .Build();
 
     /// <summary>

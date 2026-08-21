@@ -11,7 +11,7 @@ public static partial class Doji
             .WithId("DOJI")
             .WithCategory(Category.CandlestickPattern)
             .AddParameter<double>("maxPriceChangePercent", "Max Price Change %", defaultValue: 0.1, minimum: 0.0, maximum: 0.5)
-            .AddResult("Match", "Match", ResultType.Default, isReusable: true)
+            .AddResult(nameof(CandleResult.Match), "Match", ResultType.Default, isReusable: true)
             .Build();
 
     /// <summary>

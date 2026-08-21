@@ -11,8 +11,8 @@ public static partial class Fcb
             .WithId("FCB")
             .WithCategory(Category.PriceChannel)
             .AddParameter<int>("windowSpan", "Window Span", defaultValue: 2, minimum: 2, maximum: 30)
-            .AddResult("UpperBand", "Upper Band", ResultType.Default, isReusable: true)
-            .AddResult("LowerBand", "Lower Band", ResultType.Default)
+            .AddResult(nameof(FcbResult.UpperBand), "Upper Band", ResultType.Default, isReusable: true)
+            .AddResult(nameof(FcbResult.LowerBand), "Lower Band", ResultType.Default)
             .Build();
 
     /// <summary>

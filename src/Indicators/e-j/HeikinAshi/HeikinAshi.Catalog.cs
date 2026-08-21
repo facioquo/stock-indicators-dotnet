@@ -10,11 +10,11 @@ public static partial class HeikinAshi
             .WithName("HeikinAshi")
             .WithId("HEIKINASHI")
             .WithCategory(Category.PriceTransform)
-            .AddResult("Open", "Open", ResultType.Default)
-            .AddResult("High", "High", ResultType.Default)
-            .AddResult("Low", "Low", ResultType.Default)
-            .AddResult("Close", "Close", ResultType.Default, isReusable: true)
-            .AddResult("Volume", "Volume", ResultType.Default)
+            .AddResult(nameof(HeikinAshiResult.Open), "Open", ResultType.Default)
+            .AddResult(nameof(HeikinAshiResult.High), "High", ResultType.Default)
+            .AddResult(nameof(HeikinAshiResult.Low), "Low", ResultType.Default)
+            .AddResult(nameof(HeikinAshiResult.Close), "Close", ResultType.Default, isReusable: true)
+            .AddResult(nameof(HeikinAshiResult.Volume), "Volume", ResultType.Default)
             .Build();
 
     /// <summary>

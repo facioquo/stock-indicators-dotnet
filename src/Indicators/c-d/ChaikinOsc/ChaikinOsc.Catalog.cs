@@ -12,10 +12,10 @@ public static partial class ChaikinOsc
             .WithCategory(Category.VolumeBased)
             .AddParameter<int>("fastPeriods", "Fast Periods", defaultValue: 3, minimum: 1, maximum: 100)
             .AddParameter<int>("slowPeriods", "Slow Periods", defaultValue: 10, minimum: 1, maximum: 100)
-            .AddResult("MoneyFlowMultiplier", "Money Flow Multiplier", ResultType.Default)
-            .AddResult("MoneyFlowVolume", "Money Flow Volume", ResultType.Default)
-            .AddResult("Adl", "ADL", ResultType.Default)
-            .AddResult("Oscillator", "Oscillator", ResultType.Default, isReusable: true)
+            .AddResult(nameof(ChaikinOscResult.MoneyFlowMultiplier), "Money Flow Multiplier", ResultType.Default)
+            .AddResult(nameof(ChaikinOscResult.MoneyFlowVolume), "Money Flow Volume", ResultType.Default)
+            .AddResult(nameof(ChaikinOscResult.Adl), "ADL", ResultType.Default)
+            .AddResult(nameof(ChaikinOscResult.Oscillator), "Oscillator", ResultType.Default, isReusable: true)
             .Build();
 
     /// <summary>

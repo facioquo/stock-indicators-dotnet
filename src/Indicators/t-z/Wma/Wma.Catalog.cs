@@ -11,7 +11,7 @@ public static partial class Wma
             .WithId("WMA")
             .WithCategory(Category.MovingAverage)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", description: "Number of periods for the WMA calculation", isRequired: true, defaultValue: 14, minimum: 1, maximum: 250)
-            .AddResult("Wma", "WMA", ResultType.Default, isReusable: true)
+            .AddResult(nameof(WmaResult.Wma), "WMA", ResultType.Default, isReusable: true)
             .Build();
 
     /// <summary>

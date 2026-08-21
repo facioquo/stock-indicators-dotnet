@@ -11,7 +11,7 @@ public static partial class Epma
             .WithId("EPMA")
             .WithCategory(Category.MovingAverage)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", defaultValue: 10, minimum: 1, maximum: 250)
-            .AddResult("Epma", "EPMA", ResultType.Default, isReusable: true)
+            .AddResult(nameof(EpmaResult.Epma), "EPMA", ResultType.Default, isReusable: true)
             .Build();
 
     /// <summary>

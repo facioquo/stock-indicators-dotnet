@@ -13,11 +13,11 @@ public static partial class ConnorsRsi
             .AddParameter<int>("rsiPeriods", "RSI Periods", defaultValue: 3, minimum: 2, maximum: 250)
             .AddParameter<int>("streakPeriods", "Streak Periods", defaultValue: 2, minimum: 2, maximum: 50)
             .AddParameter<int>("rankPeriods", "Rank Periods", defaultValue: 100, minimum: 2, maximum: 250)
-            .AddResult("Streak", "Streak", ResultType.Default)
-            .AddResult("Rsi", "RSI", ResultType.Default)
-            .AddResult("RsiStreak", "RSI of Streak", ResultType.Default)
-            .AddResult("PercentRank", "Percent Rank", ResultType.Default)
-            .AddResult("ConnorsRsi", "ConnorsRSI", ResultType.Default, isReusable: true)
+            .AddResult(nameof(ConnorsRsiResult.Streak), "Streak", ResultType.Default)
+            .AddResult(nameof(ConnorsRsiResult.Rsi), "RSI", ResultType.Default)
+            .AddResult(nameof(ConnorsRsiResult.RsiStreak), "RSI of Streak", ResultType.Default)
+            .AddResult(nameof(ConnorsRsiResult.PercentRank), "Percent Rank", ResultType.Default)
+            .AddResult(nameof(ConnorsRsiResult.ConnorsRsi), "ConnorsRSI", ResultType.Default, isReusable: true)
             .Build();
 
     /// <summary>

@@ -11,8 +11,8 @@ public static partial class Dpo
             .WithId("DPO")
             .WithCategory(Category.Oscillator)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", defaultValue: 14, minimum: 2, maximum: 250)
-            .AddResult("Dpo", "DPO", ResultType.Default, isReusable: true)
-            .AddResult("Sma", "SMA", ResultType.Default)
+            .AddResult(nameof(DpoResult.Dpo), "DPO", ResultType.Default, isReusable: true)
+            .AddResult(nameof(DpoResult.Sma), "SMA", ResultType.Default)
             .Build();
 
     /// <summary>

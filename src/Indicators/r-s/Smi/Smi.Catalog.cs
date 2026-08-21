@@ -14,8 +14,8 @@ public static partial class Smi
             .AddParameter<int>("firstSmoothPeriods", "First Smooth Periods", description: "Number of periods for the first smoothing", isRequired: false, defaultValue: 25, minimum: 1, maximum: 300)
             .AddParameter<int>("secondSmoothPeriods", "Second Smooth Periods", description: "Number of periods for the second smoothing", isRequired: false, defaultValue: 2, minimum: 1, maximum: 50)
             .AddParameter<int>("signalPeriods", "Signal Periods", description: "Number of periods for the signal line", isRequired: false, defaultValue: 3, minimum: 1, maximum: 50)
-            .AddResult("Smi", "SMI", ResultType.Default, isReusable: true)
-            .AddResult("Signal", "Signal", ResultType.Default)
+            .AddResult(nameof(SmiResult.Smi), "SMI", ResultType.Default, isReusable: true)
+            .AddResult(nameof(SmiResult.Signal), "Signal", ResultType.Default)
             .Build();
 
     /// <summary>

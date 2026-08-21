@@ -11,8 +11,8 @@ public static partial class Vortex
             .WithId("VORTEX")
             .WithCategory(Category.PriceTrend)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", description: "Number of periods for the Vortex calculation", isRequired: false, defaultValue: 14, minimum: 2, maximum: 100)
-            .AddResult("Pvi", "VI+", ResultType.Default, isReusable: true)
-            .AddResult("Nvi", "VI-", ResultType.Default)
+            .AddResult(nameof(VortexResult.Pvi), "VI+", ResultType.Default, isReusable: true)
+            .AddResult(nameof(VortexResult.Nvi), "VI-", ResultType.Default)
             .Build();
 
     /// <summary>

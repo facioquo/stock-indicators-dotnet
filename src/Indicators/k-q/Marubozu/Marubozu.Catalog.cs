@@ -11,7 +11,7 @@ public static partial class Marubozu
             .WithId("MARUBOZU")
             .WithCategory(Category.CandlestickPattern)
             .AddParameter<double>("minBodyPercent", "Min Body Percent %", defaultValue: 95.0, minimum: 80.0, maximum: 100.0) // Default from C# method signature
-            .AddResult("Match", "Match", ResultType.Default, isReusable: true) // Based on CandleResult.Match
+            .AddResult(nameof(CandleResult.Match), "Match", ResultType.Default, isReusable: true) // Based on CandleResult.Match
             .Build();
 
     /// <summary>

@@ -12,8 +12,8 @@ public static partial class Mama
             .WithCategory(Category.MovingAverage)
             .AddParameter<double>("fastLimit", "Fast Limit", defaultValue: 0.5, minimum: 0.01, maximum: 0.99)
             .AddParameter<double>("slowLimit", "Slow Limit", defaultValue: 0.05, minimum: 0.01, maximum: 0.99)
-            .AddResult("Mama", "MAMA", ResultType.Default, isReusable: true)
-            .AddResult("Fama", "FAMA", ResultType.Default)
+            .AddResult(nameof(MamaResult.Mama), "MAMA", ResultType.Default, isReusable: true)
+            .AddResult(nameof(MamaResult.Fama), "FAMA", ResultType.Default)
             .Build();
 
     /// <summary>

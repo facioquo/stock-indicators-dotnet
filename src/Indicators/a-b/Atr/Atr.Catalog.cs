@@ -11,9 +11,9 @@ public static partial class Atr
             .WithId("ATR")
             .WithCategory(Category.PriceCharacteristic)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", defaultValue: 14, minimum: 2, maximum: 250)
-            .AddResult("Tr", "True Range", ResultType.Default)
-            .AddResult("Atr", "ATR", ResultType.Default)
-            .AddResult("Atrp", "ATR %", ResultType.Default, isReusable: true)
+            .AddResult(nameof(AtrResult.Tr), "True Range", ResultType.Default)
+            .AddResult(nameof(AtrResult.Atr), "ATR", ResultType.Default)
+            .AddResult(nameof(AtrResult.Atrp), "ATR %", ResultType.Default, isReusable: true)
             .Build();
 
     /// <summary>

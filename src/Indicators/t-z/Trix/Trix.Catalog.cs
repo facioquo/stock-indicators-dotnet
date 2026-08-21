@@ -11,7 +11,7 @@ public static partial class Trix
             .WithId("TRIX")
             .WithCategory(Category.Oscillator)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", description: "Number of periods for the TRIX calculation", isRequired: false, defaultValue: 14, minimum: 1, maximum: 250)
-            .AddResult("Trix", "TRIX", ResultType.Default, isReusable: true)
+            .AddResult(nameof(TrixResult.Trix), "TRIX", ResultType.Default, isReusable: true)
             .Build();
 
     /// <summary>
