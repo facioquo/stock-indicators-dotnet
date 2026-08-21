@@ -63,8 +63,17 @@ internal static class ListingExecutor
             }
         }
 
-        // Build parameter array using catalog metadata and user overrides
-        List<object?> parameterList = [bars];
+        // Build parameter array using catalog metadata and user overrides.
+        //
+        // A listing that declares series parameters names its own source inputs, so
+        // bars are not prepended as an implicit first argument — they instead fill
+        // the first series parameter the caller did not supply. Every other listing
+        // keeps bars as the implicit source, as before.
+        bool declaresSeries = listing.Parameters?.Any(
+            static p => p.DataType == IndicatorParam.SeriesDataType) == true;
+
+        List<object?> parameterList = declaresSeries ? [] : [bars];
+        bool barsBound = !declaresSeries;
 
         // Add parameters based on catalog metadata
         if (listing.Parameters != null)
@@ -76,6 +85,23 @@ internal static class ListingExecutor
                 if (parameters?.TryGetValue(param.ParameterName, out object? value) == true)
                 {
                     parameterList.Add(value);
+                }
+                else if (param.DataType == IndicatorParam.SeriesDataType)
+                {
+                    // The bars source stands in for one missing series input only.
+                    // Filling a second one with the same data would compute a
+                    // degenerate result (a series compared against itself), so a
+                    // further missing series input is an error, not a default.
+                    if (barsBound)
+                    {
+                        throw new InvalidOperationException(
+                            $"Series parameter '{param.ParameterName}' must be supplied for indicator '{listing.Uiid}'. "
+                          + "The bars source fills only the first series parameter; provide the rest "
+                          + $"with WithParamValue(\"{param.ParameterName}\", series) or FromSource(series, \"{param.ParameterName}\").");
+                    }
+
+                    parameterList.Add(bars);
+                    barsBound = true;
                 }
                 else if (param.IsRequired)
                 {

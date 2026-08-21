@@ -249,7 +249,7 @@ internal class CatalogListingBuilder
             ParameterName = parameterName,
             DisplayName = displayName,
             Description = description,
-            DataType = "IReadOnlyList<T> where T : IReusable",
+            DataType = IndicatorParam.SeriesDataType,
             IsRequired = isRequired,
             DefaultValue = null,
             Minimum = null,

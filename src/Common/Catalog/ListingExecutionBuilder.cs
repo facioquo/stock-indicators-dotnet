@@ -58,7 +58,12 @@ public class ListingExecutionBuilder
         Dictionary<string, object> newOverrides = new(_parameterOverrides);
         foreach (KeyValuePair<string, object> kvp in parameters)
         {
-            newOverrides[kvp.Key] = kvp.Value;
+            if (kvp.Value != null)
+            {
+                ValidateParameterType(kvp.Key, kvp.Value);
+            }
+
+            newOverrides[kvp.Key] = kvp.Value!;
         }
 
         return new ListingExecutionBuilder(BaseListing, newOverrides) {
@@ -125,7 +130,7 @@ public class ListingExecutionBuilder
             ?? throw new ArgumentException($"Parameter '{parameterName}' not found in indicator '{BaseListing.Uiid}'", nameof(parameterName));
 
         // Validate series parameters
-        if (param.DataType == "IReadOnlyList<T> where T : IReusable")
+        if (param.DataType == IndicatorParam.SeriesDataType)
         {
             if (value is not System.Collections.IEnumerable)
             {
@@ -182,12 +187,24 @@ public class ListingExecutionBuilder
     /// <exception cref="InvalidOperationException">Thrown when no series parameter is found.</exception>
     private string FindFirstSeriesParameter()
     {
-        IndicatorParam? seriesParam
+        List<IndicatorParam> seriesParams
             = BaseListing.Parameters?
-                .FirstOrDefault(static p => p.DataType == "IReadOnlyList<T> where T : IReusable");
+                .Where(static p => p.DataType == IndicatorParam.SeriesDataType)
+                .ToList() ?? [];
 
-        return seriesParam?.ParameterName
-            ?? throw new InvalidOperationException($"No series parameter found in indicator '{BaseListing.Uiid}'");
+        // With one series parameter the intent is unambiguous. With more than one,
+        // guessing would bind the caller's series to the first slot and demote the
+        // bars source to the second — silently inverting an asymmetric calculation
+        // such as PRS or BETA. Require the name instead.
+        return seriesParams.Count switch {
+            0 => throw new InvalidOperationException(
+                $"No series parameter found in indicator '{BaseListing.Uiid}'"),
+            1 => seriesParams[0].ParameterName,
+            _ => throw new InvalidOperationException(
+                $"Indicator '{BaseListing.Uiid}' has {seriesParams.Count} series parameters "
+              + $"({string.Join(", ", seriesParams.Select(static p => p.ParameterName))}); "
+              + "name the one to bind: FromSource(series, \"parameterName\")")
+        };
     }
 
     /// <summary>
