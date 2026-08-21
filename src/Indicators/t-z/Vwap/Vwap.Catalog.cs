@@ -12,8 +12,6 @@ public static partial class Vwap
             .WithCategory(Category.PriceChannel)
             .AddDateParameter("startDate", "Start Date", description: "Starting date for VWAP calculation", isRequired: false)
             .AddResult("Vwap", "VWAP", ResultType.Default, isReusable: true)
-            .AddResult("UpperBand", "Upper Band", ResultType.Default)
-            .AddResult("LowerBand", "Lower Band", ResultType.Default)
             .Build();
 
     /// <summary>

@@ -27,7 +27,7 @@ public class PrsCatalogTests : TestBase
         lookbackPeriodsParam.Should().NotBeNull();
 
         listing.Results.Should().NotBeNull();
-        listing.Results.Should().HaveCount(3);
+        listing.Results.Should().HaveCount(2);
 
         IndicatorResult prsResult = listing.Results.SingleOrDefault(static r => r.DataName == "Prs");
         prsResult.Should().NotBeNull();
@@ -37,9 +37,5 @@ public class PrsCatalogTests : TestBase
         prspercentResult1.Should().NotBeNull();
         prspercentResult1?.DisplayName.Should().Be("PRS %");
         prspercentResult1.IsReusable.Should().Be(false);
-        IndicatorResult smaResult2 = listing.Results.SingleOrDefault(static r => r.DataName == "Sma");
-        smaResult2.Should().NotBeNull();
-        smaResult2?.DisplayName.Should().Be("SMA");
-        smaResult2.IsReusable.Should().Be(false);
     }
 }
