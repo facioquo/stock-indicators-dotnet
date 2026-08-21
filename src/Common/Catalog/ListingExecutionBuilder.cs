@@ -157,6 +157,12 @@ public class ListingExecutionBuilder
             throw new ArgumentException(
                 $"Parameter '{parameterName}' expects a double value, but received {value.GetType().Name}", nameof(value));
         }
+        else if (param.DataType == "Decimal" && value is not decimal)
+        {
+            throw new ArgumentException(
+                $"Parameter '{parameterName}' expects a decimal value, but received {value?.GetType().Name ?? "null"}. "
+              + "Use a decimal literal (for example 2.5m); a double cannot be bound to a decimal parameter.", nameof(value));
+        }
         else if (param.DataType == "Boolean" && value is not bool)
         {
             throw new ArgumentException(

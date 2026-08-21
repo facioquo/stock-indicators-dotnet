@@ -64,7 +64,7 @@ internal static class ListingExecutor
         }
 
         // Build parameter array using catalog metadata and user overrides
-        List<object> parameterList = [bars];
+        List<object?> parameterList = [bars];
 
         // Add parameters based on catalog metadata
         if (listing.Parameters != null)
@@ -99,8 +99,28 @@ internal static class ListingExecutor
             }
         }
 
-        // Find the method that matches our parameter count
-        MethodInfo? targetMethod = methods.FirstOrDefault(m => m.GetParameters().Length == parameterList.Count) ?? throw new InvalidOperationException($"No '{methodName}' method found with {parameterList.Count} parameters");
+        // Find the method that matches our parameter count. Failing an exact match,
+        // accept an overload whose extra trailing parameters are all optional and
+        // supply their declared defaults: a catalog need not enumerate every optional
+        // parameter a method offers, and refusing to bind would make such a listing
+        // permanently unexecutable. Prefer the fewest extra parameters so the choice
+        // does not depend on reflection order.
+        MethodInfo? targetMethod = methods.FirstOrDefault(m => m.GetParameters().Length == parameterList.Count);
+
+        if (targetMethod is null)
+        {
+            targetMethod = methods
+                .Where(m => m.GetParameters().Length > parameterList.Count
+                         && m.GetParameters().Skip(parameterList.Count).All(static p => p.IsOptional))
+                .OrderBy(static m => m.GetParameters().Length)
+                .FirstOrDefault()
+                ?? throw new InvalidOperationException($"No '{methodName}' method found with {parameterList.Count} parameters");
+
+            foreach (ParameterInfo optional in targetMethod.GetParameters().Skip(parameterList.Count))
+            {
+                parameterList.Add(optional.DefaultValue);
+            }
+        }
 
         // If the method is generic, make it specific for the IBar interface type.
         // Indicator methods that are generic use IBar as the constraint.

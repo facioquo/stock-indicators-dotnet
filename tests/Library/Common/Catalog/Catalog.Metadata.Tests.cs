@@ -155,7 +155,7 @@ public class CatalogMetadataTests : TestBase
                 parameter.DataType.Should().NotBeNullOrWhiteSpace();
                 string[] supportedTypes =
                 [
-                    "Int32", "Double", "Boolean", "DateTime", "String", "enum", "Nullable",
+                    "Int32", "Double", "Decimal", "Boolean", "DateTime", "String", "enum", "Nullable",
                     "IEnumerable", "IReadOnlyList<T> where T : IReusable",
                     "BetaType", "ChandExitType", "PivotPointType", "MaType", "CandlePartType", "EndType"
                 ];
