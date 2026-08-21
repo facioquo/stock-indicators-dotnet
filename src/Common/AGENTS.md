@@ -77,7 +77,7 @@ When adding new hubs, follow the canonical `RollbackState` pattern in `src/Commo
 - `IIncrementFromChain` — `Add(DateTime, double)`, `Add(IReusable)`, `Add(IReadOnlyList<IReusable>)` — for chainable single-value indicators
 - `IIncrementFromBar` — `Add(IBar)`, `Add(IReadOnlyList<IBar>)` — for indicators requiring full OHLCV
 
-The implementation uses the C# `field` keyword in `BufferList.cs`, which is currently why `<EnablePreviewFeatures>true</EnablePreviewFeatures>` remains in `src/Indicators.csproj`.
+The implementation uses the C# 14 `field` keyword in `BufferList.cs`. It compiles as GA under the .NET 10 SDK, so no preview flag is needed. The Roslynator CLI (0.13.1) still bundles Roslyn 4.14, which gates `field` behind preview, so `roslynator analyze` reports CS8652/CS0103 until a CLI built on Roslyn 5.0 ships ([dotnet/roslynator#1827](https://github.com/dotnet/roslynator/issues/1827)).
 
 ## Catalog framework specifics
 
