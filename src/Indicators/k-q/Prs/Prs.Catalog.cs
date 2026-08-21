@@ -15,7 +15,6 @@ public static partial class Prs
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", description: "Number of periods for the PRS calculation", isRequired: false, defaultValue: 20, minimum: 1, maximum: 250)
             .AddResult("Prs", "PRS", ResultType.Default, isReusable: true)
             .AddResult("PrsPercent", "PRS %", ResultType.Default)
-            .AddResult("Sma", "SMA", ResultType.Default)
             .Build();
 
     /// <summary>

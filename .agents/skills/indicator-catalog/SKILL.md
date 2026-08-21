@@ -74,6 +74,8 @@ public static partial class Ema
 - `AddDateParameter()` — DateTime
 - `AddSeriesParameter()` — `IReadOnlyList<T> where T : IReusable`
 - `minimum` and `maximum` required for all numeric parameters
+- `parameterName` must match the bound method's parameter name exactly — a mismatch makes a catalog-bound caller silently receive the default instead of the value it supplied
+- Declare parameters in the same order the method's signature declares them; `ListingExecutor` binds them positionally
 
 ## Result patterns
 
@@ -128,6 +130,7 @@ listings.Add(Beta.SeriesListing);
 - Wrong indicator method name
 - `isReusable: true` for `ISeries` models
 - Multiple `isReusable: true` results per indicator
+- A `dataName` or `parameterName` that names a member the library does not have
 
 ## Testing
 
@@ -147,3 +150,9 @@ public class EmaCatalogTests : TestBase
     }
 }
 ```
+
+`tests/Library/Common/Catalog/Catalog.Binding.Tests.cs` additionally enforces, for every
+listing in the catalog, that `MethodName` resolves to a real method, that each
+`dataName` resolves to a property on that method's result record, and that each
+`parameterName` resolves to a method parameter in signature order. A new listing that
+names a member the library does not have fails there — no per-indicator test needed.

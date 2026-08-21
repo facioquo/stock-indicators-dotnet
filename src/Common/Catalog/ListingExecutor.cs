@@ -56,7 +56,27 @@ internal static class ListingExecutor
 
         if (methods.Count == 0)
         {
-            throw new InvalidOperationException($"Method {methodName} not found");
+            throw new InvalidOperationException($"Method '{methodName}' not found");
+        }
+
+        // Reject overrides that name no catalog parameter. Ignoring them would fall
+        // through to the default below, so the caller would receive a value it did not
+        // ask for, with no indication that its argument was discarded.
+        if (parameters is not null)
+        {
+            foreach (string providedName in parameters.Keys)
+            {
+                if (listing.Parameters?.Any(p => p.ParameterName == providedName) != true)
+                {
+                    string expected = listing.Parameters is { Count: > 0 }
+                        ? string.Join(", ", listing.Parameters.Select(static p => p.ParameterName))
+                        : "(none - this indicator takes no parameters)";
+
+                    throw new InvalidOperationException(
+                        $"Parameter '{providedName}' is not defined for indicator '{listing.Uiid}'. "
+                      + $"Expected one of: {expected}");
+                }
+            }
         }
 
         // Build parameter array using catalog metadata and user overrides
@@ -96,7 +116,7 @@ internal static class ListingExecutor
         }
 
         // Find the method that matches our parameter count
-        MethodInfo? targetMethod = methods.FirstOrDefault(m => m.GetParameters().Length == parameterList.Count) ?? throw new InvalidOperationException($"No {methodName} method found with {parameterList.Count} parameters");
+        MethodInfo? targetMethod = methods.FirstOrDefault(m => m.GetParameters().Length == parameterList.Count) ?? throw new InvalidOperationException($"No '{methodName}' method found with {parameterList.Count} parameters");
 
         // If the method is generic, make it specific for the IBar interface type.
         // Indicator methods that are generic use IBar as the constraint.

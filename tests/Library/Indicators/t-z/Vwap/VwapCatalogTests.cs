@@ -24,20 +24,12 @@ public class VwapCatalogTests : TestBase
         // No parameters for this indicator
 
         listing.Results.Should().NotBeNull();
-        listing.Results.Should().HaveCount(3);
+        listing.Results.Should().HaveCount(1);
 
         IndicatorResult vwapResult = listing.Results.SingleOrDefault(static r => r.DataName == "Vwap");
         vwapResult.Should().NotBeNull();
         vwapResult?.DisplayName.Should().Be("VWAP");
         vwapResult.IsReusable.Should().Be(true);
-        IndicatorResult upperbandResult1 = listing.Results.SingleOrDefault(static r => r.DataName == "UpperBand");
-        upperbandResult1.Should().NotBeNull();
-        upperbandResult1?.DisplayName.Should().Be("Upper Band");
-        upperbandResult1.IsReusable.Should().Be(false);
-        IndicatorResult lowerbandResult2 = listing.Results.SingleOrDefault(static r => r.DataName == "LowerBand");
-        lowerbandResult2.Should().NotBeNull();
-        lowerbandResult2?.DisplayName.Should().Be("Lower Band");
-        lowerbandResult2.IsReusable.Should().Be(false);
     }
 
     [TestMethod]
@@ -57,7 +49,7 @@ public class VwapCatalogTests : TestBase
         listing.Parameters?.Count.Should().Be(1);
 
         listing.Results.Should().NotBeNull();
-        listing.Results.Should().HaveCount(3);
+        listing.Results.Should().HaveCount(1);
     }
 
     [TestMethod]
@@ -77,6 +69,6 @@ public class VwapCatalogTests : TestBase
         listing.Parameters?.Count.Should().Be(1);
 
         listing.Results.Should().NotBeNull();
-        listing.Results.Should().HaveCount(3);
+        listing.Results.Should().HaveCount(1);
     }
 }
