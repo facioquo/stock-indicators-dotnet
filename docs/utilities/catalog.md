@@ -69,7 +69,6 @@ Each `IndicatorListing` describes one indicator-and-style combination. This is t
 | `Results` | `IReadOnlyList<IndicatorResult>` | Output fields the indicator produces |
 | `ResultRecordType` | `string?` | Name of the result record the method returns (e.g. `"EmaResult"`), the same for all three styles — the record type, not the method's literal return type (`EmaList` for Buffer, `EmaHub` for Stream). `null` when `MethodName` is unset, or when the method cannot be resolved (possible under trimming or NativeAOT publishing) — check before use |
 | `MethodName` | `string?` | Method name, for automation use cases |
-| ~~`ReturnType`~~ | `string?` | **Obsolete.** Renamed to `ResultRecordType`; forwards to it and is removed in the next major version. Not serialized. |
 | `LegendTemplate` | `string` | Legend template for charting |
 
 `IndicatorParam` (each input parameter):
