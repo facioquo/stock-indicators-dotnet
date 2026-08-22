@@ -13,7 +13,7 @@ public static partial class Cmo
     /// <returns>A read-only list of <see cref="CmoResult"/> containing the CMO calculation results.</returns>
     public static IReadOnlyList<CmoResult> ToCmo(
         this IReadOnlyList<IReusable> source,
-        int lookbackPeriods)
+        int lookbackPeriods = 14)
     {
         // check parameter arguments
         ArgumentNullException.ThrowIfNull(source);

@@ -108,6 +108,6 @@ public static partial class Cmo
     /// <param name="lookbackPeriods">Quantity of periods in lookback window.</param>
     public static CmoList ToCmoList(
         this IReadOnlyList<IReusable> source,
-        int lookbackPeriods)
+        int lookbackPeriods = 14)
         => new(lookbackPeriods) { source };
 }

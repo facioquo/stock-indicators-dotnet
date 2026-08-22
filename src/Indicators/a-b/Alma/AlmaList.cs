@@ -135,7 +135,7 @@ public static partial class Alma
     /// <param name="sigma">Sigma value for Gaussian calculations</param>
     public static AlmaList ToAlmaList(
         this IReadOnlyList<IReusable> source,
-        int lookbackPeriods,
+        int lookbackPeriods = 9,
         double offset = 0.85,
         double sigma = 6)
         => new(lookbackPeriods, offset, sigma) { source };

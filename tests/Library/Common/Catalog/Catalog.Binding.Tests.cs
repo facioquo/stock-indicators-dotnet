@@ -7,6 +7,7 @@ namespace Catalogging;
 /// - <c>MethodName</c> resolves to a public static indicator method
 /// - each <c>Results[].DataName</c> resolves to a property on the result record
 /// - each <c>Parameters[].ParameterName</c> resolves to a method parameter, in order
+/// - each <c>Parameters[].IsRequired</c> agrees with whether C# lets a caller omit it
 /// </summary>
 /// <remarks>
 /// These names are plain strings in the <c>*.Catalog.cs</c> definitions, so the
@@ -140,6 +141,62 @@ public class CatalogBindingTests : TestBase
 
         string.Join(Environment.NewLine, violations).Should().BeEmpty(
             "every catalog parameter must name a method parameter, in the contiguous order the executor binds them positionally");
+    }
+
+    [TestMethod]
+    public void EveryParameterIsRequiredMatchesCallability()
+    {
+        List<string> violations = [];
+
+        foreach (IndicatorListing listing in Catalog.Get())
+        {
+            if (listing.Parameters is null or { Count: 0 })
+            {
+                continue;
+            }
+
+            IReadOnlyList<MethodInfo> overloads
+                = CatalogReflection.GetOverloads(listing.MethodName);
+
+            string[] catalogNames = listing.Parameters
+                .Select(static p => p.ParameterName)
+                .ToArray();
+
+            bool aligned = overloads.Any(m => CatalogReflection.IsContiguousRun(
+                catalogNames,
+                CatalogReflection.GetParameterNames(m)));
+
+            if (!aligned)
+            {
+                continue; // reported by EveryParameterNameMatchesMethodSignature
+            }
+
+            string identity = CatalogReflection.Describe(listing);
+
+            for (int i = 0; i < listing.Parameters.Count; i++)
+            {
+                IndicatorParam param = listing.Parameters[i];
+
+                bool callerMustSupply
+                    = !CatalogReflection.IsOmittable(overloads, catalogNames, i);
+
+                if (param.IsRequired == callerMustSupply)
+                {
+                    continue;
+                }
+
+                violations.Add(param.IsRequired
+                    ? $"{identity}: '{param.ParameterName}' is marked required, but "
+                    + $"'{listing.MethodName}' has a form that omits it"
+                    : $"{identity}: '{param.ParameterName}' is marked optional, but every form of "
+                    + $"'{listing.MethodName}' requires it");
+            }
+        }
+
+        string.Join(Environment.NewLine, violations).Should().BeEmpty(
+            "IsRequired must track whether C# lets a caller omit the argument; catalog-driven code "
+          + "generation reads it to decide whether to emit one, so an understated value produces "
+          + "source that does not compile");
     }
 
     [TestMethod]

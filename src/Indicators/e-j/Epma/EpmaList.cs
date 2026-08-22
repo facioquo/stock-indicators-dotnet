@@ -132,6 +132,6 @@ public static partial class Epma
     /// <param name="lookbackPeriods">Quantity of periods in lookback window.</param>
     public static EpmaList ToEpmaList(
         this IReadOnlyList<IReusable> source,
-        int lookbackPeriods)
+        int lookbackPeriods = 10)
         => new(lookbackPeriods) { source };
 }

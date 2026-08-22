@@ -130,6 +130,6 @@ public static partial class Hma
     /// <param name="lookbackPeriods">Quantity of periods in lookback window.</param>
     public static HmaList ToHmaList(
         this IReadOnlyList<IReusable> source,
-        int lookbackPeriods)
+        int lookbackPeriods = 14)
         => new(lookbackPeriods) { source };
 }

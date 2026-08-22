@@ -12,7 +12,7 @@ public static partial class Beta
             .WithCategory(Category.PriceCharacteristic)
             .AddSeriesParameter("sourceEval", "Evaluated Prices")
             .AddSeriesParameter("sourceMrkt", "Market Prices")
-            .AddParameter<int>("lookbackPeriods", "Lookback Periods", defaultValue: 50, minimum: 1, maximum: 250)
+            .AddParameter<int>("lookbackPeriods", "Lookback Periods", isRequired: true, defaultValue: 50, minimum: 1, maximum: 250)
             .AddEnumParameter<BetaType>("type", "Beta Type", defaultValue: BetaType.Standard)
             .AddResult(nameof(BetaResult.Beta), "Beta", ResultType.Default, isReusable: true)
             .AddResult(nameof(BetaResult.BetaUp), "Beta Up", ResultType.Default)

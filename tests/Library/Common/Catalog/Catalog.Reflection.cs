@@ -103,7 +103,68 @@ internal static class CatalogReflection
     /// <param name="methodNames">Method parameter names, in signature order.</param>
     /// <returns><c>true</c> when the catalog names form a contiguous run.</returns>
     internal static bool IsContiguousRun(string[] catalogNames, string[] methodNames)
-        => methodNames.AsSpan().IndexOf(catalogNames.AsSpan()) >= 0;
+        => IndexOfRun(catalogNames, methodNames) >= 0;
+
+    /// <summary>
+    /// Finds the offset at which the catalog parameter names begin within a method's
+    /// parameter list, as an unbroken in-order run.
+    /// </summary>
+    /// <param name="catalogNames">Catalog parameter names, in listing order.</param>
+    /// <param name="methodNames">Method parameter names, in signature order.</param>
+    /// <returns>The starting offset, or <c>-1</c> when there is no such run.</returns>
+    internal static int IndexOfRun(string[] catalogNames, string[] methodNames)
+        => methodNames.AsSpan().IndexOf(catalogNames.AsSpan());
+
+    /// <summary>
+    /// Determines whether a caller can leave out the catalog parameter at
+    /// <paramref name="index"/> while still supplying every catalog parameter before it.
+    /// </summary>
+    /// <remarks>
+    /// A parameter is omittable in two ways, and checking only the first reports
+    /// defects that are not real: the parameter carries a C# default value, or a
+    /// shorter overload exists that does not declare it at all. The second is how
+    /// <c>ToVwap(bars)</c> makes <c>startDate</c> genuinely optional even though the
+    /// only signature naming it requires it.
+    /// </remarks>
+    /// <param name="overloads">All overloads of the listing's method.</param>
+    /// <param name="catalogNames">Catalog parameter names, in listing order.</param>
+    /// <param name="index">Index of the parameter being tested.</param>
+    /// <returns><c>true</c> when some public form of the method omits it.</returns>
+    internal static bool IsOmittable(
+        IReadOnlyList<MethodInfo> overloads,
+        string[] catalogNames,
+        int index)
+    {
+        foreach (MethodInfo method in overloads)
+        {
+            string[] methodNames = GetParameterNames(method);
+
+            // (a) an overload carrying the whole run gives this parameter a default
+            int offset = IndexOfRun(catalogNames, methodNames);
+
+            if (offset >= 0 && method.GetParameters()[offset + index].HasDefaultValue)
+            {
+                return true;
+            }
+
+            // (b) an overload drops it yet still accepts every earlier catalog parameter
+            if (!methodNames.Contains(catalogNames[index], StringComparer.Ordinal)
+             && IndexOfRun(catalogNames[..index], methodNames) >= 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Gets a method's parameter names in signature order.
+    /// </summary>
+    /// <param name="method">Indicator method bound to a catalog listing.</param>
+    /// <returns>Parameter names, with <c>null</c> names normalized to empty.</returns>
+    internal static string[] GetParameterNames(MethodInfo method)
+        => method.GetParameters().Select(static p => p.Name ?? string.Empty).ToArray();
 
     /// <summary>
     /// Finds a public library type by its simple name.

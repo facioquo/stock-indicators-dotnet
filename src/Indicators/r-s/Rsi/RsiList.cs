@@ -148,6 +148,6 @@ public static partial class Rsi
     /// <param name="lookbackPeriods">Quantity of periods in lookback window.</param>
     public static RsiList ToRsiList(
         this IReadOnlyList<IReusable> source,
-        int lookbackPeriods)
+        int lookbackPeriods = 14)
         => new(lookbackPeriods) { source };
 }

@@ -33,8 +33,18 @@ public record IndicatorParam
     public string? Description { get; init; }
 
     /// <summary>
-    /// Gets or sets whether the parameter is required.
+    /// Gets or sets whether the caller must supply this parameter.
     /// </summary>
+    /// <remarks>
+    /// Tracks C# callability. <c>false</c> means some public form of
+    /// <see cref="IndicatorListing.MethodName"/> lets a caller leave the argument out —
+    /// either because the parameter carries a default value, or because a shorter
+    /// overload omits it entirely, as <c>ToVwap(bars)</c> does for <c>startDate</c>.
+    /// Catalog-driven code generation reads this to decide whether it may skip the
+    /// argument, so an understated value yields source that does not compile.
+    /// This is not a display hint: <see cref="DefaultValue"/> seeds an input field, and
+    /// a required parameter may carry one too.
+    /// </remarks>
     public bool IsRequired { get; init; }
 
     /// <summary>
