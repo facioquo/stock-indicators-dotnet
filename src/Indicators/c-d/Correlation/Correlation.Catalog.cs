@@ -13,11 +13,11 @@ public static partial class Correlation
             .AddSeriesParameter("sourceA", "Source A")
             .AddSeriesParameter("sourceB", "Source B")
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", defaultValue: 20, minimum: 1, maximum: 250)
-            .AddResult("VarianceA", "Variance A", ResultType.Default)
-            .AddResult("VarianceB", "Variance B", ResultType.Default)
-            .AddResult("Covariance", "Covariance", ResultType.Default)
-            .AddResult("Correlation", "Correlation", ResultType.Default, isReusable: true)
-            .AddResult("RSquared", "R-squared", ResultType.Default)
+            .AddResult(nameof(CorrResult.VarianceA), "Variance A", ResultType.Default)
+            .AddResult(nameof(CorrResult.VarianceB), "Variance B", ResultType.Default)
+            .AddResult(nameof(CorrResult.Covariance), "Covariance", ResultType.Default)
+            .AddResult(nameof(CorrResult.Correlation), "Correlation", ResultType.Default, isReusable: true)
+            .AddResult(nameof(CorrResult.RSquared), "R-squared", ResultType.Default)
             .Build();
 
     /// <summary>

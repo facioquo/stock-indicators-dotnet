@@ -11,11 +11,11 @@ public static partial class Adx
             .WithId("ADX")
             .WithCategory(Category.PriceTrend)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", defaultValue: 14, minimum: 2, maximum: 250)
-            .AddResult("Pdi", "+DI", ResultType.Default)
-            .AddResult("Mdi", "-DI", ResultType.Default)
-            .AddResult("Dx", "DX", ResultType.Default)
-            .AddResult("Adx", "ADX", ResultType.Default, isReusable: true)
-            .AddResult("Adxr", "ADXR", ResultType.Default)
+            .AddResult(nameof(AdxResult.Pdi), "+DI", ResultType.Default)
+            .AddResult(nameof(AdxResult.Mdi), "-DI", ResultType.Default)
+            .AddResult(nameof(AdxResult.Dx), "DX", ResultType.Default)
+            .AddResult(nameof(AdxResult.Adx), "ADX", ResultType.Default, isReusable: true)
+            .AddResult(nameof(AdxResult.Adxr), "ADXR", ResultType.Default)
             .Build();
 
     /// <summary>

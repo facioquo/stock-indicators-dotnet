@@ -12,12 +12,12 @@ public static partial class Renko
             .WithCategory(Category.PriceTransform)
             .AddParameter<decimal>("brickSize", "Brick Size", description: "The size of each Renko brick", isRequired: true, defaultValue: 1.0m, minimum: 0.001, maximum: 1000000.0)
             .AddEnumParameter<EndType>("endType", "End Type", description: "The price candle end type to use as the brick threshold", isRequired: false, defaultValue: EndType.Close)
-            .AddResult("Open", "Open", ResultType.Default)
-            .AddResult("High", "High", ResultType.Default)
-            .AddResult("Low", "Low", ResultType.Default)
-            .AddResult("Close", "Close", ResultType.Default, isReusable: true)
-            .AddResult("Volume", "Volume", ResultType.Default)
-            .AddResult("IsUp", "Is Up", ResultType.Default)
+            .AddResult(nameof(RenkoResult.Open), "Open", ResultType.Default)
+            .AddResult(nameof(RenkoResult.High), "High", ResultType.Default)
+            .AddResult(nameof(RenkoResult.Low), "Low", ResultType.Default)
+            .AddResult(nameof(RenkoResult.Close), "Close", ResultType.Default, isReusable: true)
+            .AddResult(nameof(RenkoResult.Volume), "Volume", ResultType.Default)
+            .AddResult(nameof(RenkoResult.IsUp), "Is Up", ResultType.Default)
             .Build();
 
     /// <summary>

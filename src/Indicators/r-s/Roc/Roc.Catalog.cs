@@ -11,7 +11,7 @@ public static partial class Roc
             .WithId("ROC")
             .WithCategory(Category.Oscillator)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", description: "Number of periods for the ROC calculation", isRequired: false, defaultValue: 14, minimum: 1, maximum: 250)
-            .AddResult("Roc", "ROC", ResultType.Default, isReusable: true)
+            .AddResult(nameof(RocResult.Roc), "ROC", ResultType.Default, isReusable: true)
             .Build();
 
     /// <summary>

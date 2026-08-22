@@ -11,7 +11,7 @@ public static partial class Rsi
             .WithId("RSI")
             .WithCategory(Category.Oscillator)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", description: "Number of periods for the RSI calculation", isRequired: false, defaultValue: 14, minimum: 1, maximum: 250)
-            .AddResult("Rsi", "RSI", ResultType.Default, isReusable: true)
+            .AddResult(nameof(RsiResult.Rsi), "RSI", ResultType.Default, isReusable: true)
             .Build();
 
     /// <summary>

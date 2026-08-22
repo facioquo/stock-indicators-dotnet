@@ -11,7 +11,7 @@ public static partial class Bop
             .WithId("BOP")
             .WithCategory(Category.Oscillator)
             .AddParameter<int>("smoothPeriods", "Smooth Periods", defaultValue: 14, minimum: 1, maximum: 250)
-            .AddResult("Bop", "BOP", ResultType.Default, isReusable: true)
+            .AddResult(nameof(BopResult.Bop), "BOP", ResultType.Default, isReusable: true)
             .Build();
 
     /// <summary>

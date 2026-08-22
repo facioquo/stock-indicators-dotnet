@@ -11,7 +11,7 @@ public static partial class Dema
             .WithId("DEMA")
             .WithCategory(Category.MovingAverage)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", description: "Number of periods for the DEMA calculation", isRequired: false, defaultValue: 14, minimum: 2, maximum: 250)
-            .AddResult("Dema", "DEMA", ResultType.Default, isReusable: true)
+            .AddResult(nameof(DemaResult.Dema), "DEMA", ResultType.Default, isReusable: true)
             .Build();
 
     /// <summary>

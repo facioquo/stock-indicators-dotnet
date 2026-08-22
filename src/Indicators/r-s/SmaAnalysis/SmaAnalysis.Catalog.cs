@@ -11,10 +11,10 @@ public static partial class SmaAnalysis
             .WithId("SMA-ANALYSIS")
             .WithCategory(Category.PriceCharacteristic)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", description: "Number of periods for the SMA analysis", isRequired: true, defaultValue: 20, minimum: 1, maximum: 250)
-            .AddResult("Sma", "SMA", ResultType.Default, isReusable: true)
-            .AddResult("Mad", "Mean absolute deviation", ResultType.Default)
-            .AddResult("Mse", "Mean square error", ResultType.Default)
-            .AddResult("Mape", "Mean absolute percentage error", ResultType.Default)
+            .AddResult(nameof(SmaAnalysisResult.Sma), "SMA", ResultType.Default, isReusable: true)
+            .AddResult(nameof(SmaAnalysisResult.Mad), "Mean absolute deviation", ResultType.Default)
+            .AddResult(nameof(SmaAnalysisResult.Mse), "Mean square error", ResultType.Default)
+            .AddResult(nameof(SmaAnalysisResult.Mape), "Mean absolute percentage error", ResultType.Default)
             .Build();
 
     /// <summary>

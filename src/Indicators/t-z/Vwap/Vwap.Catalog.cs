@@ -11,7 +11,7 @@ public static partial class Vwap
             .WithId("VWAP")
             .WithCategory(Category.PriceChannel)
             .AddDateParameter("startDate", "Start Date", description: "Starting date for VWAP calculation", isRequired: false)
-            .AddResult("Vwap", "VWAP", ResultType.Default, isReusable: true)
+            .AddResult(nameof(VwapResult.Vwap), "VWAP", ResultType.Default, isReusable: true)
             .Build();
 
     /// <summary>

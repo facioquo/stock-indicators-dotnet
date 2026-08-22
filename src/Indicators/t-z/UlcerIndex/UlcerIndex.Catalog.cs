@@ -11,7 +11,7 @@ public static partial class UlcerIndex
             .WithId("ULCER")
             .WithCategory(Category.PriceCharacteristic)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", description: "Number of periods for the Ulcer Index calculation", isRequired: false, defaultValue: 14, minimum: 1, maximum: 250)
-            .AddResult("UlcerIndex", "Ulcer Index", ResultType.Default, isReusable: true)
+            .AddResult(nameof(UlcerIndexResult.UlcerIndex), "Ulcer Index", ResultType.Default, isReusable: true)
             .Build();
 
     /// <summary>

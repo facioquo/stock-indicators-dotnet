@@ -11,7 +11,7 @@ public static partial class Cci
             .WithId("CCI")
             .WithCategory(Category.Oscillator)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", defaultValue: 20, minimum: 1, maximum: 250)
-            .AddResult("Cci", "CCI", ResultType.Default, isReusable: true)
+            .AddResult(nameof(CciResult.Cci), "CCI", ResultType.Default, isReusable: true)
             .Build();
 
     /// <summary>

@@ -262,7 +262,10 @@ internal class CatalogListingBuilder
     /// <summary>
     /// Adds a result to the indicator.
     /// </summary>
-    /// <param name="dataName">Name of the data property.</param>
+    /// <param name="dataName">
+    /// Name of the data property. Pass <c>nameof(TResult.Property)</c> rather than a
+    /// literal so a renamed result property fails the build.
+    /// </param>
     /// <param name="displayName">Display name of the result.</param>
     /// <param name="dataType">Type of the result.</param>
     /// <param name="isReusable">Whether this is the reusable result.</param>

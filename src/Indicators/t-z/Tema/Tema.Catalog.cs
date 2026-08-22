@@ -11,7 +11,7 @@ public static partial class Tema
             .WithId("TEMA")
             .WithCategory(Category.MovingAverage)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", description: "Number of periods for the TEMA calculation", isRequired: false, defaultValue: 20, minimum: 2, maximum: 250)
-            .AddResult("Tema", "TEMA", ResultType.Default, isReusable: true)
+            .AddResult(nameof(TemaResult.Tema), "TEMA", ResultType.Default, isReusable: true)
             .Build();
 
     /// <summary>

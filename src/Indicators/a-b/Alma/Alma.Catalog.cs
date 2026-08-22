@@ -13,7 +13,7 @@ public static partial class Alma
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", defaultValue: 9, minimum: 2, maximum: 250)
             .AddParameter<double>("offset", "Offset", defaultValue: 0.85, minimum: 0.0, maximum: 1.0)
             .AddParameter<double>("sigma", "Sigma", defaultValue: 6.0, minimum: 0.1, maximum: 10.0)
-            .AddResult("Alma", "Arnaud Legoux Moving Average (ALMA)", ResultType.Default, isReusable: true)
+            .AddResult(nameof(AlmaResult.Alma), "Arnaud Legoux Moving Average (ALMA)", ResultType.Default, isReusable: true)
             .Build();
 
     /// <summary>

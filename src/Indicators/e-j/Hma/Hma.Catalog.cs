@@ -11,7 +11,7 @@ public static partial class Hma
             .WithId("HMA")
             .WithCategory(Category.MovingAverage)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", defaultValue: 14, minimum: 2, maximum: 250)
-            .AddResult("Hma", "HMA", ResultType.Default, isReusable: true)
+            .AddResult(nameof(HmaResult.Hma), "HMA", ResultType.Default, isReusable: true)
             .Build();
 
     /// <summary>

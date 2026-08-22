@@ -25,7 +25,7 @@ public static partial class Ema
             .AddParameter<int>("lookbackPeriods", "Lookback Period",
                 description: "Number of periods for the EMA calculation",
                 isRequired: true, defaultValue: 20, minimum: 2, maximum: 250)
-            .AddResult("Ema", "EMA", ResultType.Default, isReusable: true)
+            .AddResult(nameof(EmaResult.Ema), "EMA", ResultType.Default, isReusable: true)
             .Build();
 
     /// <summary>
@@ -81,7 +81,8 @@ public static partial class Ema
 
 ## Result patterns
 
-- `dataName` must match property name in Models file exactly
+- `dataName` uses `nameof(TResult.Property)`, not a string literal, so a renamed result property fails the build instead of a test — e.g. `.AddResult(nameof(EmaResult.Ema), "EMA", ...)`
+- `displayName` stays a string literal; it is a human label, not a member name
 - `isReusable: true` only for the property mapping to `IReusable.Value`
 - `ISeries` models: all results must have `isReusable: false`
 - Exactly one `isReusable: true` per `IReusable` indicator
@@ -132,7 +133,8 @@ listings.Add(Beta.SeriesListing);
 - Wrong indicator method name
 - `isReusable: true` for `ISeries` models
 - Multiple `isReusable: true` results per indicator
-- A `dataName` or `parameterName` that names a member the library does not have
+- A `dataName` as a string literal where `nameof` can reach the member
+- A `parameterName` that names a member the library does not have
 
 ## Testing
 
