@@ -78,14 +78,14 @@ public class CatalogExecutabilityTests : TestBase
     }
 
     /// <summary>
-    /// Indicators that need a second input series, which the executor cannot supply.
+    /// Indicators that require a second input series and so cannot run from bars alone.
     /// </summary>
     /// <remarks>
-    /// <c>ListingExecutor</c> binds exactly one bars source, so a listing that also
-    /// declares a source series always assembles one argument too many. That is a
-    /// capability the executor does not have rather than a defect in these listings,
-    /// and it is tracked separately. Excluded by name so the count below stays a real
-    /// assertion instead of a moving target.
+    /// The executor binds bars to the first missing series parameter and rejects a
+    /// second missing one by design — comparing a series against itself is a
+    /// degenerate result, not a default. These execute with an explicit second
+    /// source (see the TwoSeriesIndicator tests in Catalog.Execution.Tests), and are
+    /// excluded here by name so the count below stays a real assertion.
     /// </remarks>
     private static readonly HashSet<string> TwoSeriesIndicators
         = new(StringComparer.Ordinal) { "BETA", "CORR", "PRS" };

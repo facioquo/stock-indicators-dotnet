@@ -245,15 +245,25 @@ public class CatalogExecutionTests : TestBase
         IReadOnlyList<Bar> bars = Bars.Take(50).ToList();
 
         // Act — a name the listing does not define, e.g. one left over from a
-        // renamed catalog parameter
+        // renamed catalog parameter, rejected at the call that is wrong
         Action act = () => listing
-            .WithParams(new Dictionary<string, object> { ["lookbackPeriodz"] = 10 })
-            .FromSource((IEnumerable<IBar>)bars)
-            .Execute<EmaResult>();
+            .WithParams(new Dictionary<string, object> { ["lookbackPeriodz"] = 10 });
 
-        // Assert — must fail loudly rather than silently substituting the default,
-        // and name the parameters it would have accepted
-        act.Should().Throw<InvalidOperationException>()
+        // Assert — must fail loudly rather than silently substituting the default
+        act.Should().Throw<ArgumentException>()
+            .WithMessage("*lookbackPeriodz*not found in indicator*");
+
+        // A deserialized config bypasses the builder's validation, so the executor
+        // must reject the same mistake on that path too
+        IndicatorConfig config = new() {
+            Id = "EMA",
+            Style = Style.Series,
+            Parameters = new Dictionary<string, object> { ["lookbackPeriodz"] = 10 }
+        };
+
+        Action actConfig = () => config.Execute<EmaResult>(bars);
+
+        actConfig.Should().Throw<InvalidOperationException>()
             .WithMessage("*lookbackPeriodz*is not defined*")
             .WithMessage("*Expected one of: lookbackPeriods*");
     }
@@ -268,11 +278,15 @@ public class CatalogExecutionTests : TestBase
 
         IReadOnlyList<Bar> bars = Bars.Take(50).ToList();
 
-        // Act
-        Action act = () => listing
-            .WithParams(new Dictionary<string, object> { ["lookbackPeriods"] = 10 })
-            .FromSource((IEnumerable<IBar>)bars)
-            .Execute<GatorResult>();
+        // Act — via a deserialized config, which bypasses builder validation and
+        // exercises the executor's own rejection
+        IndicatorConfig config = new() {
+            Id = "GATOR",
+            Style = Style.Series,
+            Parameters = new Dictionary<string, object> { ["lookbackPeriods"] = 10 }
+        };
+
+        Action act = () => config.Execute<GatorResult>(bars);
 
         // Assert — the message must say the indicator takes none, not trail off
         // with an empty list
@@ -332,5 +346,116 @@ public class CatalogExecutionTests : TestBase
         viaCatalog.Should().HaveCount(direct.Count);
         viaCatalog[^1].Upper.Should().Be(direct[^1].Upper);
         viaCatalog[^1].Lower.Should().Be(direct[^1].Lower);
+    }
+
+    [TestMethod]
+    public void TwoSeriesIndicatorExecutesWithExplicitSources()
+    {
+        IndicatorListing listing = Catalog.Get("CORR", Style.Series);
+        listing.Should().NotBeNull();
+
+        IReadOnlyList<CorrResult> viaCatalog = listing
+            .WithParams(new Dictionary<string, object> {
+                ["sourceA"] = Bars,
+                ["sourceB"] = OtherBars
+            })
+            .FromSource((IEnumerable<IBar>)Bars)
+            .Execute<CorrResult>();
+
+        IReadOnlyList<CorrResult> direct = ((IReadOnlyList<IReusable>)Bars).ToCorrelation(OtherBars, 20);
+
+        viaCatalog.Should().HaveCount(direct.Count);
+        viaCatalog[^1].Correlation.Should().Be(direct[^1].Correlation);
+
+        // Correlation is symmetric, so it cannot detect an A/B slot swap;
+        // the per-side variances can
+        viaCatalog[^1].VarianceA.Should().Be(direct[^1].VarianceA);
+        viaCatalog[^1].VarianceB.Should().Be(direct[^1].VarianceB);
+    }
+
+    [TestMethod]
+    public void TwoSeriesIndicatorFillsFirstSourceFromBars()
+    {
+        // supplying only the second series binds bars to the first, so the natural
+        // "compare my bars against this benchmark" call needs one override, not two
+        IndicatorListing listing = Catalog.Get("PRS", Style.Series);
+        listing.Should().NotBeNull();
+
+        IReadOnlyList<PrsResult> viaCatalog = listing
+            .WithParamValue("sourceBase", OtherBars)
+            .FromSource((IEnumerable<IBar>)Bars)
+            .Execute<PrsResult>();
+
+        IReadOnlyList<PrsResult> direct = ((IReadOnlyList<IReusable>)Bars).ToPrs(OtherBars, 20);
+
+        viaCatalog.Should().HaveCount(direct.Count);
+        viaCatalog[^1].Prs.Should().Be(direct[^1].Prs);
+    }
+
+    [TestMethod]
+    public void TwoSeriesIndicatorUsesCatalogDefaultsForValueParameters()
+    {
+        IndicatorListing listing = Catalog.Get("BETA", Style.Series);
+        listing.Should().NotBeNull();
+
+        // lookbackPeriods (50) and type (Standard) come from catalog defaults;
+        // the enum default is stored as a boxed int and coerced by the binder
+        IReadOnlyList<BetaResult> viaCatalog = listing
+            .WithParamValue("sourceMrkt", OtherBars)
+            .FromSource((IEnumerable<IBar>)Bars)
+            .Execute<BetaResult>();
+
+        IReadOnlyList<BetaResult> direct = ((IReadOnlyList<IReusable>)Bars).ToBeta(OtherBars, 50);
+
+        viaCatalog.Should().HaveCount(direct.Count);
+        viaCatalog[^1].Beta.Should().Be(direct[^1].Beta);
+    }
+
+    [TestMethod]
+    public void TwoSeriesIndicatorRejectsMissingSecondSource()
+    {
+        // bars stand in for one series input only; filling a second with the same
+        // data would compute a series against itself, so it must fail loudly
+        IndicatorListing listing = Catalog.Get("CORR", Style.Series);
+
+        Action act = () => listing.Execute<CorrResult>(Bars);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("*'sourceB' must be supplied*")
+            .WithMessage("*fills only the first series parameter*");
+    }
+
+    [TestMethod]
+    public void TwoSeriesIndicatorFillsSecondSourceFromBarsWhenFirstIsNamed()
+    {
+        // naming the first slot leaves bars for the second — the inverse ratio,
+        // reachable only by explicit choice
+        IndicatorListing listing = Catalog.Get("PRS", Style.Series);
+
+        IReadOnlyList<PrsResult> viaCatalog = listing
+            .WithParamValue("sourceEval", OtherBars)
+            .FromSource((IEnumerable<IBar>)Bars)
+            .Execute<PrsResult>();
+
+        IReadOnlyList<PrsResult> direct = ((IReadOnlyList<IReusable>)OtherBars).ToPrs(Bars, 20);
+
+        viaCatalog.Should().HaveCount(direct.Count);
+        viaCatalog[^1].Prs.Should().Be(direct[^1].Prs);
+    }
+
+    [TestMethod]
+    public void UnnamedSeriesSourceIsRejectedOnTwoSeriesIndicators()
+    {
+        // an unnamed FromSource(series) would bind the first slot and demote bars
+        // to the second, silently inverting an asymmetric calculation — so a
+        // listing with more than one series parameter demands the name
+        IndicatorListing listing = Catalog.Get("PRS", Style.Series);
+
+        Action act = () => listing.FromSource(OtherBars);
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("*2 series parameters*")
+            .WithMessage("*sourceEval, sourceBase*")
+            .WithMessage("*name the one to bind*");
     }
 }

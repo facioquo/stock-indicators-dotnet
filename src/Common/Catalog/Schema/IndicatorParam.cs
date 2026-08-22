@@ -7,6 +7,12 @@ namespace FacioQuo.Stock.Indicators;
 public record IndicatorParam
 {
     /// <summary>
+    /// The <see cref="DataType"/> value identifying a series-input parameter.
+    /// </summary>
+    internal const string SeriesDataType = "IReadOnlyList<T> where T : IReusable";
+
+
+    /// <summary>
     /// Gets or sets the display name of the parameter.
     /// </summary>
     public required string DisplayName { get; init; }
