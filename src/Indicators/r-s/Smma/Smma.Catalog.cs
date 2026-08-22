@@ -10,7 +10,7 @@ public static partial class Smma
             .WithName("Smoothed Moving Average")
             .WithId("SMMA")
             .WithCategory(Category.MovingAverage)
-            .AddParameter<int>("lookbackPeriods", "Lookback Periods", description: "Number of periods for the SMMA calculation", isRequired: false, defaultValue: 20, minimum: 1, maximum: 250)
+            .AddParameter<int>("lookbackPeriods", "Lookback Periods", description: "Number of periods for the SMMA calculation", isRequired: true, defaultValue: 20, minimum: 1, maximum: 250)
             .AddResult(nameof(SmmaResult.Smma), "SMMA", ResultType.Default, isReusable: true)
             .Build();
 

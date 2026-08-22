@@ -147,6 +147,6 @@ public static partial class Tema
     /// <param name="lookbackPeriods">Quantity of periods in lookback window.</param>
     public static TemaList ToTemaList(
         this IReadOnlyList<IReusable> source,
-        int lookbackPeriods)
+        int lookbackPeriods = 20)
         => new(lookbackPeriods) { source };
 }

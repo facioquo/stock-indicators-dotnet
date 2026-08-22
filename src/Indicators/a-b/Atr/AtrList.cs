@@ -131,6 +131,6 @@ public static partial class Atr
     /// <param name="lookbackPeriods">Quantity of periods in lookback window.</param>
     public static AtrList ToAtrList(
         this IReadOnlyList<IBar> bars,
-        int lookbackPeriods)
+        int lookbackPeriods = 14)
         => new(lookbackPeriods) { bars };
 }

@@ -137,9 +137,9 @@ public static partial class StochRsi
     /// <returns>A buffer list for Stochastic RSI calculations.</returns>
     public static StochRsiList ToStochRsiList(
         this IReadOnlyList<IReusable> source,
-        int rsiPeriods,
-        int stochPeriods,
-        int signalPeriods,
+        int rsiPeriods = 14,
+        int stochPeriods = 14,
+        int signalPeriods = 3,
         int smoothPeriods = 1)
         => new(rsiPeriods, stochPeriods, signalPeriods, smoothPeriods) { source };
 }

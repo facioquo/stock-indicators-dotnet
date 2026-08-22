@@ -175,6 +175,6 @@ public static partial class Dpo
     /// <param name="lookbackPeriods">Quantity of periods in lookback window.</param>
     public static DpoList ToDpoList(
         this IReadOnlyList<IReusable> source,
-        int lookbackPeriods)
+        int lookbackPeriods = 14)
         => new(lookbackPeriods) { source };
 }

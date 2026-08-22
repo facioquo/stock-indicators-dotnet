@@ -124,6 +124,6 @@ public static partial class Hma
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the lookback periods are invalid.</exception>
     public static HmaHub ToHmaHub(
         this IChainProvider<IReusable> chainProvider,
-        int lookbackPeriods)
+        int lookbackPeriods = 14)
         => new(chainProvider, lookbackPeriods);
 }

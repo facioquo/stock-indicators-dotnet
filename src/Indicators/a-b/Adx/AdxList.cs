@@ -215,6 +215,6 @@ public static partial class Adx
     /// <returns>An initialized <see cref="AdxList" />.</returns>
     public static AdxList ToAdxList(
         this IReadOnlyList<IBar> bars,
-        int lookbackPeriods)
+        int lookbackPeriods = 14)
         => new(lookbackPeriods) { bars };
 }

@@ -12,7 +12,7 @@ public static partial class Correlation
             .WithCategory(Category.Oscillator)
             .AddSeriesParameter("sourceA", "Source A")
             .AddSeriesParameter("sourceB", "Source B")
-            .AddParameter<int>("lookbackPeriods", "Lookback Periods", defaultValue: 20, minimum: 1, maximum: 250)
+            .AddParameter<int>("lookbackPeriods", "Lookback Periods", isRequired: true, defaultValue: 20, minimum: 1, maximum: 250)
             .AddResult(nameof(CorrResult.VarianceA), "Variance A", ResultType.Default)
             .AddResult(nameof(CorrResult.VarianceB), "Variance B", ResultType.Default)
             .AddResult(nameof(CorrResult.Covariance), "Covariance", ResultType.Default)

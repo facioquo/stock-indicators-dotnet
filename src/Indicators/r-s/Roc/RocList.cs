@@ -109,6 +109,6 @@ public static partial class Roc
     /// <param name="lookbackPeriods">Quantity of periods in lookback window.</param>
     public static RocList ToRocList(
         this IReadOnlyList<IReusable> source,
-        int lookbackPeriods)
+        int lookbackPeriods = 14)
         => new(lookbackPeriods) { source };
 }

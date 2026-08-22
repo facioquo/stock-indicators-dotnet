@@ -14,7 +14,7 @@ public static partial class Tema
     /// <exception cref="ArgumentNullException">Thrown when the source data is null.</exception>
     public static IReadOnlyList<TemaResult> ToTema(
         this IReadOnlyList<IReusable> source,
-        int lookbackPeriods)
+        int lookbackPeriods = 20)
     {
         // check parameter arguments
         ArgumentNullException.ThrowIfNull(source);

@@ -10,7 +10,7 @@ public static partial class BarParts
             .WithName("Bar Part")
             .WithId("BARPART")
             .WithCategory(Category.PriceTransform)
-            .AddEnumParameter<CandlePart>("candlePart", "Candle Part", defaultValue: CandlePart.Close)
+            .AddEnumParameter<CandlePart>("candlePart", "Candle Part", isRequired: true, defaultValue: CandlePart.Close)
             .AddResult(nameof(TimeValue.Value), "Value", ResultType.Default, isReusable: true)
             .Build();
 

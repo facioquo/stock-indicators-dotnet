@@ -120,6 +120,6 @@ public static partial class Epma
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the lookback periods are invalid.</exception>
     public static EpmaHub ToEpmaHub(
         this IChainProvider<IReusable> chainProvider,
-        int lookbackPeriods)
+        int lookbackPeriods = 10)
              => new(chainProvider, lookbackPeriods);
 }

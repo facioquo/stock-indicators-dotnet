@@ -10,7 +10,7 @@ public static partial class Vwma
             .WithName("Volume Weighted Moving Average")
             .WithId("VWMA")
             .WithCategory(Category.MovingAverage)
-            .AddParameter<int>("lookbackPeriods", "Lookback Periods", description: "Number of periods for the VWMA calculation", isRequired: false, defaultValue: 14, minimum: 1, maximum: 250)
+            .AddParameter<int>("lookbackPeriods", "Lookback Periods", description: "Number of periods for the VWMA calculation", isRequired: true, defaultValue: 14, minimum: 1, maximum: 250)
             .AddResult(nameof(VwmaResult.Vwma), "VWMA", ResultType.Default, isReusable: true)
             .Build();
 
