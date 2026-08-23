@@ -15,7 +15,10 @@ All indicators MUST be mathematically correct, deterministic, and reproducible a
 - Results MUST match validated reference data (published examples, academic definitions, or vetted calculators).
 - All implementation styles (Series/batch, BufferList/streaming, StreamHub/streaming) MUST produce bit-for-bit identical final values for deterministic calculations; Series serves as the validated baseline and streaming implementations must match it precisely.
 - Any new indicator requires a written spec (math definition + parameter constraints) before implementation.
-- Breaking mathematical behavior changes require a MAJOR library version bump and release note callout.
+- Changing *intended* mathematical behavior — replacing a formula, redefining a parameter, or altering a documented default that was correct as specified — requires a MAJOR library version bump.
+- Correcting a *defect* — where the shipped behavior never matched its own documentation, specification, or reference data — is a bug fix, and versions as one. Restoring the specified behavior is not a breaking change to it.
+- Both require a release note callout naming the affected indicator, the observable change in output, and the version it lands in. The version bump distinguishes the two cases; the disclosure obligation does not.
+- When it is genuinely unclear whether behavior was intended or defective, treat it as intended and bump MAJOR. The ambiguity itself should be resolved in the indicator's documentation so the next occurrence is not ambiguous.
 
 **Formula sourcing hierarchy:**
 
