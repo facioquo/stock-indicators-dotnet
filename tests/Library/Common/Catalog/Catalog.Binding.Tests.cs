@@ -8,6 +8,7 @@ namespace Catalogging;
 /// - each <c>Results[].DataName</c> resolves to a property on the result record
 /// - each <c>Parameters[].ParameterName</c> resolves to a method parameter, in order
 /// - each <c>Parameters[].IsRequired</c> agrees with whether C# lets a caller omit it
+///   and still get the behavior the listing describes
 /// </summary>
 /// <remarks>
 /// These names are plain strings in the <c>*.Catalog.cs</c> definitions, so the
@@ -177,26 +178,65 @@ public class CatalogBindingTests : TestBase
             {
                 IndicatorParam param = listing.Parameters[i];
 
-                bool callerMustSupply
-                    = !CatalogReflection.IsOmittable(overloads, catalogNames, i);
+                bool defaulted = CatalogReflection.TryGetCSharpDefault(
+                    overloads, catalogNames, i, out object csharpDefault);
 
-                if (param.IsRequired == callerMustSupply)
+                bool shorter = CatalogReflection.HasShorterOverload(overloads, catalogNames, i);
+
+                // no form of the method leaves it out, so a caller must supply it
+                if (!defaulted && !shorter && !param.IsRequired)
                 {
-                    continue;
+                    violations.Add(
+                        $"{identity}: '{param.ParameterName}' is marked optional, but every form of "
+                      + $"'{listing.MethodName}' requires it");
                 }
 
-                violations.Add(param.IsRequired
-                    ? $"{identity}: '{param.ParameterName}' is marked required, but "
-                    + $"'{listing.MethodName}' has a form that omits it"
-                    : $"{identity}: '{param.ParameterName}' is marked optional, but every form of "
-                    + $"'{listing.MethodName}' requires it");
+                // C# already supplies a value, so demanding one over-constrains callers
+                if (defaulted && param.IsRequired)
+                {
+                    violations.Add(
+                        $"{identity}: '{param.ParameterName}' is marked required, but "
+                      + $"'{listing.MethodName}' gives it a default");
+                }
+
+                // optional plus a declared default promises that omitting yields that
+                // default; a shorter overload delivers its own behavior instead. The
+                // no-way-to-omit case is already reported above, so this speaks only
+                // where a shorter overload genuinely exists.
+                //
+                // This assumes a shorter overload never merely re-applies the declared
+                // default. That holds across the catalog today — ToPrs drops PrsPercent
+                // and ToVwap derives a start from the data — and reflection cannot tell
+                // the difference, so an overload that did forward the same constant
+                // would have to be marked required or drop its declared default.
+                if (!param.IsRequired && param.DefaultValue is not null && !defaulted && shorter)
+                {
+                    violations.Add(
+                        $"{identity}: '{param.ParameterName}' is marked optional with default "
+                      + $"'{param.DefaultValue}', but omitting it selects a shorter overload of "
+                      + $"'{listing.MethodName}' that does not apply that value");
+                }
+
+                // an advertised default that differs from the one C# applies is the
+                // silent-wrong-value case: the caller omits the argument expecting the
+                // documented number and the method uses another
+                if (defaulted
+                 && param.DefaultValue is not null
+                 && !CatalogReflection.DefaultsAgree(csharpDefault, param.DefaultValue))
+                {
+                    violations.Add(
+                        $"{identity}: '{param.ParameterName}' advertises default "
+                      + $"'{param.DefaultValue}', but '{listing.MethodName}' applies "
+                      + $"'{csharpDefault}' when the argument is omitted");
+                }
             }
         }
 
         string.Join(Environment.NewLine, violations).Should().BeEmpty(
-            "IsRequired must track whether C# lets a caller omit the argument; catalog-driven code "
-          + "generation reads it to decide whether to emit one, so an understated value produces "
-          + "source that does not compile");
+            "IsRequired must track whether C# lets a caller omit the argument and still get what "
+          + "the listing describes; catalog-driven code generation reads it to decide whether to "
+          + "emit one, so an understated value produces source that does not compile and a default "
+          + "the shorter overload ignores produces a silently different indicator");
     }
 
     [TestMethod]

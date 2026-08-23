@@ -28,6 +28,7 @@ Core builder methods: `.WithName`, `.WithId`, `.WithStyle`, `.WithCategory`, `.W
 - Define separate listings: `SeriesListing`, `StreamListing`, `BufferListing`
 - Parameter names must exactly match method signatures
 - Result `dataName` uses `nameof(TResult.Property)` so a renamed result property fails the build
+- `isRequired: false` means a caller may omit the argument **and get `defaultValue`**. That holds in exactly two shapes: the parameter carries a C# default equal to `defaultValue`, or the listing declares no `defaultValue` at all and so promises nothing (VWAP's `startDate`, omittable via `ToVwap(bars)`). If the argument can only be dropped by selecting a shorter overload that behaves differently while the listing still advertises a default — as `ToPrs(sourceEval, sourceBase)` does, computing no `PrsPercent` — mark it `isRequired: true` so a catalog-driven caller does not silently get a different indicator, and reach that overload with `WithoutParam(name)` instead. `EveryParameterIsRequiredMatchesCallability` enforces all three cases.
 
 ## Catalog and registry access
 

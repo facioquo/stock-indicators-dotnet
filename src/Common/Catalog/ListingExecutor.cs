@@ -19,13 +19,22 @@ internal static class ListingExecutor
     /// The listing.Parameters metadata defines the schema (names, types, defaults),
     /// while this dictionary provides runtime override values.
     /// </param>
+    /// <param name="omitted">
+    /// Optional parameter names to leave out of the call entirely, so a shorter
+    /// overload is selected where one exists and the method's own default applies
+    /// where none does. This is how a catalog caller reaches an overload whose meaning
+    /// is "this argument was not given" — <c>ToPrs(sourceEval, sourceBase)</c>, which
+    /// computes no <c>PrsPercent</c> and is otherwise reachable only through the
+    /// <c>int.MinValue</c> sentinel it forwards.
+    /// </param>
     /// <returns>Indicator results.</returns>
     /// <exception cref="InvalidOperationException">Thrown when the indicator cannot be executed.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="bars"/> is <c>null</c>.</exception>
     internal static IReadOnlyList<TResult> Execute<TResult>(
         IEnumerable<IBar> bars,
         IndicatorListing listing,
-        Dictionary<string, object>? parameters = null)
+        Dictionary<string, object>? parameters = null,
+        IReadOnlySet<string>? omitted = null)
         where TResult : class
     {
         // Validate inputs
@@ -63,6 +72,8 @@ internal static class ListingExecutor
             }
         }
 
+        ValidateOmissions(listing, omitted);
+
         // Build parameter array using catalog metadata and user overrides.
         //
         // A listing that declares series parameters names its own source inputs, so
@@ -80,6 +91,14 @@ internal static class ListingExecutor
         {
             foreach (IndicatorParam param in listing.Parameters)
             {
+                // An omitted parameter contributes no argument at all, so overload
+                // resolution below lands on a shorter form of the method rather than
+                // on the listing's default. ValidateOmissions has already established
+                // that only a trailing run is dropped.
+                if (omitted?.Contains(param.ParameterName) == true)
+                {
+                    continue;
+                }
 
                 // Check if user provided an override
                 if (parameters?.TryGetValue(param.ParameterName, out object? value) == true)
@@ -140,7 +159,15 @@ internal static class ListingExecutor
                          && m.GetParameters().Skip(parameterList.Count).All(static p => p.IsOptional))
                 .OrderBy(static m => m.GetParameters().Length)
                 .FirstOrDefault()
-                ?? throw new InvalidOperationException($"No '{methodName}' method found with {parameterList.Count} parameters");
+                // an omission the method has no shorter form for leaves an argument
+                // list nothing accepts; say which request could not be met rather than
+                // reporting a bare parameter count
+                ?? throw new InvalidOperationException(
+                    omitted is { Count: > 0 }
+                        ? $"No form of '{methodName}' omits "
+                        + $"{string.Join(", ", omitted.Select(static n => $"'{n}'"))} for indicator "
+                        + $"'{listing.Uiid}'; that parameter is mandatory, so supply a value instead."
+                        : $"No '{methodName}' method found with {parameterList.Count} parameters");
 
             foreach (ParameterInfo optional in targetMethod.GetParameters().Skip(parameterList.Count))
             {
@@ -167,6 +194,84 @@ internal static class ListingExecutor
         return result is IReadOnlyList<TResult> typedResult
             ? typedResult
             : throw new InvalidOperationException($"Result is not of expected type {typeof(IReadOnlyList<TResult>).Name}");
+    }
+
+    /// <summary>
+    /// Validates that the requested omissions can be expressed as a shorter call.
+    /// </summary>
+    /// <remarks>
+    /// Arguments bind positionally, so dropping a parameter with others still after it
+    /// would shift every later argument one slot left and bind it to the wrong
+    /// parameter — the same silent misbinding the catalog's contiguity rule prevents.
+    /// Only a trailing run can be dropped. A series parameter is the indicator's data
+    /// input rather than a setting, so it is never omittable.
+    /// <para>
+    /// The name and series checks repeat what <see cref="ListingExecutionBuilder.WithoutParam(string)"/>
+    /// already rejects, because the builder is not the only source of an omission set:
+    /// <see cref="IndicatorConfig.ToBuilder"/> carries names straight from deserialized
+    /// JSON, which never passed through that method. This is the boundary where an
+    /// untrusted set is first trusted, so it validates rather than assumes. The
+    /// trailing-run rule can only be checked here in any case — a later
+    /// <c>WithoutParam</c> call may drop the parameters that follow and make an
+    /// interior omission trailing after all.
+    /// </para>
+    /// </remarks>
+    /// <param name="listing">Indicator listing being executed.</param>
+    /// <param name="omitted">Parameter names the caller asked to leave out.</param>
+    /// <exception cref="InvalidOperationException">Thrown when an omission is not expressible.</exception>
+    private static void ValidateOmissions(
+        IndicatorListing listing,
+        IReadOnlySet<string>? omitted)
+    {
+        if (omitted is not { Count: > 0 })
+        {
+            return;
+        }
+
+        IReadOnlyList<IndicatorParam> declared = listing.Parameters ?? [];
+
+        foreach (string name in omitted)
+        {
+            IndicatorParam? param = declared.FirstOrDefault(p => p.ParameterName == name);
+
+            if (param is null)
+            {
+                string expected = declared.Count > 0
+                    ? string.Join(", ", declared.Select(static p => p.ParameterName))
+                    : "(none - this indicator takes no parameters)";
+
+                throw new InvalidOperationException(
+                    $"Cannot omit '{name}': it is not defined for indicator '{listing.Uiid}'. "
+                  + $"Expected one of: {expected}");
+            }
+
+            if (param.DataType == IndicatorParam.SeriesDataType)
+            {
+                throw new InvalidOperationException(
+                    $"Series parameter '{name}' cannot be omitted for indicator '{listing.Uiid}'; "
+                  + "it supplies the data the indicator reads, not a setting with a shorter form.");
+            }
+        }
+
+        int firstOmitted = -1;
+
+        for (int i = 0; i < declared.Count; i++)
+        {
+            if (omitted.Contains(declared[i].ParameterName))
+            {
+                if (firstOmitted < 0)
+                {
+                    firstOmitted = i;
+                }
+            }
+            else if (firstOmitted >= 0)
+            {
+                throw new InvalidOperationException(
+                    $"Cannot omit '{declared[firstOmitted].ParameterName}' for indicator '{listing.Uiid}' "
+                  + $"while '{declared[i].ParameterName}' after it is still supplied. Arguments bind "
+                  + "positionally, so only a trailing run of parameters can be dropped.");
+            }
+        }
     }
 
     /// <summary>

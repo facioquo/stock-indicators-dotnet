@@ -1,4 +1,5 @@
 #nullable enable
+using System.Globalization;
 using System.Reflection;
 
 namespace Catalogging;
@@ -116,21 +117,112 @@ internal static class CatalogReflection
         => methodNames.AsSpan().IndexOf(catalogNames.AsSpan());
 
     /// <summary>
-    /// Determines whether a caller can leave out the catalog parameter at
-    /// <paramref name="index"/> while still supplying every catalog parameter before it.
+    /// Determines whether an overload carrying the whole catalog run gives the
+    /// parameter at <paramref name="index"/> a C# default value.
     /// </summary>
     /// <remarks>
-    /// A parameter is omittable in two ways, and checking only the first reports
-    /// defects that are not real: the parameter carries a C# default value, or a
-    /// shorter overload exists that does not declare it at all. The second is how
-    /// <c>ToVwap(bars)</c> makes <c>startDate</c> genuinely optional even though the
-    /// only signature naming it requires it.
+    /// This is the only way omitting the argument provably yields a known value, so it
+    /// is what lets a listing advertise a <see cref="IndicatorParam.DefaultValue"/> that
+    /// a caller can rely on by leaving the argument out.
     /// </remarks>
     /// <param name="overloads">All overloads of the listing's method.</param>
     /// <param name="catalogNames">Catalog parameter names, in listing order.</param>
     /// <param name="index">Index of the parameter being tested.</param>
-    /// <returns><c>true</c> when some public form of the method omits it.</returns>
-    internal static bool IsOmittable(
+    /// <returns><c>true</c> when the parameter carries a C# default.</returns>
+    internal static bool HasCSharpDefault(
+        IReadOnlyList<MethodInfo> overloads,
+        string[] catalogNames,
+        int index)
+        => TryGetCSharpDefault(overloads, catalogNames, index, out _);
+
+    /// <summary>
+    /// Gets the C# default value for the catalog parameter at <paramref name="index"/>.
+    /// </summary>
+    /// <param name="overloads">All overloads of the listing's method.</param>
+    /// <param name="catalogNames">Catalog parameter names, in listing order.</param>
+    /// <param name="index">Index of the parameter being tested.</param>
+    /// <param name="value">The compiler-recorded default, when there is one.</param>
+    /// <returns><c>true</c> when the parameter carries a C# default.</returns>
+    internal static bool TryGetCSharpDefault(
+        IReadOnlyList<MethodInfo> overloads,
+        string[] catalogNames,
+        int index,
+        out object? value)
+    {
+        foreach (MethodInfo method in overloads)
+        {
+            int offset = IndexOfRun(catalogNames, GetParameterNames(method));
+
+            if (offset >= 0 && method.GetParameters()[offset + index] is { HasDefaultValue: true } parameter)
+            {
+                value = parameter.DefaultValue;
+                return true;
+            }
+        }
+
+        value = null;
+        return false;
+    }
+
+    /// <summary>
+    /// Determines whether a listing's declared default is the same value the compiler
+    /// applies when the argument is left out.
+    /// </summary>
+    /// <remarks>
+    /// The two arrive as differently typed boxes for the same number — a
+    /// <c>decimal</c> parameter default against a <c>double</c> in the listing, or an
+    /// enum member against the <c>int</c> the builder stores — so they are compared
+    /// numerically rather than by boxed identity or rendered text.
+    /// </remarks>
+    /// <param name="csharpDefault">Compiler-recorded default.</param>
+    /// <param name="declaredDefault">Value the listing advertises.</param>
+    /// <returns><c>true</c> when the two agree.</returns>
+    internal static bool DefaultsAgree(object? csharpDefault, object? declaredDefault)
+    {
+        if (csharpDefault is null || declaredDefault is null)
+        {
+            return csharpDefault is null && declaredDefault is null;
+        }
+
+        return IsNumeric(csharpDefault) && IsNumeric(declaredDefault)
+            ? Convert.ToDecimal(csharpDefault, CultureInfo.InvariantCulture)
+           == Convert.ToDecimal(declaredDefault, CultureInfo.InvariantCulture)
+            : string.Equals(
+                Convert.ToString(csharpDefault, CultureInfo.InvariantCulture),
+                Convert.ToString(declaredDefault, CultureInfo.InvariantCulture),
+                StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Determines whether a boxed value is a number, counting enums as their backing
+    /// integer because that is how a listing stores an enum default.
+    /// </summary>
+    /// <param name="value">Boxed value.</param>
+    /// <returns><c>true</c> when it converts to a number.</returns>
+    private static bool IsNumeric(object value)
+        => value is byte or sbyte or short or ushort or int or uint
+                 or long or ulong or float or double or decimal
+        || value.GetType().IsEnum;
+
+    /// <summary>
+    /// Determines whether a shorter overload drops the parameter at
+    /// <paramref name="index"/> while still accepting every catalog parameter before it.
+    /// </summary>
+    /// <remarks>
+    /// This makes the argument omittable but says nothing about what the shorter
+    /// overload then does, and the compiler records no default to compare against.
+    /// <c>ToPrs(sourceEval, sourceBase)</c> computes no <c>PrsPercent</c>, reachable
+    /// otherwise only through an <c>int.MinValue</c> sentinel outside the parameter's
+    /// declared range; <c>ToVwap(bars)</c> starts from the first bar's timestamp, a
+    /// value that depends on the data rather than a constant. Neither is a default a
+    /// listing could honestly advertise, so this kind of omittability can back only
+    /// the absence of one.
+    /// </remarks>
+    /// <param name="overloads">All overloads of the listing's method.</param>
+    /// <param name="catalogNames">Catalog parameter names, in listing order.</param>
+    /// <param name="index">Index of the parameter being tested.</param>
+    /// <returns><c>true</c> when a shorter overload omits it.</returns>
+    internal static bool HasShorterOverload(
         IReadOnlyList<MethodInfo> overloads,
         string[] catalogNames,
         int index)
@@ -139,15 +231,6 @@ internal static class CatalogReflection
         {
             string[] methodNames = GetParameterNames(method);
 
-            // (a) an overload carrying the whole run gives this parameter a default
-            int offset = IndexOfRun(catalogNames, methodNames);
-
-            if (offset >= 0 && method.GetParameters()[offset + index].HasDefaultValue)
-            {
-                return true;
-            }
-
-            // (b) an overload drops it yet still accepts every earlier catalog parameter
             if (!methodNames.Contains(catalogNames[index], StringComparer.Ordinal)
              && IndexOfRun(catalogNames[..index], methodNames) >= 0)
             {

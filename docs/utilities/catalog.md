@@ -79,7 +79,7 @@ Each `IndicatorListing` describes one indicator-and-style combination. This is t
 | `ParameterName` | `string` | Method parameter name (use this with `WithParamValue`) |
 | `DataType` | `string` | Parameter type name |
 | `Description` | `string?` | Optional description |
-| `IsRequired` | `bool` | Whether the parameter must be supplied |
+| `IsRequired` | `bool` | Whether the caller must supply the parameter. `false` means omitting it yields `DefaultValue` |
 | `DefaultValue` | `object?` | Default value, if any |
 | `Minimum` / `Maximum` | `double?` | Recommended bounds, if any |
 | `EnumOptions` | `Dictionary<int, string>?` | Allowed values for enum parameters (`null` otherwise) |
@@ -155,7 +155,32 @@ IReadOnlyList<EmaResult> emaWithParams = indicatorListing
   .Execute<EmaResult>();
 ```
 
-The fluent `ListingExecutionBuilder` supports `WithParamValue(name, value)`, `WithParams(dictionary)`, `FromSource(bars)`, `FromSource(series, parameterName?)` for chaining off another indicator's results, and `Execute<TResult>()`. Parameter values are type-checked against the listing's `IndicatorParam` metadata.
+The fluent `ListingExecutionBuilder` supports `WithParamValue(name, value)`, `WithParams(dictionary)`, `WithoutParam(name)`, `FromSource(bars)`, `FromSource(series, parameterName?)` for chaining off another indicator's results, and `Execute<TResult>()`. Parameter values are type-checked against the listing's `IndicatorParam` metadata.
+
+### Leave a parameter out
+
+A few indicators have an overload that means "this argument was not given" rather than "this argument took its default". `ToPrs(sourceEval, sourceBase)` computes no `PrsPercent` at all — no value in the parameter's advertised range (`Minimum: 1`, `Maximum: 250`) produces that, and the only override that does is the `int.MinValue` sentinel the overload forwards internally, which the catalog gives you no way to discover. `WithoutParam` drops the argument instead of supplying one:
+
+```csharp
+IndicatorListing prs = Catalog.Get("PRS", Style.Series);
+
+// declared default: lookbackPeriods = 20, PrsPercent computed
+IReadOnlyList<PrsResult> withPercent = prs
+  .WithParamValue("sourceBase", benchmarkBars)
+  .FromSource((IEnumerable<IBar>)bars)
+  .Execute<PrsResult>();
+
+// no lookback argument at all: PrsPercent is null throughout
+IReadOnlyList<PrsResult> ratioOnly = prs
+  .WithParamValue("sourceBase", benchmarkBars)
+  .WithoutParam("lookbackPeriods")
+  .FromSource((IEnumerable<IBar>)bars)
+  .Execute<PrsResult>();
+```
+
+A shorter overload is selected where one exists; where none does, the method's own default for that parameter applies instead. Arguments bind positionally, so only a trailing run of parameters can be dropped — omitting one while a later one is still supplied is rejected rather than silently shifting arguments into the wrong slots. Series parameters supply the indicator's data rather than a setting, so they cannot be omitted.
+
+Omissions are part of a configuration, not a transient builder detail: `IndicatorConfig` round-trips them through `OmittedParameters` alongside `Parameters`, so a saved configuration reloads as the same indicator.
 
 ::: tip ✨ Tip: disambiguate the bars overload
 Because `Bar` implements both `IBar` and `IReusable`, a `bars` collection matches both `FromSource(bars)` and the `FromSource(series, …)` chaining overload. Cast to `(IEnumerable<IBar>)` (as above) to select the bars overload. The simpler `listing.Execute<TResult>(bars)` form needs no cast.
