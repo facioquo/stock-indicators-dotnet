@@ -680,18 +680,22 @@ public static partial class Indicator
     public static IEnumerable<PrsResult> GetPrs(
     this IEnumerable<IBar> quotesEval,
     IEnumerable<IBar> quotesBase, int? lookbackPeriods = null)
-    => quotesBase.ToSortedList()
-        .ToPrs(quotesEval.ToSortedList(), lookbackPeriods ?? 0);
+    // an unspecified lookback means "compute no PrsPercent", which is the
+    // two-argument overload -- not lookbackPeriods 0, which validation rejects
+    => lookbackPeriods is int periods
+        ? quotesEval.ToSortedList().ToPrs(quotesBase.ToSortedList(), periods)
+        : quotesEval.ToSortedList().ToPrs(quotesBase.ToSortedList());
 
     [ExcludeFromCodeCoverage]
     [Obsolete("Use a chained `results.ToSma(smaPeriods)` for moving averages.", true)]
     public static IEnumerable<PrsResult> GetPrs(
         this IEnumerable<IBar> quotesEval,
         IEnumerable<IBar> quotesBase, int? lookbackPeriods, int? smaPeriods = null)
-        => quotesEval
-            .ToSortedList()
-            .Use(CandlePart.Close)
-            .ToPrs(quotesBase.ToSortedList().Use(CandlePart.Close), lookbackPeriods ?? 0);
+        => lookbackPeriods is int periods
+            ? quotesEval.ToSortedList().Use(CandlePart.Close)
+                .ToPrs(quotesBase.ToSortedList().Use(CandlePart.Close), periods)
+            : quotesEval.ToSortedList().Use(CandlePart.Close)
+                .ToPrs(quotesBase.ToSortedList().Use(CandlePart.Close));
 
     [ExcludeFromCodeCoverage]
     [Obsolete("Use 'ToPrs(..)' method. Tuple arguments were removed.", false)]
@@ -700,11 +704,21 @@ public static partial class Indicator
         IEnumerable<(DateTime d, double v)> tupleBase,
         int lookbackPeriods = 0,
         int smaPeriods = 0)
-        => tupleEval
-            .Select(static t => new TimeValue(t.d, t.v)).ToSortedList()
-            .ToPrs(tupleBase
-                .Select(static t => new TimeValue(t.d, t.v)).ToSortedList(),
-            lookbackPeriods);
+        // v2 declared this int? and treated null as "no PrsPercent"; the 3.0.0 shim
+        // narrowed it to int = 0, so 0 is the only marker left for "unspecified".
+        // Restoring the default therefore also accepts an explicit 0, which v2 rejected
+        // -- the alternative, changing the signature back, would break already-compiled
+        // callers rather than fix them.
+        => lookbackPeriods == 0
+            ? tupleEval
+                .Select(static t => new TimeValue(t.d, t.v)).ToSortedList()
+                .ToPrs(tupleBase
+                    .Select(static t => new TimeValue(t.d, t.v)).ToSortedList())
+            : tupleEval
+                .Select(static t => new TimeValue(t.d, t.v)).ToSortedList()
+                .ToPrs(tupleBase
+                    .Select(static t => new TimeValue(t.d, t.v)).ToSortedList(),
+                lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
     [Obsolete("Rename `GetPvo(..)` to `ToPvo(..)`", false)]
