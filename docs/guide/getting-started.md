@@ -104,8 +104,7 @@ You must provide historical price bars to the library in the standard OHLCV `IRe
 ### Where can I get historical bar data?
 
 ::: info BYOD: bring your own data
-You must get price bar data from your own provider.
-_The `GetBarsFromFeed()` method shown in our examples represents your own acquisition of price data and **is not part of this library**._
+You must get price bar data from your own provider. _The `GetBarsFromFeed()` method shown in our examples represents your own acquisition of price data and **is not part of this library**._
 :::
 
 There are many places to get financial market data.  Check with your brokerage or other commercial sites.  If you're looking for a free developer API, see our ongoing [discussion on market data](https://github.com/facioquo/stock-indicators-dotnet/discussions/579) for ideas.
@@ -164,8 +163,7 @@ When implementing your custom bar type, it must be either `record` class or impl
 
 ## Chaining indicators
 
-If you want to compute an indicator of indicators, such as an SMA of an ADX or an [RSI of an OBV](https://medium.com/@robswc/this-is-what-happens-when-you-combine-the-obv-and-rsi-indicators-6616d991773d), use _**chaining**_ to calculate an indicator from prior results.
-Example:
+If you want to compute an indicator of indicators, such as an SMA of an ADX or an [RSI of an OBV](https://medium.com/@robswc/this-is-what-happens-when-you-combine-the-obv-and-rsi-indicators-6616d991773d), use _**chaining**_ to calculate an indicator from prior results. Example:
 
 ```csharp
 // fetch historical price bars from your feed (your method)
