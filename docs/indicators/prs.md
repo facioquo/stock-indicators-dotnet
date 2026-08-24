@@ -5,8 +5,7 @@ description: Price Relative Strength, also called Comparative Relative Strength,
 
 # Price Relative Strength (PRS)
 
-[Price Relative Strength (PRS)](https://en.wikipedia.org/wiki/Relative_strength), also called Comparative Relative Strength, shows the ratio of two bar histories, based on price.  It is often used to compare against a market index or sector ETF.  When using the optional `lookbackPeriods`, this also returns relative percent change over the specified periods.  This is not the same as the more prevalent [Relative Strength Index (RSI)](/indicators/rsi).
-[[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/243 "Community discussion about this indicator")
+[Price Relative Strength (PRS)](https://en.wikipedia.org/wiki/Relative_strength), also called Comparative Relative Strength, shows the ratio of two bar histories, based on price.  It is often used to compare against a market index or sector ETF.  When using the optional `lookbackPeriods`, this also returns relative percent change over the specified periods.  This is not the same as the more prevalent [Relative Strength Index (RSI)](/indicators/rsi). [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/243 "Community discussion about this indicator")
 
 ```csharp
 // C# usage syntax
@@ -87,6 +86,4 @@ See [Chaining indicators](/guide/chaining) for more.
 
 ## Streaming
 
-Streaming is not supported for this indicator.
-This indicator requires a second synchronized bar series, which cannot be expressed in the single-series streaming model.
-Use the Series (batch) implementation with periodic recalculation instead.
+Streaming is not supported for this indicator. This indicator requires a second synchronized bar series, which cannot be expressed in the single-series streaming model. Use the Series (batch) implementation with periodic recalculation instead.
