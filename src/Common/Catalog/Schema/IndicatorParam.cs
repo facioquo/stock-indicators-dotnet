@@ -36,12 +36,21 @@ public record IndicatorParam
     /// Gets or sets whether the caller must supply this parameter.
     /// </summary>
     /// <remarks>
-    /// Tracks C# callability. <c>false</c> means some public form of
-    /// <see cref="IndicatorListing.MethodName"/> lets a caller leave the argument out —
-    /// either because the parameter carries a default value, or because a shorter
-    /// overload omits it entirely, as <c>ToVwap(bars)</c> does for <c>startDate</c>.
+    /// Tracks what a caller must pass to get the behavior this listing describes.
+    /// <c>false</c> means leaving the argument out is both legal and equivalent to
+    /// <see cref="DefaultValue"/>: either the parameter carries that value as a C#
+    /// default, or the listing declares no default at all — VWAP's <c>startDate</c>
+    /// is the latter, omittable through <c>ToVwap(bars)</c> with nothing promised.
+    /// <para>
+    /// <c>true</c> means the caller must pass a value, which includes the case where a
+    /// shorter overload exists but does something other than the declared default.
+    /// <c>ToPrs(sourceEval, sourceBase)</c> computes no <c>PrsPercent</c>, so PRS's
+    /// <c>lookbackPeriods</c> is required despite being droppable; reach that overload
+    /// deliberately with <see cref="ListingExecutionBuilder.WithoutParam(string)"/>.
+    /// </para>
     /// Catalog-driven code generation reads this to decide whether it may skip the
-    /// argument, so an understated value yields source that does not compile.
+    /// argument, so an understated value yields either source that does not compile or
+    /// an indicator that quietly differs from the one described.
     /// This is not a display hint: <see cref="DefaultValue"/> seeds an input field, and
     /// a required parameter may carry one too.
     /// </remarks>

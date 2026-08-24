@@ -78,6 +78,7 @@ public static partial class Ema
 - `minimum` and `maximum` required for all numeric parameters
 - `parameterName` must match the bound method's parameter name exactly — a mismatch makes a catalog-bound caller silently receive the default instead of the value it supplied
 - Declare parameters as an unbroken run in signature order, skipping none in the middle; `ListingExecutor` binds them positionally and picks an overload by argument count
+- `isRequired: false` must mean omitting the argument yields `defaultValue` — so use it only when the parameter has a C# default equal to `defaultValue`, or when the listing declares no `defaultValue` at all and promises nothing (VWAP `startDate`). When the argument can only be dropped by selecting a shorter overload that behaves differently while a `defaultValue` is advertised — `ToPrs(sourceEval, sourceBase)` computes no `PrsPercent` — use `isRequired: true`, and reach the shorter form with `WithoutParam(name)` at execution time
 
 ## Result patterns
 
@@ -135,6 +136,7 @@ listings.Add(Beta.SeriesListing);
 - Multiple `isReusable: true` results per indicator
 - A `dataName` as a string literal where `nameof` can reach the member
 - A `parameterName` that names a member the library does not have
+- `isRequired: false` with a `defaultValue` the C# signature does not apply when the argument is omitted
 
 ## Testing
 

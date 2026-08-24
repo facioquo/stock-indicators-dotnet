@@ -22,6 +22,18 @@ public class IndicatorConfig
     public Dictionary<string, object> Parameters { get; init; } = [];
 
     /// <summary>
+    /// Names of parameters to leave out of the call entirely.
+    /// </summary>
+    /// <remarks>
+    /// These take no argument at all, selecting a shorter overload rather than the
+    /// listing's declared default — see <see cref="ListingExecutionBuilder.WithoutParam(string)"/>.
+    /// Omitting is not the same as leaving a name out of <see cref="Parameters"/>, which
+    /// falls back to the declared default, so a configuration must carry both to
+    /// round-trip faithfully.
+    /// </remarks>
+    public IList<string> OmittedParameters { get; init; } = [];
+
+    /// <summary>
     /// Optional display name for this configuration.
     /// </summary>
     public string? DisplayName { get; set; }
@@ -41,7 +53,10 @@ public class IndicatorConfig
         IndicatorListing? listing = Catalog.Get(Id, Style);
         return listing == null
             ? throw new InvalidOperationException($"Indicator '{Id}' with style '{Style}' not found in catalog")
-            : new ListingExecutionBuilder(listing, Parameters);
+            : new ListingExecutionBuilder(
+                listing,
+                Parameters,
+                new HashSet<string>(OmittedParameters, StringComparer.Ordinal));
     }
 
     /// <summary>
@@ -58,6 +73,7 @@ public class IndicatorConfig
             Id = builder.BaseListing.Uiid,
             Style = builder.BaseListing.Style,
             Parameters = new Dictionary<string, object>(builder.ParameterOverrides),
+            OmittedParameters = [.. builder.OmittedParameters],
             DisplayName = builder.BaseListing.Name
         };
     }

@@ -19,6 +19,21 @@ public static class ListingExecutionBuilderExtensions
             => new ListingExecutionBuilder(listing).WithParamValue(parameterName, value);
 
     /// <summary>
+    /// Creates a customizable indicator builder that leaves a parameter out of the call.
+    /// </summary>
+    /// <remarks>
+    /// Selects a shorter overload instead of supplying the listing's default value.
+    /// See <see cref="ListingExecutionBuilder.WithoutParam(string)"/>.
+    /// </remarks>
+    /// <param name="listing">Base indicator listing.</param>
+    /// <param name="parameterName">Name of the parameter to leave out.</param>
+    /// <returns>A <see cref="ListingExecutionBuilder"/> for fluent configuration.</returns>
+    public static ListingExecutionBuilder WithoutParam(
+        this IndicatorListing listing,
+        string parameterName)
+            => new ListingExecutionBuilder(listing).WithoutParam(parameterName);
+
+    /// <summary>
     /// Creates a customizable indicator builder from an indicator listing with multiple parameters.
     /// </summary>
     /// <param name="listing">Base indicator listing.</param>
