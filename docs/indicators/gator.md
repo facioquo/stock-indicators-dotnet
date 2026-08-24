@@ -5,8 +5,7 @@ description: Created by Bill Williams, the Gator Oscillator is an expanded oscil
 
 # Gator Oscillator
 
-Created by Bill Williams, the Gator Oscillator is an expanded oscillator view of [Williams Alligator](/indicators/alligator)'s three moving averages.
-[[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/385 "Community discussion about this indicator")
+Created by Bill Williams, the Gator Oscillator is an expanded oscillator view of [Williams Alligator](/indicators/alligator)'s three moving averages. [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/385 "Community discussion about this indicator")
 
 <ClientOnly>
   <StockIndicatorChart indicator="Gator" withOverlay />
@@ -109,9 +108,7 @@ IReadOnlyList<GatorResult> results = observer.Results;
 ```
 
 ::: info Compound hub
-The Gator hub is based on the Alligator indicator.
-When the Gator hub is chained from an existing `AlligatorHub` instance it will reuse the existing Alligator hub values rather than creating its own internal Alligator calculations.
-**This is not a normal chaining model.**
+The Gator hub is based on the Alligator indicator. When the Gator hub is chained from an existing `AlligatorHub` instance it will reuse the existing Alligator hub values rather than creating its own internal Alligator calculations. **This is not a normal chaining model.**
 
 ```csharp
 // creates an internal Alligator hub

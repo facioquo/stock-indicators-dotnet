@@ -82,12 +82,9 @@ When reviewing PRs with baseline changes, verify the reason is documented, revie
 
 ### Performance benchmarking
 
-Performance (timing) benchmarks run through one script: `tools/performance/perf.sh`.
-Copy/paste these exact commands — run them from the repository root. Do not add
-options; the defaults keep runs comparable to the committed baselines.
+Performance (timing) benchmarks run through one script: `tools/performance/perf.sh`. Copy/paste these exact commands — run them from the repository root. Do not add options; the defaults keep runs comparable to the committed baselines.
 
-Requirements: .NET SDK and [`jq`](https://jqlang.github.io/jq/) (for `evaluate`
-and `spot`).
+Requirements: .NET SDK and [`jq`](https://jqlang.github.io/jq/) (for `evaluate` and `spot`).
 
 ```bash
 # Check one indicator against the baselines (fast — use this in your dev loop)
@@ -100,15 +97,11 @@ bash tools/performance/perf.sh evaluate
 bash tools/performance/perf.sh reset
 ```
 
-That is everything most contributors need. For the baseline set, single-style spot
-checks, CI workflows, and raw BenchmarkDotNet usage, see the
-[benchmarking guide](https://github.com/facioquo/stock-indicators-dotnet/blob/main/tools/performance/benchmarking.md).
+That is everything most contributors need. For the baseline set, single-style spot checks, CI workflows, and raw BenchmarkDotNet usage, see the [benchmarking guide](https://github.com/facioquo/stock-indicators-dotnet/blob/main/tools/performance/benchmarking.md).
 
 ## Documentation
 
-This site uses [VitePress](https://vitepress.dev) with Vue components and Markdown.
-Our documentation site code is in the `docs` folder.
-Build the site locally to test that it works properly.
+This site uses [VitePress](https://vitepress.dev) with Vue components and Markdown. Our documentation site code is in the `docs` folder. Build the site locally to test that it works properly.
 
 ```bash
 # one-time: grant your gh CLI token read:packages access
@@ -282,5 +275,4 @@ This repository uses a standard Apache 2.0 open-source license.  It enables open
 
 [Start a new discussion](https://github.com/facioquo/stock-indicators-dotnet/discussions) or [submit an issue](https://github.com/facioquo/stock-indicators-dotnet/issues) if it is publicly relevant.  You can also direct message [@daveskender](https://twitter.com/messages/compose?recipient_id=27475431).
 
-Thanks,
-Dave Skender
+Thanks, Dave Skender

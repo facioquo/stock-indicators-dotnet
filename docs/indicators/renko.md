@@ -5,8 +5,7 @@ description: The Renko Chart is a Japanese price transformed candlestick pattern
 
 # Renko Chart
 
-The [Renko Chart](https://en.m.wikipedia.org/wiki/Renko_chart) is a Japanese price transformed candlestick pattern that uses "bricks" to show a defined increment of change over a non-linear time series.  Transitions can use either `Close` or `High/Low` price values.  An ATR variant is also provided where brick size is determined by current Average True Range values.
-[[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/478 "Community discussion about this indicator")
+The [Renko Chart](https://en.m.wikipedia.org/wiki/Renko_chart) is a Japanese price transformed candlestick pattern that uses "bricks" to show a defined increment of change over a non-linear time series.  Transitions can use either `Close` or `High/Low` price values.  An ATR variant is also provided where brick size is determined by current Average True Range values. [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/478 "Community discussion about this indicator")
 
 ```csharp
 // C# usage syntax (fixed brick size)
@@ -135,9 +134,7 @@ IReadOnlyList<RenkoResult> results = observer.Results;
 ```
 
 ::: warning 🚩
-`ToRenkoAtr()` does not support streaming.
-The ATR brick size is derived from the full dataset and changes as new bars are added, making incremental output undefined.
-Use the Series implementation with periodic recalculation instead.
+`ToRenkoAtr()` does not support streaming. The ATR brick size is derived from the full dataset and changes as new bars are added, making incremental output undefined. Use the Series implementation with periodic recalculation instead.
 :::
 
 See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.

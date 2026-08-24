@@ -508,7 +508,7 @@ public static partial class Indicator
     public static IEnumerable<KeltnerResult> GetKeltner(
         this IEnumerable<IBar> bars,
         int emaPeriods = 20,
-        int multiplier = 2,
+        double multiplier = 2,
         int atrPeriods = 10)
         => bars.ToSortedList().ToKeltner(emaPeriods, multiplier, atrPeriods);
 
@@ -946,12 +946,18 @@ public static partial class Indicator
     [Obsolete("Use 'ToStdDevChannels(..)' method. Tuple arguments were removed.", false)]
     public static IEnumerable<StdDevChannelsResult> GetStdDevChannels(
         this IEnumerable<(DateTime d, double v)> priceTuples,
-        int lookbackPeriods = 20,
+        int? lookbackPeriods = 20,
         double stdDeviations = 2)
-        => priceTuples
+    {
+        // v2 accepted a null lookback here, meaning "the whole series", and the sibling
+        // bar overload above still does. Narrowing this one to int made that v2 idiom
+        // uncompilable through the tuple form alone.
+        IReadOnlyList<TimeValue> source = priceTuples
             .Select(static t => new TimeValue(t.d, t.v))
-            .ToSortedList()
-            .ToStdDevChannels(lookbackPeriods, stdDeviations);
+            .ToSortedList();
+
+        return source.ToStdDevChannels(lookbackPeriods ?? source.Count, stdDeviations);
+    }
 
     [ExcludeFromCodeCoverage]
     [Obsolete("Rename `GetStoch(..)` to `ToStoch(..)`", false)]
