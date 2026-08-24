@@ -698,7 +698,9 @@ public static partial class Indicator
                 .ToPrs(quotesBase.ToSortedList().Use(CandlePart.Close));
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToPrs(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToPrs(..)' method. Tuple arguments were removed. "
+            + "`smaPeriods` is ignored: v3 has no PrsSma result. "
+            + "Chain `results.ToSma(smaPeriods)` instead.", false)]
     public static IEnumerable<PrsResult> GetPrs(
         this IEnumerable<(DateTime d, double v)> tupleEval,
         IEnumerable<(DateTime d, double v)> tupleBase,
@@ -752,7 +754,9 @@ public static partial class Indicator
         => bars.ToSortedList().Use(CandlePart.Close).ToRoc(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToRoc(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToRoc(..)' method. Tuple arguments were removed. "
+            + "`smaPeriods` is ignored: v3 has no RocSma result. "
+            + "Chain `results.ToSma(smaPeriods)` instead.", false)]
     public static IEnumerable<RocResult> GetRoc(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods,
