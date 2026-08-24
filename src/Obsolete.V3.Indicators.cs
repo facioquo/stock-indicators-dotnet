@@ -724,7 +724,7 @@ public static partial class Indicator
     [Obsolete("Rename `GetPvo(..)` to `ToPvo(..)`", false)]
     public static IEnumerable<PvoResult> GetPvo(
         this IEnumerable<IBar> bars,
-        int fastPeriods = 9, int slowPeriods = 12, int signalPeriods = 9)
+        int fastPeriods = 12, int slowPeriods = 26, int signalPeriods = 9)
         => bars.ToSortedList().ToPvo(fastPeriods, slowPeriods, signalPeriods);
 
     [ExcludeFromCodeCoverage]
