@@ -50,11 +50,10 @@ jobs:
       - name: Install pnpm packages
         run: pnpm install --frozen-lockfile
 
-      - name: Install htmlproofer
-        run: gem install html-proofer -v 5.0.10
-
-      # The script builds the site and owns the ignore lists and retry policy,
-      # so this check cannot drift from what contributors run locally. It uses
-      # the htmlproofer installed above rather than its container fallback.
+      # The script owns everything about the check — the build, the pinned
+      # html-proofer version, the ignore lists and the retry policy — so CI
+      # cannot drift from what contributors run locally. Ruby is on PATH from
+      # the setup step above, so the script installs and uses the gem natively
+      # rather than falling back to its container path.
       - name: Test for broken URLs
         run: pnpm run test:links

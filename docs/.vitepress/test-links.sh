@@ -67,7 +67,16 @@ run_docker() {
 
 # Probe by running it, not with `command -v`: Windows ships an App Execution
 # Alias shim named `htmlproofer` that resolves on PATH but fails to launch, and
-# a PATH-only check would pick that over a working Docker fallback.
+# a PATH-only check would pick that over a working install path.
+#
+# When Ruby is present but html-proofer is not, install it here rather than in
+# the caller. That keeps HTMLPROOFER_VERSION above as the only place the pin
+# lives — CI just runs this script instead of installing the gem itself.
+if ! htmlproofer --version >/dev/null 2>&1 && command -v gem >/dev/null 2>&1; then
+  echo "Installing html-proofer ${HTMLPROOFER_VERSION}..."
+  gem install --no-document html-proofer -v "${HTMLPROOFER_VERSION}" || true
+fi
+
 if htmlproofer --version >/dev/null 2>&1; then
   echo "Using native htmlproofer: $(htmlproofer --version 2>&1 | head -n 1)"
   run_check() { run_native; }
@@ -75,8 +84,8 @@ elif command -v docker >/dev/null 2>&1; then
   echo "No native htmlproofer; using ${RUBY_IMAGE} with html-proofer ${HTMLPROOFER_VERSION}"
   run_check() { run_docker; }
 else
-  echo "Error: needs either a 'htmlproofer' binary on PATH or Docker." >&2
-  echo "  gem install html-proofer -v ${HTMLPROOFER_VERSION}" >&2
+  echo "Error: needs Ruby (to install html-proofer) or Docker." >&2
+  echo "  gem install --no-document html-proofer -v ${HTMLPROOFER_VERSION}" >&2
   exit 1
 fi
 

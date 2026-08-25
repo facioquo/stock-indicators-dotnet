@@ -12,9 +12,9 @@
     "docs:dev": "vitepress dev",
     "docs:build": "vitepress build",
     "docs:preview": "vitepress preview",
-    "test": "vitepress build && playwright test",
-    "test:charts": "vitepress build && playwright test --project=charts",
-    "test:a11y": "vitepress build && playwright test --project=a11y",
+    "test": "playwright test",
+    "test:charts": "playwright test --project=charts",
+    "test:a11y": "playwright test --project=a11y",
     "test:links": "bash .vitepress/test-links.sh"
   },
   "devDependencies": {

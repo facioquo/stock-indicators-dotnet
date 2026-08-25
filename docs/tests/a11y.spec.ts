@@ -4,6 +4,8 @@ import { readFileSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 
+import { mockStockChartsApi, CHART_TERMINAL_SELECTOR } from './chart-api-mock'
+
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const SITEMAP = join(__dirname, '../.vitepress/dist/sitemap.xml')
 
@@ -84,11 +86,25 @@ for (const path of PAGES) {
   test(`a11y - ${path}`, async ({ page }) => {
     const analyticsAttempts = await blockAnalytics(page)
 
+    // Serve charts from the same fixtures the chart suite uses. Without this
+    // the scan waits on the live API — slow, and it would only ever scan the
+    // failure UI rather than a rendered chart.
+    await mockStockChartsApi(page)
+
     await page.goto(path, { waitUntil: 'domcontentloaded' })
 
-    // Charts mount behind ClientOnly and paint after hydration; waiting for the
-    // network to settle keeps the scan from racing late-inserted content.
-    await page.waitForLoadState('networkidle')
+    // Web-first waits rather than `networkidle`, which Playwright discourages
+    // for tests. The content root proves the page rendered; charts mount behind
+    // ClientOnly after hydration, so any chart on the page must also reach a
+    // terminal state before axe looks at it.
+    await expect(page.locator('.VPContent')).toBeVisible()
+
+    const charts = page.locator('[data-testid$="-root"]')
+    for (let i = 0; i < (await charts.count()); i++) {
+      await expect(
+        charts.nth(i).locator(CHART_TERMINAL_SELECTOR).first()
+      ).toBeVisible({ timeout: 20_000 })
+    }
 
     const { violations } = await new AxeBuilder({ page })
       .withTags(WCAG_TAGS)

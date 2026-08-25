@@ -7,14 +7,18 @@ import { defineConfig, devices } from '@playwright/test'
  *   charts - visual chart rendering, mocked against static fixture data
  *   a11y   - axe-core WCAG 2.1 A/AA scan of every page in the sitemap
  *
- * Run via the package scripts, which build the site first:
+ * Run via the package scripts, or drive Playwright directly:
  *   pnpm run test          # both projects
  *   pnpm run test:charts
  *   pnpm run test:a11y
+ *   pnpm exec playwright test --ui
  *
- * The build must precede the run because the a11y project enumerates its
- * pages from `.vitepress/dist/sitemap.xml` while collecting tests, before
- * `webServer` starts. That is also why `webServer` only previews.
+ * `webServer` builds before previewing so every entry point is self-contained
+ * — an IDE run button or a bare `playwright test` gets a fresh build rather
+ * than previewing stale output. Playwright starts `webServer` before it loads
+ * spec files, so the build is also what puts `.vitepress/dist/sitemap.xml` in
+ * place for the a11y project, which enumerates its pages from it at
+ * collection time.
  */
 export default defineConfig({
   testDir: './tests',
@@ -48,7 +52,7 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'pnpm run docs:preview',
+    command: 'pnpm run docs:build && pnpm run docs:preview',
     url: 'http://localhost:4173',
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,

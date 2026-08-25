@@ -1,55 +1,13 @@
-import { test, expect, type Page, type Route } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
 import { readdirSync, readFileSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 
 import { getTestIdPrefix } from '@facioquo/indy-charts/vue'
 
+import { mockStockChartsApi } from './chart-api-mock'
+
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const FIXTURES = join(__dirname, '../.vitepress/public/data/chart-api')
-
-// Static fixture data loaded once
-const quotesJson = readFileSync(join(FIXTURES, 'quotes.json'), 'utf8')
-const indicatorsJson = readFileSync(join(FIXTURES, 'indicators.json'), 'utf8')
-const smaJson = readFileSync(join(FIXTURES, 'sma.json'), 'utf8')
-const rsiJson = readFileSync(join(FIXTURES, 'rsi.json'), 'utf8')
-
-/**
- * Intercept all stock-charts API requests and respond with static fixture data,
- * so the suite is hermetic and never depends on the live API.
- *
- * The API serves indicator data from per-indicator endpoints keyed by UIID
- * (e.g. `/SMA/`, `/RSI/`, `/MACD/`) — NOT `/indicators/<name>`. The listings
- * fixture (`indicators.json`) carries those absolute endpoints, so the client
- * requests `/<UIID>/` and the routes below must match that shape.
- */
-async function mockStockChartsApi(page: Page): Promise<void> {
-  // Routes are matched LIFO (last-registered = highest priority). This catch-all
-  // is registered first, so every specific route below shadows it. Any indicator
-  // endpoint we don't explicitly fixture returns an empty array → the chart
-  // reaches the (tolerated) empty state instead of touching the network.
-  await page.route(/charts-api\.stockindicators\.dev\/.+/, (route: Route) =>
-    route.fulfill({ contentType: 'application/json', body: '[]' })
-  )
-
-  await page.route(/\/quotes(?:\?|$)/, (route: Route) =>
-    route.fulfill({ contentType: 'application/json', body: quotesJson })
-  )
-
-  await page.route(/\/indicators(?:\?|$)/, (route: Route) =>
-    route.fulfill({ contentType: 'application/json', body: indicatorsJson })
-  )
-
-  // SMA indicator data — endpoint is `/SMA/?lookbackPeriods=...`
-  await page.route(/\/SMA\//i, (route: Route) =>
-    route.fulfill({ contentType: 'application/json', body: smaJson })
-  )
-
-  // RSI indicator data — endpoint is `/RSI/?lookbackPeriods=...`
-  await page.route(/\/RSI\//i, (route: Route) =>
-    route.fulfill({ contentType: 'application/json', body: rsiJson })
-  )
-}
 
 /**
  * Wait for a chart to reach a terminal state (ready, empty, or error).
