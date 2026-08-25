@@ -1,5 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 
+// Code Analysis suppressions specifically covering intended or accepted overrides.
+// These must remain specific and targeted and never be used to hide genuine issues.
+// Suppressions for the obsolete shims are in Obsolete.*.Suppressions.cs, not here.
+
 [assembly: SuppressMessage(
     "Naming",
     "CA1710:Identifiers should have correct suffix",
@@ -26,10 +30,3 @@ using System.Diagnostics.CodeAnalysis;
     Justification = "Not really an issue.",
     Scope = "member",
     Target = "~F:FacioQuo.Stock.Indicators.Direction.Short")]
-
-[assembly: SuppressMessage(
-    "Naming",
-    "CA1716:Identifiers should not match keywords",
-    Justification = "Temporary, during deprecation period.",
-    Scope = "member",
-    Target = "~P:FacioQuo.Stock.Indicators.ISeries.Date")]

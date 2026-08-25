@@ -1,4 +1,7 @@
-namespace Catalogging;
+using Catalogging;
+
+namespace ObsoleteShims;
+#pragma warning disable CS0618
 
 /// <summary>
 /// Tests for the obsolete <c>ReturnType</c> alias kept for source compatibility
@@ -12,7 +15,7 @@ namespace Catalogging;
 /// second copy, so the two cannot disagree.
 /// </remarks>
 [TestClass]
-public class CatalogObsoleteAliasTests : TestBase
+public class ObsoleteCatalogTests : TestBase
 {
     [TestMethod]
     public void ReturnTypeAliasTracksResultRecordType()
@@ -21,9 +24,7 @@ public class CatalogObsoleteAliasTests : TestBase
 
         foreach (IndicatorListing listing in Catalog.Get())
         {
-#pragma warning disable CS0618 // asserting the obsolete alias is exactly the point
             string alias = listing.ReturnType;
-#pragma warning restore CS0618
 
             if (!string.Equals(alias, listing.ResultRecordType, StringComparison.Ordinal))
             {

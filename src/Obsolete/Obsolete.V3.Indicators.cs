@@ -1079,7 +1079,7 @@ public static partial class Indicator
             .ToTrix(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use a chained `results.ToSma(smaPeriods)` for moving averages.", true)]
+    [Obsolete("Use a chained `results.ToSma(signalPeriods)` for moving averages.", true)]
     public static IEnumerable<TrixResult> GetTrix(
         this IEnumerable<IBar> bars, int lookbackPeriods, int signalPeriods)
         => bars.ToSortedList().Use(CandlePart.Close).ToTrix(lookbackPeriods);
