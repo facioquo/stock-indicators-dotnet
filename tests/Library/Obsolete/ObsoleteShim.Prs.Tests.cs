@@ -1,6 +1,7 @@
 using System.Reflection;
 
-namespace StaticSeries;
+namespace ObsoleteShims;
+#pragma warning disable CS0618
 
 /// <summary>
 /// Tests for the obsolete v3 <c>GetPrs</c> shims, which must return what the pre-3.0.0
@@ -14,17 +15,15 @@ namespace StaticSeries;
 /// validation rejects, so the documented default threw instead of computing.
 /// </remarks>
 [TestClass]
-public class PrsObsoleteShimTests : TestBaseWithPrecision
+public class ObsoletePrsTests : TestBaseWithPrecision
 {
     [TestMethod]
     public void GetPrsMatchesToPrsRatioDirection()
     {
         const int lookbackPeriods = 20;
 
-#pragma warning disable CS0618 // exercising the obsolete shim is the point
         IReadOnlyList<PrsResult> shim
             = Bars.GetPrs(OtherBars, lookbackPeriods).ToList();
-#pragma warning restore CS0618
 
         IReadOnlyList<PrsResult> expected
             = ((IReadOnlyList<IReusable>)Bars).ToPrs(OtherBars, lookbackPeriods);
@@ -42,10 +41,8 @@ public class PrsObsoleteShimTests : TestBaseWithPrecision
         // value came back as the reciprocal
         const int lookbackPeriods = 20;
 
-#pragma warning disable CS0618
         List<PrsResult> shimResults = Bars.GetPrs(OtherBars, lookbackPeriods).ToList();
         double shim = shimResults[^1].Prs!.Value;
-#pragma warning restore CS0618
 
         IReadOnlyList<PrsResult> invertedResults
             = ((IReadOnlyList<IReusable>)OtherBars).ToPrs(Bars, lookbackPeriods);
@@ -58,9 +55,7 @@ public class PrsObsoleteShimTests : TestBaseWithPrecision
     public void GetPrsWithUnspecifiedLookbackComputesWithoutPercent()
     {
         // the shim's own default: v2 treated it as "no PrsPercent", not as an error
-#pragma warning disable CS0618
         IReadOnlyList<PrsResult> shim = Bars.GetPrs(OtherBars).ToList();
-#pragma warning restore CS0618
 
         IReadOnlyList<PrsResult> expected
             = ((IReadOnlyList<IReusable>)Bars).ToPrs(OtherBars);
@@ -79,9 +74,7 @@ public class PrsObsoleteShimTests : TestBaseWithPrecision
         IEnumerable<(DateTime d, double v)> baseTuples
             = OtherBars.Select(static b => (b.Timestamp, (double)b.Close));
 
-#pragma warning disable CS0618
         IReadOnlyList<PrsResult> shim = evalTuples.GetPrs(baseTuples, 20).ToList();
-#pragma warning restore CS0618
 
         IReadOnlyList<PrsResult> expected
             = ((IReadOnlyList<IReusable>)Bars).ToPrs(OtherBars, 20);
@@ -98,9 +91,7 @@ public class PrsObsoleteShimTests : TestBaseWithPrecision
         IEnumerable<(DateTime d, double v)> baseTuples
             = OtherBars.Select(static b => (b.Timestamp, (double)b.Close));
 
-#pragma warning disable CS0618
         IReadOnlyList<PrsResult> shim = evalTuples.GetPrs(baseTuples).ToList();
-#pragma warning restore CS0618
 
         IReadOnlyList<PrsResult> expected
             = ((IReadOnlyList<IReusable>)Bars).ToPrs(OtherBars);
@@ -117,9 +108,7 @@ public class PrsObsoleteShimTests : TestBaseWithPrecision
         // ToPrs would move both sides together; these anchor the shim to absolute values
         const int lookbackPeriods = 30;
 
-#pragma warning disable CS0618
         List<PrsResult> shim = Bars.GetPrs(OtherBars, lookbackPeriods).ToList();
-#pragma warning restore CS0618
 
         shim.Should().HaveCount(502);
         shim[8].Prs.Should().BeApproximately(0.902250, Money6);
@@ -134,9 +123,7 @@ public class PrsObsoleteShimTests : TestBaseWithPrecision
     {
         // v2 rejected <= 0; null was the "no PrsPercent" marker, not 0. This overload
         // still distinguishes the two, so an explicit 0 stays an error.
-#pragma warning disable CS0618
         Action act = () => _ = Bars.GetPrs(OtherBars, 0).ToList();
-#pragma warning restore CS0618
 
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
@@ -144,9 +131,7 @@ public class PrsObsoleteShimTests : TestBaseWithPrecision
     [TestMethod]
     public void GetPrsRejectsANegativeLookback()
     {
-#pragma warning disable CS0618
         Action act = () => _ = Bars.GetPrs(OtherBars, -5).ToList();
-#pragma warning restore CS0618
 
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
@@ -163,9 +148,7 @@ public class PrsObsoleteShimTests : TestBaseWithPrecision
         IEnumerable<(DateTime d, double v)> baseTuples
             = OtherBars.Select(static b => (b.Timestamp, (double)b.Close));
 
-#pragma warning disable CS0618
         List<PrsResult> shim = evalTuples.GetPrs(baseTuples, 0).ToList();
-#pragma warning restore CS0618
 
         shim.Should().HaveCount(Bars.Count);
         shim.Should().OnlyContain(static r => r.PrsPercent == null);

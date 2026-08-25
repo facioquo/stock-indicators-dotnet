@@ -1,6 +1,7 @@
 using System.Reflection;
 
-namespace Utilities;
+namespace ObsoleteShims;
+#pragma warning disable CS0618
 
 /// <summary>
 /// Tests for the two obsolete v3 tuple shims that accept an <c>smaPeriods</c> argument
@@ -19,7 +20,7 @@ namespace Utilities;
 /// </para>
 /// </remarks>
 [TestClass]
-public class ObsoleteShimTupleSmaPeriodsTests : TestBase
+public class ObsoleteTupleTests : TestBase
 {
     /// <summary>
     /// Resolves an obsolete shim overload by parameter type.
@@ -85,10 +86,8 @@ public class ObsoleteShimTupleSmaPeriodsTests : TestBase
         IEnumerable<(DateTime d, double v)> baseTuples
             = OtherBars.Select(static b => (b.Timestamp, (double)b.Close));
 
-#pragma warning disable CS0618 // exercising the obsolete shim is the point
         List<PrsResult> withSma = evalTuples.GetPrs(baseTuples, 20, 5).ToList();
         List<PrsResult> withoutSma = evalTuples.GetPrs(baseTuples, 20).ToList();
-#pragma warning restore CS0618
 
         // the argument changes nothing, which is what the message now says
         withSma.Select(static r => r.Prs).Should().Equal(withoutSma.Select(static r => r.Prs));
@@ -101,10 +100,8 @@ public class ObsoleteShimTupleSmaPeriodsTests : TestBase
         IEnumerable<(DateTime d, double v)> priceTuples
             = Bars.Select(static b => (b.Timestamp, (double)b.Close));
 
-#pragma warning disable CS0618
         List<RocResult> withSma = priceTuples.GetRoc(20, 5).ToList();
         List<RocResult> withoutSma = priceTuples.GetRoc(20).ToList();
-#pragma warning restore CS0618
 
         withSma.Select(static r => r.Roc).Should().Equal(withoutSma.Select(static r => r.Roc));
         withSma.Select(static r => r.Momentum).Should().Equal(withoutSma.Select(static r => r.Momentum));

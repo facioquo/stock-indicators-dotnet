@@ -1,4 +1,5 @@
-namespace StaticSeries;
+namespace ObsoleteShims;
+#pragma warning disable CS0618
 
 /// <summary>
 /// Tests for the obsolete v3 <c>GetPvo</c> shim, which must return what the pre-3.0.0
@@ -12,14 +13,12 @@ namespace StaticSeries;
 /// nothing caught it.
 /// </remarks>
 [TestClass]
-public class PvoObsoleteShimTests : TestBaseWithPrecision
+public class ObsoletePvoTests : TestBaseWithPrecision
 {
     [TestMethod]
     public void GetPvoDefaultsMatchToPvo()
     {
-#pragma warning disable CS0618 // exercising the obsolete shim is the point
         List<PvoResult> shim = Bars.GetPvo().ToList();
-#pragma warning restore CS0618
 
         IReadOnlyList<PvoResult> expected = Bars.ToPvo();
 
@@ -33,9 +32,7 @@ public class PvoObsoleteShimTests : TestBaseWithPrecision
     public void GetPvoDefaultsAreNotTheShiftedPeriods()
     {
         // guards the specific 3.0.0 regression: the shim declared 9, 12, 9
-#pragma warning disable CS0618
         List<PvoResult> shim = Bars.GetPvo().ToList();
-#pragma warning restore CS0618
 
         IReadOnlyList<PvoResult> shifted = Bars.ToPvo(9, 12, 9);
 
@@ -47,9 +44,7 @@ public class PvoObsoleteShimTests : TestBaseWithPrecision
     {
         // anchors the shim to absolute values, so a co-regression in ToPvo cannot
         // move both sides of the comparison above and pass unnoticed
-#pragma warning disable CS0618
         List<PvoResult> shim = Bars.GetPvo().ToList();
-#pragma warning restore CS0618
 
         shim.Should().HaveCount(502);
         shim[501].Pvo.Should().BeApproximately(10.439509, Money6);
@@ -58,9 +53,7 @@ public class PvoObsoleteShimTests : TestBaseWithPrecision
     [TestMethod]
     public void GetPvoWithExplicitPeriodsMatchesToPvo()
     {
-#pragma warning disable CS0618
         List<PvoResult> shim = Bars.GetPvo(10, 20, 7).ToList();
-#pragma warning restore CS0618
 
         IReadOnlyList<PvoResult> expected = Bars.ToPvo(10, 20, 7);
 

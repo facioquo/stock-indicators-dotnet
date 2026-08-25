@@ -1,6 +1,7 @@
 using System.Reflection;
 
-namespace StaticSeries;
+namespace ObsoleteShims;
+#pragma warning disable CS0618
 
 /// <summary>
 /// Tests for the obsolete v3 <c>GetTrix</c> shim that rejects a signal-line argument.
@@ -14,7 +15,7 @@ namespace StaticSeries;
 /// reaches the overload itself.
 /// </remarks>
 [TestClass]
-public class TrixObsoleteShimTests : TestBase
+public class ObsoleteTrixTests : TestBase
 {
     [TestMethod]
     public void ErrorLevelGetTrixOverloadMessageNamesSignalPeriods()
