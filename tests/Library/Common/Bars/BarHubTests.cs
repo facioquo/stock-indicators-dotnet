@@ -248,13 +248,19 @@ public class BarHubTests : StreamHubTestBase, ITestBarObserver, ITestChainProvid
     }
 
     [TestMethod]
-    public void BarInsidePrunedHistory_ViaProviderNotification_IsIgnored()
+    public void BarInsidePrunedHistory_ViaProviderNotification_LeavesObserverUnchanged()
     {
-        // The drop on a non-standalone BarHub is now only reachable via the
+        // The rejection on a non-standalone BarHub is only reachable via the
         // provider-notification path (OnAdd), since the public Add is rejected
-        // on a subscribed hub. Pin that branch directly. As with the standalone
-        // case, the drop is justified by the prune: the observer inherits the
-        // provider's prune boundary through OnPrune.
+        // on a subscribed hub. Exercise that branch.
+        //
+        // Honest limit, stated because over-claiming a test is what let the
+        // original defect ship: this pins the OUTCOME, not the branch. A
+        // subscribed hub's cache is a function of its provider's, so a bar that
+        // slipped past the guard would be rebuilt away against the provider —
+        // which no longer holds it — and land on this same cache. The guard is
+        // a short-circuit here, not the thing producing the result, and no
+        // assertion on the observer's cache can tell the two apart.
         const int maxCacheSize = 50;
         const int totalBars = 100;
 
@@ -397,6 +403,61 @@ public class BarHubTests : StreamHubTestBase, ITestBarObserver, ITestChainProvid
         hub.Cache.Should().NotContain(b => b.Timestamp == Bars[10].Timestamp);
 
         hub.EndTransmission();
+    }
+
+    [TestMethod]
+    public void GapBarPrecedingHead_AtCapacity_LeavesCacheUntouched()
+    {
+        // The variant that matters most, because it strikes a bar this change
+        // exists to ACCEPT: one strictly above the prune boundary, sitting in a
+        // gap the hub never held, arriving while the cache is full. Left to the
+        // insert path it would evict the head, refuse the bar, and — worst —
+        // advance the prune boundary to the destroyed head's timestamp,
+        // permanently shrinking the acceptance window this change widens.
+        BarHub hub = new(21);
+
+        hub.Add(Bars.Take(49));          // prunes; boundary lands at Bars[48]
+        hub.Add(Bars.Skip(60).Take(21)); // head is Bars[60]; cache at capacity
+
+        hub.Results.Should().HaveCount(21);
+        DateTime headBefore = hub.Cache[0].Timestamp;
+        headBefore.Should().Be(Bars[60].Timestamp);
+
+        // above the boundary and below the head: in the never-pruned gap
+        Bars[50].Timestamp.Should().BeAfter(Bars[48].Timestamp);
+        Bars[50].Timestamp.Should().BeBefore(headBefore);
+
+        hub.Add(Bars[50]);
+
+        hub.Results.Should().HaveCount(21, "refusing must not shrink the cache");
+        hub.Cache[0].Timestamp.Should().Be(headBefore, "the retained head must survive");
+        hub.Cache.Should().NotContain(b => b.Timestamp == Bars[50].Timestamp);
+    }
+
+    [TestMethod]
+    public void BarPrecedingHead_AfterPruning_TurnsOnTheBoundaryNotCapacity()
+    {
+        // Pruning leaves the cache exactly at MaxCacheSize, so in the steady
+        // state the capacity rule alone would refuse every before-head bar and
+        // the boundary rule would never be observable. Drop below capacity
+        // first, so this pins the boundary itself: at it, refuse; above it,
+        // accept — the case the suite otherwise never reaches, because every
+        // other acceptance test uses a hub that has never pruned.
+        BarHub hub = new(50);
+        hub.Add(Bars.Take(100)); // prunes [0..49]; boundary at Bars[49]
+        hub.RemoveAt(0);         // 49 of 50: capacity rule now inactive
+
+        hub.Results.Should().HaveCount(49);
+
+        // exactly at the boundary — refused, and `<=` is what makes it so
+        hub.Add(Bars[49]);
+        hub.Results.Should().HaveCount(49, "a bar at the boundary is still inside pruned history");
+        hub.Cache.Should().NotContain(b => b.Timestamp == Bars[49].Timestamp);
+
+        // one step above it — accepted, with room to hold it
+        hub.Add(Bars[50]);
+        hub.Results.Should().HaveCount(50, "a bar above the boundary was never discarded");
+        hub.Cache[0].Timestamp.Should().Be(Bars[50].Timestamp);
     }
 
     [TestMethod]
