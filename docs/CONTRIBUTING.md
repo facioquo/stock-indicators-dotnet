@@ -134,14 +134,18 @@ When adding or updating indicators:
 ### Accessibility testing
 
 - Use Lighthouse in Chrome, or
-- Run the automated pa11y task: **Tasks: Run Task** → `Test: Website a11y (pa11y)`, or
-- Run script manually: `bash .vitepress/test-a11y.sh` (tests `localhost` build, not production)
+- Run the automated task: **Tasks: Run Task** → `Test: Website a11y (axe-core)`, or
+- Run it manually: `pnpm run test:a11y` (builds, then scans every sitemap page
+  with axe-core against WCAG 2.1 A/AA; tests the `localhost` build, not production)
+
+Broken-link checking is a separate task, `Test: Website links (htmlproofer)`, or
+`pnpm run test:links`.
 
 ## Submitting changes
 
 By submitting changes to this repo you are also acknowledging and agree to the terms in both the [Developer Certificate of Origin (DCO) 1.1](https://developercertificate.org) and the [Apache 2.0 license](https://opensource.org/licenses/Apache-2.0).  These are standard open-source terms and conditions.
 
-When ready, submit a [Pull Request](https://help.github.com/pull-requests) with a clear description of what you've done and why it's important.
+When ready, submit a [Pull Request](https://docs.github.com/en/pull-requests) with a clear description of what you've done and why it's important.
 
 ### Pull Request naming convention
 

@@ -50,29 +50,11 @@ jobs:
       - name: Install pnpm packages
         run: pnpm install --frozen-lockfile
 
-      - name: Build site
-        run: pnpm run docs:build
-
       - name: Install htmlproofer
-        run: gem install html-proofer
+        run: gem install html-proofer -v 5.0.10
 
+      # The script builds the site and owns the ignore lists and retry policy,
+      # so this check cannot drift from what contributors run locally. It uses
+      # the htmlproofer installed above rather than its container fallback.
       - name: Test for broken URLs
-        run: |
-          max_attempts=2
-          for attempt in $(seq 1 $max_attempts); do
-            if htmlproofer .vitepress/dist \
-              --no-enforce-https \
-              --no-check-external-hash \
-              --ignore-status-codes "302,401,402,403,406,429,999" \
-              --ignore-urls "/fonts.gstatic.com/,/github\.com\/(DaveSkender\/Stock\.Indicators|facioquo\/stock-indicators-dotnet)\/(edit|blob|tree|discussions)\//,/((www\.)?google\.[^\/]+\/search\?)/"; then
-              exit 0
-            fi
-
-            if [ "$attempt" -lt "$max_attempts" ]; then
-              echo "htmlproofer failed on attempt $attempt/$max_attempts; retrying in 5 seconds..."
-              sleep 5
-            fi
-          done
-
-          echo "htmlproofer failed after $max_attempts attempts."
-          exit 1
+        run: pnpm run test:links

@@ -115,8 +115,7 @@
       "detail": "Complete one-time environment setup (global tools and packages)",
       "dependsOn": [
         "Install: .NET tools",
-        "Install: All code dependencies",
-        "Install: Chrome for Puppeteer"
+        "Install: All code dependencies"
       ],
       "dependsOrder": "parallel"
     },
@@ -138,7 +137,7 @@
       "dependsOn": [
         "Install: .NET packages",
         "Install: Node packages",
-        "Install: Chrome for Puppeteer"
+        "Install: Browsers for website tests"
       ],
       "dependsOrder": "parallel"
     },
@@ -148,15 +147,20 @@
       "dependsOn": [
         "Update: .NET packages",
         "Update: Node packages",
-        "Install: Chrome for Puppeteer"
+        "Install: Browsers for website tests"
       ],
       "dependsOrder": "parallel"
     },
     {
-      "label": "Install: Chrome for Puppeteer",
-      "detail": "Install Chrome browser for Puppeteer-based accessibility testing",
+      "label": "Install: Browsers for website tests",
+      "detail": "Install the Chromium build Playwright pins, for the chart and a11y suites",
       "type": "shell",
-      "command": "pnpm dlx puppeteer browsers install chrome",
+      "command": "pnpm exec playwright install chromium",
+      "dependsOn": "Install: Node packages",
+      "dependsOrder": "sequence",
+      "options": {
+        "cwd": "${workspaceFolder}/docs"
+      },
       "presentation": {
         "echo": false,
         "clear": true,
@@ -564,9 +568,9 @@
     },
     {
       "label": "Test: Website links (htmlproofer)",
-      "detail": "Build website and check for broken links with htmlproofer (uses Docker)",
+      "detail": "Build website and check for broken links with htmlproofer (native, or Docker fallback)",
       "type": "shell",
-      "command": "bash .vitepress/test-links.sh",
+      "command": "pnpm run test:links",
       "options": {
         "cwd": "${workspaceFolder}/docs"
       },
@@ -577,16 +581,17 @@
       "dependsOrder": "sequence"
     },
     {
-      "label": "Test: Website a11y (pa11y)",
-      "detail": "Build website, preview locally, and run pa11y-ci sitemap checks",
+      "label": "Test: Website a11y (axe-core)",
+      "detail": "Build website and run axe-core WCAG 2.1 A/AA checks over every sitemap page",
       "type": "shell",
-      "command": "bash .vitepress/test-a11y.sh",
+      "command": "pnpm run test:a11y",
       "dependsOn": [
         "Stop: VitePress servers",
         "Install: Node packages",
-        "Install: Chrome for Puppeteer"
+        "Install: Browsers for website tests"
       ],
       "dependsOrder": "sequence",
+      "group": "test",
       "options": {
         "cwd": "${workspaceFolder}/docs"
       }
@@ -596,7 +601,11 @@
       "detail": "Run Playwright chart rendering tests for the website",
       "type": "shell",
       "command": "pnpm run test:charts",
-      "dependsOn": "Install: Node packages",
+      "dependsOn": [
+        "Stop: VitePress servers",
+        "Install: Node packages",
+        "Install: Browsers for website tests"
+      ],
       "dependsOrder": "sequence",
       "group": "test",
       "options": {
@@ -608,7 +617,7 @@
       "detail": "Run all website tests: links, accessibility, and charts",
       "dependsOn": [
         "Test: Website links (htmlproofer)",
-        "Test: Website a11y (pa11y)",
+        "Test: Website a11y (axe-core)",
         "Test: Website charts (playwright)"
       ],
       "dependsOrder": "sequence",

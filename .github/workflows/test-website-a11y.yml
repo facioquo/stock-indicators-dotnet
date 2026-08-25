@@ -51,23 +51,20 @@ jobs:
       - name: Install pnpm packages
         run: pnpm install --frozen-lockfile
 
-      - name: Build site
-        run: pnpm run docs:build
+      - name: Install Playwright browser
+        run: pnpm exec playwright install --with-deps chromium
 
-      - name: Serve site
-        run: pnpm run docs:preview &
-
-      - name: Wait for server
-        run: sleep 5
-
-      - name: Show environment
-        run: pnpm dlx pa11y --environment
-
+      # Builds the site, serves it, and runs axe-core (WCAG 2.1 A/AA) against
+      # every page in the sitemap. ANALYTICS_ENABLED is intentionally unset so
+      # the build carries no gtag snippet; the suite additionally blocks and
+      # fails on any analytics request.
       - name: Test accessibility
-        run: >
-          pnpm dlx pa11y-ci
-          --sitemap http://localhost:4173/sitemap.xml
+        run: pnpm run test:a11y
 
-      - name: Kill site (failsafe)
-        if: always()
-        run: pkill -f vitepress
+      - name: Upload report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: a11y-report
+          path: docs/playwright-report
+          retention-days: 7

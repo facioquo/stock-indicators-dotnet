@@ -284,8 +284,13 @@ export default defineConfig({
             { text: 'Doji', link: '/indicators/doji' },
             { text: 'Marubozu', link: '/indicators/marubozu' },
             {
+              // No `collapsed` key on purpose: a collapsible group without its
+              // own `link` renders `role="button"` on the group header AND on
+              // the caret inside it, which axe flags as nested-interactive
+              // (WCAG 4.1.2) on every page this group is expanded for. Omitting
+              // `collapsed` makes it a plain always-open heading with no
+              // button, keeping the grouping without the nested controls.
               text: 'Other price patterns',
-              collapsed: false,
               items: [
                 { text: 'Pivots', link: '/indicators/pivots' },
                 { text: 'Williams Fractal', link: '/indicators/fractal' },
@@ -480,7 +485,6 @@ export default defineConfig({
     'test-results/**',
     'playwright-report/**',
     'vendor/**',
-    '.pa11yci',
     '_headers',
     'custom-chart.md',
     'Gemfile*',
