@@ -24,6 +24,7 @@ Complete formatting requirements for Markdown files in this organization.
 - **Indentation:** Must align with body text start position (GitHub Flavored Markdown standard)
 - **Ordering:** Use ordered lists (1., 2., 3.) only when sequence matters
 - **Bold labels:** Use sentence case for bold labels that start list items
+- Never add arbitrary linebreaks due to line length
 
 ## Code blocks
 
@@ -82,6 +83,7 @@ Only these elements are allowed:
 | ------------- | --- |
 | Title case in headers | Convert to sentence case |
 | Title case in bold labels | Convert to sentence case |
+| Arbitrary line breaks | Remove unnatural line breaks in prose and lists |
 | Asterisk bullets | Replace with hyphens |
 | Setext headers | Convert to ATX |
 | Missing blank lines | Add around headers and code blocks |
