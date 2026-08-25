@@ -172,8 +172,13 @@ public class BarHubTests : StreamHubTestBase, ITestBarObserver, ITestChainProvid
     }
 
     [TestMethod]
-    public void IgnoreBarsPrecedingTimeline_Standalone()
+    public void IgnoreBarsInsidePrunedHistory_Standalone()
     {
+        // Pruning is what makes a bar unrepresentable: bars [0..49] were
+        // discarded, so re-admitting one would leave it adjoining bars[50],
+        // a bar it never followed. Dropping is correct *here* — see
+        // AcceptBarPrecedingHead_WhenNothingPruned for the case where the
+        // same relative ordering carries no such loss.
         const int maxCacheSize = 50;
         const int totalBars = 100;
 
@@ -182,7 +187,7 @@ public class BarHubTests : StreamHubTestBase, ITestBarObserver, ITestChainProvid
         // Setup standalone BarHub with cache limit
         BarHub barHub = new(maxCacheSize);
 
-        // Stream more bars than cache can hold
+        // Stream more bars than cache can hold, forcing a prune
         barHub.Add(bars);
 
         // Verify cache was pruned to maxCacheSize
@@ -191,7 +196,11 @@ public class BarHubTests : StreamHubTestBase, ITestBarObserver, ITestChainProvid
         // Cache should now contain bars [50..99]
         DateTime firstTimestamp = barHub.Cache[0].Timestamp;
 
-        // Try to add a bar that precedes the current timeline
+        // the precondition this test turns on: history really was discarded
+        firstTimestamp.Should().BeAfter(bars[0].Timestamp,
+            "the drop below is only justified because earlier bars were pruned");
+
+        // Try to add a bar that falls inside the pruned range
         Bar oldBar = bars[10]; // This is before bars[50]
         oldBar.Timestamp.Should().BeBefore(firstTimestamp);
 
@@ -239,11 +248,13 @@ public class BarHubTests : StreamHubTestBase, ITestBarObserver, ITestChainProvid
     }
 
     [TestMethod]
-    public void BarBeforeHead_ViaProviderNotification_IsIgnored()
+    public void BarInsidePrunedHistory_ViaProviderNotification_IsIgnored()
     {
-        // The before-head drop on a non-standalone BarHub is now only
-        // reachable via the provider-notification path (OnAdd), since the
-        // public Add is rejected on a subscribed hub. Pin that branch directly.
+        // The drop on a non-standalone BarHub is now only reachable via the
+        // provider-notification path (OnAdd), since the public Add is rejected
+        // on a subscribed hub. Pin that branch directly. As with the standalone
+        // case, the drop is justified by the prune: the observer inherits the
+        // provider's prune boundary through OnPrune.
         const int maxCacheSize = 50;
         const int totalBars = 100;
 
@@ -270,5 +281,115 @@ public class BarHubTests : StreamHubTestBase, ITestBarObserver, ITestChainProvid
 
         observer.Unsubscribe();
         provider.EndTransmission();
+    }
+
+    [TestMethod]
+    public void AcceptBarPrecedingHead_WhenNothingPruned()
+    {
+        // #2153: a hub seeded from the middle of a series has pruned nothing,
+        // so a bar arriving beneath its head is simply one it never received —
+        // backfill, a second feed, or plain out-of-order delivery. Discarding
+        // it lost data the hub was able to hold.
+        BarHub hub = new(); // default cache is 100_000; nothing will prune
+
+        hub.Add(Bars.Skip(50).Take(20));
+        DateTime headBefore = hub.Cache[0].Timestamp;
+
+        Bar earlier = Bars[10];
+        earlier.Timestamp.Should().BeBefore(headBefore);
+
+        hub.Add(earlier);
+
+        hub.Results.Should().HaveCount(21, "the earlier bar is representable and must be kept");
+        hub.Cache[0].Timestamp.Should().Be(earlier.Timestamp, "it sorts ahead of the seeded window");
+        hub.Cache[1].Timestamp.Should().Be(headBefore, "the seeded window is otherwise untouched");
+        hub.IsFaulted.Should().BeFalse();
+
+        hub.EndTransmission();
+    }
+
+    [TestMethod]
+    public void AcceptBatchPrecedingHead_WhenNothingPruned()
+    {
+        // The batch path is where the loss was silent enough to miss: a caller
+        // offering 30 bars over a 20-bar cache saw the count stay at 20 — ten
+        // dropped, twenty same-timestamp replacements — and no signal either way.
+        BarHub hub = new();
+
+        hub.Add(Bars.Skip(50).Take(20));
+
+        IReadOnlyList<Bar> batch = Bars.Skip(40).Take(30).ToList();
+        hub.Add(batch);
+
+        // bars [40..69]: ten precede the head, twenty restate what is cached
+        hub.Results.Should().HaveCount(30, "the ten leading bars must survive the batch");
+        hub.Cache[0].Timestamp.Should().Be(Bars[40].Timestamp);
+        hub.Cache.Select(b => b.Timestamp).Should().BeInAscendingOrder();
+
+        hub.EndTransmission();
+    }
+
+    [TestMethod]
+    public void BarPrecedingHead_ArrivalOrderDoesNotChangeCache()
+    {
+        // The clearest statement of the rule: the accepted cache is exactly the
+        // one the reverse arrival order already produced before this fix, so
+        // refusing it was ordering-dependent rather than protective.
+        BarHub inOrder = new();
+        inOrder.Add(Bars[10]);
+        inOrder.Add(Bars.Skip(50).Take(20));
+
+        BarHub outOfOrder = new();
+        outOfOrder.Add(Bars.Skip(50).Take(20));
+        outOfOrder.Add(Bars[10]);
+
+        outOfOrder.Cache.Select(static b => b.Timestamp)
+            .Should().Equal(inOrder.Cache.Select(static b => b.Timestamp));
+
+        inOrder.EndTransmission();
+        outOfOrder.EndTransmission();
+    }
+
+    [TestMethod]
+    public void BarPrecedingHead_CascadesRebuildToObservers()
+    {
+        // A front insert invalidates every downstream calculation, so the
+        // observer must re-derive rather than keep results computed without it.
+        BarHub provider = new();
+        provider.Add(Bars.Skip(50).Take(20));
+
+        BarHub observer = provider.ToBarHub();
+        observer.Results.Should().HaveCount(20);
+
+        provider.Add(Bars[10]);
+
+        observer.Results.Should().HaveCount(21, "the observer rebuilds to include the earlier bar");
+        observer.Cache[0].Timestamp.Should().Be(Bars[10].Timestamp);
+
+        observer.Unsubscribe();
+        provider.EndTransmission();
+    }
+
+    [TestMethod]
+    public void PrunedBoundary_SurvivesReinitialize()
+    {
+        // Pruning is irreversible, so the boundary must outlive a reset. A root
+        // BarHub deliberately preserves its cache across Reinitialize (see the
+        // IsRootHub branch of Rebuild), so the pruned range is still missing
+        // afterward and re-admitting into it would still fabricate adjacency.
+        const int maxCacheSize = 50;
+
+        BarHub hub = new(maxCacheSize);
+        hub.Add(Bars.Take(100)); // forces a prune of bars [0..49]
+        DateTime headBefore = hub.Cache[0].Timestamp;
+
+        hub.Reinitialize();
+
+        hub.Add(Bars[10]); // inside the pruned range
+
+        hub.Cache[0].Timestamp.Should().Be(headBefore,
+            "a reset does not bring pruned history back, so the boundary still applies");
+
+        hub.EndTransmission();
     }
 }

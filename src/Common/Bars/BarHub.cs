@@ -82,13 +82,23 @@ public class BarHub
     {
         ArgumentNullException.ThrowIfNull(item);
 
-        // Reject additions that precede the current cache timeline
-        // (applies to both standalone and non-standalone BarHub)
+        // Reject additions that fall inside history this hub already pruned
+        // away: that data is gone, so re-admitting a bar beneath the retained
+        // window would leave it adjoining a bar it never followed, and every
+        // downstream indicator would treat the two as consecutive.
+        //
+        // A bar that merely precedes Cache[0] with nothing pruned beneath it is
+        // not that case. The hub never held it, and accepting it produces the
+        // same cache the reverse arrival order already produces today, so it is
+        // inserted like any other out-of-order arrival. (applies to both
+        // standalone and non-standalone BarHub)
         lock (CacheLock)
         {
-            if (Cache.Count > 0 && item.Timestamp < Cache[0].Timestamp)
+            if (Cache.Count > 0
+                && item.Timestamp < Cache[0].Timestamp
+                && PrunedThrough is DateTime prunedThrough
+                && item.Timestamp <= prunedThrough)
             {
-                // Silently ignore - this prevents indeterminate gaps in the timeline
                 return;
             }
         }
