@@ -371,6 +371,35 @@ public class BarHubTests : StreamHubTestBase, ITestBarObserver, ITestChainProvid
     }
 
     [TestMethod]
+    public void BarPrecedingHead_AtCapacity_LeavesCacheUntouched()
+    {
+        // A full cache has no room for a bar older than everything it holds, so
+        // the bar is refused outright. That has to be decided before the insert:
+        // the maintenance prune inside InsertWithoutRebuild runs first, so it
+        // would evict the retained head to make room and only then find the
+        // shifted index negative — dropping the arriving bar AND the head, a net
+        // loss of one bar where refusing costs nothing.
+        const int maxCacheSize = 50;
+
+        BarHub hub = new(maxCacheSize);
+
+        // exactly at capacity, and nothing has pruned yet
+        hub.Add(Bars.Skip(50).Take(maxCacheSize));
+        hub.Results.Should().HaveCount(maxCacheSize);
+
+        DateTime headBefore = hub.Cache[0].Timestamp;
+        headBefore.Should().Be(Bars[50].Timestamp);
+
+        hub.Add(Bars[10]); // older than every retained bar
+
+        hub.Results.Should().HaveCount(maxCacheSize, "refusing must not shrink the cache");
+        hub.Cache[0].Timestamp.Should().Be(headBefore, "the retained head must survive the refusal");
+        hub.Cache.Should().NotContain(b => b.Timestamp == Bars[10].Timestamp);
+
+        hub.EndTransmission();
+    }
+
+    [TestMethod]
     public void PrunedBoundary_SurvivesReinitialize()
     {
         // Pruning is irreversible, so the boundary must outlive a reset. A root
