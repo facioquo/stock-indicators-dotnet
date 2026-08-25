@@ -33,28 +33,26 @@ public abstract partial class StreamHub<TIn, TOut> : IStreamHub<TIn, TOut>
     /// <see langword="null"/> when nothing has been pruned.
     /// </summary>
     /// <remarks>
-    /// Pruning is the one way a hub loses history it once held, so this marks
-    /// the boundary below which the timeline is no longer representable:
-    /// re-admitting an item at or before it would place an entry next to a
-    /// neighbor it never actually adjoined, and every downstream calculation
-    /// would treat the two as consecutive.
-    /// <para>
-    /// An item that merely precedes <c>Cache[0]</c> is a different case. When
-    /// nothing was pruned away beneath it, the hub simply never received it,
-    /// and accepting it yields exactly the cache an in-order arrival would
-    /// have produced — so timestamp order, not arrival order, decides.
-    /// </para>
+    /// Pruning is the one way a hub loses history it once held, so this records
+    /// how far that loss reaches. What a hub does with the boundary is its own
+    /// policy — see <c>BarHub.RejectsBeforeHead</c> for the only one today.
     /// <para>
     /// Monotonic, and never cleared: pruning is irreversible, and no reset path
     /// restores the discarded entries. <see cref="Reinitialize"/> in particular
     /// does not clear it — a root <see cref="BarHub"/> deliberately preserves
     /// its cache across that call, so the boundary still describes the timeline
     /// afterward, and a non-root hub re-derives from a provider whose own
-    /// pruned history is equally gone. Read and written under
-    /// <see cref="CacheLock"/>.
+    /// pruned history is equally gone.
+    /// </para>
+    /// <para>
+    /// Written under <see cref="CacheLock"/> on every path that reads it today.
+    /// The root-hub branch of <c>TradeTickHub.OnAdd</c> is a pre-existing
+    /// exception — it mutates the cache outside the lock, so the write reached
+    /// from there is unsynchronized. Nothing reads the boundary on that path,
+    /// so it is latent; a future reader must fix that locking first.
     /// </para>
     /// </remarks>
-    protected DateTime? PrunedThrough { get; private set; }
+    private protected DateTime? PrunedThrough { get; private set; }
 
     /// <summary>
     /// Records that history through <paramref name="toTimestamp"/> has been

@@ -175,6 +175,15 @@ public class BarHub
     /// A bar that hits neither is one the hub simply never received. Accepting
     /// it produces the same cache the reverse arrival order already produces,
     /// so it is inserted like any other out-of-order arrival.
+    /// <para>
+    /// An empty cache admits anything, deliberately. Emptying a pruned hub
+    /// through <c>RemoveRange</c> and re-seeding it with older bars can
+    /// therefore re-create the adjacency the prune boundary otherwise refuses.
+    /// That is left open rather than closed: the boundary is never cleared, so
+    /// refusing here would permanently bar a re-seed and trade a rare
+    /// fabricated adjacency for a new silent drop — the failure this guard
+    /// exists to end.
+    /// </para>
     /// </remarks>
     /// <param name="item">Arriving bar.</param>
     /// <returns><see langword="true"/> when the bar must be discarded.</returns>

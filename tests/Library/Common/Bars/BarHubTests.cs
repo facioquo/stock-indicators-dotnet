@@ -292,7 +292,7 @@ public class BarHubTests : StreamHubTestBase, ITestBarObserver, ITestChainProvid
     [TestMethod]
     public void AcceptBarPrecedingHead_WhenNothingPruned()
     {
-        // #2153: a hub seeded from the middle of a series has pruned nothing,
+        // issue #2153: a hub seeded from the middle of a series has pruned nothing,
         // so a bar arriving beneath its head is simply one it never received —
         // backfill, a second feed, or plain out-of-order delivery. Discarding
         // it lost data the hub was able to hold.
