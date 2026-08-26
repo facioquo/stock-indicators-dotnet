@@ -49,6 +49,15 @@ export default defineConfig({
       fullyParallel: true,
       use: { ...devices['Desktop Chrome'] },
     },
+    {
+      // Verifies the controls that keep automated runs out of the production
+      // analytics property. Runs alongside `a11y`, which is the suite that
+      // loads every page and so carries the risk these controls cover.
+      name: 'analytics',
+      testMatch: /analytics-guard\.spec\.ts/,
+      fullyParallel: true,
+      use: { ...devices['Desktop Chrome'] },
+    },
   ],
 
   webServer: {

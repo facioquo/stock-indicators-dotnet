@@ -14,7 +14,7 @@
     "docs:preview": "vitepress preview",
     "test": "playwright test",
     "test:charts": "playwright test --project=charts",
-    "test:a11y": "playwright test --project=a11y",
+    "test:a11y": "playwright test --project=a11y --project=analytics",
     "test:links": "bash .vitepress/test-links.sh"
   },
   "devDependencies": {

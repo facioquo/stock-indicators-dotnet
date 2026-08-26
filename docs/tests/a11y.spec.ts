@@ -1,29 +1,21 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 import { readFileSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 
 import { mockStockChartsApi, CHART_TERMINAL_SELECTOR } from './chart-api-mock'
+import { assertBuildHasNoAnalytics, blockAnalytics } from './analytics-guard'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const SITEMAP = join(__dirname, '../.vitepress/dist/sitemap.xml')
+const DIST = join(__dirname, '../.vitepress/dist')
+const SITEMAP = join(DIST, 'sitemap.xml')
 
 /**
  * WCAG 2.1 level A and AA — the same conformance target the previous pa11y
  * suite ran against, evaluated here by axe-core instead of HTML CodeSniffer.
  */
 const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']
-
-/**
- * Analytics endpoints. The site only injects gtag when ANALYTICS_ENABLED is
- * exactly "true" (see config.mts), which no test or CI path sets — but tests
- * must never report to Google Analytics no matter where they run, so every
- * request to these hosts is aborted before it leaves the machine AND recorded
- * so the test fails loudly rather than silently passing on a config change.
- */
-const ANALYTICS_HOSTS =
-  /(googletagmanager\.com|google-analytics\.com|analytics\.google\.com|doubleclick\.net|googlesyndication\.com)/i
 
 /**
  * Every page the site publishes, taken from the built sitemap so coverage
@@ -51,21 +43,6 @@ function sitemapPaths(): string[] {
   return paths
 }
 
-/**
- * Block analytics before any navigation and collect anything that tried.
- */
-async function blockAnalytics(page: Page): Promise<string[]> {
-  const attempted: string[] = []
-
-  page.on('request', (request) => {
-    if (ANALYTICS_HOSTS.test(request.url())) attempted.push(request.url())
-  })
-
-  await page.route(ANALYTICS_HOSTS, (route) => route.abort())
-
-  return attempted
-}
-
 /** Render violations as an actionable report rather than a diff of objects. */
 function formatViolations(
   violations: Awaited<ReturnType<AxeBuilder['analyze']>>['violations']
@@ -79,6 +56,10 @@ function formatViolations(
     })
     .join('\n\n')
 }
+
+// Checked while collecting tests, before a single page is opened: if the build
+// carries analytics markup, no test in this file runs at all.
+assertBuildHasNoAnalytics(DIST)
 
 const PAGES = sitemapPaths()
 
