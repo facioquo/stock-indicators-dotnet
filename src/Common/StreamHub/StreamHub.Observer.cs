@@ -101,6 +101,9 @@ public abstract partial class StreamHub<TIn, TOut> : IStreamObserver<TIn>
                 if (removedCount > 0)
                 {
                     Cache.RemoveRange(0, removedCount);
+
+                    // provider-driven prune drops history here too
+                    MarkPruned(toTimestamp);
                 }
             }
 

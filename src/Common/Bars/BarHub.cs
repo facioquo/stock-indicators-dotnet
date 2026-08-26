@@ -82,27 +82,34 @@ public class BarHub
     {
         ArgumentNullException.ThrowIfNull(item);
 
-        // Reject additions that precede the current cache timeline
-        // (applies to both standalone and non-standalone BarHub)
-        lock (CacheLock)
-        {
-            if (Cache.Count > 0 && item.Timestamp < Cache[0].Timestamp)
-            {
-                // Silently ignore - this prevents indeterminate gaps in the timeline
-                return;
-            }
-        }
-
-        // for non-root BarHub, use standard behavior (which handles locking)
+        // for non-root BarHub, use standard behavior (which handles locking).
+        // The guard is only a short-circuit here: a before-head item that gets
+        // through re-derives from the provider (AppendCache -> Act.Rebuild),
+        // which no longer holds the dropped bar, so the outcome is the same.
         if (!IsRootHub)
         {
+            lock (CacheLock)
+            {
+                if (RejectsBeforeHead(item))
+                {
+                    return;
+                }
+            }
+
             base.OnAdd(item, notify, indexHint);
             return;
         }
 
-        // Lock for standalone BarHub operations
+        // Lock for standalone BarHub operations. The rejection test lives
+        // inside this same critical section as the insert below it: deciding
+        // under one lock and inserting under another would let a concurrent
+        // prune invalidate the decision in between.
         lock (CacheLock)
         {
+            if (RejectsBeforeHead(item))
+            {
+                return;
+            }
 
             // get result and position
             (IBar result, int index) = ToIndicator(item, indexHint);
@@ -140,6 +147,55 @@ public class BarHub
                 AppendCache(result, notify);
             }
         }
+    }
+
+    /// <summary>
+    /// Decides whether a bar arriving beneath <c>Cache[0]</c> has to be turned
+    /// away. Caller must hold <see cref="StreamHub{TIn, TOut}.CacheLock"/>.
+    /// </summary>
+    /// <remarks>
+    /// Two things make such a bar unkeepable, and only these two:
+    /// <list type="number">
+    /// <item><description>
+    /// It falls inside history this hub already pruned. That data is gone, so
+    /// re-admitting the bar would leave it adjoining one it never followed, and
+    /// every downstream indicator would treat the two as consecutive.
+    /// </description></item>
+    /// <item><description>
+    /// The cache is at capacity. The bar is older than everything retained, so
+    /// there is no room for it and it would be the first thing evicted. This
+    /// has to be settled here rather than left to the insert: the maintenance
+    /// prune inside
+    /// <see cref="StreamHub{TIn, TOut}.InsertWithoutRebuild(TOut, int, bool)"/>
+    /// runs before the insert, so it would evict the retained head to make room
+    /// and only then find the shifted index negative — losing the head as well
+    /// as the arriving bar, a net loss where refusing costs nothing.
+    /// </description></item>
+    /// </list>
+    /// A bar that hits neither is one the hub simply never received. Accepting
+    /// it produces the same cache the reverse arrival order already produces,
+    /// so it is inserted like any other out-of-order arrival.
+    /// <para>
+    /// An empty cache admits anything, deliberately. Emptying a pruned hub
+    /// through <c>RemoveRange</c> and re-seeding it with older bars can
+    /// therefore re-create the adjacency the prune boundary otherwise refuses.
+    /// That is left open rather than closed: the boundary is never cleared, so
+    /// refusing here would permanently bar a re-seed and trade a rare
+    /// fabricated adjacency for a new silent drop — the failure this guard
+    /// exists to end.
+    /// </para>
+    /// </remarks>
+    /// <param name="item">Arriving bar.</param>
+    /// <returns><see langword="true"/> when the bar must be discarded.</returns>
+    private bool RejectsBeforeHead(IBar item)
+    {
+        if (Cache.Count == 0 || item.Timestamp >= Cache[0].Timestamp)
+        {
+            return false;
+        }
+
+        return (PrunedThrough is DateTime prunedThrough && item.Timestamp <= prunedThrough)
+            || Cache.Count >= MaxCacheSize;
     }
 
     /// <summary>
