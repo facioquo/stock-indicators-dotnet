@@ -5,31 +5,36 @@ import { dirname, join } from 'path'
 
 import { getTestIdPrefix } from '@facioquo/indy-charts/vue'
 
-import { mockStockChartsApi } from './chart-api-mock'
+import {
+  mockStockChartsApi,
+  CHART_MARKERS,
+  CHART_TERMINAL_SELECTOR,
+  type ChartPhase,
+} from './chart-api-mock'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 /**
  * Wait for a chart to reach a terminal state (ready, empty, or error).
  * Returns the phase that was reached.
+ *
+ * Both the wait and the phase check derive from `CHART_MARKERS`, so a new
+ * terminal state added there is waited for here and scanned by the a11y suite
+ * without either file being edited.
  */
-async function waitForChartPhase(page: Page, testId: string): Promise<string> {
+async function waitForChartPhase(page: Page, testId: string): Promise<ChartPhase> {
   const root = page.locator(`[data-testid="${testId}-root"]`)
   await expect(root).toBeVisible({ timeout: 15_000 })
 
-  const readyOverlay = root.locator('[data-testid$="-overlay-canvas"]')
-  const emptyState = root.locator('[data-testid$="-empty"]')
-  const errorState = root.locator('[data-testid$="-error"]')
-
   // Wait for one terminal UI marker to become visible — atomic, avoids the DOM-present
   // but not-yet-visible race that `waitForFunction` with querySelector can hit.
-  const terminal = readyOverlay.or(emptyState).or(errorState)
-  await terminal.first().waitFor({ state: 'visible', timeout: 20_000 })
+  await root.locator(CHART_TERMINAL_SELECTOR).first()
+    .waitFor({ state: 'visible', timeout: 20_000 })
 
-  // Check error before ready: prevents a residual canvas from masking an error state.
-  if (await errorState.isVisible()) return 'error'
-  if (await emptyState.isVisible()) return 'empty'
-  if (await readyOverlay.isVisible()) return 'ready'
+  // Error before ready: prevents a residual canvas from masking an error state.
+  for (const phase of ['error', 'empty', 'ready'] as const) {
+    if (await root.locator(CHART_MARKERS[phase]).isVisible()) return phase
+  }
 
   throw new Error(`Chart ${testId} did not reach a terminal state`)
 }

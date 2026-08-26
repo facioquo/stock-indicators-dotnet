@@ -56,8 +56,22 @@ export async function mockStockChartsApi(page: Page): Promise<void> {
 }
 
 /**
+ * The terminal states a chart can settle into, and the marker that identifies
+ * each. This is the single definition both suites derive from: `charts.spec.ts`
+ * needs the markers individually to report which state was reached, while
+ * `a11y.spec.ts` only needs to know a chart stopped changing. Adding a state
+ * here reaches both automatically.
+ */
+export const CHART_MARKERS = {
+  ready: '[data-testid$="-overlay-canvas"]',
+  empty: '[data-testid$="-empty"]',
+  error: '[data-testid$="-error"]',
+} as const
+
+export type ChartPhase = keyof typeof CHART_MARKERS
+
+/**
  * Selector matching any terminal state of a chart: rendered, empty, or errored.
  * Waiting on this is the web-first way to know a chart has stopped changing.
  */
-export const CHART_TERMINAL_SELECTOR =
-  '[data-testid$="-overlay-canvas"], [data-testid$="-empty"], [data-testid$="-error"]'
+export const CHART_TERMINAL_SELECTOR = Object.values(CHART_MARKERS).join(', ')
