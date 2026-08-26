@@ -367,17 +367,20 @@ html:not(.dark) body {
   }
 }
 
-// Code-comment contrast (WCAG 2.1 AA, 4.5:1).
-// VitePress' default Shiki theme colours comments `#6A737D` for both light and
-// dark. On the dark code-block background that is only 3.75:1, and on the light
-// background ~4.45:1 — both fail pa11y. VitePress renders each token's colour
-// via `color: var(--shiki-light|dark)`, set inline per span, so we raise the
-// contrast by redefining those custom properties on the comment spans only.
-// `!important` is required to beat the inline declaration.
-.vp-doc span[style*="--shiki-dark:#6A737D"] {
-  --shiki-dark: #9ba7b4 !important;
+// Removed-line contrast in diff code blocks (WCAG 2.1 AA, 4.5:1).
+// VitePress dims `.diff.remove` with `opacity: .7`, which composites the
+// syntax colours toward the red line background — axe measures the C# keyword
+// token at 3.68:1 there instead of the 5.7:1 it has undimmed. The red tint and
+// the `-` gutter marker already distinguish removed lines without the dimming,
+// so restore full opacity and let those carry the meaning.
+.vp-doc [class*='language-'] code .diff.remove {
+  opacity: 1;
 }
 
-.vp-doc span[style*="--shiki-light:#6A737D"] {
-  --shiki-light: #57606a !important;
-}
+// Code-comment contrast (WCAG 2.1 AA, 4.5:1) is now handled upstream.
+// VitePress 2.0.0-alpha.19 ships default Shiki `colorReplacements` that raise
+// the github-light/github-dark comment colour `#6a737d` to `#62687b` (5.1:1 on
+// the light code background) and `#818e99` (5.5:1 on the dark one). The former
+// `span[style*="--shiki-*:#6A737D"]` overrides here no longer match any token
+// and were removed. Should another token ever fail pa11y, set
+// `markdown.colorReplacements` in config.mts rather than re-adding CSS.

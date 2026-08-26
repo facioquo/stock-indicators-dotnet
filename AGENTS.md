@@ -125,6 +125,8 @@ Do not add "Co-authored-by" trailers to commit messages.
 
 ⚠️ Ask before suppressing any compiler or linting warning — treat all warnings as errors
 
+🚫 Never over-extrapolate an implementation — for example, never write tests of tests or write about non-existant state
+
 🚫 Never duplicate indicator calculations from authoritative sources — cite and implement from reference
 
 🚫 Never merge without all quality gates passing — no exceptions for "minor" changes

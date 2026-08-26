@@ -73,6 +73,7 @@ Review the file for issues that automated linting cannot fix:
 
 - Convert ordered lists to unordered hyphen lists for non-sequential items
 - Ensure proper indentation alignment
+- Never add arbitrary linebreaks due to line length
 
 **Code blocks:**
 

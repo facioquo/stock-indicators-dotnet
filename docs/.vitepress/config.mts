@@ -284,8 +284,23 @@ export default defineConfig({
             { text: 'Doji', link: '/indicators/doji' },
             { text: 'Marubozu', link: '/indicators/marubozu' },
             {
+              // No `collapsed` key on purpose, and note the trade-off: this
+              // group is now permanently non-collapsible, not merely open by
+              // default. VitePress treats `collapsed != null` as "collapsible",
+              // so any value renders a caret with `role="button"` inside a
+              // header that is itself `role="button"` (the header takes that
+              // role because this group has no `link` of its own). axe flags
+              // that nesting as WCAG 4.1.2 nested-interactive on every page the
+              // group is expanded for. Dropping the key removes both controls.
+              //
+              // Intended: these two entries should simply be visible whenever
+              // the parent "Candlestick patterns" group is open. Collapsing
+              // them independently was never the goal, and the header had no
+              // page behind it to make the affordance meaningful. To restore
+              // collapsibility without the violation, this group would need its
+              // own `link` — then the header renders as an <a> beside a
+              // separate caret button instead of nesting two buttons.
               text: 'Other price patterns',
-              collapsed: false,
               items: [
                 { text: 'Pivots', link: '/indicators/pivots' },
                 { text: 'Williams Fractal', link: '/indicators/fractal' },
@@ -480,7 +495,6 @@ export default defineConfig({
     'test-results/**',
     'playwright-report/**',
     'vendor/**',
-    '.pa11yci',
     '_headers',
     'custom-chart.md',
     'Gemfile*',

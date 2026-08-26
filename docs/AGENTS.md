@@ -64,18 +64,24 @@ Then use the #tool:playwright MCP tool to navigate, screenshot, and inspect page
 
 - Add indicator pages to the `indicators/` directory
 - Place image assets in `.vitepress/public/assets/`
-- Use HTML `<img>` tags instead of Markdown image syntax (avoids SSR import issues)
-- Optimize images to webp: `cwebp -resize 832 0 -q 100 input.png -o output.webp`
+- Prefer Markdown image syntax (`![alt](image.png)`) for local images — VitePress measures them at build time and emits `width`/`height`, which prevents layout shift. Reserve HTML `<img>` for remote images (badges, shields) that cannot be measured
+- Optimize images to webp (example): `cwebp -resize 832 0 -q 100 input.png -o output.webp`
 - All pages require YAML front matter with title, description, and layout metadata
+- Never add arbitrary linebreaks in Markdown prose or list items due to line length
 
 ## VitePress alert blocks
 
 Use VitePress native container syntax instead of GitHub alert syntax in docs pages:
 
 - `::: tip ✨` — helpful suggestions
+- `::: note` — neutral asides and clarifications
+- `::: important` — points the reader must not miss
 - `::: warning 🚩` — important warnings
+- `::: caution` — actions with a risk of adverse outcome
 - `::: danger` — critical warnings
 - `::: info` — informational highlights (default)
 - `::: details` — collapsible sections
+
+Text after the container name replaces the default title. To drop the title bar entirely, use the `no-title` attribute: `::: tip {no-title}`.
 
 GitHub alert blocks (`> [!NOTE]`, `> [!WARNING]`) are still preferred in non-website Markdown files.
