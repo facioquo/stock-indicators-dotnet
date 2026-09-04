@@ -45,6 +45,7 @@ IReadOnlyList<FractalResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The first and last `S` periods in `bars` are unable to be calculated since there's not enough prior/following data.
+- Per Williams' definition the middle bar must be strictly beyond both wings, so when two or more bars tie for the extreme value, no fractal is identified.
 
 ::: warning ️🖌️ Repaint warning
 This price pattern uses future bars and will never identify a `fractal` in the last `S` periods of `bars`.  Fractals are retroactively identified.
