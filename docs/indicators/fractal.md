@@ -1,11 +1,11 @@
 ---
 title: Williams Fractal
-description: Created by Larry Williams, Fractal is a retrospective price pattern that identifies a central high or low point chevron.
+description: Created by Bill Williams, Fractal is a retrospective price pattern that identifies a central high or low point chevron.
 ---
 
 # Williams Fractal
 
-Created by Larry Williams, [Fractal](https://www.investopedia.com/terms/f/fractal.asp) is a retrospective price pattern that identifies a central high or low point chevron.
+Created by Bill Williams in _Trading Chaos_ (1995), [Fractal](https://www.investopedia.com/terms/f/fractal.asp) is a retrospective price pattern that identifies a central high or low point chevron.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/255 "Community discussion about this indicator")
 
 <ClientOnly>
