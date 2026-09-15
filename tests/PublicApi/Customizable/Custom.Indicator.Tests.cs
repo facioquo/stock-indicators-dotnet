@@ -125,7 +125,7 @@ public class CustomIndicators
             .GetIndicator(15);
 
         Assert.HasCount(502, r);
-        Assert.HasCount(0, r.Where(static x => x.Sma is double.NaN));
+        Assert.IsEmpty(r.Where(static x => x.Sma is double.NaN));
     }
 
     [TestMethod]

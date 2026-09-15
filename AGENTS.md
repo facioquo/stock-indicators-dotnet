@@ -96,7 +96,7 @@ Subfolder AGENTS.md files provide domain-specific context:
 
 MCP servers configured in .vscode/mcp.json provide research and documentation lookup:
 
-- microsoft-docs/* - C# coding conventions, .NET best practices, performance optimization
+- microsoft-learn/* - C# coding conventions, .NET best practices, performance optimization
 - context7/* - NuGet package dependencies and external libraries
 - github/web_search - Indicator algorithms, financial calculations, technical analysis standards  
 - github/* - CI workflow details, repository changes, pull requests, issues

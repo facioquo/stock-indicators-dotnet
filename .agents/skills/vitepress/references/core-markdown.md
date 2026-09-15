@@ -46,11 +46,11 @@ Styled callout blocks:
 This is an info box.
 :::
 
-::: tip ✨
+::: tip
 This is a tip.
 :::
 
-::: warning 🚩
+::: warning
 This is a warning.
 :::
 
