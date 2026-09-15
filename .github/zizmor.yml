@@ -1,10 +1,5 @@
-# zizmor static analysis for GitHub Actions workflows.
-# Run: zizmor --min-severity medium .github/workflows/
-#
-# Pinning policy: every `uses:` is pinned to a major version tag (`@v7`), not a
-# commit SHA. Dependabot tracks the tags; SHA pinning would trade that for a
-# manual bump on every release. `unpinned-uses` is configured to match that
-# policy rather than suppressed per workflow.
+# Major-tag pinning is deliberate: Dependabot tracks tags, where SHA pinning
+# would trade that for a manual bump on every action release.
 rules:
   unpinned-uses:
     config:

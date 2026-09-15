@@ -67,9 +67,9 @@ See the code-completion skill for the complete quality gates checklist, Roslynat
 
 ## Code navigation
 
-A C# language server (`csharp-ls`) indexes the whole `Stock.Indicators.sln` — `src/`, `tests/`, and `tools/`. Agents with language server support resolve symbols through it rather than inferring structure from text search.
+The `csharp-ls` language server indexes the whole `Stock.Indicators.sln` — `src/`, `tests/`, and `tools/`. Resolve symbols through it rather than inferring structure from text search.
 
-Prerequisite: `dotnet tool install --global csharp-ls` — installed globally, not from `dotnet-tools.json`, because language server clients spawn the bare binary from PATH. Run the `Install: .NET tools` VS Code task or `.devcontainer/post-create.sh` and it is handled.
+It is installed globally rather than from `dotnet-tools.json`, because language server clients spawn the bare binary from PATH. The `Install: .NET tools` VS Code task and `.devcontainer/post-create.sh` both install it; otherwise run `dotnet tool install --global csharp-ls`.
 
 | Use the language server for | Use text search for |
 | --------------------------- | ------------------- |
@@ -78,7 +78,7 @@ Prerequisite: `dotnet tool install --global csharp-ls` — installed globally, n
 | The Series, Buffer, and Stream surface for one indicator | Naming-convention sweeps across many files |
 | Resolved types and XML documentation at a call site | Anything outside `.cs` files |
 
-The language server reports what the solution *is*, not whether it compiles. `dotnet format`, `dotnet build`, Roslynator, and `dotnet test` remain the only correctness gates.
+The language server reports what the solution *is*, not whether it compiles. The quality gates remain the correctness authority.
 
 ## Skills for development
 
@@ -97,7 +97,7 @@ This repository uses Agent Skills (.agents/skills/) for domain-specific guidance
 | vitepress | VitePress documentation site development - configuration, routing, theme, components | Working on the docs/ site, VitePress config, or custom theme |
 | markdown | Markdown authoring, linting workflow, formatting rules, validation checklist | Creating or modifying any Markdown file |
 
-Skills are defined in .agents/skills/ following the Agent Skills specification. `.claude/skills` is a tracked symlink to that folder, so Claude Code loads the same skills from its own conventional path. Edit skills in `.agents/skills/` only; never add files under `.claude/skills/`.
+Skills are defined in .agents/skills/ following the Agent Skills specification. `.claude/skills` is a tracked symlink to that folder. Edit skills in `.agents/skills/` only; never add files under `.claude/skills/`.
 
 ## Folder-specific guidance
 

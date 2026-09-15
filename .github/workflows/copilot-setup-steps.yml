@@ -61,8 +61,7 @@ jobs:
         continue-on-error: true
         timeout-minutes: 1
 
-      # Installed globally, not from the manifest, because LSP clients spawn
-      # the bare `csharp-ls` binary from PATH.
+      # Global, not from the manifest: LSP clients spawn the bare binary from PATH.
       - name: Install C# language server
         run: dotnet tool install --global csharp-ls || dotnet tool update --global csharp-ls
         continue-on-error: true

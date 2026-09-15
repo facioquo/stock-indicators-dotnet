@@ -49,8 +49,7 @@ _ReSharper*/
 *.sln.docstates
 *.userprefs
 
-# Agent configuration (harness-specific; only the shared plugin list and the
-# skills symlink are tracked)
+# Agent configuration (harness-specific)
 .claude/*
 !.claude/settings.json
 !.claude/skills
