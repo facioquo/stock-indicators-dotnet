@@ -47,24 +47,27 @@ jobs:
         with:
           fetch-depth: 0
 
+      # No NuGet cache: this job builds the artifact published to nuget.org, so
+      # a cache entry poisoned from a less-trusted run must not reach it.
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
         with:
           dotnet-version: "10.x"
           dotnet-quality: "ga"
-          cache: true
-          cache-dependency-path: "**/packages.lock.json"
 
       - name: Extract version from release tag
         id: version_info
+        env:
+          INPUT_TAG: ${{ github.event.inputs.tag }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
           # Tag source depends on trigger:
           #   - release published → release tag
           #   - workflow_dispatch  → manual tag input
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            TAG="${{ github.event.inputs.tag }}"
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            TAG="${INPUT_TAG}"
           else
-            TAG="${{ github.event.release.tag_name }}"
+            TAG="${RELEASE_TAG}"
           fi
           VERSION="${TAG#v}"  # strip 'v' prefix
 
@@ -79,11 +82,13 @@ jobs:
 
       - name: Determine deployment mode
         id: settings
+        env:
+          EVENT_ACTION: ${{ github.event.action }}
         run: |
           # Fail-safe: default to dry-run. Only a published GitHub Release
           # performs the irreversible deployment to nuget.org; every other
           # trigger (manual workflow_dispatch, etc.) builds without deploying.
-          if [[ "${{ github.event_name }}" == "release" && "${{ github.event.action }}" == "published" ]]; then
+          if [[ "${GITHUB_EVENT_NAME}" == "release" && "${EVENT_ACTION}" == "published" ]]; then
             echo "dry_run=false" >> $GITHUB_OUTPUT
             echo "🚀 DEPLOY mode (published release)"
           else
@@ -208,9 +213,11 @@ jobs:
 
       - name: Production package published
         if: ${{ env.dry_run == 'false' }}
+        env:
+          RELEASE_URL: ${{ github.event.release.html_url }}
         run: |
-          echo "📦 Published production package ${{ env.name }} version ${{ env.version }} to nuget.org"
-          echo "   Release: ${{ github.event.release.html_url }}"
+          echo "📦 Published production package ${name} version ${version} to nuget.org"
+          echo "   Release: ${RELEASE_URL}"
 
       - name: Deployment summary
         if: always()

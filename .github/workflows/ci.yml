@@ -14,7 +14,6 @@ on:
 
 permissions:
   contents: read # Required for checkout
-  checks: write # Required for test results
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -75,6 +74,10 @@ jobs:
     timeout-minutes: 20
     needs: quick-check
     if: ${{ !github.event.pull_request.draft }}
+
+    permissions:
+      contents: read
+      checks: write # Required to post test results
 
     steps:
       - name: Checkout source
@@ -170,6 +173,10 @@ jobs:
     timeout-minutes: 20
     needs: quick-check
     if: ${{ !github.event.pull_request.draft }}
+
+    permissions:
+      contents: read
+      checks: write # Required to post test results
 
     steps:
       - name: Checkout source

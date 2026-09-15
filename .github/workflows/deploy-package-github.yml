@@ -51,8 +51,8 @@ jobs:
       - name: Validate CI deployment
         run: |
           echo "✅ CI deployment to GitHub Packages"
-          echo "   Branch: ${{ github.ref }}"
-          echo "   Run: ${{ github.run_number }}"
+          echo "   Branch: ${GITHUB_REF}"
+          echo "   Run: ${GITHUB_RUN_NUMBER}"
 
       - name: Set workflow mode
         id: settings
