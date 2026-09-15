@@ -8,6 +8,7 @@
     // not otherwise in root .gitignore
     "**/.git/**",
     "**/.vs/**",
+    ".claude/skills/**", // symlink to .agents/skills
     "**/BenchmarkDotNet.Artifacts/**",
     "tools/performance/baselines/**",
     "**/*playwright*/**"

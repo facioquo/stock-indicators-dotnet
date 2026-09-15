@@ -19,6 +19,7 @@
   "search.exclude": {
     // not otherwise ignored
     ".agents/**/vite*": true,
+    ".claude/skills": true, // symlink to .agents/skills
     "tests/**/*.json": true,
     "tests/**/*.csv": true,
     "docs/examples/**/*.json": true,
