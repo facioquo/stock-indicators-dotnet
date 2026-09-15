@@ -12,8 +12,8 @@ permissions:
   packages: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
 
 env:
   NODE_VERSION: 24
@@ -37,21 +37,19 @@ jobs:
         with:
           fetch-depth: 0 # required for proper Last Updated page dates
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
+      - name: Setup pnpm and Node.js
+        uses: pnpm/setup@v2
         with:
-          run_install: false
-          package_json_file: docs/package.json
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "pnpm"
+          cache: true
+          runtime: node@${{ env.NODE_VERSION }}
           cache-dependency-path: docs/pnpm-lock.yaml
+          package-json-file: docs/package.json
+          install: false
 
       - name: Configure pnpm registry auth
-        run: pnpm config set //npm.pkg.github.com/:_authToken ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm config set //npm.pkg.github.com/:_authToken "$GITHUB_TOKEN"
 
       - name: Install pnpm packages
         run: pnpm install --frozen-lockfile

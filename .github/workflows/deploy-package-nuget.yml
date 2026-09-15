@@ -132,7 +132,7 @@ jobs:
           name: packages
           path: NuGet/*.nupkg
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 3
 
       - name: Summary output
         if: always()
@@ -161,6 +161,7 @@ jobs:
   deploy:
     needs: package
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     if: success()
 
     permissions:

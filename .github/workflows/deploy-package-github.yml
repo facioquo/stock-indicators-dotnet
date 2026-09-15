@@ -34,7 +34,7 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   package:
@@ -213,6 +213,7 @@ jobs:
   cleanup:
     needs: [package, deploy]
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     if: success() && needs.package.outputs.dry_run != 'true'
 
     permissions:

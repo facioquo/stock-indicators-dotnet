@@ -13,29 +13,27 @@ env:
 jobs:
   copilot-setup-steps:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
+      - name: Setup pnpm and Node.js
+        uses: pnpm/setup@v2
         with:
-          run_install: false
-          package_json_file: docs/package.json
+          cache: true
+          runtime: node@${{ env.NODE_VERSION }}
+          cache-dependency-path: docs/pnpm-lock.yaml
+          package-json-file: docs/package.json
+          install: false
         continue-on-error: true
         timeout-minutes: 5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "pnpm"
-          cache-dependency-path: docs/pnpm-lock.yaml
-        continue-on-error: true
-
       - name: Configure pnpm registry auth
-        run: pnpm config set //npm.pkg.github.com/:_authToken ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm config set //npm.pkg.github.com/:_authToken "$GITHUB_TOKEN"
         continue-on-error: true
 
       - name: Install pnpm packages
@@ -71,13 +69,18 @@ jobs:
         timeout-minutes: 1
 
       - name: Environment summary
+        env:
+          REPOSITORY: ${{ github.repository }}
         run: |
-          echo "## Copilot Environment Setup Complete 🚀" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Development Tools" >> $GITHUB_STEP_SUMMARY
-          echo "- Repository: ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
-          echo "- .NET SDKs: $(dotnet --list-sdks | wc -l) versions available" >> $GITHUB_STEP_SUMMARY
-          echo "- .NET Tools: $(dotnet tool list | tail -n +3 | wc -l) installed" >> $GITHUB_STEP_SUMMARY
-          echo "- Node.js: $(node --version 2>/dev/null || echo 'Not available')" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+          {
+            echo "## Copilot Environment Setup Complete 🚀"
+            echo ""
+            echo "### Development Tools"
+            echo "- Repository: ${REPOSITORY}"
+            echo "- .NET SDKs: $(dotnet --list-sdks | wc -l) versions available"
+            echo "- .NET Tools: $(dotnet tool list | tail -n +3 | wc -l) installed"
+            echo "- C# language server: $(csharp-ls --version 2>/dev/null || echo 'Not available')"
+            echo "- Node.js: $(node --version 2>/dev/null || echo 'Not available')"
+            echo ""
+          } >> "$GITHUB_STEP_SUMMARY"
         continue-on-error: true

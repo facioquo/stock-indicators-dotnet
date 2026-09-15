@@ -8,7 +8,6 @@ on:
     paths:
       - "docs/examples/**"
   pull_request:
-    branches: ["*"]
     paths:
       - "docs/examples/**"
       - ".github/workflows/test-examples.yml"
@@ -19,13 +18,14 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
   build:
     name: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     if: ${{ !github.event.pull_request.draft }}
 
     steps:
