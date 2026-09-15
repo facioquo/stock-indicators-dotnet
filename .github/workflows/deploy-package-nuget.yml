@@ -47,8 +47,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      # No NuGet cache: this job builds the artifact published to nuget.org, so
-      # a cache entry poisoned from a less-trusted run must not reach it.
+      # No NuGet cache: this job builds the artifact published to nuget.org,
+      # so a cache entry poisoned from a less-trusted run must not reach it.
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
         with:
