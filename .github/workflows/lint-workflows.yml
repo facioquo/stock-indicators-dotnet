@@ -37,10 +37,15 @@ jobs:
         with:
           persist-credentials: false # required by zizmor's artipacked audit
 
+      # shellcheck off here, on in the scheduled scan: its findings are
+      # repository-wide style, while the rest of actionlint — syntax,
+      # expressions, runner labels, action inputs — is what a diff can break.
       - name: Lint workflows
         uses: raven-actions/actionlint@v2
+        with:
+          shellcheck: false
 
-  # Scheduled rather than part of the pull request lane: zizmor reports on the
+  # Scheduled rather than part of the pull request lane: these report on the
   # repository, not on the diff, so a pull request would inherit findings it
   # did not cause.
   scan:
@@ -54,9 +59,14 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Lint workflows, with shellcheck
+        uses: raven-actions/actionlint@v2
+
       # Installed rather than used as an action: zizmorcore/zizmor-action runs
-      # in a container, and ubuntu-slim has no Docker daemon.
+      # in a container, and ubuntu-slim has no Docker daemon. !cancelled() so an
+      # actionlint failure still surfaces the security findings.
       - name: Scan workflows
+        if: ${{ !cancelled() }}
         env:
           ZIZMOR_VERSION: "1.30.1"
           GH_TOKEN: ${{ github.token }} # online audits resolve action refs
