@@ -45,7 +45,7 @@ jobs:
         timeout-minutes: 5
 
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: "10.x"
           dotnet-quality: "ga"
@@ -61,14 +61,14 @@ jobs:
       - name: Install .NET tools
         run: dotnet tool restore
         continue-on-error: true
-        timeout-minutes: 5
+        timeout-minutes: 1
 
       # Installed globally, not from the manifest, because LSP clients spawn
       # the bare `csharp-ls` binary from PATH.
       - name: Install C# language server
         run: dotnet tool install --global csharp-ls || dotnet tool update --global csharp-ls
         continue-on-error: true
-        timeout-minutes: 5
+        timeout-minutes: 1
 
       - name: Environment summary
         run: |
