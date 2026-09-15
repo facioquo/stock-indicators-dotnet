@@ -52,7 +52,10 @@ _ReSharper*/
 # Agent configuration (harness-specific)
 .claude/*
 !.claude/settings.json
+# The tracked entry is the symlink blob itself; anything under it is a clone
+# that materialized it as a real directory.
 !.claude/skills
+.claude/skills/**
 CLAUDE.local.md
 .cline/
 .clinerules/

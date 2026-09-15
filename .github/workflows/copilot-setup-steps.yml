@@ -13,19 +13,20 @@ env:
 jobs:
   copilot-setup-steps:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # Above the sum of the step budgets: a job timeout ignores continue-on-error,
+    # so a tighter one would hard-fail a job built never to block on setup.
+    timeout-minutes: 30
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
 
       - name: Setup pnpm and Node.js
-        uses: pnpm/setup@v2
+        uses: pnpm/setup@v2.1.0
         with:
           cache: true
           runtime: node@${{ env.NODE_VERSION }}
-          cache-dependency-path: docs/pnpm-lock.yaml
-          package-json-file: docs/package.json
+          working-directory: docs
           install: false
         continue-on-error: true
         timeout-minutes: 5
@@ -59,13 +60,13 @@ jobs:
       - name: Install .NET tools
         run: dotnet tool restore
         continue-on-error: true
-        timeout-minutes: 1
+        timeout-minutes: 5
 
       # Global, not from the manifest: LSP clients spawn the bare binary from PATH.
       - name: Install C# language server
         run: dotnet tool install --global csharp-ls || dotnet tool update --global csharp-ls
         continue-on-error: true
-        timeout-minutes: 1
+        timeout-minutes: 5
 
       - name: Environment summary
         env:

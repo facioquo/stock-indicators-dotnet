@@ -1,0 +1,67 @@
+name: Lint workflows
+
+on:
+  push:
+    branches:
+      - "main"
+      - "v[0-9]*"
+    paths:
+      - .github/workflows/**
+      - .github/zizmor.yml
+  pull_request:
+    paths:
+      - .github/workflows/**
+      - .github/zizmor.yml
+  schedule:
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # Do not make either job a required status check. The paths: filters mean
+  # neither runs on a pull request that touches no workflow file, and GitHub
+  # reports a filtered-out workflow as pending rather than passing.
+  lint:
+    runs-on: ubuntu-slim
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false # required by zizmor's artipacked audit
+
+      - name: Lint workflows
+        uses: raven-actions/actionlint@v2
+
+  # Scheduled rather than part of the pull request lane: zizmor reports on the
+  # repository, not on the diff, so a pull request would inherit findings it
+  # did not cause.
+  scan:
+    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-slim
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      # Installed rather than used as an action: zizmorcore/zizmor-action runs
+      # in a container, and ubuntu-slim has no Docker daemon.
+      - name: Scan workflows
+        env:
+          ZIZMOR_VERSION: "1.30.1"
+          GH_TOKEN: ${{ github.token }} # online audits resolve action refs
+        run: |
+          pipx run "zizmor==${ZIZMOR_VERSION}" \
+            --format=github \
+            --min-severity=medium \
+            .github/workflows

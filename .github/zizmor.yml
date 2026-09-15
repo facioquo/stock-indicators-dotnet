@@ -1,5 +1,10 @@
-# Major-tag pinning is deliberate: Dependabot tracks tags, where SHA pinning
-# would trade that for a manual bump on every action release.
+# Actions are pinned to major version tags. zizmor defaults to requiring hash
+# pins, so unpinned-uses is configured to match the repository policy rather
+# than suppressed workflow by workflow.
+#
+# One exception: pnpm/setup is pinned to an exact version, because its floating
+# v2 tag still points at v2.0.2, which installs the runtime before restoring the
+# cache and so redownloads Node on every job.
 rules:
   unpinned-uses:
     config:

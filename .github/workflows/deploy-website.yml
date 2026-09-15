@@ -13,7 +13,8 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: false
+  # Supersede a pull request preview; never interrupt a manual production deploy.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   NODE_VERSION: 24
@@ -38,12 +39,11 @@ jobs:
           fetch-depth: 0 # required for proper Last Updated page dates
 
       - name: Setup pnpm and Node.js
-        uses: pnpm/setup@v2
+        uses: pnpm/setup@v2.1.0
         with:
           cache: true
           runtime: node@${{ env.NODE_VERSION }}
-          cache-dependency-path: docs/pnpm-lock.yaml
-          package-json-file: docs/package.json
+          working-directory: docs
           install: false
 
       - name: Configure pnpm registry auth

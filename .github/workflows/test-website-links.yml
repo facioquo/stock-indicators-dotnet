@@ -32,12 +32,11 @@ jobs:
           ruby-version: 3.4
 
       - name: Setup pnpm and Node.js
-        uses: pnpm/setup@v2
+        uses: pnpm/setup@v2.1.0
         with:
           cache: true
           runtime: node@${{ env.NODE_VERSION }}
-          cache-dependency-path: docs/pnpm-lock.yaml
-          package-json-file: docs/package.json
+          working-directory: docs
           install: false
 
       - name: Configure pnpm registry auth

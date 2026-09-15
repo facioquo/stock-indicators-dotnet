@@ -67,16 +67,16 @@ See the code-completion skill for the complete quality gates checklist, Roslynat
 
 ## Code navigation
 
-The `csharp-ls` language server indexes the whole `Stock.Indicators.sln` — `src/`, `tests/`, and `tools/`. Resolve symbols through it rather than inferring structure from text search.
+The `csharp-ls` language server indexes every project in `Stock.Indicators.sln`, including the `docs/examples/` projects. Resolve symbols through it rather than inferring structure from text search.
 
-It is installed globally rather than from `dotnet-tools.json`, because language server clients spawn the bare binary from PATH. The `Install: .NET tools` VS Code task and `.devcontainer/post-create.sh` both install it; otherwise run `dotnet tool install --global csharp-ls`.
+It is installed globally rather than from `dotnet-tools.json`, because language server clients spawn the bare binary from PATH. Run `dotnet tool install --global csharp-ls` if your environment did not.
 
 | Use the language server for | Use text search for |
 | --------------------------- | ------------------- |
 | Every caller of a public API member, before renaming or removing it | Literal strings, numeric constants, and test data |
-| Implementations of `IStreamHub`, `IBufferList`, and the `StreamHub/Providers/` base classes | Markdown, YAML, JSON, and `.csproj` content |
-| The Series, Buffer, and Stream surface for one indicator | Naming-convention sweeps across many files |
-| Resolved types and XML documentation at a call site | Anything outside `.cs` files |
+| Implementations of `IStreamHub`, `IBufferList`, and the `StreamHub/Providers/` base classes | Naming-convention sweeps across many files |
+| The Series, Buffer, and Stream surface for one indicator | Anything outside `.cs` files |
+| Resolved types and XML documentation at a call site | |
 
 The language server reports what the solution *is*, not whether it compiles. The quality gates remain the correctness authority.
 
@@ -136,8 +136,6 @@ Do not add "Co-authored-by" trailers to commit messages.
 ✅ Always load the relevant skill before working in a domain area
 
 ✅ Always keep Series results as canonical truth — fix Stream/Buffer to match, not the reverse
-
-✅ Always run a language server reference search before renaming or removing a public API member
 
 ⚠️ Ask before renaming or removing any public API member — requires a MAJOR version bump
 
