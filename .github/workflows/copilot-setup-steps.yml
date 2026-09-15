@@ -13,8 +13,7 @@ env:
 jobs:
   copilot-setup-steps:
     runs-on: ubuntu-latest
-    # Above the sum of the step budgets: a job timeout ignores continue-on-error,
-    # so a tighter one would hard-fail a job built never to block on setup.
+    # A job timeout ignores continue-on-error, so keep it above the step budgets.
     timeout-minutes: 30
 
     steps:

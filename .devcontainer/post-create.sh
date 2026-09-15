@@ -19,8 +19,7 @@ echo "🧠 Installing C# language server..."
 dotnet tool install --global csharp-ls || dotnet tool update --global csharp-ls
 
 # Claude Code only discovers skills under .claude/skills, and some filesystems
-# materialize the symlink as a plain file on clone. Compare the target rather
-# than the type, so a link pointing somewhere stale is also repaired.
+# materialize the symlink as a plain file on clone.
 if [ "$(readlink .claude/skills 2>/dev/null)" != "../.agents/skills" ]; then
   echo "🔗 Linking .claude/skills to .agents/skills..."
   mkdir -p .claude

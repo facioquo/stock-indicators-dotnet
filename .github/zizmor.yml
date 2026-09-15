@@ -1,10 +1,7 @@
-# Actions are pinned to major version tags. zizmor defaults to requiring hash
-# pins, so unpinned-uses is configured to match the repository policy rather
-# than suppressed workflow by workflow.
-#
-# One exception: pnpm/setup is pinned to an exact version, because its floating
-# v2 tag still points at v2.0.2, which installs the runtime before restoring the
-# cache and so redownloads Node on every job.
+# Actions are pinned to major version tags; zizmor defaults to hash pins, so
+# unpinned-uses matches the policy here rather than being suppressed per file.
+# pnpm/setup is the exception: its floating v2 tag still points at v2.0.2,
+# which redownloads Node on every job.
 rules:
   unpinned-uses:
     config:

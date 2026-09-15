@@ -18,8 +18,7 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  # Back-to-back merges must not cancel this: it runs on push only, so a
-  # cancelled run leaves that commit with no Windows, macOS, or net8.0 coverage.
+  # Runs on push only: a cancelled run leaves that commit with no matrix coverage.
   cancel-in-progress: false
 
 jobs:

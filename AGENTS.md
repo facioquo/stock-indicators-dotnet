@@ -67,7 +67,7 @@ See the code-completion skill for the complete quality gates checklist, Roslynat
 
 ## Code navigation
 
-The `csharp-ls` language server indexes every project in `Stock.Indicators.sln`, including the `docs/examples/` projects. Resolve symbols through it rather than inferring structure from text search.
+The `csharp-ls` language server indexes every project in `Stock.Indicators.sln`. Resolve symbols through it rather than inferring structure from text search.
 
 It is installed globally rather than from `dotnet-tools.json`, because language server clients spawn the bare binary from PATH. Run `dotnet tool install --global csharp-ls` if your environment did not.
 
@@ -78,7 +78,7 @@ It is installed globally rather than from `dotnet-tools.json`, because language 
 | The Series, Buffer, and Stream surface for one indicator | Anything outside `.cs` files |
 | Resolved types and XML documentation at a call site | |
 
-The language server reports what the solution *is*, not whether it compiles. The quality gates remain the correctness authority.
+The language server reports what the solution *is*, not whether it compiles.
 
 ## Skills for development
 
