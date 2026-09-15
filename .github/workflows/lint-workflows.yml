@@ -24,9 +24,10 @@ permissions:
   contents: read
 
 jobs:
-  # Do not make either job a required status check. The paths: filters mean
-  # neither runs on a pull request that touches no workflow file, and GitHub
-  # reports a filtered-out workflow as pending rather than passing.
+  # Do not make this a required status check. The paths: filters mean it does
+  # not run on a pull request that touches no workflow file, and GitHub reports
+  # a filtered-out workflow as pending rather than passing. The weekly schedule
+  # covers audits that depend on upstream action refs rather than on this repo.
   lint:
     runs-on: ubuntu-slim
     timeout-minutes: 10
@@ -37,29 +38,7 @@ jobs:
         with:
           persist-credentials: false # required by zizmor's artipacked audit
 
-      # shellcheck off here, on in the scheduled scan: its findings are
-      # repository-wide style, while the rest of actionlint — syntax,
-      # expressions, runner labels, action inputs — is what a diff can break.
       - name: Lint workflows
-        uses: raven-actions/actionlint@v2
-        with:
-          shellcheck: false
-
-  # Scheduled rather than part of the pull request lane: these report on the
-  # repository, not on the diff, so a pull request would inherit findings it
-  # did not cause.
-  scan:
-    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
-    runs-on: ubuntu-slim
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-
-      - name: Lint workflows, with shellcheck
         uses: raven-actions/actionlint@v2
 
       # Installed rather than used as an action: zizmorcore/zizmor-action runs

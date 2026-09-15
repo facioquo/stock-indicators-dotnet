@@ -76,8 +76,8 @@ jobs:
             exit 1
           fi
 
-          echo "tag=$TAG" >> $GITHUB_OUTPUT
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Production version from tag: $VERSION"
 
       - name: Determine deployment mode
@@ -89,10 +89,10 @@ jobs:
           # performs the irreversible deployment to nuget.org; every other
           # trigger (manual workflow_dispatch, etc.) builds without deploying.
           if [[ "${GITHUB_EVENT_NAME}" == "release" && "${EVENT_ACTION}" == "published" ]]; then
-            echo "dry_run=false" >> $GITHUB_OUTPUT
+            echo "dry_run=false" >> "$GITHUB_OUTPUT"
             echo "🚀 DEPLOY mode (published release)"
           else
-            echo "dry_run=true" >> $GITHUB_OUTPUT
+            echo "dry_run=true" >> "$GITHUB_OUTPUT"
             echo "🔍 DRY RUN mode (default; not a published release)"
           fi
 
@@ -107,8 +107,8 @@ jobs:
             echo "::error::Could not extract PackageId from src/Indicators.csproj"
             exit 1
           fi
-          echo "name=${PACKAGE_NAME}" >> $GITHUB_OUTPUT
-          echo "url=https://www.nuget.org/packages/${PACKAGE_NAME}/${{ steps.version_info.outputs.version }}" >> $GITHUB_OUTPUT
+          echo "name=${PACKAGE_NAME}" >> "$GITHUB_OUTPUT"
+          echo "url=https://www.nuget.org/packages/${PACKAGE_NAME}/${{ steps.version_info.outputs.version }}" >> "$GITHUB_OUTPUT"
 
       - name: Replace version markers
         uses: jacobtomlinson/gha-find-replace@v3
@@ -155,7 +155,7 @@ jobs:
             echo "| Release Tag       | ${{ steps.version_info.outputs.tag }}            |"
             echo "| Target            | nuget.org                                        |"
             echo "| Package URL       | ${{ steps.package_info.outputs.url }}            |"
-          } >> $GITHUB_STEP_SUMMARY
+          } >> "$GITHUB_STEP_SUMMARY"
 
     outputs:
       version: ${{ steps.version_info.outputs.version }}
@@ -224,4 +224,4 @@ jobs:
         run: |
           {
             echo "| Version | ${{ env.version }} |"
-          } >> $GITHUB_STEP_SUMMARY
+          } >> "$GITHUB_STEP_SUMMARY"

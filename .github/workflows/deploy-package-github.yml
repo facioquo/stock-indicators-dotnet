@@ -58,9 +58,9 @@ jobs:
         id: settings
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "dry_run=${{ inputs.dry_run }}" >> $GITHUB_OUTPUT
+            echo "dry_run=${{ inputs.dry_run }}" >> "$GITHUB_OUTPUT"
           else
-            echo "dry_run=false" >> $GITHUB_OUTPUT
+            echo "dry_run=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Checkout source
@@ -86,7 +86,7 @@ jobs:
         run: |
           dotnet tool run dotnet-gitversion -config src/gitversion.yml -updateassemblyinfo
           # Export GitVersion variables to environment
-          dotnet tool run dotnet-gitversion -config src/gitversion.yml | jq -r 'to_entries[] | "\(.key)=\(.value)"' >> $GITHUB_ENV
+          dotnet tool run dotnet-gitversion -config src/gitversion.yml | jq -r 'to_entries[] | "\(.key)=\(.value)"' >> "$GITHUB_ENV"
 
       - name: Compose CI version
         id: version_info
@@ -99,7 +99,7 @@ jobs:
           run="${{ github.run_number }}"
           ver="${base}-ci.${run}"
 
-          echo "version=$ver" >> $GITHUB_OUTPUT
+          echo "version=$ver" >> "$GITHUB_OUTPUT"
           echo "Generated CI version: $ver"
 
       - name: Compose package info
@@ -110,8 +110,8 @@ jobs:
             echo "::error::Could not extract PackageId from src/Indicators.csproj"
             exit 1
           fi
-          echo "name=${PACKAGE_NAME}" >> $GITHUB_OUTPUT
-          echo "url=https://github.com/${{ github.repository }}/packages" >> $GITHUB_OUTPUT
+          echo "name=${PACKAGE_NAME}" >> "$GITHUB_OUTPUT"
+          echo "url=https://github.com/${{ github.repository }}/packages" >> "$GITHUB_OUTPUT"
 
       - name: Build library
         run: >
@@ -154,7 +154,7 @@ jobs:
             echo "| **Mode**          | ${MODE}                                          |"
             echo "| **Status**        | ${{ job.status == 'success' && '✅ Success' || '❌ Failed' }} |"
             echo "| **Package URL**   | ${{ steps.package_info.outputs.url }}            |"
-          } >> $GITHUB_STEP_SUMMARY
+          } >> "$GITHUB_STEP_SUMMARY"
 
   deploy:
     needs: package
@@ -208,7 +208,7 @@ jobs:
         run: |
           {
             echo "| Version | ${{ env.version }} |"
-          } >> $GITHUB_STEP_SUMMARY
+          } >> "$GITHUB_STEP_SUMMARY"
 
   cleanup:
     needs: [package, deploy]

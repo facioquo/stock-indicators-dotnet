@@ -148,7 +148,7 @@ jobs:
         run: |
           dotnet tool run dotnet-gitversion -config src/gitversion.yml -updateassemblyinfo
           # Export GitVersion variables to environment
-          dotnet tool run dotnet-gitversion -config src/gitversion.yml | jq -r 'to_entries[] | "\(.key)=\(.value)"' >> $GITHUB_ENV
+          dotnet tool run dotnet-gitversion -config src/gitversion.yml | jq -r 'to_entries[] | "\(.key)=\(.value)"' >> "$GITHUB_ENV"
 
       - name: Build performance project
         working-directory: tools/performance
@@ -222,22 +222,24 @@ jobs:
           if [ -n "$VERSION" ]; then
             TITLE="$TITLE for $VERSION"
           fi
-          echo "$TITLE" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Indicator:** $INDICATOR_KEYWORD" >> $GITHUB_STEP_SUMMARY
-          echo "**Periods:** $INDICATOR_PERIODS" >> $GITHUB_STEP_SUMMARY
+          {
+            echo "$TITLE"
+            echo ""
+            echo "**Indicator:** $INDICATOR_KEYWORD"
+            echo "**Periods:** $INDICATOR_PERIODS"
+          } >> "$GITHUB_STEP_SUMMARY"
 
           STYLE_SELECTED=""
           if [ "$INDICATOR_SERIES" = "true" ]; then STYLE_SELECTED="${STYLE_SELECTED}Series "; fi
           if [ "$INDICATOR_BUFFER" = "true" ]; then STYLE_SELECTED="${STYLE_SELECTED}Buffer "; fi
           if [ "$INDICATOR_STREAMHUB" = "true" ]; then STYLE_SELECTED="${STYLE_SELECTED}StreamHub "; fi
           if [ -z "$STYLE_SELECTED" ]; then STYLE_SELECTED="(none selected)"; fi
-          echo "**Style:** $STYLE_SELECTED" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Style:** $STYLE_SELECTED" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
 
           RESULTS_FILE="tools/performance/BenchmarkDotNet.Artifacts/results/Performance.ManualTestDirect-report-github.md"
           if [ -f "$RESULTS_FILE" ]; then
-            cat "$RESULTS_FILE" >> $GITHUB_STEP_SUMMARY
+            cat "$RESULTS_FILE" >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "⚠️ No results generated. Check if the indicator keyword is supported in ManualTestDirect.cs." >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ No results generated. Check if the indicator keyword is supported in ManualTestDirect.cs." >> "$GITHUB_STEP_SUMMARY"
           fi

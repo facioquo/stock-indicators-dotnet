@@ -37,7 +37,7 @@ jobs:
         run: |
           dotnet tool run dotnet-gitversion -config src/gitversion.yml -updateassemblyinfo
           # Export GitVersion variables to environment
-          dotnet tool run dotnet-gitversion -config src/gitversion.yml | jq -r 'to_entries[] | "\(.key)=\(.value)"' >> $GITHUB_ENV
+          dotnet tool run dotnet-gitversion -config src/gitversion.yml | jq -r 'to_entries[] | "\(.key)=\(.value)"' >> "$GITHUB_ENV"
 
       - name: Build performance project
         working-directory: tools/performance
@@ -68,8 +68,8 @@ jobs:
           if [ -n "$VERSION" ]; then
             TITLE="$TITLE for $VERSION"
           fi
-          echo "$TITLE" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "$TITLE" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
 
           # Dynamically discover and publish all available report files
           FOUND_REPORTS=false
@@ -104,10 +104,12 @@ jobs:
               FOUND_REPORTS=true
               PROCESSED_REPORTS["$REPORT_KEY"]=1
               DISPLAY_NAME="${REPORT_NAMES[$REPORT_KEY]:-$REPORT_KEY}"
-              echo "### $DISPLAY_NAME" >> $GITHUB_STEP_SUMMARY
-              echo "" >> $GITHUB_STEP_SUMMARY
-              cat "$REPORT_FILE" >> $GITHUB_STEP_SUMMARY
-              echo "" >> $GITHUB_STEP_SUMMARY
+              {
+                echo "### $DISPLAY_NAME"
+                echo ""
+                cat "$REPORT_FILE"
+                echo ""
+              } >> "$GITHUB_STEP_SUMMARY"
             fi
           done
 
@@ -119,14 +121,16 @@ jobs:
               # Skip if already processed (O(1) associative array lookup)
               if [ -z "${PROCESSED_REPORTS[$BASE_NAME]}" ]; then
                 FOUND_REPORTS=true
-                echo "### $BASE_NAME" >> $GITHUB_STEP_SUMMARY
-                echo "" >> $GITHUB_STEP_SUMMARY
-                cat "$REPORT_FILE" >> $GITHUB_STEP_SUMMARY
-                echo "" >> $GITHUB_STEP_SUMMARY
+                {
+                  echo "### $BASE_NAME"
+                  echo ""
+                  cat "$REPORT_FILE"
+                  echo ""
+                } >> "$GITHUB_STEP_SUMMARY"
               fi
             fi
           done
 
           if [ "$FOUND_REPORTS" = "false" ]; then
-            echo "⚠️ No benchmark reports were generated." >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ No benchmark reports were generated." >> "$GITHUB_STEP_SUMMARY"
           fi

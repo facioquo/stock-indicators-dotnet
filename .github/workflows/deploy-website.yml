@@ -56,7 +56,7 @@ jobs:
 
       - name: Define tag
         id: tag
-        run: echo "version=$(date +'%Y.%m.%d')-${{ github.run_number }}" >> $GITHUB_OUTPUT
+        run: echo "version=$(date +'%Y.%m.%d')-${{ github.run_number }}" >> "$GITHUB_OUTPUT"
 
       - name: Build site (production)
         if: github.ref == 'refs/heads/main'

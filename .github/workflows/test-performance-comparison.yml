@@ -37,7 +37,7 @@ jobs:
         run: |
           dotnet tool run dotnet-gitversion -config src/gitversion.yml -updateassemblyinfo
           # Export GitVersion variables to environment
-          dotnet tool run dotnet-gitversion -config src/gitversion.yml | jq -r 'to_entries[] | "\(.key)=\(.value)"' >> $GITHUB_ENV
+          dotnet tool run dotnet-gitversion -config src/gitversion.yml | jq -r 'to_entries[] | "\(.key)=\(.value)"' >> "$GITHUB_ENV"
 
       - name: Build performance project
         working-directory: tools/performance
@@ -68,13 +68,13 @@ jobs:
           if [ -n "$VERSION" ]; then
             TITLE="$TITLE for $VERSION"
           fi
-          echo "$TITLE" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "$TITLE" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
 
           REPORT_FILE="Performance.StyleComparison-report-github.md"
           if [ -f "$REPORT_FILE" ]; then
-            cat "$REPORT_FILE" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
+            cat "$REPORT_FILE" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "⚠️ No style comparison benchmark reports were generated." >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ No style comparison benchmark reports were generated." >> "$GITHUB_STEP_SUMMARY"
           fi
