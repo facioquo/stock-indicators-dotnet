@@ -1,9 +1,36 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { defineConfig, type HeadConfig } from 'vitepress'
+import { defineConfig, type DefaultTheme, type HeadConfig } from 'vitepress'
 import llmstxt, { copyOrDownloadAsMarkdownButtons } from 'vitepress-plugin-llms'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+function createLlmsSidebar(
+  configSidebar: DefaultTheme.Sidebar | undefined
+): DefaultTheme.SidebarItem[] {
+  const sections = Array.isArray(configSidebar)
+    ? configSidebar
+    : Object.values(configSidebar ?? {}).flat()
+  const seenLinks = new Set<string>()
+
+  const deduplicate = (item: DefaultTheme.SidebarItem): DefaultTheme.SidebarItem | undefined => {
+    const link = item.link?.split('#', 1)[0].replace(/\/$/, '')
+    const hasNewLink = link !== undefined && !link.startsWith('http') && !seenLinks.has(link)
+
+    if (hasNewLink) seenLinks.add(link)
+    const items = item.items
+      ?.map(deduplicate)
+      .filter((child): child is DefaultTheme.SidebarItem => child !== undefined)
+    if (!hasNewLink && items?.length) return { ...item, link: undefined, items }
+    if (!hasNewLink) return undefined
+
+    return { ...item, items }
+  }
+
+  return sections
+    .map(deduplicate)
+    .filter((item): item is DefaultTheme.SidebarItem => item !== undefined)
+}
 
 // Analytics must be explicitly enabled for production builds by
 // setting `ANALYTICS_ENABLED=true` (opt-in). This fails safely off.
@@ -445,7 +472,10 @@ export default defineConfig({
   },
 
   vite: {
-    plugins: [llmstxt()],
+    plugins: [llmstxt({
+      customTemplateVariables: { title: 'Stock Indicators for .NET' },
+      sidebar: createLlmsSidebar
+    })],
     publicDir: path.resolve(__dirname, 'public'),
     server: {
       fs: {

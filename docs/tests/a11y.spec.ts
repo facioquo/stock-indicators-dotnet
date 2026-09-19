@@ -9,6 +9,7 @@ import { assertBuildHasNoAnalytics, blockAnalytics } from './analytics-guard'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const DIST = join(__dirname, '../.vitepress/dist')
+const LLMS_TXT = join(DIST, 'llms.txt')
 const SITEMAP = join(DIST, 'sitemap.xml')
 
 /**
@@ -62,6 +63,25 @@ function formatViolations(
 assertBuildHasNoAnalytics(DIST)
 
 const PAGES = sitemapPaths()
+
+test('LLM index contains unique resolvable Markdown links', () => {
+  const content = readFileSync(LLMS_TXT, 'utf8')
+  const links = [...content.matchAll(/\]\((\/[^)#?]+\.md)\)/g)].map((match) => match[1])
+  const duplicates = links.filter((link, index) => links.indexOf(link) !== index)
+  const missing = links.filter((link) => {
+    const outputPath = join(DIST, link.slice(1))
+    try {
+      readFileSync(outputPath)
+      return false
+    } catch {
+      return true
+    }
+  })
+
+  expect(content).toMatch(/^# Stock Indicators for \.NET$/m)
+  expect(duplicates).toEqual([])
+  expect(missing).toEqual([])
+})
 
 test('Markdown page actions expose and retrieve source content', async ({ context, page }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write'])
