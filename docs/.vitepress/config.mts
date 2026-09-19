@@ -139,6 +139,14 @@ export default defineConfig({
         ]
       },
       {
+        text: 'AI tools',
+        items: [
+          { text: 'Suggested prompts', link: '/guide/getting-started#work-with-a-coding-agent' },
+          { text: 'Documentation index (LLMs)', link: '/llms.txt' },
+          { text: 'Complete documentation (LLMs)', link: '/llms-full.txt' },
+        ]
+      },
+      {
         text: 'More',
         items: [
           { text: 'Migration (v2→v3)', link: '/migration/v3' },
