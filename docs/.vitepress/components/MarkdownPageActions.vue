@@ -11,9 +11,9 @@ const {
 </script>
 
 <template>
-  <div class="markdown-page-actions" aria-label="Markdown page actions">
+  <div class="markdown-page-actions" role="group" aria-label="Markdown page actions">
     <button type="button" @click="copyAsMarkdown">
-      {{ copied ? 'Copied' : 'Copy page' }}
+      {{ copied ? 'Copied' : 'Copy page as Markdown' }}
     </button>
     <button type="button" @click="viewAsMarkdown">
       View as Markdown

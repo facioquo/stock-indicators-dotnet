@@ -50,6 +50,12 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
     {
+      name: 'agent-features',
+      testMatch: /agent-features\.spec\.ts/,
+      fullyParallel: true,
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
       // Verifies the controls that keep automated runs out of the production
       // analytics property. Runs alongside `a11y`, which is the suite that
       // loads every page and so carries the risk these controls cover.

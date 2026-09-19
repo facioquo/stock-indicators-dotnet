@@ -165,6 +165,7 @@ export default {
     })
 
     app.component('Contributors', Contributors)
+    // Replace the plugin's extension point with accessible text-labelled controls.
     app.component('CopyOrDownloadAsMarkdownButtons', MarkdownPageActions)
   }
 } satisfies Theme

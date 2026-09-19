@@ -7,7 +7,10 @@ interface WebMcpTool {
     readOnlyHint: boolean
     untrustedContentHint: boolean
   }
-  execute: (input: Record<string, unknown>) => Promise<string>
+  execute: (
+    input: Record<string, unknown>,
+    options: { signal: AbortSignal }
+  ) => Promise<unknown>
 }
 
 interface ModelContext {
@@ -29,14 +32,20 @@ interface DocumentationEntry {
 
 const MAX_QUERY_LENGTH = 200
 const MAX_RESULTS = 10
+const MATCH_SCORES = {
+  exactTitle: 8,
+  partialTitle: 5,
+  url: 3,
+  description: 1
+} as const
 
 function markdownUrl(pathname: string): URL {
   const normalizedPath = pathname.replace(/\/$/, '')
   return new URL(`${normalizedPath}.md`, window.location.origin)
 }
 
-async function fetchText(url: URL): Promise<string> {
-  const response = await fetch(url)
+async function fetchText(url: URL, signal: AbortSignal): Promise<string> {
+  const response = await fetch(url, { signal })
   if (!response.ok) {
     throw new Error(`Documentation request failed with status ${response.status}.`)
   }
@@ -58,22 +67,25 @@ function scoreEntry(entry: DocumentationEntry, terms: string[]): number {
   const url = entry.url.toLocaleLowerCase()
 
   return terms.reduce((score, term) => {
-    if (title === term) return score + 8
-    if (title.includes(term)) return score + 5
-    if (url.includes(term)) return score + 3
-    if (description.includes(term)) return score + 1
+    if (title === term) return score + MATCH_SCORES.exactTitle
+    if (title.includes(term)) return score + MATCH_SCORES.partialTitle
+    if (url.includes(term)) return score + MATCH_SCORES.url
+    if (description.includes(term)) return score + MATCH_SCORES.description
     return score
   }, 0)
 }
 
-async function searchDocumentation(input: Record<string, unknown>): Promise<string> {
+async function searchDocumentation(
+  input: Record<string, unknown>,
+  { signal }: { signal: AbortSignal }
+): Promise<unknown> {
   const query = typeof input.query === 'string' ? input.query.trim() : ''
   if (!query || query.length > MAX_QUERY_LENGTH) {
     throw new Error(`query must contain between 1 and ${MAX_QUERY_LENGTH} characters.`)
   }
 
   const terms = query.toLocaleLowerCase().split(/\s+/)
-  const index = await fetchText(new URL('/llms.txt', window.location.origin))
+  const index = await fetchText(new URL('/llms.txt', window.location.origin), signal)
   const results = parseDocumentationIndex(index)
     .map((entry) => ({ entry, score: scoreEntry(entry, terms) }))
     .filter(({ score }) => score > 0)
@@ -81,15 +93,18 @@ async function searchDocumentation(input: Record<string, unknown>): Promise<stri
     .slice(0, MAX_RESULTS)
     .map(({ entry }) => entry)
 
-  return JSON.stringify({ query, results })
+  return { query, results }
 }
 
-async function getCurrentPageMarkdown(): Promise<string> {
+async function getCurrentPageMarkdown(
+  _input: Record<string, unknown>,
+  { signal }: { signal: AbortSignal }
+): Promise<unknown> {
   const url = window.location.pathname === '/'
     ? new URL('/llms.txt', window.location.origin)
     : markdownUrl(window.location.pathname)
-  const markdown = await fetchText(url)
-  return JSON.stringify({ title: document.title, url: url.href, markdown })
+  const markdown = await fetchText(url, signal)
+  return { title: document.title, url: url.href, markdown }
 }
 
 export function installWebMcpTools(): void {
@@ -129,11 +144,7 @@ export function installWebMcpTools(): void {
     }
   ]
 
-  const controller = new AbortController()
-  window.addEventListener('pagehide', () => controller.abort(), { once: true })
-  void Promise.all(tools.map((tool) => modelContext.registerTool(tool, {
-    signal: controller.signal
-  }))).catch((error: unknown) => {
+  void Promise.all(tools.map((tool) => modelContext.registerTool(tool))).catch((error: unknown) => {
     console.warn('Unable to register WebMCP documentation tools.', error)
   })
 }
