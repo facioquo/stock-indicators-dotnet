@@ -73,6 +73,7 @@ test('Markdown page actions expose and retrieve source content', async ({ contex
   await page.getByRole('button', { name: 'View as Markdown' }).click()
   await expect(await popupPromise).toHaveURL(/\/indicators\/sma\.md$/)
 
+  await page.locator('summary[aria-label="More Markdown actions"]').click()
   const downloadPromise = page.waitForEvent('download')
   await page.getByRole('button', { name: 'Download Markdown' }).click()
   const download = await downloadPromise
