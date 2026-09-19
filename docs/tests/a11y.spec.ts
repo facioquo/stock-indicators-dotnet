@@ -105,6 +105,70 @@ test('Markdown page actions expose and retrieve source content', async ({ contex
   await expect.poll(async () => (await downloadPromise).suggestedFilename()).toBe('sma.md')
 })
 
+test('WebMCP exposes read-only documentation tools', async ({ page }) => {
+  await page.addInitScript(() => {
+    const tools: Array<Record<string, unknown>> = []
+    Object.defineProperty(document, 'modelContext', {
+      value: {
+        registerTool: async (tool: Record<string, unknown>) => {
+          tools.push(tool)
+        }
+      },
+      configurable: true
+    })
+    Object.defineProperty(window, '__webMcpTools', { value: tools })
+  })
+
+  await page.goto('/indicators/sma', { waitUntil: 'domcontentloaded' })
+
+  await expect.poll(() => page.evaluate(() => (
+    (window as unknown as { __webMcpTools: unknown[] }).__webMcpTools.length
+  ))).toBe(2)
+
+  const result = await page.evaluate(async () => {
+    const tools = (window as unknown as {
+      __webMcpTools: Array<{
+        name: string
+        annotations: { readOnlyHint: boolean }
+        execute: (input: Record<string, unknown>) => Promise<string>
+      }>
+    }).__webMcpTools
+    const search = tools.find((tool) => tool.name === 'search_documentation')
+    const currentPage = tools.find((tool) => tool.name === 'get_current_page_markdown')
+
+    return {
+      names: tools.map((tool) => tool.name),
+      readOnly: tools.every((tool) => tool.annotations.readOnlyHint),
+      search: JSON.parse(await search!.execute({ query: 'simple moving average' })),
+      currentPage: JSON.parse(await currentPage!.execute({}))
+    }
+  })
+
+  expect(result.names).toEqual(['search_documentation', 'get_current_page_markdown'])
+  expect(result.readOnly).toBe(true)
+  expect(result.search.results[0]).toMatchObject({
+    title: 'Simple Moving Average (SMA)',
+    url: 'http://localhost:4173/indicators/sma.md'
+  })
+  expect(result.currentPage).toMatchObject({
+    url: 'http://localhost:4173/indicators/sma.md'
+  })
+  expect(result.currentPage.markdown).toContain('# Simple Moving Average (SMA)')
+
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
+  const homePage = await page.evaluate(async () => {
+    const tool = (window as unknown as {
+      __webMcpTools: Array<{
+        name: string
+        execute: (input: Record<string, unknown>) => Promise<string>
+      }>
+    }).__webMcpTools.find(({ name }) => name === 'get_current_page_markdown')
+    return JSON.parse(await tool!.execute({}))
+  })
+  expect(homePage.url).toBe('http://localhost:4173/llms.txt')
+  expect(homePage.markdown).toContain('# Stock Indicators for .NET')
+})
+
 for (const path of PAGES) {
   test(`a11y - ${path}`, async ({ page }) => {
     const analyticsAttempts = await blockAnalytics(page)
