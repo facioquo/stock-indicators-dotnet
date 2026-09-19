@@ -7,6 +7,7 @@ import MarkdownPageActions from '../components/MarkdownPageActions.vue'
 import { setupIndyChartsForVue } from '@facioquo/indy-charts/vue'
 import { DARK_SURFACE, LIGHT_SURFACE } from './chart-theme'
 import { CHART_API_BASE_URL, CHART_API_RESILIENCE } from './chart-api'
+import { installWebMcpTools } from './webmcp'
 
 const CHART_API_HOST = new URL(CHART_API_BASE_URL).hostname
 const DEV_PROXY_PATH = '/chart-api-proxy'
@@ -46,6 +47,7 @@ export default {
   },
   enhanceApp({ app }) {
     installDevApiProxy()
+    installWebMcpTools()
 
     setupIndyChartsForVue(app, {
       api: { baseUrl: CHART_API_BASE_URL, ...CHART_API_RESILIENCE },
