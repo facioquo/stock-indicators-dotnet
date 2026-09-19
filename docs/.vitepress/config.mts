@@ -1,6 +1,7 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { defineConfig, type HeadConfig } from 'vitepress'
+import llmstxt, { copyOrDownloadAsMarkdownButtons } from 'vitepress-plugin-llms'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -437,7 +438,14 @@ export default defineConfig({
     'CONTRIBUTING.md': 'contributing.md',
   },
 
+  markdown: {
+    config(md) {
+      md.use(copyOrDownloadAsMarkdownButtons)
+    }
+  },
+
   vite: {
+    plugins: [llmstxt()],
     publicDir: path.resolve(__dirname, 'public'),
     server: {
       fs: {

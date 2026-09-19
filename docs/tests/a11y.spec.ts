@@ -63,6 +63,28 @@ assertBuildHasNoAnalytics(DIST)
 
 const PAGES = sitemapPaths()
 
+test('Markdown page actions expose and retrieve source content', async ({ context, page }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+  await page.goto('/indicators/sma', { waitUntil: 'domcontentloaded' })
+
+  await expect(page.locator('link[rel="alternate"][type="text/markdown"]')).toHaveAttribute(
+    'href',
+    '/indicators/sma.md'
+  )
+
+  const copyButton = page.getByRole('button', { name: 'Copy page' })
+  await copyButton.click()
+  await expect(page.getByRole('button', { name: 'Copied' })).toBeVisible()
+
+  const popupPromise = page.waitForEvent('popup')
+  await page.getByRole('button', { name: 'View as Markdown' }).click()
+  await expect(await popupPromise).toHaveURL(/\/indicators\/sma\.md$/)
+
+  const downloadPromise = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Download Markdown' }).click()
+  await expect.poll(async () => (await downloadPromise).suggestedFilename()).toBe('sma.md')
+})
+
 for (const path of PAGES) {
   test(`a11y - ${path}`, async ({ page }) => {
     const analyticsAttempts = await blockAnalytics(page)
