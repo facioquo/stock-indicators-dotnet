@@ -37,6 +37,8 @@ features:
     linkText: Learn more
 ---
 
+# Utilities and helpers
+
 ## [Utilities for price bars](/utilities/bars)
 
 - [use alternate price](/utilities/bars#use-alternate-price)

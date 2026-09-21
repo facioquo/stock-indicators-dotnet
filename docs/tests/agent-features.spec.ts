@@ -82,6 +82,17 @@ test('Markdown page actions expose and retrieve source content', async ({ contex
     .toContain('# Simple Moving Average (SMA)')
 })
 
+test('Copy page control appears on home-layout hub pages', async ({ page }) => {
+  // guide/index.md, indicators.md, and utilities/index.md render via VitePress's
+  // `layout: home`, which skips the normal doc content flow the plugin relies on
+  // unless the page supplies its own H1 — regression coverage for #2236 recurring
+  // on this layout.
+  for (const path of ['/guide/', '/indicators/', '/utilities/']) {
+    await page.goto(path, { waitUntil: 'domcontentloaded' })
+    await expect(page.getByRole('button', { name: 'Copy page' })).toBeVisible()
+  }
+})
+
 test('WebMCP exposes read-only documentation tools', async ({ page }) => {
   await page.addInitScript(() => {
     const tools: TestWebMcpTool[] = []

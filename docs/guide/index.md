@@ -51,6 +51,8 @@ features:
     
 ---
 
+# Guide
+
 ::: tip ✨ Interactive demo
 See our [charts.stockindicators.dev](https://charts.stockindicators.dev) for interactive visualization demo of library indicators.
 :::
