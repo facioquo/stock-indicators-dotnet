@@ -1,5 +1,5 @@
 diff --git a/dist/vitepress-components/CopyOrDownloadAsMarkdownButtons.vue b/dist/vitepress-components/CopyOrDownloadAsMarkdownButtons.vue
-index 5cbd240c46cbe7873b27b6912040e22ac952ff8e..7bbcca6e9e4ab7cd27eda42142551aec969f2029 100644
+index 5cbd240c46cbe7873b27b6912040e22ac952ff8e..1503a5b8b3715f85dcd97630b29a6b61d5fa4fd7 100644
 --- a/dist/vitepress-components/CopyOrDownloadAsMarkdownButtons.vue
 +++ b/dist/vitepress-components/CopyOrDownloadAsMarkdownButtons.vue
 @@ -19,7 +19,12 @@
@@ -16,12 +16,91 @@ index 5cbd240c46cbe7873b27b6912040e22ac952ff8e..7bbcca6e9e4ab7cd27eda42142551aec
  						<span v-html="iconChevron" class="icon chevron" :class="{ open: isOpen }"></span>
  					</button>
  				</div>
-@@ -51,7 +56,7 @@
- 			</div>
+@@ -32,6 +37,11 @@
+ 						<span v-html="iconExternal" class="icon external"></span>
+ 					</button>
  
- 			<!-- Download button -->
++					<button class="dropdown-item" @click="handleDownloadMarkdown">
++						<span v-html="downloaded ? iconCheck : iconDownload" class="icon"></span>
++						{{ theme.llms?.downloadText || 'Download as Markdown' }}
++					</button>
++
+ 					<button
+ 						v-for="provider in aiProviders"
+ 						:key="provider.name"
+@@ -49,11 +59,6 @@
+ 					</button>
+ 				</div>
+ 			</div>
+-
+-			<!-- Download button -->
 -			<button class="download-btn" @click="downloadMarkdown">
-+			<button class="download-btn" aria-label="Download as Markdown" @click="downloadMarkdown">
- 				<span v-html="downloaded ? iconCheck : iconDownload" class="icon"></span>
- 			</button>
+-				<span v-html="downloaded ? iconCheck : iconDownload" class="icon"></span>
+-			</button>
  		</div>
+ 	</div>
+ </template>
+@@ -136,6 +141,11 @@ function handleViewAsMarkdown(): void {
+ 	closeDropdown()
+ }
+ 
++function handleDownloadMarkdown(): void {
++	downloadMarkdown()
++	closeDropdown()
++}
++
+ function handleOpenInAI(provider: MarkdownAiProvider): void {
+ 	openInAI(provider)
+ 	closeDropdown()
+@@ -161,7 +171,6 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
+ .markdown-copy-buttons-inner {
+ 	margin: 16px 0;
+ 	display: flex;
+-	gap: 8px;
+ 	position: relative;
+ }
+ 
+@@ -257,17 +266,6 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
+ 	opacity: 0.6;
+ }
+ 
+-.download-btn {
+-	display: flex;
+-	align-items: center;
+-	padding: 8px 12px;
+-	background: transparent;
+-	border: 1px solid var(--vp-c-divider);
+-	border-radius: 6px;
+-	color: var(--vp-c-text-1);
+-	cursor: pointer;
+-}
+-
+ .icon {
+ 	width: 18px;
+ 	height: 18px;
+@@ -292,8 +290,7 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
+ 
+ 	/* Hover zones */
+ 	.copy-page:hover,
+-	.chevron-wrapper:hover,
+-	.download-btn:hover {
++	.chevron-wrapper:hover {
+ 		background: var(--vp-c-bg-soft);
+ 	}
+ 
+@@ -301,13 +298,11 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
+ 	.copy-page,
+ 	.chevron-wrapper,
+ 	.dropdown-item,
+-	.dropdown-item .icon.external,
+-	.download-btn {
++	.dropdown-item .icon.external {
+ 		transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+ 	}
+ 
+-	.dropdown-trigger:hover,
+-	.download-btn:hover {
++	.dropdown-trigger:hover {
+ 		border-color: var(--vp-c-brand-1);
+ 		transform: translateY(-1px);
+ 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
