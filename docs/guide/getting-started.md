@@ -7,7 +7,7 @@ description: Install the Stock Indicators for .NET library and calculate your fi
 
 ## Work with a coding agent
 
-Open the documentation page relevant to your task and use **Copy Markdown** beside its title. Paste the result into your coding agent with a specific request, such as:
+Open the documentation page relevant to your task and use **Copy page** beside its title. Paste the result into your coding agent with a specific request, such as:
 
 > Install Stock Indicators for .NET and show me how to calculate a 20-period SMA from my existing price-bar type.
 

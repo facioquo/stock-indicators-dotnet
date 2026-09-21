@@ -4,3 +4,5 @@ allowBuilds:
 
 minimumReleaseAge: 0
 minimumReleaseAgeStrict: false
+patchedDependencies:
+  vitepress-plugin-llms@1.14.0: patches/vitepress-plugin-llms@1.14.0.patch

@@ -63,19 +63,18 @@ test('Markdown page actions expose and retrieve source content', async ({ contex
     '/indicators/sma.md'
   )
 
-  await page.getByRole('button', { name: 'Copy Markdown' }).click()
+  await page.getByRole('button', { name: 'Copy page' }).click()
   await expect(page.getByRole('button', { name: 'Copied' })).toBeVisible()
   expect(await page.evaluate(() => navigator.clipboard.readText()))
     .toContain('# Simple Moving Average (SMA)')
 
-  await page.locator('summary[aria-label="More Markdown actions"]').click()
+  await page.getByRole('button', { name: 'More page actions' }).click()
   const popupPromise = page.waitForEvent('popup')
   await page.getByRole('button', { name: 'View as Markdown' }).click()
   await expect(await popupPromise).toHaveURL(/\/indicators\/sma\.md$/)
 
-  await page.locator('summary[aria-label="More Markdown actions"]').click()
   const downloadPromise = page.waitForEvent('download')
-  await page.getByRole('button', { name: 'Download Markdown' }).click()
+  await page.getByRole('button', { name: 'Download as Markdown' }).click()
   const download = await downloadPromise
   expect(download.suggestedFilename()).toBe('sma.md')
   expect(readFileSync((await download.path())!, 'utf8'))

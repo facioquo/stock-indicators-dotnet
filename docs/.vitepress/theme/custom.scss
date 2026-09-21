@@ -384,3 +384,30 @@ html:not(.dark) body {
 // `span[style*="--shiki-*:#6A737D"]` overrides here no longer match any token
 // and were removed. Should another token ever fail pa11y, set
 // `markdown.colorReplacements` in config.mts rather than re-adding CSS.
+
+// Page actions from vitepress-plugin-llms render as a block after the page
+// title. From tablet width up, lift them level with the title's first line,
+// and reserve that width so a long title wraps before reaching them.
+@media (min-width: 768px) {
+  .vp-doc h1:has(+ .markdown-copy-buttons) {
+    padding-right: 240px;
+  }
+
+  .vp-doc h1 + .markdown-copy-buttons {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: auto;
+    margin: 0;
+
+    .markdown-copy-buttons-inner {
+      margin: 0;
+    }
+
+    // open toward the page rather than past its right edge
+    .dropdown-menu {
+      right: 0;
+      left: auto;
+    }
+  }
+}

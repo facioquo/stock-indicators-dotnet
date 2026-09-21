@@ -1,0 +1,27 @@
+diff --git a/dist/vitepress-components/CopyOrDownloadAsMarkdownButtons.vue b/dist/vitepress-components/CopyOrDownloadAsMarkdownButtons.vue
+index 5cbd240c46cbe7873b27b6912040e22ac952ff8e..7bbcca6e9e4ab7cd27eda42142551aec969f2029 100644
+--- a/dist/vitepress-components/CopyOrDownloadAsMarkdownButtons.vue
++++ b/dist/vitepress-components/CopyOrDownloadAsMarkdownButtons.vue
+@@ -19,7 +19,12 @@
+ 					<span class="divider"></span>
+ 
+ 					<!-- Chevron area -->
+-					<button class="chevron-wrapper" @click.stop="toggleDropdown">
++					<button
++						class="chevron-wrapper"
++						aria-label="More page actions"
++						:aria-expanded="isOpen"
++						@click.stop="toggleDropdown"
++					>
+ 						<span v-html="iconChevron" class="icon chevron" :class="{ open: isOpen }"></span>
+ 					</button>
+ 				</div>
+@@ -51,7 +56,7 @@
+ 			</div>
+ 
+ 			<!-- Download button -->
+-			<button class="download-btn" @click="downloadMarkdown">
++			<button class="download-btn" aria-label="Download as Markdown" @click="downloadMarkdown">
+ 				<span v-html="downloaded ? iconCheck : iconDownload" class="icon"></span>
+ 			</button>
+ 		</div>
