@@ -30,7 +30,7 @@ import LandingCharts from './.vitepress/components/LandingCharts.vue'
 Build trading algorithms, charting applications, machine learning models, or market analysis tools with your own [OHLCV](/guide/getting-started#historical-bars) price bars from any market: equities, commodities, forex, or cryptocurrencies.
 
 ::: tip ✨ v3 adds streaming support
-Our new [**`FacioQuo.Stock.Indicators`**]((https://www.nuget.org/packages/FacioQuo.Stock.Indicators)) NuGet library, formerly `Skender.Stock.Indicators`, adds stream hub and buffer list style indicators to enable your incremental and real-time price data scenarios.
+Our new [**`FacioQuo.Stock.Indicators`**](https://www.nuget.org/packages/FacioQuo.Stock.Indicators) NuGet library, formerly `Skender.Stock.Indicators`, adds stream hub and buffer list style indicators to enable your incremental and real-time price data scenarios.
 Still on v2? See our [migration guide →](/migration/v3)
 :::
 
