@@ -56,4 +56,4 @@ See our [charts.stockindicators.dev](https://charts.stockindicators.dev) for int
 
 Start with [installation and setup](/guide/getting-started), then choose the [indicator style](/guide/styles/) that fits your application. The guide also covers [indicator chaining](/guide/chaining), [custom indicators](/guide/customization), and [custom stream observers](/guide/custom-observers).
 
-Using a coding agent? Copy a page as Markdown from its title or begin with the [suggested prompts](/guide/getting-started#work-with-a-coding-agent).
+Using a coding agent? Copy a page as Markdown from its title or begin with [Agent setup](/guide/agent-setup).

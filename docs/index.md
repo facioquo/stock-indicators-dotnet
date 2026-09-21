@@ -34,6 +34,16 @@ Our new **`FacioQuo.Stock.Indicators`** NuGet library, formerly `Skender.Stock.I
 Still on v2? See our [migration guide →](/migration/v3)
 :::
 
+## Set up with a coding agent
+
+Paste this prompt into your coding agent (Claude, ChatGPT, Copilot, etc.) to get set up automatically:
+
+```text
+Read https://dotnet.stockindicators.dev/llms.txt for the documentation index, then https://dotnet.stockindicators.dev/guide/getting-started.md for setup instructions. Use them to help me install Stock Indicators for .NET (FacioQuo.Stock.Indicators) and calculate my first indicator.
+```
+
+See [Agent setup](/guide/agent-setup) for more prompts and tips.
+
 ## Industry-standard indicators with extensibility
 
 Access a comprehensive library of battle-tested technical indicators used by traders worldwide. Extend functionality by creating your own [custom indicators](/guide/customization) that integrate seamlessly with the library.
