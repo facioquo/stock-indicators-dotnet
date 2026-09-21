@@ -411,3 +411,26 @@ html:not(.dark) body {
     }
   }
 }
+
+// A `layout: home` hub page (guide/, indicators/, utilities/) has no markdown
+// H1 for the plugin's own injection point, so the theme places the control
+// directly in the hero instead (see `home-hero-info-after` in theme/index.ts).
+// `.VPHero .main` is already `position: relative` in VitePress's own styles.
+@media (min-width: 768px) {
+  .VPHero .main > .markdown-copy-buttons {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: auto;
+    margin: 0;
+
+    .markdown-copy-buttons-inner {
+      margin: 0;
+    }
+
+    .dropdown-menu {
+      right: 0;
+      left: auto;
+    }
+  }
+}

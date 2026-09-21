@@ -1,5 +1,6 @@
 import { h } from 'vue'
 import type { Theme } from 'vitepress'
+import { useData } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import './custom.scss'
 import Contributors from '../components/Contributors.vue'
@@ -41,8 +42,18 @@ function installDevApiProxy(): void {
 export default {
   extends: DefaultTheme,
   Layout: () => {
+    const { frontmatter } = useData()
+
+    // A `layout: home` page (other than the true homepage) has no markdown H1
+    // for the plugin's own markdown-it hook to inject after, so its Copy-page
+    // control is placed here instead, beside the hero title.
+    const isHubPage = frontmatter.value.layout === 'home' && !frontmatter.value.isHome
+
     return h(DefaultTheme.Layout, null, {
-      'nav-bar-title-after': () => h('span', { class: 'nav-title-below' }, 'for .NET')
+      'nav-bar-title-after': () => h('span', { class: 'nav-title-below' }, 'for .NET'),
+      ...(isHubPage
+        ? { 'home-hero-info-after': () => h(CopyOrDownloadAsMarkdownButtons) }
+        : {})
     })
   },
   enhanceApp({ app }) {

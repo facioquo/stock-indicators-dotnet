@@ -58,8 +58,6 @@ features:
     details: Fundamental mathematical calculations for financial analysis    
 ---
 
-# Indicators and overlays
-
 {{ $frontmatter.description }}
 
 ## Complete list
