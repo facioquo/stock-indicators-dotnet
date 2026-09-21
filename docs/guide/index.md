@@ -11,6 +11,9 @@ hero:
       text: indicators reference
       link: /indicators
     - theme: alt
+      text: agent setup
+      link: /guide/agent-setup      
+    - theme: alt
       text: v2→v3 migration
       link: /migration/v3
 

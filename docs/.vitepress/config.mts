@@ -142,8 +142,8 @@ export default defineConfig({
         text: 'AI tools',
         items: [
           { text: 'Agent setup', link: '/guide/agent-setup' },
-          { text: 'Documentation index (LLMs)', link: '/llms.txt' },
-          { text: 'Complete documentation (LLMs)', link: '/llms-full.txt' },
+          { text: 'Docs index (LLMs)', link: '/llms.txt' },
+          { text: 'Complete docs (LLMs)', link: '/llms-full.txt' },
         ]
       },
       {

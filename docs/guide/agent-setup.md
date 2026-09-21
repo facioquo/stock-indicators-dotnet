@@ -7,8 +7,12 @@ description: Get a coding agent up to speed on Stock Indicators for .NET, with a
 
 Paste this prompt into your coding agent (Claude, ChatGPT, Copilot, etc.) to have it read the documentation and help you get set up:
 
-```text
-Read https://dotnet.stockindicators.dev/llms.txt for the documentation index, then https://dotnet.stockindicators.dev/guide/getting-started.md for setup instructions. Use them to help me install Stock Indicators for .NET (FacioQuo.Stock.Indicators) and calculate my first indicator.
+```prompt
+Read Stock Indicators for .NET documentation index from 
+[llms.txt](https://dotnet.stockindicators.dev/llms.txt)
+and its getting started guide.
+Help me install and use this FacioQuo.Stock.Indicators
+NuGet library to calculate my first indicator.
 ```
 
 ## Work with a coding agent

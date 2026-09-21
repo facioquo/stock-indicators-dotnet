@@ -5,12 +5,14 @@ description: Install the Stock Indicators for .NET library and calculate your fi
 
 # Getting started
 
-## Work with a coding agent
+Get started quickly by with this coding agent prompt:
 
-Paste this prompt into your coding agent to get set up automatically:
-
-```text
-Read https://dotnet.stockindicators.dev/llms.txt for the documentation index, then https://dotnet.stockindicators.dev/guide/getting-started.md for setup instructions. Use them to help me install Stock Indicators for .NET (FacioQuo.Stock.Indicators) and calculate my first indicator.
+```prompt
+Read Stock Indicators for .NET documentation index from 
+[llms.txt](https://dotnet.stockindicators.dev/llms.txt)
+and its getting started guide.
+Help me install and use this FacioQuo.Stock.Indicators
+NuGet library to calculate my first indicator.
 ```
 
 See [Agent setup](/guide/agent-setup) for more prompts and tips on working with coding agents.

@@ -30,19 +30,21 @@ import LandingCharts from './.vitepress/components/LandingCharts.vue'
 Build trading algorithms, charting applications, machine learning models, or market analysis tools with your own [OHLCV](/guide/getting-started#historical-bars) price bars from any market: equities, commodities, forex, or cryptocurrencies.
 
 ::: tip ✨ v3 adds streaming support
-Our new **`FacioQuo.Stock.Indicators`** NuGet library, formerly `Skender.Stock.Indicators`, adds stream hub and buffer list style indicators to enable your incremental and real-time price data scenarios.
+Our new [**`FacioQuo.Stock.Indicators`**]((https://www.nuget.org/packages/FacioQuo.Stock.Indicators)) NuGet library, formerly `Skender.Stock.Indicators`, adds stream hub and buffer list style indicators to enable your incremental and real-time price data scenarios.
 Still on v2? See our [migration guide →](/migration/v3)
 :::
 
-## Set up with a coding agent
+Get started quickly by with this coding agent prompt:
 
-Paste this prompt into your coding agent (Claude, ChatGPT, Copilot, etc.) to get set up automatically:
-
-```text
-Read https://dotnet.stockindicators.dev/llms.txt for the documentation index, then https://dotnet.stockindicators.dev/guide/getting-started.md for setup instructions. Use them to help me install Stock Indicators for .NET (FacioQuo.Stock.Indicators) and calculate my first indicator.
+```prompt
+Read Stock Indicators for .NET documentation index from 
+[llms.txt](https://dotnet.stockindicators.dev/llms.txt)
+and its getting started guide.
+Help me install and use this FacioQuo.Stock.Indicators
+NuGet library to calculate my first indicator.
 ```
 
-See [Agent setup](/guide/agent-setup) for more prompts and tips.
+See [Agent setup](/guide/agent-setup) for more prompts and tips on working with coding agents.
 
 ## Industry-standard indicators with extensibility
 
