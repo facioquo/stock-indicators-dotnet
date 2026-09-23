@@ -1,0 +1,2248 @@
+### ADL / Series
+Method: ToAdl
+Parameters:
+  (none)
+Results:
+  - Adl : reusable=true
+
+### ADL / Buffer
+Method: ToAdlList
+Parameters:
+  (none)
+Results:
+  - Adl : reusable=true
+
+### ADL / Stream
+Method: ToAdlHub
+Parameters:
+  (none)
+Results:
+  - Adl : reusable=true
+
+### ADX / Series
+Method: ToAdx
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Pdi : reusable=false
+  - Mdi : reusable=false
+  - Dx : reusable=false
+  - Adx : reusable=true
+  - Adxr : reusable=false
+
+### ADX / Buffer
+Method: ToAdxList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Pdi : reusable=false
+  - Mdi : reusable=false
+  - Dx : reusable=false
+  - Adx : reusable=true
+  - Adxr : reusable=false
+
+### ADX / Stream
+Method: ToAdxHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Pdi : reusable=false
+  - Mdi : reusable=false
+  - Dx : reusable=false
+  - Adx : reusable=true
+  - Adxr : reusable=false
+
+### ALLIGATOR / Series
+Method: ToAlligator
+Parameters:
+  - jawPeriods : Int32 : optional
+  - jawOffset : Int32 : optional
+  - teethPeriods : Int32 : optional
+  - teethOffset : Int32 : optional
+  - lipsPeriods : Int32 : optional
+  - lipsOffset : Int32 : optional
+Results:
+  - Jaw : reusable=false
+  - Teeth : reusable=false
+  - Lips : reusable=true
+
+### ALLIGATOR / Buffer
+Method: ToAlligatorList
+Parameters:
+  - jawPeriods : Int32 : optional
+  - jawOffset : Int32 : optional
+  - teethPeriods : Int32 : optional
+  - teethOffset : Int32 : optional
+  - lipsPeriods : Int32 : optional
+  - lipsOffset : Int32 : optional
+Results:
+  - Jaw : reusable=false
+  - Teeth : reusable=false
+  - Lips : reusable=true
+
+### ALLIGATOR / Stream
+Method: ToAlligatorHub
+Parameters:
+  - jawPeriods : Int32 : optional
+  - jawOffset : Int32 : optional
+  - teethPeriods : Int32 : optional
+  - teethOffset : Int32 : optional
+  - lipsPeriods : Int32 : optional
+  - lipsOffset : Int32 : optional
+Results:
+  - Jaw : reusable=false
+  - Teeth : reusable=false
+  - Lips : reusable=true
+
+### ALMA / Series
+Method: ToAlma
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - offset : Double : optional
+  - sigma : Double : optional
+Results:
+  - Alma : reusable=true
+
+### ALMA / Buffer
+Method: ToAlmaList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - offset : Double : optional
+  - sigma : Double : optional
+Results:
+  - Alma : reusable=true
+
+### ALMA / Stream
+Method: ToAlmaHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - offset : Double : optional
+  - sigma : Double : optional
+Results:
+  - Alma : reusable=true
+
+### AROON / Series
+Method: ToAroon
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - AroonUp : reusable=false
+  - AroonDown : reusable=false
+  - Oscillator : reusable=true
+
+### AROON / Buffer
+Method: ToAroonList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - AroonUp : reusable=false
+  - AroonDown : reusable=false
+  - Oscillator : reusable=true
+
+### AROON / Stream
+Method: ToAroonHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - AroonUp : reusable=false
+  - AroonDown : reusable=false
+  - Oscillator : reusable=true
+
+### ATR / Series
+Method: ToAtr
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Tr : reusable=false
+  - Atr : reusable=false
+  - Atrp : reusable=true
+
+### ATR / Buffer
+Method: ToAtrList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Tr : reusable=false
+  - Atr : reusable=false
+  - Atrp : reusable=true
+
+### ATR / Stream
+Method: ToAtrHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Tr : reusable=false
+  - Atr : reusable=false
+  - Atrp : reusable=true
+
+### ATR-STOP / Series
+Method: ToAtrStop
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - multiplier : Double : optional
+  - endType : enum : optional
+Results:
+  - AtrStop : reusable=true
+  - BuyStop : reusable=false
+  - SellStop : reusable=false
+  - Atr : reusable=false
+
+### ATR-STOP / Buffer
+Method: ToAtrStopList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - multiplier : Double : optional
+  - endType : enum : optional
+Results:
+  - AtrStop : reusable=true
+  - BuyStop : reusable=false
+  - SellStop : reusable=false
+  - Atr : reusable=false
+
+### ATR-STOP / Stream
+Method: ToAtrStopHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - multiplier : Double : optional
+  - endType : enum : optional
+Results:
+  - AtrStop : reusable=true
+  - BuyStop : reusable=false
+  - SellStop : reusable=false
+  - Atr : reusable=false
+
+### AWESOME / Series
+Method: ToAwesome
+Parameters:
+  - fastPeriods : Int32 : optional
+  - slowPeriods : Int32 : optional
+Results:
+  - Oscillator : reusable=true
+  - Normalized : reusable=false
+
+### AWESOME / Buffer
+Method: ToAwesomeList
+Parameters:
+  - fastPeriods : Int32 : optional
+  - slowPeriods : Int32 : optional
+Results:
+  - Oscillator : reusable=true
+  - Normalized : reusable=false
+
+### AWESOME / Stream
+Method: ToAwesomeHub
+Parameters:
+  - fastPeriods : Int32 : optional
+  - slowPeriods : Int32 : optional
+Results:
+  - Oscillator : reusable=true
+  - Normalized : reusable=false
+
+### BARPART / Series
+Method: ToBarPart
+Parameters:
+  - candlePart : enum : required
+Results:
+  - Value : reusable=true
+
+### BARPART / Buffer
+Method: ToBarPartList
+Parameters:
+  - candlePart : enum : required
+Results:
+  - Value : reusable=true
+
+### BARPART / Stream
+Method: ToBarPartHub
+Parameters:
+  - candlePart : enum : required
+Results:
+  - Value : reusable=true
+
+### BB / Series
+Method: ToBollingerBands
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - standardDeviations : Double : optional
+Results:
+  - Sma : reusable=false
+  - UpperBand : reusable=false
+  - LowerBand : reusable=false
+  - PercentB : reusable=true
+  - ZScore : reusable=false
+  - Width : reusable=false
+
+### BB / Buffer
+Method: ToBollingerBandsList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - standardDeviations : Double : optional
+Results:
+  - Sma : reusable=false
+  - UpperBand : reusable=false
+  - LowerBand : reusable=false
+  - PercentB : reusable=true
+  - ZScore : reusable=false
+  - Width : reusable=false
+
+### BB / Stream
+Method: ToBollingerBandsHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - standardDeviations : Double : optional
+Results:
+  - Sma : reusable=false
+  - UpperBand : reusable=false
+  - LowerBand : reusable=false
+  - PercentB : reusable=true
+  - ZScore : reusable=false
+  - Width : reusable=false
+
+### BETA / Series
+Method: ToBeta
+Parameters:
+  - sourceEval : IReadOnlyList<T> where T : IReusable : required
+  - sourceMrkt : IReadOnlyList<T> where T : IReusable : required
+  - lookbackPeriods : Int32 : required
+  - type : enum : optional
+Results:
+  - Beta : reusable=true
+  - BetaUp : reusable=false
+  - BetaDown : reusable=false
+  - Ratio : reusable=false
+  - Convexity : reusable=false
+  - ReturnsEval : reusable=false
+  - ReturnsMrkt : reusable=false
+
+### BOP / Series
+Method: ToBop
+Parameters:
+  - smoothPeriods : Int32 : optional
+Results:
+  - Bop : reusable=true
+
+### BOP / Buffer
+Method: ToBopList
+Parameters:
+  - smoothPeriods : Int32 : optional
+Results:
+  - Bop : reusable=true
+
+### BOP / Stream
+Method: ToBopHub
+Parameters:
+  - smoothPeriods : Int32 : optional
+Results:
+  - Bop : reusable=true
+
+### CCI / Series
+Method: ToCci
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Cci : reusable=true
+
+### CCI / Buffer
+Method: ToCciList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Cci : reusable=true
+
+### CCI / Stream
+Method: ToCciHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Cci : reusable=true
+
+### CHAIKIN-OSC / Series
+Method: ToChaikinOsc
+Parameters:
+  - fastPeriods : Int32 : optional
+  - slowPeriods : Int32 : optional
+Results:
+  - MoneyFlowMultiplier : reusable=false
+  - MoneyFlowVolume : reusable=false
+  - Adl : reusable=false
+  - Oscillator : reusable=true
+
+### CHAIKIN-OSC / Buffer
+Method: ToChaikinOscList
+Parameters:
+  - fastPeriods : Int32 : optional
+  - slowPeriods : Int32 : optional
+Results:
+  - MoneyFlowMultiplier : reusable=false
+  - MoneyFlowVolume : reusable=false
+  - Adl : reusable=false
+  - Oscillator : reusable=true
+
+### CHAIKIN-OSC / Stream
+Method: ToChaikinOscHub
+Parameters:
+  - fastPeriods : Int32 : optional
+  - slowPeriods : Int32 : optional
+Results:
+  - MoneyFlowMultiplier : reusable=false
+  - MoneyFlowVolume : reusable=false
+  - Adl : reusable=false
+  - Oscillator : reusable=true
+
+### CHEXIT / Series
+Method: ToChandelier
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - multiplier : Double : optional
+  - type : enum : optional
+Results:
+  - ChandelierExit : reusable=true
+
+### CHEXIT / Buffer
+Method: ToChandelierList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - multiplier : Double : optional
+  - type : enum : optional
+Results:
+  - ChandelierExit : reusable=true
+
+### CHEXIT / Stream
+Method: ToChandelierHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - multiplier : Double : optional
+  - type : enum : optional
+Results:
+  - ChandelierExit : reusable=true
+
+### CHOP / Series
+Method: ToChop
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Chop : reusable=true
+
+### CHOP / Buffer
+Method: ToChopList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Chop : reusable=true
+
+### CHOP / Stream
+Method: ToChopHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Chop : reusable=true
+
+### CMF / Series
+Method: ToCmf
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - MoneyFlowMultiplier : reusable=false
+  - MoneyFlowVolume : reusable=false
+  - Cmf : reusable=true
+
+### CMF / Buffer
+Method: ToCmfList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - MoneyFlowMultiplier : reusable=false
+  - MoneyFlowVolume : reusable=false
+  - Cmf : reusable=true
+
+### CMF / Stream
+Method: ToCmfHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - MoneyFlowMultiplier : reusable=false
+  - MoneyFlowVolume : reusable=false
+  - Cmf : reusable=true
+
+### CMO / Series
+Method: ToCmo
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Cmo : reusable=true
+
+### CMO / Buffer
+Method: ToCmoList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Cmo : reusable=true
+
+### CMO / Stream
+Method: ToCmoHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Cmo : reusable=true
+
+### CORR / Series
+Method: ToCorrelation
+Parameters:
+  - sourceA : IReadOnlyList<T> where T : IReusable : required
+  - sourceB : IReadOnlyList<T> where T : IReusable : required
+  - lookbackPeriods : Int32 : required
+Results:
+  - VarianceA : reusable=false
+  - VarianceB : reusable=false
+  - Covariance : reusable=false
+  - Correlation : reusable=true
+  - RSquared : reusable=false
+
+### CRSI / Series
+Method: ToConnorsRsi
+Parameters:
+  - rsiPeriods : Int32 : optional
+  - streakPeriods : Int32 : optional
+  - rankPeriods : Int32 : optional
+Results:
+  - Streak : reusable=false
+  - Rsi : reusable=false
+  - RsiStreak : reusable=false
+  - PercentRank : reusable=false
+  - ConnorsRsi : reusable=true
+
+### CRSI / Buffer
+Method: ToConnorsRsiList
+Parameters:
+  - rsiPeriods : Int32 : optional
+  - streakPeriods : Int32 : optional
+  - rankPeriods : Int32 : optional
+Results:
+  - Streak : reusable=false
+  - Rsi : reusable=false
+  - RsiStreak : reusable=false
+  - PercentRank : reusable=false
+  - ConnorsRsi : reusable=true
+
+### CRSI / Stream
+Method: ToConnorsRsiHub
+Parameters:
+  - rsiPeriods : Int32 : optional
+  - streakPeriods : Int32 : optional
+  - rankPeriods : Int32 : optional
+Results:
+  - Streak : reusable=false
+  - Rsi : reusable=false
+  - RsiStreak : reusable=false
+  - PercentRank : reusable=false
+  - ConnorsRsi : reusable=true
+
+### DEMA / Series
+Method: ToDema
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Dema : reusable=true
+
+### DEMA / Buffer
+Method: ToDemaList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Dema : reusable=true
+
+### DEMA / Stream
+Method: ToDemaHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Dema : reusable=true
+
+### DOJI / Series
+Method: ToDoji
+Parameters:
+  - maxPriceChangePercent : Double : optional
+Results:
+  - Match : reusable=true
+
+### DOJI / Buffer
+Method: ToDojiList
+Parameters:
+  - maxPriceChangePercent : Double : optional
+Results:
+  - Match : reusable=true
+
+### DOJI / Stream
+Method: ToDojiHub
+Parameters:
+  - maxPriceChangePercent : Double : optional
+Results:
+  - Match : reusable=true
+
+### DONCHIAN / Series
+Method: ToDonchian
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - UpperBand : reusable=false
+  - Centerline : reusable=true
+  - LowerBand : reusable=false
+  - Width : reusable=false
+
+### DONCHIAN / Buffer
+Method: ToDonchianList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - UpperBand : reusable=false
+  - Centerline : reusable=true
+  - LowerBand : reusable=false
+  - Width : reusable=false
+
+### DONCHIAN / Stream
+Method: ToDonchianHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - UpperBand : reusable=false
+  - Centerline : reusable=true
+  - LowerBand : reusable=false
+  - Width : reusable=false
+
+### DPO / Series
+Method: ToDpo
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Dpo : reusable=true
+  - Sma : reusable=false
+
+### DPO / Buffer
+Method: ToDpoList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Dpo : reusable=true
+  - Sma : reusable=false
+
+### DPO / Stream
+Method: ToDpoHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Dpo : reusable=true
+  - Sma : reusable=false
+
+### DYNAMIC / Series
+Method: ToDynamic
+Parameters:
+  - lookbackPeriods : Int32 : required
+  - kFactor : Double : optional
+Results:
+  - Dynamic : reusable=true
+
+### DYNAMIC / Buffer
+Method: ToDynamicList
+Parameters:
+  - lookbackPeriods : Int32 : required
+  - kFactor : Double : optional
+Results:
+  - Dynamic : reusable=true
+
+### DYNAMIC / Stream
+Method: ToDynamicHub
+Parameters:
+  - lookbackPeriods : Int32 : required
+  - kFactor : Double : optional
+Results:
+  - Dynamic : reusable=true
+
+### ELDER-RAY / Series
+Method: ToElderRay
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Ema : reusable=false
+  - BullPower : reusable=false
+  - BearPower : reusable=false
+  - Value : reusable=true
+
+### ELDER-RAY / Buffer
+Method: ToElderRayList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Ema : reusable=false
+  - BullPower : reusable=false
+  - BearPower : reusable=false
+  - Value : reusable=true
+
+### ELDER-RAY / Stream
+Method: ToElderRayHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Ema : reusable=false
+  - BullPower : reusable=false
+  - BearPower : reusable=false
+  - Value : reusable=true
+
+### EMA / Series
+Method: ToEma
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Ema : reusable=true
+
+### EMA / Buffer
+Method: ToEmaList
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Ema : reusable=true
+
+### EMA / Stream
+Method: ToEmaHub
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Ema : reusable=true
+
+### EPMA / Series
+Method: ToEpma
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Epma : reusable=true
+
+### EPMA / Buffer
+Method: ToEpmaList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Epma : reusable=true
+
+### EPMA / Stream
+Method: ToEpmaHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Epma : reusable=true
+
+### FCB / Series
+Method: ToFcb
+Parameters:
+  - windowSpan : Int32 : optional
+Results:
+  - UpperBand : reusable=true
+  - LowerBand : reusable=false
+
+### FCB / Buffer
+Method: ToFcbList
+Parameters:
+  - windowSpan : Int32 : optional
+Results:
+  - UpperBand : reusable=true
+  - LowerBand : reusable=false
+
+### FCB / Stream
+Method: ToFcbHub
+Parameters:
+  - windowSpan : Int32 : optional
+Results:
+  - UpperBand : reusable=true
+  - LowerBand : reusable=false
+
+### FISHER / Series
+Method: ToFisherTransform
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Fisher : reusable=true
+  - Trigger : reusable=false
+
+### FISHER / Buffer
+Method: ToFisherTransformList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Fisher : reusable=true
+  - Trigger : reusable=false
+
+### FISHER / Stream
+Method: ToFisherTransformHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Fisher : reusable=true
+  - Trigger : reusable=false
+
+### FORCE / Series
+Method: ToForceIndex
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - ForceIndex : reusable=true
+
+### FORCE / Buffer
+Method: ToForceIndexList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - ForceIndex : reusable=true
+
+### FORCE / Stream
+Method: ToForceIndexHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - ForceIndex : reusable=true
+
+### FRACTAL / Series
+Method: ToFractal
+Parameters:
+  - windowSpan : Int32 : optional
+  - endType : enum : optional
+Results:
+  - FractalBear : reusable=false
+  - FractalBull : reusable=true
+
+### FRACTAL / Buffer
+Method: ToFractalList
+Parameters:
+  - windowSpan : Int32 : optional
+  - endType : enum : optional
+Results:
+  - FractalBear : reusable=false
+  - FractalBull : reusable=true
+
+### FRACTAL / Stream
+Method: ToFractalHub
+Parameters:
+  - windowSpan : Int32 : optional
+  - endType : enum : optional
+Results:
+  - FractalBear : reusable=false
+  - FractalBull : reusable=true
+
+### GATOR / Series
+Method: ToGator
+Parameters:
+  (none)
+Results:
+  - Upper : reusable=false
+  - Lower : reusable=false
+  - UpperIsExpanding : reusable=false
+  - LowerIsExpanding : reusable=false
+
+### GATOR / Buffer
+Method: ToGatorList
+Parameters:
+  (none)
+Results:
+  - Upper : reusable=false
+  - Lower : reusable=false
+  - UpperIsExpanding : reusable=false
+  - LowerIsExpanding : reusable=false
+
+### GATOR / Stream
+Method: ToGatorHub
+Parameters:
+  (none)
+Results:
+  - Upper : reusable=false
+  - Lower : reusable=false
+  - UpperIsExpanding : reusable=false
+  - LowerIsExpanding : reusable=false
+
+### HEIKINASHI / Series
+Method: ToHeikinAshi
+Parameters:
+  (none)
+Results:
+  - Open : reusable=false
+  - High : reusable=false
+  - Low : reusable=false
+  - Close : reusable=true
+  - Volume : reusable=false
+
+### HEIKINASHI / Buffer
+Method: ToHeikinAshiList
+Parameters:
+  (none)
+Results:
+  - Open : reusable=false
+  - High : reusable=false
+  - Low : reusable=false
+  - Close : reusable=true
+  - Volume : reusable=false
+
+### HEIKINASHI / Stream
+Method: ToHeikinAshiHub
+Parameters:
+  (none)
+Results:
+  - Open : reusable=false
+  - High : reusable=false
+  - Low : reusable=false
+  - Close : reusable=true
+  - Volume : reusable=false
+
+### HMA / Series
+Method: ToHma
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Hma : reusable=true
+
+### HMA / Buffer
+Method: ToHmaList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Hma : reusable=true
+
+### HMA / Stream
+Method: ToHmaHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Hma : reusable=true
+
+### HTL / Series
+Method: ToHtTrendline
+Parameters:
+  (none)
+Results:
+  - DcPeriods : reusable=false
+  - Trendline : reusable=true
+  - SmoothPrice : reusable=false
+
+### HTL / Buffer
+Method: ToHtTrendlineList
+Parameters:
+  (none)
+Results:
+  - DcPeriods : reusable=false
+  - Trendline : reusable=true
+  - SmoothPrice : reusable=false
+
+### HTL / Stream
+Method: ToHtTrendlineHub
+Parameters:
+  (none)
+Results:
+  - DcPeriods : reusable=false
+  - Trendline : reusable=true
+  - SmoothPrice : reusable=false
+
+### HURST / Series
+Method: ToHurst
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - HurstExponent : reusable=true
+  - HurstExponentAL : reusable=false
+
+### HURST / Buffer
+Method: ToHurstList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - HurstExponent : reusable=true
+  - HurstExponentAL : reusable=false
+
+### HURST / Stream
+Method: ToHurstHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - HurstExponent : reusable=true
+  - HurstExponentAL : reusable=false
+
+### ICHIMOKU / Series
+Method: ToIchimoku
+Parameters:
+  - tenkanPeriods : Int32 : optional
+  - kijunPeriods : Int32 : optional
+  - senkouBPeriods : Int32 : optional
+Results:
+  - TenkanSen : reusable=true
+  - KijunSen : reusable=false
+  - SenkouSpanA : reusable=false
+  - SenkouSpanB : reusable=false
+  - ChikouSpan : reusable=false
+
+### ICHIMOKU / Buffer
+Method: ToIchimokuList
+Parameters:
+  - tenkanPeriods : Int32 : optional
+  - kijunPeriods : Int32 : optional
+  - senkouBPeriods : Int32 : optional
+Results:
+  - TenkanSen : reusable=true
+  - KijunSen : reusable=false
+  - SenkouSpanA : reusable=false
+  - SenkouSpanB : reusable=false
+  - ChikouSpan : reusable=false
+
+### ICHIMOKU / Stream
+Method: ToIchimokuHub
+Parameters:
+  - tenkanPeriods : Int32 : optional
+  - kijunPeriods : Int32 : optional
+  - senkouBPeriods : Int32 : optional
+Results:
+  - TenkanSen : reusable=true
+  - KijunSen : reusable=false
+  - SenkouSpanA : reusable=false
+  - SenkouSpanB : reusable=false
+  - ChikouSpan : reusable=false
+
+### KAMA / Series
+Method: ToKama
+Parameters:
+  - erPeriods : Int32 : optional
+  - fastPeriods : Int32 : optional
+  - slowPeriods : Int32 : optional
+Results:
+  - Er : reusable=false
+  - Kama : reusable=true
+
+### KAMA / Buffer
+Method: ToKamaList
+Parameters:
+  - erPeriods : Int32 : optional
+  - fastPeriods : Int32 : optional
+  - slowPeriods : Int32 : optional
+Results:
+  - Er : reusable=false
+  - Kama : reusable=true
+
+### KAMA / Stream
+Method: ToKamaHub
+Parameters:
+  - erPeriods : Int32 : optional
+  - fastPeriods : Int32 : optional
+  - slowPeriods : Int32 : optional
+Results:
+  - Er : reusable=false
+  - Kama : reusable=true
+
+### KELTNER / Series
+Method: ToKeltner
+Parameters:
+  - emaPeriods : Int32 : optional
+  - multiplier : Double : optional
+  - atrPeriods : Int32 : optional
+Results:
+  - UpperBand : reusable=false
+  - Centerline : reusable=true
+  - LowerBand : reusable=false
+  - Width : reusable=false
+
+### KELTNER / Buffer
+Method: ToKeltnerList
+Parameters:
+  - emaPeriods : Int32 : optional
+  - multiplier : Double : optional
+  - atrPeriods : Int32 : optional
+Results:
+  - UpperBand : reusable=false
+  - Centerline : reusable=true
+  - LowerBand : reusable=false
+  - Width : reusable=false
+
+### KELTNER / Stream
+Method: ToKeltnerHub
+Parameters:
+  - emaPeriods : Int32 : optional
+  - multiplier : Double : optional
+  - atrPeriods : Int32 : optional
+Results:
+  - UpperBand : reusable=false
+  - Centerline : reusable=true
+  - LowerBand : reusable=false
+  - Width : reusable=false
+
+### KVO / Series
+Method: ToKvo
+Parameters:
+  - fastPeriods : Int32 : optional
+  - slowPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+Results:
+  - Oscillator : reusable=true
+  - Signal : reusable=false
+
+### KVO / Buffer
+Method: ToKvoList
+Parameters:
+  - fastPeriods : Int32 : optional
+  - slowPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+Results:
+  - Oscillator : reusable=true
+  - Signal : reusable=false
+
+### KVO / Stream
+Method: ToKvoHub
+Parameters:
+  - fastPeriods : Int32 : optional
+  - slowPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+Results:
+  - Oscillator : reusable=true
+  - Signal : reusable=false
+
+### MA-ENV / Series
+Method: ToMaEnvelopes
+Parameters:
+  - lookbackPeriods : Int32 : required
+  - percentOffset : Double : optional
+  - movingAverageType : enum : optional
+Results:
+  - Centerline : reusable=true
+  - UpperEnvelope : reusable=false
+  - LowerEnvelope : reusable=false
+
+### MA-ENV / Buffer
+Method: ToMaEnvelopesList
+Parameters:
+  - lookbackPeriods : Int32 : required
+  - percentOffset : Double : optional
+  - movingAverageType : enum : optional
+Results:
+  - Centerline : reusable=true
+  - UpperEnvelope : reusable=false
+  - LowerEnvelope : reusable=false
+
+### MA-ENV / Stream
+Method: ToMaEnvelopesHub
+Parameters:
+  - lookbackPeriods : Int32 : required
+  - percentOffset : Double : optional
+  - movingAverageType : enum : optional
+Results:
+  - Centerline : reusable=true
+  - UpperEnvelope : reusable=false
+  - LowerEnvelope : reusable=false
+
+### MACD / Series
+Method: ToMacd
+Parameters:
+  - fastPeriods : Int32 : optional
+  - slowPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+Results:
+  - Macd : reusable=true
+  - Signal : reusable=false
+  - Histogram : reusable=false
+
+### MACD / Buffer
+Method: ToMacdList
+Parameters:
+  - fastPeriods : Int32 : optional
+  - slowPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+Results:
+  - Macd : reusable=true
+  - Signal : reusable=false
+  - Histogram : reusable=false
+
+### MACD / Stream
+Method: ToMacdHub
+Parameters:
+  - fastPeriods : Int32 : optional
+  - slowPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+Results:
+  - Macd : reusable=true
+  - Signal : reusable=false
+  - Histogram : reusable=false
+
+### MAMA / Series
+Method: ToMama
+Parameters:
+  - fastLimit : Double : optional
+  - slowLimit : Double : optional
+Results:
+  - Mama : reusable=true
+  - Fama : reusable=false
+
+### MAMA / Buffer
+Method: ToMamaList
+Parameters:
+  - fastLimit : Double : optional
+  - slowLimit : Double : optional
+Results:
+  - Mama : reusable=true
+  - Fama : reusable=false
+
+### MAMA / Stream
+Method: ToMamaHub
+Parameters:
+  - fastLimit : Double : optional
+  - slowLimit : Double : optional
+Results:
+  - Mama : reusable=true
+  - Fama : reusable=false
+
+### MARUBOZU / Series
+Method: ToMarubozu
+Parameters:
+  - minBodyPercent : Double : optional
+Results:
+  - Match : reusable=true
+
+### MARUBOZU / Buffer
+Method: ToMarubozuList
+Parameters:
+  - minBodyPercent : Double : optional
+Results:
+  - Match : reusable=true
+
+### MARUBOZU / Stream
+Method: ToMarubozuHub
+Parameters:
+  - minBodyPercent : Double : optional
+Results:
+  - Match : reusable=true
+
+### MFI / Series
+Method: ToMfi
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Mfi : reusable=true
+
+### MFI / Buffer
+Method: ToMfiList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Mfi : reusable=true
+
+### MFI / Stream
+Method: ToMfiHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Mfi : reusable=true
+
+### OBV / Series
+Method: ToObv
+Parameters:
+  (none)
+Results:
+  - Obv : reusable=true
+
+### OBV / Buffer
+Method: ToObvList
+Parameters:
+  (none)
+Results:
+  - Obv : reusable=true
+
+### OBV / Stream
+Method: ToObvHub
+Parameters:
+  (none)
+Results:
+  - Obv : reusable=true
+
+### PIVOT-POINTS / Series
+Method: ToPivotPoints
+Parameters:
+  - windowSize : enum : optional
+  - pointType : enum : optional
+Results:
+  - R3 : reusable=false
+  - R2 : reusable=false
+  - R1 : reusable=false
+  - PP : reusable=true
+  - S1 : reusable=false
+  - S2 : reusable=false
+  - S3 : reusable=false
+
+### PIVOT-POINTS / Buffer
+Method: ToPivotPointsList
+Parameters:
+  - windowSize : enum : optional
+  - pointType : enum : optional
+Results:
+  - R3 : reusable=false
+  - R2 : reusable=false
+  - R1 : reusable=false
+  - PP : reusable=true
+  - S1 : reusable=false
+  - S2 : reusable=false
+  - S3 : reusable=false
+
+### PIVOT-POINTS / Stream
+Method: ToPivotPointsHub
+Parameters:
+  - windowSize : enum : optional
+  - pointType : enum : optional
+Results:
+  - R3 : reusable=false
+  - R2 : reusable=false
+  - R1 : reusable=false
+  - PP : reusable=true
+  - S1 : reusable=false
+  - S2 : reusable=false
+  - S3 : reusable=false
+
+### PIVOTS / Series
+Method: ToPivots
+Parameters:
+  - leftSpan : Int32 : optional
+  - rightSpan : Int32 : optional
+  - maxTrendPeriods : Int32 : optional
+  - endType : enum : optional
+Results:
+  - HighPoint : reusable=false
+  - LowPoint : reusable=false
+  - HighLine : reusable=false
+  - LowLine : reusable=false
+  - HighTrend : reusable=false
+  - LowTrend : reusable=false
+
+### PIVOTS / Buffer
+Method: ToPivotsList
+Parameters:
+  - leftSpan : Int32 : optional
+  - rightSpan : Int32 : optional
+  - maxTrendPeriods : Int32 : optional
+  - endType : enum : optional
+Results:
+  - HighPoint : reusable=false
+  - LowPoint : reusable=false
+  - HighLine : reusable=false
+  - LowLine : reusable=false
+  - HighTrend : reusable=false
+  - LowTrend : reusable=false
+
+### PIVOTS / Stream
+Method: ToPivotsHub
+Parameters:
+  - leftSpan : Int32 : optional
+  - rightSpan : Int32 : optional
+  - maxTrendPeriods : Int32 : optional
+  - endType : enum : optional
+Results:
+  - HighPoint : reusable=false
+  - LowPoint : reusable=false
+  - HighLine : reusable=false
+  - LowLine : reusable=false
+  - HighTrend : reusable=false
+  - LowTrend : reusable=false
+
+### PMO / Series
+Method: ToPmo
+Parameters:
+  - timePeriods : Int32 : optional
+  - smoothPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+Results:
+  - Pmo : reusable=true
+  - Signal : reusable=false
+
+### PMO / Buffer
+Method: ToPmoList
+Parameters:
+  - timePeriods : Int32 : optional
+  - smoothPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+Results:
+  - Pmo : reusable=true
+  - Signal : reusable=false
+
+### PMO / Stream
+Method: ToPmoHub
+Parameters:
+  - timePeriods : Int32 : optional
+  - smoothPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+Results:
+  - Pmo : reusable=true
+  - Signal : reusable=false
+
+### PRS / Series
+Method: ToPrs
+Parameters:
+  - sourceEval : IReadOnlyList<T> where T : IReusable : required
+  - sourceBase : IReadOnlyList<T> where T : IReusable : required
+  - lookbackPeriods : Int32 : required
+Results:
+  - Prs : reusable=true
+  - PrsPercent : reusable=false
+
+### PSAR / Series
+Method: ToParabolicSar
+Parameters:
+  - accelerationStep : Double : optional
+  - maxAccelerationFactor : Double : optional
+Results:
+  - Sar : reusable=true
+  - IsReversal : reusable=false
+
+### PSAR / Buffer
+Method: ToParabolicSarList
+Parameters:
+  - accelerationStep : Double : optional
+  - maxAccelerationFactor : Double : optional
+Results:
+  - Sar : reusable=true
+  - IsReversal : reusable=false
+
+### PSAR / Stream
+Method: ToParabolicSarHub
+Parameters:
+  - accelerationStep : Double : optional
+  - maxAccelerationFactor : Double : optional
+Results:
+  - Sar : reusable=true
+  - IsReversal : reusable=false
+
+### PVO / Series
+Method: ToPvo
+Parameters:
+  - fastPeriods : Int32 : optional
+  - slowPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+Results:
+  - Pvo : reusable=true
+  - Signal : reusable=false
+  - Histogram : reusable=false
+
+### PVO / Buffer
+Method: ToPvoList
+Parameters:
+  - fastPeriods : Int32 : optional
+  - slowPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+Results:
+  - Pvo : reusable=true
+  - Signal : reusable=false
+  - Histogram : reusable=false
+
+### PVO / Stream
+Method: ToPvoHub
+Parameters:
+  - fastPeriods : Int32 : optional
+  - slowPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+Results:
+  - Pvo : reusable=true
+  - Signal : reusable=false
+  - Histogram : reusable=false
+
+### RENKO / Series
+Method: ToRenko
+Parameters:
+  - brickSize : Decimal : required
+  - endType : enum : optional
+Results:
+  - Open : reusable=false
+  - High : reusable=false
+  - Low : reusable=false
+  - Close : reusable=true
+  - Volume : reusable=false
+  - IsUp : reusable=false
+
+### RENKO / Buffer
+Method: ToRenkoList
+Parameters:
+  - brickSize : Decimal : required
+  - endType : enum : optional
+Results:
+  - Open : reusable=false
+  - High : reusable=false
+  - Low : reusable=false
+  - Close : reusable=true
+  - Volume : reusable=false
+  - IsUp : reusable=false
+
+### RENKO / Stream
+Method: ToRenkoHub
+Parameters:
+  - brickSize : Decimal : required
+  - endType : enum : optional
+Results:
+  - Open : reusable=false
+  - High : reusable=false
+  - Low : reusable=false
+  - Close : reusable=true
+  - Volume : reusable=false
+  - IsUp : reusable=false
+
+### RENKO-ATR / Series
+Method: ToRenkoAtr
+Parameters:
+  - atrPeriods : Int32 : optional
+  - endType : enum : optional
+Results:
+  - Open : reusable=false
+  - High : reusable=false
+  - Low : reusable=false
+  - Close : reusable=true
+  - Volume : reusable=false
+  - IsUp : reusable=false
+
+### ROC / Series
+Method: ToRoc
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Roc : reusable=true
+
+### ROC / Buffer
+Method: ToRocList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Roc : reusable=true
+
+### ROC / Stream
+Method: ToRocHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Roc : reusable=true
+
+### ROC-WB / Series
+Method: ToRocWb
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - emaPeriods : Int32 : optional
+  - stdDevPeriods : Int32 : optional
+Results:
+  - Roc : reusable=true
+  - RocEma : reusable=false
+  - UpperBand : reusable=false
+  - LowerBand : reusable=false
+
+### ROC-WB / Buffer
+Method: ToRocWbList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - emaPeriods : Int32 : optional
+  - stdDevPeriods : Int32 : optional
+Results:
+  - Roc : reusable=true
+  - RocEma : reusable=false
+  - UpperBand : reusable=false
+  - LowerBand : reusable=false
+
+### ROC-WB / Stream
+Method: ToRocWbHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - emaPeriods : Int32 : optional
+  - stdDevPeriods : Int32 : optional
+Results:
+  - Roc : reusable=true
+  - RocEma : reusable=false
+  - UpperBand : reusable=false
+  - LowerBand : reusable=false
+
+### ROLLING-PIVOTS / Series
+Method: ToRollingPivots
+Parameters:
+  - windowPeriods : Int32 : optional
+  - offsetPeriods : Int32 : optional
+  - pointType : enum : optional
+Results:
+  - R3 : reusable=false
+  - R2 : reusable=false
+  - R1 : reusable=false
+  - PP : reusable=true
+  - S1 : reusable=false
+  - S2 : reusable=false
+  - S3 : reusable=false
+
+### ROLLING-PIVOTS / Buffer
+Method: ToRollingPivotsList
+Parameters:
+  - windowPeriods : Int32 : optional
+  - offsetPeriods : Int32 : optional
+  - pointType : enum : optional
+Results:
+  - R3 : reusable=false
+  - R2 : reusable=false
+  - R1 : reusable=false
+  - PP : reusable=true
+  - S1 : reusable=false
+  - S2 : reusable=false
+  - S3 : reusable=false
+
+### ROLLING-PIVOTS / Stream
+Method: ToRollingPivotsHub
+Parameters:
+  - windowPeriods : Int32 : optional
+  - offsetPeriods : Int32 : optional
+  - pointType : enum : optional
+Results:
+  - R3 : reusable=false
+  - R2 : reusable=false
+  - R1 : reusable=false
+  - PP : reusable=true
+  - S1 : reusable=false
+  - S2 : reusable=false
+  - S3 : reusable=false
+
+### RSI / Series
+Method: ToRsi
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Rsi : reusable=true
+
+### RSI / Buffer
+Method: ToRsiList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Rsi : reusable=true
+
+### RSI / Stream
+Method: ToRsiHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Rsi : reusable=true
+
+### SLOPE / Series
+Method: ToSlope
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Slope : reusable=true
+  - Intercept : reusable=false
+  - StdDev : reusable=false
+  - RSquared : reusable=false
+  - Line : reusable=false
+
+### SLOPE / Buffer
+Method: ToSlopeList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Slope : reusable=true
+  - Intercept : reusable=false
+  - StdDev : reusable=false
+  - RSquared : reusable=false
+  - Line : reusable=false
+
+### SLOPE / Stream
+Method: ToSlopeHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Slope : reusable=true
+  - Intercept : reusable=false
+  - StdDev : reusable=false
+  - RSquared : reusable=false
+  - Line : reusable=false
+
+### SMA / Series
+Method: ToSma
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Sma : reusable=true
+
+### SMA / Buffer
+Method: ToSmaList
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Sma : reusable=true
+
+### SMA / Stream
+Method: ToSmaHub
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Sma : reusable=true
+
+### SMA-ANALYSIS / Series
+Method: ToSmaAnalysis
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Sma : reusable=true
+  - Mad : reusable=false
+  - Mse : reusable=false
+  - Mape : reusable=false
+
+### SMA-ANALYSIS / Buffer
+Method: ToSmaAnalysisList
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Sma : reusable=true
+  - Mad : reusable=false
+  - Mse : reusable=false
+  - Mape : reusable=false
+
+### SMA-ANALYSIS / Stream
+Method: ToSmaAnalysisHub
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Sma : reusable=true
+  - Mad : reusable=false
+  - Mse : reusable=false
+  - Mape : reusable=false
+
+### SMI / Series
+Method: ToSmi
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - firstSmoothPeriods : Int32 : optional
+  - secondSmoothPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+Results:
+  - Smi : reusable=true
+  - Signal : reusable=false
+
+### SMI / Buffer
+Method: ToSmiList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - firstSmoothPeriods : Int32 : optional
+  - secondSmoothPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+Results:
+  - Smi : reusable=true
+  - Signal : reusable=false
+
+### SMI / Stream
+Method: ToSmiHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - firstSmoothPeriods : Int32 : optional
+  - secondSmoothPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+Results:
+  - Smi : reusable=true
+  - Signal : reusable=false
+
+### SMMA / Series
+Method: ToSmma
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Smma : reusable=true
+
+### SMMA / Buffer
+Method: ToSmmaList
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Smma : reusable=true
+
+### SMMA / Stream
+Method: ToSmmaHub
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Smma : reusable=true
+
+### STARC / Series
+Method: ToStarcBands
+Parameters:
+  - smaPeriods : Int32 : optional
+  - multiplier : Double : optional
+  - atrPeriods : Int32 : optional
+Results:
+  - UpperBand : reusable=false
+  - Centerline : reusable=true
+  - LowerBand : reusable=false
+
+### STARC / Buffer
+Method: ToStarcBandsList
+Parameters:
+  - smaPeriods : Int32 : optional
+  - multiplier : Double : optional
+  - atrPeriods : Int32 : optional
+Results:
+  - UpperBand : reusable=false
+  - Centerline : reusable=true
+  - LowerBand : reusable=false
+
+### STARC / Stream
+Method: ToStarcBandsHub
+Parameters:
+  - smaPeriods : Int32 : optional
+  - multiplier : Double : optional
+  - atrPeriods : Int32 : optional
+Results:
+  - UpperBand : reusable=false
+  - Centerline : reusable=true
+  - LowerBand : reusable=false
+
+### STC / Series
+Method: ToStc
+Parameters:
+  - cyclePeriods : Int32 : optional
+  - fastPeriods : Int32 : optional
+  - slowPeriods : Int32 : optional
+Results:
+  - Stc : reusable=true
+
+### STC / Buffer
+Method: ToStcList
+Parameters:
+  - cyclePeriods : Int32 : optional
+  - fastPeriods : Int32 : optional
+  - slowPeriods : Int32 : optional
+Results:
+  - Stc : reusable=true
+
+### STC / Stream
+Method: ToStcHub
+Parameters:
+  - cyclePeriods : Int32 : optional
+  - fastPeriods : Int32 : optional
+  - slowPeriods : Int32 : optional
+Results:
+  - Stc : reusable=true
+
+### STDEV / Series
+Method: ToStdDev
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - StdDev : reusable=true
+
+### STDEV / Buffer
+Method: ToStdDevList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - StdDev : reusable=true
+
+### STDEV / Stream
+Method: ToStdDevHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - StdDev : reusable=true
+
+### STDEV-CHANNELS / Series
+Method: ToStdDevChannels
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - stdDeviations : Double : optional
+Results:
+  - UpperChannel : reusable=false
+  - Centerline : reusable=true
+  - LowerChannel : reusable=false
+
+### STOCH / Series
+Method: ToStoch
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+  - smoothPeriods : Int32 : optional
+Results:
+  - Oscillator : reusable=true
+  - Signal : reusable=false
+
+### STOCH / Buffer
+Method: ToStochList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+  - smoothPeriods : Int32 : optional
+Results:
+  - Oscillator : reusable=true
+  - Signal : reusable=false
+
+### STOCH / Stream
+Method: ToStochHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+  - smoothPeriods : Int32 : optional
+Results:
+  - Oscillator : reusable=true
+  - Signal : reusable=false
+
+### STOCH-RSI / Series
+Method: ToStochRsi
+Parameters:
+  - rsiPeriods : Int32 : optional
+  - stochPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+  - smoothPeriods : Int32 : optional
+Results:
+  - StochRsi : reusable=true
+  - Signal : reusable=false
+
+### STOCH-RSI / Buffer
+Method: ToStochRsiList
+Parameters:
+  - rsiPeriods : Int32 : optional
+  - stochPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+  - smoothPeriods : Int32 : optional
+Results:
+  - StochRsi : reusable=true
+  - Signal : reusable=false
+
+### STOCH-RSI / Stream
+Method: ToStochRsiHub
+Parameters:
+  - rsiPeriods : Int32 : optional
+  - stochPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+  - smoothPeriods : Int32 : optional
+Results:
+  - StochRsi : reusable=true
+  - Signal : reusable=false
+
+### SUPERTREND / Series
+Method: ToSuperTrend
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - multiplier : Double : optional
+Results:
+  - SuperTrend : reusable=false
+  - UpperBand : reusable=false
+  - LowerBand : reusable=false
+
+### SUPERTREND / Buffer
+Method: ToSuperTrendList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - multiplier : Double : optional
+Results:
+  - SuperTrend : reusable=false
+  - UpperBand : reusable=false
+  - LowerBand : reusable=false
+
+### SUPERTREND / Stream
+Method: ToSuperTrendHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - multiplier : Double : optional
+Results:
+  - SuperTrend : reusable=false
+  - UpperBand : reusable=false
+  - LowerBand : reusable=false
+
+### T3 / Series
+Method: ToT3
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - volumeFactor : Double : optional
+Results:
+  - T3 : reusable=true
+
+### T3 / Buffer
+Method: ToT3List
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - volumeFactor : Double : optional
+Results:
+  - T3 : reusable=true
+
+### T3 / Stream
+Method: ToT3Hub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - volumeFactor : Double : optional
+Results:
+  - T3 : reusable=true
+
+### TEMA / Series
+Method: ToTema
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Tema : reusable=true
+
+### TEMA / Buffer
+Method: ToTemaList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Tema : reusable=true
+
+### TEMA / Stream
+Method: ToTemaHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Tema : reusable=true
+
+### TR / Series
+Method: ToTr
+Parameters:
+  (none)
+Results:
+  - Tr : reusable=true
+
+### TR / Buffer
+Method: ToTrList
+Parameters:
+  (none)
+Results:
+  - Tr : reusable=true
+
+### TR / Stream
+Method: ToTrHub
+Parameters:
+  (none)
+Results:
+  - Tr : reusable=true
+
+### TRIX / Series
+Method: ToTrix
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Trix : reusable=true
+
+### TRIX / Buffer
+Method: ToTrixList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Trix : reusable=true
+
+### TRIX / Stream
+Method: ToTrixHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Trix : reusable=true
+
+### TSI / Series
+Method: ToTsi
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - smoothPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+Results:
+  - Tsi : reusable=true
+  - Signal : reusable=false
+
+### TSI / Buffer
+Method: ToTsiList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - smoothPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+Results:
+  - Tsi : reusable=true
+  - Signal : reusable=false
+
+### TSI / Stream
+Method: ToTsiHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - smoothPeriods : Int32 : optional
+  - signalPeriods : Int32 : optional
+Results:
+  - Tsi : reusable=true
+  - Signal : reusable=false
+
+### ULCER / Series
+Method: ToUlcerIndex
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - UlcerIndex : reusable=true
+
+### ULCER / Buffer
+Method: ToUlcerIndexList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - UlcerIndex : reusable=true
+
+### ULCER / Stream
+Method: ToUlcerIndexHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - UlcerIndex : reusable=true
+
+### UO / Series
+Method: ToUltimate
+Parameters:
+  - shortPeriods : Int32 : optional
+  - middlePeriods : Int32 : optional
+  - longPeriods : Int32 : optional
+Results:
+  - Ultimate : reusable=true
+
+### UO / Buffer
+Method: ToUltimateList
+Parameters:
+  - shortPeriods : Int32 : optional
+  - middlePeriods : Int32 : optional
+  - longPeriods : Int32 : optional
+Results:
+  - Ultimate : reusable=true
+
+### UO / Stream
+Method: ToUltimateHub
+Parameters:
+  - shortPeriods : Int32 : optional
+  - middlePeriods : Int32 : optional
+  - longPeriods : Int32 : optional
+Results:
+  - Ultimate : reusable=true
+
+### VOL-STOP / Series
+Method: ToVolatilityStop
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - multiplier : Double : optional
+Results:
+  - Sar : reusable=true
+  - IsStop : reusable=false
+
+### VOL-STOP / Buffer
+Method: ToVolatilityStopList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - multiplier : Double : optional
+Results:
+  - Sar : reusable=true
+  - IsStop : reusable=false
+
+### VOL-STOP / Stream
+Method: ToVolatilityStopHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - multiplier : Double : optional
+Results:
+  - Sar : reusable=true
+  - IsStop : reusable=false
+
+### VORTEX / Series
+Method: ToVortex
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Pvi : reusable=true
+  - Nvi : reusable=false
+
+### VORTEX / Buffer
+Method: ToVortexList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Pvi : reusable=true
+  - Nvi : reusable=false
+
+### VORTEX / Stream
+Method: ToVortexHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - Pvi : reusable=true
+  - Nvi : reusable=false
+
+### VWAP / Series
+Method: ToVwap
+Parameters:
+  - startDate : DateTime : optional
+Results:
+  - Vwap : reusable=true
+
+### VWAP / Buffer
+Method: ToVwapList
+Parameters:
+  - startDate : DateTime : optional
+Results:
+  - Vwap : reusable=true
+
+### VWAP / Stream
+Method: ToVwapHub
+Parameters:
+  - startDate : DateTime : optional
+Results:
+  - Vwap : reusable=true
+
+### VWMA / Series
+Method: ToVwma
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Vwma : reusable=true
+
+### VWMA / Buffer
+Method: ToVwmaList
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Vwma : reusable=true
+
+### VWMA / Stream
+Method: ToVwmaHub
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Vwma : reusable=true
+
+### WILLR / Series
+Method: ToWilliamsR
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - WilliamsR : reusable=true
+
+### WILLR / Buffer
+Method: ToWilliamsRList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - WilliamsR : reusable=true
+
+### WILLR / Stream
+Method: ToWilliamsRHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+Results:
+  - WilliamsR : reusable=true
+
+### WMA / Series
+Method: ToWma
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Wma : reusable=true
+
+### WMA / Buffer
+Method: ToWmaList
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Wma : reusable=true
+
+### WMA / Stream
+Method: ToWmaHub
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Wma : reusable=true
+
+### ZIGZAG / Series
+Method: ToZigZag
+Parameters:
+  - endType : enum : optional
+  - percentChange : Decimal : optional
+Results:
+  - ZigZag : reusable=true
+  - PointType : reusable=false
+  - RetraceHigh : reusable=false
+  - RetraceLow : reusable=false
+
