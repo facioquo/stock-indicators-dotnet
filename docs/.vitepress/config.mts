@@ -2,6 +2,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import { defineConfig, type DefaultTheme, type HeadConfig } from 'vitepress'
 import llmstxt, { copyOrDownloadAsMarkdownButtons } from 'vitepress-plugin-llms'
+import { identityBlock, readBuildInfo, SITE_URL, writeAgentArtifacts } from './agent-artifacts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -36,6 +37,9 @@ function createLlmsSidebar(
 // setting `ANALYTICS_ENABLED=true` (opt-in). This fails safely off.
 const analyticsEnabled = process.env.ANALYTICS_ENABLED === 'true'
 
+// Build timestamp and commit, stamped into the agent-facing Markdown output.
+const buildInfo = readBuildInfo()
+
 // Google Analytics (gtag) head entries — injected only when analyticsEnabled is true.
 const googleAnalytics: HeadConfig[] = [
   ['script', { async: '', src: 'https://www.googletagmanager.com/gtag/js?id=G-7602GXEZ0R' }],
@@ -69,7 +73,7 @@ export default defineConfig({
   appearance: 'dark',
 
   sitemap: {
-    hostname: 'https://dotnet.stockindicators.dev'
+    hostname: SITE_URL
   },
 
   head: [
@@ -94,9 +98,7 @@ export default defineConfig({
     ['meta', { name: 'color-scheme', content: 'dark' }],
     ['style', {}, 'html, body { background-color: var(--vp-c-bg, #1b1b1f); }'],
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:title', content: 'Stock Indicators for .NET' }],
-    ['meta', { property: 'og:description', content: 'Transform price quotes into trading insights.' }],
-    ['meta', { property: 'og:image', content: '/assets/social-banner.png' }],
+    ['meta', { property: 'og:image', content: `${SITE_URL}/assets/social-banner.png` }],
     ['meta', { name: 'twitter:card', content: 'summary' }],
     ['meta', { name: 'twitter:site', content: '@daveskender' }],
 
@@ -466,6 +468,28 @@ export default defineConfig({
 
   },
 
+  // Page-specific canonical and Open Graph metadata, so legacy, alternate-case,
+  // and redirected routes all resolve to one authoritative URL. Added through
+  // frontmatter `head` because vitepress-plugin-llms wraps `transformHead`.
+  transformPageData(pageData, { siteConfig }) {
+    if (pageData.isNotFound) return
+    const route = pageData.relativePath
+      .replace(/(^|\/)index\.md$/, '$1')
+      .replace(/\.md$/, '')
+    const url = `${SITE_URL}/${route}`
+    const head: HeadConfig[] = [
+      ['link', { rel: 'canonical', href: url }],
+      ['meta', { property: 'og:url', content: url }],
+      ['meta', { property: 'og:title', content: pageData.title || 'Stock Indicators for .NET' }],
+      ['meta', { property: 'og:description', content: pageData.description || siteConfig.site.description }],
+    ]
+    pageData.frontmatter.head = [...(pageData.frontmatter.head ?? []), ...head]
+  },
+
+  buildEnd(siteConfig) {
+    writeAgentArtifacts(siteConfig.outDir, buildInfo)
+  },
+
   srcDir: '.',
   outDir: '.vitepress/dist',
 
@@ -487,7 +511,15 @@ export default defineConfig({
 
   vite: {
     plugins: [llmstxt({
-      customTemplateVariables: { title: 'Stock Indicators for .NET' },
+      customLLMsTxtTemplate: [
+        '# {title}', '{description}', '{details}',
+        '## Library identity', '{identity}',
+        '## Table of Contents', '{toc}',
+      ].join('\n\n'),
+      customTemplateVariables: {
+        title: 'Stock Indicators for .NET',
+        identity: identityBlock(buildInfo),
+      },
       sidebar: createLlmsSidebar
     })],
     publicDir: path.resolve(__dirname, 'public'),
@@ -547,7 +579,6 @@ export default defineConfig({
     'test-results/**',
     'playwright-report/**',
     'vendor/**',
-    '_headers',
     'custom-chart.md',
     'Gemfile*',
     'README.md',

@@ -1,0 +1,15 @@
+# Cloudflare Pages response headers
+# https://developers.cloudflare.com/pages/configuration/headers/
+
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+
+# Agent discovery (RFC 8288 Link relations) on the homepage
+/
+  Link: </llms.txt>; rel="describedby"; type="text/plain", </.well-known/agent-skills/index.json>; rel="describedby"; type="application/json", </guide/getting-started>; rel="service-doc"; type="text/html"
+
+/llms.txt
+  Content-Signal: search=yes, ai-input=yes, ai-train=yes
+
+/llms-full.txt
+  Content-Signal: search=yes, ai-input=yes, ai-train=yes

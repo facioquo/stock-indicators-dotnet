@@ -248,14 +248,12 @@
 # slash variations from old Jekyll site
 
 /contributing/ /contributing 301
-/custom-indicators/ /custom-indicators 301
+/custom-indicators /guide/customization 301
+/custom-indicators/ /guide/customization 301
 /customization /guide/customization 301
 /customization/ /guide/customization 301
 /indicators/ /indicators 301
-/guide /guide/getting-started 301
-/guide/ /guide/getting-started 301
 /performance / 301
 /performance/ / 301
-/utilities/ /utilities 301
 /utilities/quotes /utilities/bars 301
 /utilities/quotes/ /utilities/bars 301

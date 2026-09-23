@@ -78,12 +78,15 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # Run from docs/ so wrangler bundles docs/functions (Pages Functions)
+          # with the site and uses the wrangler version pinned in its lockfile.
+          workingDirectory: docs
           # Do not pass `gitHubToken`: it makes wrangler-action open a second
           # GitHub Deployment on top of the one the job `environment` already
           # records, which shows up as a duplicate deployment on the PR.
           # `--branch` is explicit because `pull_request` checkouts are on a
           # detached HEAD, which would otherwise alias every PR to `head.`.
           command: >
-            pages deploy docs/.vitepress/dist
+            pages deploy .vitepress/dist
             --project-name=stock-indicators-dotnet
             --branch=${{ github.head_ref || github.ref_name }}

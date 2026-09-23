@@ -20,7 +20,13 @@ interface ModelContext {
   ) => Promise<void>
 }
 
+// The specification places `modelContext` on Document; Chrome's early preview
+// and agent-readiness scanners expose it on Navigator.
 interface WebMcpDocument extends Document {
+  modelContext?: ModelContext
+}
+
+interface WebMcpNavigator extends Navigator {
   modelContext?: ModelContext
 }
 
@@ -111,6 +117,7 @@ export function installWebMcpTools(): void {
   if (typeof document === 'undefined') return
 
   const modelContext = (document as WebMcpDocument).modelContext
+    ?? (navigator as WebMcpNavigator).modelContext
   if (!modelContext) return
 
   const tools: WebMcpTool[] = [

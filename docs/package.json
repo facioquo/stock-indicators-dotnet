@@ -15,6 +15,7 @@
     "test": "playwright test",
     "test:charts": "playwright test --project=charts",
     "test:a11y": "playwright test --project=a11y --project=analytics",
+    "test:agents": "playwright test --project=agent-features",
     "test:links": "bash .vitepress/test-links.sh"
   },
   "devDependencies": {
@@ -25,7 +26,8 @@
     "sass-embedded": "^1.104.1",
     "vitepress": "2.0.0-alpha.20",
     "vitepress-plugin-llms": "1.14.0",
-    "vue": "^3.5.42"
+    "vue": "^3.5.42",
+    "wrangler": "^4.136.3"
   },
   "dependencies": {
     "@facioquo/indy-charts": "^0.10.0",

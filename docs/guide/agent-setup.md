@@ -26,3 +26,9 @@ Open the documentation page relevant to your task and use **Copy page** beside i
 > Find the indicator that measures trend strength, then provide a minimal C# example and explain its warmup requirements.
 
 Agents that support documentation discovery can start from [`/llms.txt`](/llms.txt) or load the complete reference from [`/llms-full.txt`](/llms-full.txt).
+
+## Machine-readable documentation
+
+- **Markdown pages**: add `.md` to any page URL, such as `/indicators/sma.md`, or request the page with an `Accept: text/markdown` header.
+- **Agent skill**: agents that support [Agent Skills](https://agentskills.io) can install the skill listed at [`/.well-known/agent-skills/index.json`](/.well-known/agent-skills/index.json).
+- **Browser tools**: in browsers that support [WebMCP](https://webmachinelearning.github.io/webmcp/), every page exposes read-only tools to search the documentation and get the current page as Markdown.

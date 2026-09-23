@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "include": ["/*"],
+  "exclude": [
+    "/assets/*",
+    "/data/*",
+    "/.well-known/*",
+    "/contributors.json",
+    "/hashmap.json",
+    "/favicon.ico",
+    "/favicon.svg",
+    "/FacioQuo.Stock.Indicators-Examples.zip",
+    "/llms.txt",
+    "/llms-full.txt",
+    "/robots.txt",
+    "/sitemap.xml"
+  ]
+}

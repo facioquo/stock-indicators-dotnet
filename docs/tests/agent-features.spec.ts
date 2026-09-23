@@ -97,6 +97,23 @@ test('Copy page control appears once, in the hero, on hub pages', async ({ page 
   }
 })
 
+test('WebMCP registers through navigator.modelContext when document lacks it', async ({ page }) => {
+  await page.addInitScript(() => {
+    const names: string[] = []
+    Object.defineProperty(navigator, 'modelContext', {
+      value: { registerTool: async ({ name }: { name: string }) => { names.push(name) } },
+      configurable: true
+    })
+    Object.defineProperty(window, '__navigatorToolNames', { value: names })
+  })
+
+  await page.goto('/indicators/sma', { waitUntil: 'domcontentloaded' })
+
+  await expect.poll(() => page.evaluate(() =>
+    (window as unknown as { __navigatorToolNames: string[] }).__navigatorToolNames
+  )).toEqual(['search_documentation', 'get_current_page_markdown'])
+})
+
 test('WebMCP exposes read-only documentation tools', async ({ page }) => {
   await page.addInitScript(() => {
     const tools: TestWebMcpTool[] = []

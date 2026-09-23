@@ -22,8 +22,10 @@ GEM_VOLUME="stock-indicators-htmlproofer-gems"
 DIST=".vitepress/dist"
 
 # Hosts that rate-limit or bot-block automated checkers. These are reachability
-# false negatives, not broken links.
-IGNORE_URLS='/fonts.gstatic.com/,/github\.com\/(DaveSkender\/Stock\.Indicators|facioquo\/stock-indicators-dotnet)\/(edit|blob|tree|discussions)\//,/((www\.)?google\.[^\/]+\/search\?)/,/(googletagmanager\.com|google-analytics\.com|analytics\.google\.com)/'
+# false negatives, not broken links. The site's own absolute URLs (canonical
+# links) point at production, not the build under test; the internal-link
+# checks already cover those pages.
+IGNORE_URLS='/^https:\/\/dotnet\.stockindicators\.dev\//,/fonts.gstatic.com/,/github\.com\/(DaveSkender\/Stock\.Indicators|facioquo\/stock-indicators-dotnet)\/(edit|blob|tree|discussions)\//,/((www\.)?google\.[^\/]+\/search\?)/,/(googletagmanager\.com|google-analytics\.com|analytics\.google\.com)/'
 
 # 302 redirect, 401/402/403 auth-walled, 406/429 bot-throttled, 999 LinkedIn.
 IGNORE_STATUS_CODES='302,401,402,403,406,429,999'

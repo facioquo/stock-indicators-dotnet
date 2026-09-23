@@ -51,7 +51,7 @@ export default defineConfig({
     },
     {
       name: 'agent-features',
-      testMatch: /agent-features\.spec\.ts/,
+      testMatch: /agent-(features|artifacts)\.spec\.ts/,
       fullyParallel: true,
       use: { ...devices['Desktop Chrome'] },
     },

@@ -43,6 +43,15 @@ pnpm run docs:build
 pnpm run docs:preview
 ```
 
+## Agent-facing output
+
+The site serves AI agents alongside people. `pnpm run test:agents` validates everything below against a fresh build.
+
+- `vitepress-plugin-llms` emits `llms.txt`, `llms-full.txt`, and a `.md` twin of every page; `.vitepress/agent-artifacts.ts` then post-processes them in `buildEnd` (identity and provenance frontmatter, `.md` link targets, containers rendered as GitHub alerts, resolved `{{ $frontmatter.* }}` templates) and writes the Agent Skills index.
+- Agent Skills live in `.vitepress/public/.well-known/agent-skills/<name>/SKILL.md`; the index and digests are generated.
+- Cloudflare Pages config lives in `.vitepress/public/`: `_headers`, `_redirects`, `_routes.json`, and `robots.txt`.
+- `functions/_middleware.ts` serves a page's `.md` twin when a request prefers `Accept: text/markdown`. Keep static paths listed under `exclude` in `_routes.json` so they never invoke the function. Run it locally with `pnpm exec wrangler pages dev .vitepress/dist` after a build.
+
 ## Visual inspection with Playwright
 
 Use the Playwright MCP tool to visually inspect docs work against the dev server.
