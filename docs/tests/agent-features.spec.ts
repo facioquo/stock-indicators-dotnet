@@ -111,7 +111,7 @@ test('WebMCP registers through navigator.modelContext when document lacks it', a
 
   await expect.poll(() => page.evaluate(() =>
     (window as unknown as { __navigatorToolNames: string[] }).__navigatorToolNames
-  )).toEqual(['search_documentation', 'get_current_page_markdown'])
+  )).toEqual(['search_documentation', 'get_documentation_page', 'get_current_page_markdown'])
 })
 
 test('WebMCP exposes read-only documentation tools', async ({ page }) => {
@@ -130,12 +130,13 @@ test('WebMCP exposes read-only documentation tools', async ({ page }) => {
 
   await page.goto('/indicators/sma', { waitUntil: 'domcontentloaded' })
 
-  await expect.poll(() => page.evaluate(() => window.__webMcpTools.length)).toBe(2)
+  await expect.poll(() => page.evaluate(() => window.__webMcpTools.length)).toBe(3)
 
   const result = await page.evaluate(async () => {
     const tools = window.__webMcpTools
     const search = tools.find((tool) => tool.name === 'search_documentation')!
     const currentPage = tools.find((tool) => tool.name === 'get_current_page_markdown')!
+    const getPage = tools.find((tool) => tool.name === 'get_documentation_page')!
     const options = { signal: new AbortController().signal }
     const originalFetch = window.fetch
     let cancellationPropagated = false
@@ -150,7 +151,16 @@ test('WebMCP exposes read-only documentation tools', async ({ page }) => {
       search: await search.execute(
         { query: 'simple moving average' }, options
       ) as unknown as TestSearchResult,
+      taskSearch: await search.execute(
+        { query: 'calculate SMA custom price bars installation' }, options
+      ) as unknown as TestSearchResult,
       currentPage: await currentPage.execute({}, options) as unknown as TestPageResult,
+      pages: await Promise.all(['/indicators/rsi', '/indicators/rsi.md', '/indicators/rsi/', 'http://localhost:4173/guide/getting-started']
+        .map(async (path) => await getPage.execute({ path }, options) as unknown as TestPageResult)),
+      invalidPaths: await Promise.allSettled(
+        ['', '/', '/indicators/candlestick-patterns', '/llms-full.txt', '/indicators/../../etc/passwd', '//example.com/indicators/rsi', 'https://example.com/indicators/rsi', 'x'.repeat(201)]
+          .map((path) => getPage.execute({ path }, options))
+      ),
       cancellationPropagated,
       invalidQueries: await Promise.allSettled([
         search.execute({ query: '   ' }, options),
@@ -159,12 +169,25 @@ test('WebMCP exposes read-only documentation tools', async ({ page }) => {
     }
   })
 
-  expect(result.names).toEqual(['search_documentation', 'get_current_page_markdown'])
+  expect(result.names).toEqual(['search_documentation', 'get_documentation_page', 'get_current_page_markdown'])
   expect(result.readOnly).toBe(true)
   expect(result.search.results[0]).toMatchObject({
     title: 'Simple Moving Average (SMA)',
     url: 'http://localhost:4173/indicators/sma.md'
   })
+  expect(result.taskSearch.results[0]).toMatchObject({
+    title: 'Getting started',
+    url: 'http://localhost:4173/guide/getting-started.md'
+  })
+  expect(result.pages.map(({ url }) => url)).toEqual([
+    'http://localhost:4173/indicators/rsi.md',
+    'http://localhost:4173/indicators/rsi.md',
+    'http://localhost:4173/indicators/rsi.md',
+    'http://localhost:4173/guide/getting-started.md'
+  ])
+  expect(result.pages[0].title).toBe('Relative Strength Index (RSI)')
+  expect(result.pages[0].markdown).toMatch(/^---\nurl: \/indicators\/rsi\.md\n[\s\S]*?\ncanonical: https:\/\/dotnet\.stockindicators\.dev\/indicators\/rsi\n/)
+  expect(result.invalidPaths.map(({ status }) => status)).toEqual(Array(8).fill('rejected'))
   expect(result.currentPage).toMatchObject({
     url: 'http://localhost:4173/indicators/sma.md'
   })
@@ -183,7 +206,7 @@ test('WebMCP exposes read-only documentation tools', async ({ page }) => {
   expect(homePage.url).toBe('http://localhost:4173/llms.txt')
   expect(homePage.markdown).toContain('# Stock Indicators for .NET')
 
-  await page.route('**/llms.txt', (route) => route.fulfill({ status: 503 }))
+  await page.route('**/search-index.json', (route) => route.fulfill({ status: 503 }))
   const fetchError = await page.evaluate(async () => {
     const tool = window.__webMcpTools.find(({ name }) => name === 'search_documentation')!
     try {

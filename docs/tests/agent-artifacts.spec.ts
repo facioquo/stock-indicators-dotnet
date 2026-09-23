@@ -4,10 +4,12 @@ import { existsSync, readdirSync, readFileSync } from 'fs'
 import { dirname, join, relative, sep } from 'path'
 import { fileURLToPath } from 'url'
 import {
+  buildSearchIndex,
   DOCS_VERSION,
   normalizeDocument,
   PACKAGE_ID,
   renderContainers,
+  SEARCH_INDEX,
   rewriteInternalLinks,
   stripVitePressSyntax,
 } from '../.vitepress/agent-artifacts'
@@ -132,6 +134,22 @@ test.describe('Markdown normalization', () => {
   })
 })
 
+test.describe('Search index', () => {
+  test('indexes headings outside code and distinct body words', () => {
+    const [entry] = buildSearchIndex(
+      '- [Getting started](/guide/getting-started.md): Install it\n- not an entry\n',
+      () => '---\nurl: /x.md\n---\n\n# Getting started\n\n## Install\n\n```bash\n# not a heading\n```\n\nSee [bars](/guide/bars.md) and Bars.\n'
+    )
+    expect(entry).toEqual({
+      title: 'Getting started',
+      url: '/guide/getting-started.md',
+      description: 'Install it',
+      headings: ['Install'],
+      text: 'getting started install bash not a heading see bars and bars.',
+    })
+  })
+})
+
 test.describe('Markdown negotiation middleware', () => {
   test('honors explicit Markdown preference only', () => {
     expect(prefersMarkdown('text/markdown')).toBe(true)
@@ -222,6 +240,14 @@ test.describe('Build output', () => {
         .filter((route) => route && routes.has(`${route}.md`))
       expect(htmlLinks, file).toEqual([])
     }
+  })
+
+  test('search index covers exactly the pages llms.txt lists', () => {
+    const listed = [...read('llms.txt').matchAll(/^- \[[^\]]+\]\((\/[^)]+\.md)\)/gm)].map((match) => match[1])
+    const indexed = (JSON.parse(read(SEARCH_INDEX)) as Array<{ url: string }>).map(({ url }) => url)
+    expect(indexed).toEqual(listed)
+    const routes = JSON.parse(read('_routes.json')) as { exclude: string[] }
+    expect(routes.exclude).toContain(`/${SEARCH_INDEX}`)
   })
 
   test('Markdown outputs contain no VitePress-only syntax', () => {

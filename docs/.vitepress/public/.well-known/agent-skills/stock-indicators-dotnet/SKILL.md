@@ -20,7 +20,7 @@ metadata:
 
 1. Fetch the index at <https://dotnet.stockindicators.dev/llms.txt>.
 2. Fetch the page for the indicator you need; every page has a Markdown version at the same URL plus `.md` (for example `https://dotnet.stockindicators.dev/indicators/sma.md`).
-3. Follow each page's parameter constraints, warmup requirements, and result type exactly. For the complete reference in one file, use <https://dotnet.stockindicators.dev/llms-full.txt>.
+3. Follow each page's parameter constraints, warmup requirements, and result type exactly. Load <https://dotnet.stockindicators.dev/llms-full.txt>, the complete reference in one large file, only for broad analysis that needs most of the documentation.
 
 ## Core pattern
 

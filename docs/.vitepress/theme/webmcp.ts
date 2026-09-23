@@ -1,3 +1,5 @@
+import { markdownPath } from '../routes'
+
 interface WebMcpTool {
   name: string
   title: string
@@ -30,25 +32,34 @@ interface WebMcpNavigator extends Navigator {
   modelContext?: ModelContext
 }
 
-interface DocumentationEntry {
+interface SearchIndexEntry {
   title: string
   url: string
   description: string
+  headings: string[]
+  text: string
+}
+
+interface IndexedPage {
+  entry: SearchIndexEntry
+  title: string
+  description: string
+  headings: string
+  text: string
 }
 
 const MAX_QUERY_LENGTH = 200
+const MAX_PATH_LENGTH = 200
 const MAX_RESULTS = 10
-const MATCH_SCORES = {
-  exactTitle: 8,
-  partialTitle: 5,
-  url: 3,
-  description: 1
-} as const
-
-function markdownUrl(pathname: string): URL {
-  const normalizedPath = pathname.replace(/\/$/, '')
-  return new URL(`${normalizedPath}.md`, window.location.origin)
-}
+// A page covering more distinct query terms always outranks one covering
+// fewer; field weights only order pages with equal coverage.
+const COVERAGE_WEIGHT = 100
+const FIELD_WEIGHTS = { title: 8, headings: 4, description: 3, text: 1 } as const
+const TITLE_PHRASE_BONUS = 1000
+const STOP_WORDS = new Set([
+  'a', 'an', 'and', 'are', 'can', 'do', 'for', 'how', 'i', 'in', 'is', 'my',
+  'of', 'on', 'or', 'the', 'to', 'use', 'what', 'with'
+])
 
 async function fetchText(url: URL, signal: AbortSignal): Promise<string> {
   const response = await fetch(url, { signal })
@@ -58,27 +69,40 @@ async function fetchText(url: URL, signal: AbortSignal): Promise<string> {
   return response.text()
 }
 
-function parseDocumentationIndex(content: string): DocumentationEntry[] {
-  return [...content.matchAll(/^- \[([^\]]+)\]\((\/[^)]+\.md)\)(?:: (.*))?$/gm)]
-    .map((match) => ({
-      title: match[1],
-      url: new URL(match[2], window.location.origin).href,
-      description: match[3] ?? ''
-    }))
+async function loadIndex(signal: AbortSignal): Promise<IndexedPage[]> {
+  const content = await fetchText(new URL('/search-index.json', window.location.origin), signal)
+  return (JSON.parse(content) as SearchIndexEntry[]).map((entry) => ({
+    entry,
+    title: entry.title.toLocaleLowerCase(),
+    description: entry.description.toLocaleLowerCase(),
+    headings: entry.headings.join('\n').toLocaleLowerCase(),
+    text: entry.text.toLocaleLowerCase()
+  }))
 }
 
-function scoreEntry(entry: DocumentationEntry, terms: string[]): number {
-  const title = entry.title.toLocaleLowerCase()
-  const description = entry.description.toLocaleLowerCase()
-  const url = entry.url.toLocaleLowerCase()
+function queryTerms(query: string): string[] {
+  const words = [...new Set(query.toLocaleLowerCase().split(/[^\p{L}\p{N}.#+-]+/u).filter(Boolean))]
+  const terms = words.filter((word) => !STOP_WORDS.has(word))
+  return terms.length ? terms : words
+}
 
-  return terms.reduce((score, term) => {
-    if (title === term) return score + MATCH_SCORES.exactTitle
-    if (title.includes(term)) return score + MATCH_SCORES.partialTitle
-    if (url.includes(term)) return score + MATCH_SCORES.url
-    if (description.includes(term)) return score + MATCH_SCORES.description
-    return score
-  }, 0)
+// Matches a term at the start of a word, so `install` finds `installation`.
+function wordPrefix(term: string): RegExp {
+  return new RegExp(`(?:^|[^\\p{L}\\p{N}])${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'u')
+}
+
+function scorePage(page: IndexedPage, phrase: string, patterns: RegExp[]): number {
+  let score = page.title.includes(phrase) ? TITLE_PHRASE_BONUS : 0
+  for (const pattern of patterns) {
+    const field = (Object.keys(FIELD_WEIGHTS) as Array<keyof typeof FIELD_WEIGHTS>)
+      .find((name) => pattern.test(page[name]))
+    if (field) score += COVERAGE_WEIGHT + FIELD_WEIGHTS[field]
+  }
+  return score
+}
+
+function toResult({ title, url, description }: SearchIndexEntry) {
+  return { title, url: new URL(url, window.location.origin).href, description }
 }
 
 async function searchDocumentation(
@@ -90,25 +114,44 @@ async function searchDocumentation(
     throw new Error(`query must contain between 1 and ${MAX_QUERY_LENGTH} characters.`)
   }
 
-  const terms = query.toLocaleLowerCase().split(/\s+/)
-  const index = await fetchText(new URL('/llms.txt', window.location.origin), signal)
-  const results = parseDocumentationIndex(index)
-    .map((entry) => ({ entry, score: scoreEntry(entry, terms) }))
+  const phrase = query.toLocaleLowerCase()
+  const patterns = queryTerms(query).map(wordPrefix)
+  const results = (await loadIndex(signal))
+    .map((page) => ({ entry: page.entry, score: scorePage(page, phrase, patterns) }))
     .filter(({ score }) => score > 0)
     .sort((left, right) => right.score - left.score || left.entry.title.localeCompare(right.entry.title))
     .slice(0, MAX_RESULTS)
-    .map(({ entry }) => entry)
+    .map(({ entry }) => toResult(entry))
 
   return { query, results }
+}
+
+async function getDocumentationPage(
+  input: Record<string, unknown>,
+  { signal }: { signal: AbortSignal }
+): Promise<unknown> {
+  const raw = typeof input.path === 'string' ? input.path.trim() : ''
+  if (!raw || raw.length > MAX_PATH_LENGTH) {
+    throw new Error(`path must contain between 1 and ${MAX_PATH_LENGTH} characters.`)
+  }
+
+  const requested = new URL(raw, window.location.origin)
+  const route = requested.pathname.replace(/\.md$/, '')
+  const target = requested.origin === window.location.origin ? markdownPath(route) : undefined
+  const entry = target && (await loadIndex(signal)).find((page) => page.entry.url === target)?.entry
+  if (!entry) {
+    throw new Error(`No documentation page matches "${raw}". Use search_documentation to find a page path.`)
+  }
+
+  const url = new URL(entry.url, window.location.origin)
+  return { title: entry.title, url: url.href, markdown: await fetchText(url, signal) }
 }
 
 async function getCurrentPageMarkdown(
   _input: Record<string, unknown>,
   { signal }: { signal: AbortSignal }
 ): Promise<unknown> {
-  const url = window.location.pathname === '/'
-    ? new URL('/llms.txt', window.location.origin)
-    : markdownUrl(window.location.pathname)
+  const url = new URL(markdownPath(window.location.pathname) ?? '/llms.txt', window.location.origin)
   const markdown = await fetchText(url, signal)
   return { title: document.title, url: url.href, markdown }
 }
@@ -132,7 +175,7 @@ export function installWebMcpTools(): void {
             type: 'string',
             minLength: 1,
             maxLength: MAX_QUERY_LENGTH,
-            description: 'Words to find in documentation titles, URLs, and descriptions.'
+            description: 'Words describing the task or topic, matched against page titles, headings, descriptions, and content.'
           }
         },
         required: ['query'],
@@ -140,6 +183,26 @@ export function installWebMcpTools(): void {
       },
       annotations: { readOnlyHint: true, untrustedContentHint: true },
       execute: searchDocumentation
+    },
+    {
+      name: 'get_documentation_page',
+      title: 'Get a documentation page as Markdown',
+      description: 'Return the complete Markdown, with provenance frontmatter, for one page in the documentation index, such as a result from search_documentation. This operation does not change site or user data.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          path: {
+            type: 'string',
+            minLength: 1,
+            maxLength: MAX_PATH_LENGTH,
+            description: 'Page path or URL on this site, such as /indicators/rsi or /indicators/rsi.md.'
+          }
+        },
+        required: ['path'],
+        additionalProperties: false
+      },
+      annotations: { readOnlyHint: true, untrustedContentHint: true },
+      execute: getDocumentationPage
     },
     {
       name: 'get_current_page_markdown',

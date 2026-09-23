@@ -13,6 +13,7 @@
     "/llms.txt",
     "/llms-full.txt",
     "/robots.txt",
+    "/search-index.json",
     "/sitemap.xml"
   ]
 }

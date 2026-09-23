@@ -35,7 +35,7 @@ Our new [**`FacioQuo.Stock.Indicators`**](https://www.nuget.org/packages/FacioQu
 Still on v2? See our [migration guide →](/migration/v3)
 :::
 
-Get started quickly by with this coding agent prompt:
+Get started quickly with this coding agent prompt:
 
 ```prompt
 Read Stock Indicators for .NET documentation index from 
@@ -76,7 +76,7 @@ The library provides three indicator styles for different use cases.
 
 See the [Indicator styles](/guide/styles/) guide for a full feature comparison.
 
-## Incrementally add data with buffer lists <Badge type="warning" text="preview" />
+## Incrementally add data with buffer lists <Badge type="tip" text="new in v3" />
 
 For scenarios where bars arrive one at a time, buffer lists provide efficient incremental processing without recalculating the entire history.
 
@@ -90,9 +90,9 @@ smaList.Add(newBar);
 
 Buffer lists maintain internal state and automatically manage the warmup period, making them ideal for basic live data feeds and incremental updates.
 
-## Streaming hubs with observer patterns <Badge type="warning" text="preview" />
+## Streaming hubs with observer patterns <Badge type="tip" text="new in v3" />
 
-Hubs provides a reactive, subscription-based pattern for streaming market data with automatic cascading calculations for advances scenarios.
+Stream hubs provide a reactive, subscription-based pattern for streaming market data with automatic cascading calculations for advanced scenarios.
 
 ### Example 1: Chained hubs
 

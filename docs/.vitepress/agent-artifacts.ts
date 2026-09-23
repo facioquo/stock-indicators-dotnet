@@ -13,6 +13,8 @@ export const PACKAGE_ID = 'FacioQuo.Stock.Indicators'
 export const DOCS_VERSION = 'v3'
 
 const SKILLS_DIR = '.well-known/agent-skills'
+// Read by the WebMCP tools in theme/webmcp.ts.
+export const SEARCH_INDEX = 'search-index.json'
 const SKILLS_SCHEMA = 'https://schemas.agentskills.io/discovery/0.2.0/schema.json'
 
 export interface BuildInfo {
@@ -219,6 +221,36 @@ export function normalizeBundle(content: string, markdownRoutes: Set<string>): s
   return preamble + documents.map((doc) => normalizeDocument(doc, markdownRoutes)).join('')
 }
 
+export interface SearchIndexEntry {
+  title: string
+  url: string
+  description: string
+  headings: string[]
+  text: string
+}
+
+/**
+ * Builds the WebMCP search index from the pages `llms.txt` lists, so search
+ * results and direct page retrieval cover exactly the documentation index.
+ */
+export function buildSearchIndex(llmsTxt: string, readPage: (url: string) => string): SearchIndexEntry[] {
+  return [...llmsTxt.matchAll(/^- \[([^\]]+)\]\((\/[^)]+\.md)\)(?:: (.*))?$/gm)].map(([, title, url, description]) => {
+    const content = readPage(url)
+    const body = content.slice(content.match(FRONTMATTER)?.[0].length ?? 0)
+    const headings: string[] = []
+    mapLines(body, (line) => {
+      const heading = line.match(/^#{2,6}\s+(.+?)\s*$/)?.[1]
+      if (heading) headings.push(heading)
+      return line
+    })
+    // Search matches word prefixes, so each distinct word is enough; the
+    // client splits queries on the same characters.
+    const words = body.replace(/\]\([^)]*\)/g, ']').toLowerCase().split(/[^\p{L}\p{N}.#+-]+/u)
+    const text = [...new Set(words.filter((word) => /[\p{L}\p{N}]/u.test(word)))].join(' ')
+    return { title, url, description: description ?? '', headings, text }
+  })
+}
+
 function listFiles(dir: string, root = dir): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const full = path.join(dir, entry.name)
@@ -285,7 +317,10 @@ export function writeAgentArtifacts(outDir: string, sourcePages: string[], build
 
   const llmsTxt = path.join(outDir, 'llms.txt')
   if (existsSync(llmsTxt)) {
-    writeFileSync(llmsTxt, normalizeBundle(readFileSync(llmsTxt, 'utf8'), markdownRoutes))
+    const index = normalizeBundle(readFileSync(llmsTxt, 'utf8'), markdownRoutes)
+    writeFileSync(llmsTxt, index)
+    const searchIndex = buildSearchIndex(index, (url) => readFileSync(path.join(outDir, url), 'utf8'))
+    writeFileSync(path.join(outDir, SEARCH_INDEX), JSON.stringify(searchIndex))
   }
 
   // llms.txt carries the identity block through its template; the full bundle

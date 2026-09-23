@@ -5,7 +5,7 @@ description: Install the Stock Indicators for .NET library and calculate your fi
 
 # Getting started
 
-Get started quickly by with this coding agent prompt:
+Get started quickly with this coding agent prompt:
 
 ```prompt
 Read Stock Indicators for .NET documentation index from 
@@ -88,6 +88,50 @@ SMA on 4/25/2018 was $255.6570
 SMA on 4/26/2018 was $255.9705
 ..
 ```
+
+::: details Complete runnable example
+Verify your setup before connecting a market data provider. This console app builds sample bars in memory instead of calling `GetBarsFromFeed()`.
+
+```bash
+dotnet new console -n FirstIndicator
+cd FirstIndicator
+dotnet add package FacioQuo.Stock.Indicators
+```
+
+Replace the contents of `Program.cs`, then run `dotnet run`.
+
+```csharp
+using FacioQuo.Stock.Indicators;
+
+// sample bars stand in for data from your own provider
+List<Bar> bars = [];
+DateTime date = new(2025, 1, 2);
+decimal close = 100m;
+
+for (int i = 0; i < 30; i++)
+{
+    close += i % 3 == 0 ? -1.5m : 1m;
+    bars.Add(new Bar(date.AddDays(i), close - 0.5m, close + 1m, close - 1m, close, 1_000_000m));
+}
+
+// calculate 20-period SMA
+IReadOnlyList<SmaResult> results = bars.ToSma(20);
+
+foreach (SmaResult r in results.TakeLast(5))
+{
+    Console.WriteLine($"SMA on {r.Timestamp:yyyy-MM-dd} was {r.Sma:N4}");
+}
+```
+
+```console
+SMA on 2025-01-27 was 101.8750
+SMA on 2025-01-28 was 102.1250
+SMA on 2025-01-29 was 102.2500
+SMA on 2025-01-30 was 102.3750
+SMA on 2025-01-31 was 102.6250
+```
+
+:::
 
 See [individual indicator pages](/indicators) for specific usage guidance.
 
