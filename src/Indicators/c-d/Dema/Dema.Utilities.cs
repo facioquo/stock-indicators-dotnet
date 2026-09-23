@@ -32,7 +32,7 @@ public static partial class Dema
         this IReadOnlyList<DemaResult> results)
         => results.RemoveBeforeFirstValue(
             static x => x.Dema != null,
-            static i => 2 * i + 102);
+            static i => (2 * i) + 102);
 
     /// <summary>
     /// Validates the parameters for the DEMA calculation.

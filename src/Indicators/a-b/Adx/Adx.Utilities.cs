@@ -14,7 +14,7 @@ public static partial class Adx
         this IReadOnlyList<AdxResult> results)
         => results.RemoveBeforeFirstValue(
             static x => x.Pdi != null,
-            static i => 2 * i + 100);
+            static i => (2 * i) + 100);
 
     /// <summary>
     /// Validates the parameters for the ADX calculation.

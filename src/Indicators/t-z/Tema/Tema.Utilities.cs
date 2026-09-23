@@ -14,7 +14,7 @@ public static partial class Tema
         this IReadOnlyList<TemaResult> results)
         => results.RemoveBeforeFirstValue(
             static x => x.Tema != null,
-            static i => 3 * i + 103);
+            static i => (3 * i) + 103);
 
     /// <summary>
     /// Validates the parameters for TEMA calculation.

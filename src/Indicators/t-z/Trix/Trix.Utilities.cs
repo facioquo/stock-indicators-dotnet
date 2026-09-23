@@ -14,7 +14,7 @@ public static partial class Trix
         this IReadOnlyList<TrixResult> results)
         => results.RemoveBeforeFirstValue(
             static x => x.Trix != null,
-            static i => 3 * i + 100);
+            static i => (3 * i) + 100);
 
     /// <summary>
     /// Validates the parameters for the TRIX calculation.
