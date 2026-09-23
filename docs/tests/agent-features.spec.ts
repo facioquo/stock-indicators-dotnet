@@ -154,6 +154,10 @@ test('WebMCP exposes read-only documentation tools', async ({ page }) => {
       taskSearch: await search.execute(
         { query: 'calculate SMA custom price bars installation' }, options
       ) as unknown as TestSearchResult,
+      // VWAP matches "volume" in its title; Bar utilities matches every term
+      coverageSearch: await search.execute(
+        { query: 'price bar timestamp decimal volume' }, options
+      ) as unknown as TestSearchResult,
       currentPage: await currentPage.execute({}, options) as unknown as TestPageResult,
       pages: await Promise.all(['/indicators/rsi', '/indicators/rsi.md', '/indicators/rsi/', 'http://localhost:4173/guide/getting-started']
         .map(async (path) => await getPage.execute({ path }, options) as unknown as TestPageResult)),
@@ -179,6 +183,7 @@ test('WebMCP exposes read-only documentation tools', async ({ page }) => {
     title: 'Getting started',
     url: 'http://localhost:4173/guide/getting-started.md'
   })
+  expect(result.coverageSearch.results[0].title).toBe('Bar utilities')
   expect(result.pages.map(({ url }) => url)).toEqual([
     'http://localhost:4173/indicators/rsi.md',
     'http://localhost:4173/indicators/rsi.md',
