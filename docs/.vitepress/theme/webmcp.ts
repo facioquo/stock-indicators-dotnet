@@ -135,9 +135,10 @@ async function getDocumentationPage(
     throw new Error(`path must contain between 1 and ${MAX_PATH_LENGTH} characters.`)
   }
 
-  const requested = new URL(raw, window.location.origin)
-  const route = requested.pathname.replace(/\.md$/, '')
-  const target = requested.origin === window.location.origin ? markdownPath(route) : undefined
+  const requested = URL.parse(raw, window.location.origin)
+  const target = requested?.origin === window.location.origin
+    ? markdownPath(requested.pathname.replace(/\.md$/, ''))
+    : undefined
   const entry = target && (await loadIndex(signal)).find((page) => page.entry.url === target)?.entry
   if (!entry) {
     throw new Error(`No documentation page matches "${raw}". Use search_documentation to find a page path.`)

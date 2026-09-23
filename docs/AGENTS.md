@@ -48,6 +48,7 @@ pnpm run docs:preview
 The site serves AI agents alongside people. `pnpm run test:agents` validates everything below against a fresh build.
 
 - `vitepress-plugin-llms` emits `llms.txt`, `llms-full.txt`, and a `.md` twin of every page; `.vitepress/agent-artifacts.ts` then post-processes them in `buildEnd` (identity and provenance frontmatter, `.md` link targets, containers rendered as GitHub alerts, resolved `{{ $frontmatter.* }}` templates) and writes the Agent Skills index.
+- `agent-artifacts.ts` also writes `search-index.json` from the pages `llms.txt` lists; the WebMCP tools in `theme/webmcp.ts` search it and use it as the allowlist for direct page retrieval.
 - Agent Skills live in `.vitepress/public/.well-known/agent-skills/<name>/SKILL.md`; the index and digests are generated.
 - Cloudflare Pages config lives in `.vitepress/public/`: `_headers`, `_redirects`, `_routes.json`, and `robots.txt`.
 - `.vitepress/routes.ts` owns the route rules (page route, `.md` path) that the config, the artifact writer, and the middleware share; the patched plugin applies the same directory-index rule.

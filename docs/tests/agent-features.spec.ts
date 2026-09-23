@@ -162,9 +162,10 @@ test('WebMCP exposes read-only documentation tools', async ({ page }) => {
       pages: await Promise.all(['/indicators/rsi', '/indicators/rsi.md', '/indicators/rsi/', 'http://localhost:4173/guide/getting-started']
         .map(async (path) => await getPage.execute({ path }, options) as unknown as TestPageResult)),
       invalidPaths: await Promise.allSettled(
-        ['', '/', '/indicators/candlestick-patterns', '/llms-full.txt', '/indicators/../../etc/passwd', '//example.com/indicators/rsi', 'https://example.com/indicators/rsi', 'x'.repeat(201)]
+        ['', '/', '/indicators/candlestick-patterns', '/llms-full.txt', '/indicators/../../etc/passwd', '//example.com/indicators/rsi', 'https://example.com/indicators/rsi', 'http://', 'x'.repeat(201)]
           .map((path) => getPage.execute({ path }, options))
-      ),
+      ).then((settled) => settled.map((outcome) =>
+        outcome.status === 'rejected' ? String(outcome.reason) : 'fulfilled')),
       cancellationPropagated,
       invalidQueries: await Promise.allSettled([
         search.execute({ query: '   ' }, options),
@@ -192,7 +193,10 @@ test('WebMCP exposes read-only documentation tools', async ({ page }) => {
   ])
   expect(result.pages[0].title).toBe('Relative Strength Index (RSI)')
   expect(result.pages[0].markdown).toMatch(/^---\nurl: \/indicators\/rsi\.md\n[\s\S]*?\ncanonical: https:\/\/dotnet\.stockindicators\.dev\/indicators\/rsi\n/)
-  expect(result.invalidPaths.map(({ status }) => status)).toEqual(Array(8).fill('rejected'))
+  for (const outcome of result.invalidPaths) {
+    expect(outcome).toMatch(/path must contain|No documentation page matches/)
+  }
+  expect(result.invalidPaths).toHaveLength(9)
   expect(result.currentPage).toMatchObject({
     url: 'http://localhost:4173/indicators/sma.md'
   })
