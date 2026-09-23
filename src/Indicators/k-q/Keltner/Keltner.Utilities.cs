@@ -24,20 +24,15 @@ public static partial class Keltner
     }
 
     /// <summary>
-    /// Removes the recommended warmup periods from the Keltner Channel results.
+    /// Removes the warmup periods and the further periods Keltner Channels needs for its values to converge.
     /// </summary>
-    /// <param name="results">List of Keltner Channel results to process.</param>
-    /// <returns>A list of Keltner Channel results with the warmup periods removed.</returns>
+    /// <param name="results">Keltner Channels results to evaluate.</param>
+    /// <returns>Keltner Channels results with the warmup periods removed.</returns>
     public static IReadOnlyList<KeltnerResult> RemoveWarmupPeriods(
         this IReadOnlyList<KeltnerResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int n = results
-            .FindIndex(static x => x.Width != null) + 1;
-
-        return results.Remove(Math.Max(2 * n, n + 100));
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.Width != null,
+            static i => Math.Max((2 * i) + 2, i + 101));
 
     /// <summary>
     /// Validates the parameters for the Keltner Channel calculation.

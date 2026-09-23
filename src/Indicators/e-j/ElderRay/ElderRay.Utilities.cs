@@ -6,19 +6,15 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class ElderRay
 {
     /// <summary>
-    /// Removes the recommended warmup periods from the Elder Ray results.
+    /// Removes the warmup periods and the further periods Elder-ray needs for its values to converge.
     /// </summary>
-    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <param name="results">Elder-ray results to evaluate.</param>
+    /// <returns>Elder-ray results with the warmup periods removed.</returns>
     public static IReadOnlyList<ElderRayResult> RemoveWarmupPeriods(
         this IReadOnlyList<ElderRayResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int n = results
-          .FindIndex(static x => x.BullPower != null) + 1;
-
-        return results.Remove(n + 100);
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.BullPower != null,
+            static i => i + 101);
 
     /// <summary>
     /// Validates the lookback periods for Elder Ray calculations.

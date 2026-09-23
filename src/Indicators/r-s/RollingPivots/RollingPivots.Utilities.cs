@@ -6,19 +6,13 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class RollingPivots
 {
     /// <summary>
-    /// Removes the recommended warmup periods from the Rolling Pivots results.
+    /// Removes the leading Rolling Pivot Points results that have no calculated value.
     /// </summary>
-    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <param name="results">Rolling Pivot Points results to evaluate.</param>
+    /// <returns>Rolling Pivot Points results with the warmup periods removed.</returns>
     public static IReadOnlyList<RollingPivotsResult> RemoveWarmupPeriods(
         this IReadOnlyList<RollingPivotsResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int removePeriods = results
-            .FindIndex(static x => x.PP != null);
-
-        return results.Remove(removePeriods);
-    }
+        => results.RemoveBeforeFirstValue(static x => x.PP != null);
 
     /// <summary>
     /// Returns the minimum number of source items required to produce a valid Rolling Pivot result

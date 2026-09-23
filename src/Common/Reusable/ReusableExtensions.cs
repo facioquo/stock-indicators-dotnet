@@ -41,23 +41,6 @@ public static class ReusableExtensions
     }
 
     /// <summary>
-    /// Removes the recommended quantity of results from the beginning
-    /// of the results list using a reverse-engineering approach.
-    /// </summary>
-    /// <typeparam name="T">Any reusable result type.</typeparam>
-    /// <param name="results">Indicator results to evaluate.</param>
-    /// <returns>Time series of results, pruned.</returns>
-    internal static IReadOnlyList<T> RemoveWarmupPeriods<T>(
-        this IReadOnlyList<T> results)
-        where T : IReusable
-    {
-        int removePeriods = results
-            .FindIndex(static x => !double.IsNaN(x.Value));
-
-        return results.Remove(removePeriods);
-    }
-
-    /// <summary>
     /// Converts a bar to a basic chainable class.
     /// </summary>
     /// <param name="q">Bar to convert.</param>

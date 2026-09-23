@@ -6,20 +6,15 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class Stc
 {
     /// <summary>
-    /// Removes the recommended warmup periods from the results.
+    /// Removes the warmup periods and the further periods Schaff Trend Cycle needs for its values to converge.
     /// </summary>
-    /// <param name="results">List of STC results.</param>
-    /// <returns>A list of STC results with warmup periods removed.</returns>
+    /// <param name="results">Schaff Trend Cycle results to evaluate.</param>
+    /// <returns>Schaff Trend Cycle results with the warmup periods removed.</returns>
     public static IReadOnlyList<StcResult> RemoveWarmupPeriods(
         this IReadOnlyList<StcResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int n = results
-            .FindIndex(static x => x.Stc != null);
-
-        return results.Remove(n + 250);
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.Stc != null,
+            static i => i + 250);
 
     /// <summary>
     /// Validates the parameters for STC calculation.

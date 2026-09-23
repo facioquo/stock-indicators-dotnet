@@ -6,9 +6,10 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class HtTrendline
 {
     /// <summary>
-    /// Removes the recommended warmup periods from the HTL results.
+    /// Removes the warmup periods and the further periods HT Trendline needs for its values to converge.
     /// </summary>
-    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <param name="results">HT Trendline results to evaluate.</param>
+    /// <returns>HT Trendline results with the warmup periods removed.</returns>
     public static IReadOnlyList<HtlResult> RemoveWarmupPeriods(
         this IReadOnlyList<HtlResult> results)
             => results.Remove(100);

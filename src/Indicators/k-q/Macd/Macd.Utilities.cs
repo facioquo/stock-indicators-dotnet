@@ -6,20 +6,15 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class Macd
 {
     /// <summary>
-    /// Removes the recommended warmup periods from the MACD results.
+    /// Removes the warmup periods and the further periods MACD needs for its values to converge.
     /// </summary>
-    /// <param name="results">List of MACD results.</param>
-    /// <returns>A list of MACD results with the warmup periods removed.</returns>
+    /// <param name="results">MACD results to evaluate.</param>
+    /// <returns>MACD results with the warmup periods removed.</returns>
     public static IReadOnlyList<MacdResult> RemoveWarmupPeriods(
         this IReadOnlyList<MacdResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int n = results
-            .FindIndex(static x => x.Signal != null) + 2;
-
-        return results.Remove(n + 250);
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.Signal != null,
+            static i => i + 252);
 
     /// <summary>
     /// Validates the parameters for the MACD calculation.

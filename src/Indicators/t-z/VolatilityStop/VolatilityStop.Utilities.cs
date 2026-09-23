@@ -15,21 +15,15 @@ public static partial class VolatilityStop
         => lookbackPeriods + 1;
 
     /// <summary>
-    /// Removes the warmup periods from the Volatility Stop results.
+    /// Removes the warmup periods and the further periods Volatility Stop needs for its values to converge.
     /// </summary>
-    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <param name="results">Volatility Stop results to evaluate.</param>
+    /// <returns>Volatility Stop results with the warmup periods removed.</returns>
     public static IReadOnlyList<VolatilityStopResult> RemoveWarmupPeriods(
         this IReadOnlyList<VolatilityStopResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int removePeriods = results
-            .FindIndex(static x => x.Sar != null);
-
-        removePeriods = Math.Max(100, removePeriods);
-
-        return results.Remove(removePeriods);
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.Sar != null,
+            static i => Math.Max(100, i));
 
     // parameter validation
     /// <summary>

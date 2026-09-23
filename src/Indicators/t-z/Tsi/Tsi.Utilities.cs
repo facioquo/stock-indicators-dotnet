@@ -7,19 +7,15 @@ public static partial class Tsi
 {
     // remove recommended periods
     /// <summary>
-    /// Removes the warmup periods from the TSI results.
+    /// Removes the warmup periods and the further periods TSI needs for its values to converge.
     /// </summary>
-    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <param name="results">TSI results to evaluate.</param>
+    /// <returns>TSI results with the warmup periods removed.</returns>
     public static IReadOnlyList<TsiResult> RemoveWarmupPeriods(
         this IReadOnlyList<TsiResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int nm = results
-            .FindIndex(static x => x.Tsi != null) + 1;
-
-        return results.Remove(nm + 250);
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.Tsi != null,
+            static i => i + 251);
 
     // parameter validation
     /// <summary>

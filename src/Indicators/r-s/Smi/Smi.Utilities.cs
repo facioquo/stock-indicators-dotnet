@@ -6,20 +6,15 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class Smi
 {
     /// <summary>
-    /// Removes the recommended warmup periods from the results.
+    /// Removes the warmup periods and the further periods SMI needs for its values to converge.
     /// </summary>
-    /// <param name="results">List of SMI results.</param>
-    /// <returns>A list of SMI results with the warmup periods removed.</returns>
+    /// <param name="results">SMI results to evaluate.</param>
+    /// <returns>SMI results with the warmup periods removed.</returns>
     public static IReadOnlyList<SmiResult> RemoveWarmupPeriods(
         this IReadOnlyList<SmiResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int removePeriods = results
-            .FindIndex(static x => x.Smi != null);
-
-        return results.Remove(removePeriods + 2 + 100);
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.Smi != null,
+            static i => i + 102);
 
     /// <summary>
     /// Validates the parameters for the SMI calculation.

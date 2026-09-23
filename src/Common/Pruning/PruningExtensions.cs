@@ -6,6 +6,19 @@ namespace FacioQuo.Stock.Indicators;
 public static class PruningExtensions
 {
     /// <summary>
+    /// Removes the leading results that have no calculated value, up to the first one that does.
+    /// Indicators whose values converge after that point declare their own overload.
+    /// </summary>
+    /// <typeparam name="T">Reusable result type.</typeparam>
+    /// <param name="results">Indicator results to evaluate.</param>
+    /// <returns>Results from the first calculated value onward; empty when none has a value.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when results is null.</exception>
+    public static IReadOnlyList<T> RemoveWarmupPeriods<T>(
+        this IReadOnlyList<T> results)
+        where T : IReusable
+        => results.RemoveBeforeFirstValue(static x => !double.IsNaN(x.Value));
+
+    /// <summary>
     /// Removes a specified number of warmup periods from the beginning of the series.
     /// </summary>
     /// <typeparam name="T">Type of elements in the series.</typeparam>
@@ -20,6 +33,31 @@ public static class PruningExtensions
             ? throw new ArgumentOutOfRangeException(nameof(removePeriods), removePeriods,
                 "If specified, the Remove Periods value must be greater than or equal to 0.")
             : series.Remove(removePeriods);
+
+    /// <summary>
+    /// Removes the results before the first one with a calculated value, plus any further
+    /// periods an indicator needs for its values to converge.
+    /// </summary>
+    /// <typeparam name="T">Type of elements in the series.</typeparam>
+    /// <param name="results">Indicator results to evaluate.</param>
+    /// <param name="hasValue">Whether a result has a calculated value.</param>
+    /// <param name="removePeriods">
+    /// Periods to remove, given the index of the first calculated value; defaults to that index.
+    /// </param>
+    /// <returns>The remaining results; empty when none has a calculated value.</returns>
+    internal static IReadOnlyList<T> RemoveBeforeFirstValue<T>(
+        this IReadOnlyList<T> results,
+        Func<T, bool> hasValue,
+        Func<int, int>? removePeriods = null)
+    {
+        ArgumentNullException.ThrowIfNull(results);
+
+        int firstValue = results.FindIndex(hasValue);
+
+        return firstValue < 0
+            ? []
+            : results.Remove(removePeriods?.Invoke(firstValue) ?? firstValue);
+    }
 
     /// <summary>
     /// Finds the index of the first element that matches the specified predicate.
@@ -61,14 +99,9 @@ public static class PruningExtensions
             return [];
         }
 
-        if (removePeriods <= 0)
+        if (removePeriods > 0)
         {
-            return seriesList;
-        }
-
-        for (int i = 0; i < removePeriods; i++)
-        {
-            seriesList.RemoveAt(0);
+            seriesList.RemoveRange(0, removePeriods);
         }
 
         return seriesList;

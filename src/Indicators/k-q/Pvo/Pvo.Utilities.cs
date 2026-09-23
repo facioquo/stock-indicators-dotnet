@@ -6,19 +6,15 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class Pvo
 {
     /// <summary>
-    /// Removes the recommended warmup periods from the PVO results.
+    /// Removes the warmup periods and the further periods PVO needs for its values to converge.
     /// </summary>
-    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <param name="results">PVO results to evaluate.</param>
+    /// <returns>PVO results with the warmup periods removed.</returns>
     public static IReadOnlyList<PvoResult> RemoveWarmupPeriods(
         this IReadOnlyList<PvoResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int n = results
-            .FindIndex(static x => x.Signal != null) + 2;
-
-        return results.Remove(n + 250);
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.Signal != null,
+            static i => i + 252);
 
     /// <summary>
     /// Validates the parameters for PVO calculations.

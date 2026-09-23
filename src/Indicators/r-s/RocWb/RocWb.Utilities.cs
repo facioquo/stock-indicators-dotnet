@@ -6,19 +6,15 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class RocWb
 {
     /// <summary>
-    /// Removes the recommended warmup periods from the RocWb results.
+    /// Removes the warmup periods and the further periods ROC with Bands needs for its values to converge.
     /// </summary>
-    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <param name="results">ROC with Bands results to evaluate.</param>
+    /// <returns>ROC with Bands results with the warmup periods removed.</returns>
     public static IReadOnlyList<RocWbResult> RemoveWarmupPeriods(
         this IReadOnlyList<RocWbResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int n = results
-            .FindIndex(static x => x.RocEma != null) + 1;
-
-        return results.Remove(n + 100);
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.RocEma != null,
+            static i => i + 101);
 
     /// <summary>
     /// Validates the parameters for RocWb calculations.

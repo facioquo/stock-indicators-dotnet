@@ -6,20 +6,15 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class StochRsi
 {
     /// <summary>
-    /// Removes the recommended warmup periods from the results.
+    /// Removes the warmup periods and the further periods Stochastic RSI needs for its values to converge.
     /// </summary>
-    /// <param name="results">List of Stochastic RSI results.</param>
-    /// <returns>A list of Stochastic RSI results with warmup periods removed.</returns>
+    /// <param name="results">Stochastic RSI results to evaluate.</param>
+    /// <returns>Stochastic RSI results with the warmup periods removed.</returns>
     public static IReadOnlyList<StochRsiResult> RemoveWarmupPeriods(
         this IReadOnlyList<StochRsiResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int n = results
-            .FindIndex(static x => x.StochRsi != null) + 2;
-
-        return results.Remove(n + 100);
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.StochRsi != null,
+            static i => i + 102);
 
     /// <summary>
     /// Returns the minimum number of source items required to produce a full

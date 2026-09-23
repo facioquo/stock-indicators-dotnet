@@ -24,20 +24,15 @@ public static partial class StarcBands
     }
 
     /// <summary>
-    /// Removes the recommended warmup periods from the results.
+    /// Removes the warmup periods and the further periods STARC Bands needs for its values to converge.
     /// </summary>
-    /// <param name="results">List of STARC Bands results.</param>
-    /// <returns>A list of STARC Bands results with warmup periods removed.</returns>
+    /// <param name="results">STARC Bands results to evaluate.</param>
+    /// <returns>STARC Bands results with the warmup periods removed.</returns>
     public static IReadOnlyList<StarcBandsResult> RemoveWarmupPeriods(
         this IReadOnlyList<StarcBandsResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int n = results
-            .FindIndex(static x => x.UpperBand != null || x.LowerBand != null) + 1;
-
-        return results.Remove(n + 150);
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.UpperBand != null || x.LowerBand != null,
+            static i => i + 151);
 
     /// <summary>
     /// Validates the parameters for STARC Bands calculation.

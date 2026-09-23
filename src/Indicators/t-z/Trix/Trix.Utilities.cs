@@ -6,20 +6,15 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class Trix
 {
     /// <summary>
-    /// Removes the recommended warmup periods from the TRIX results.
+    /// Removes the warmup periods and the further periods TRIX needs for its values to converge.
     /// </summary>
-    /// <param name="results">List of TRIX results.</param>
-    /// <returns>A list of TRIX results with the warmup periods removed.</returns>
+    /// <param name="results">TRIX results to evaluate.</param>
+    /// <returns>TRIX results with the warmup periods removed.</returns>
     public static IReadOnlyList<TrixResult> RemoveWarmupPeriods(
         this IReadOnlyList<TrixResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int n = results
-            .FindIndex(static x => x.Trix != null);
-
-        return results.Remove((3 * n) + 100);
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.Trix != null,
+            static i => 3 * i + 100);
 
     /// <summary>
     /// Validates the parameters for the TRIX calculation.

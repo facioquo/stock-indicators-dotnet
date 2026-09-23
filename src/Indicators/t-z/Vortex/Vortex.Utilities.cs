@@ -25,19 +25,13 @@ public static partial class Vortex
 
     // remove recommended periods
     /// <summary>
-    /// Removes the warmup periods from the Vortex results.
+    /// Removes the leading Vortex results that have no calculated value.
     /// </summary>
-    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <param name="results">Vortex results to evaluate.</param>
+    /// <returns>Vortex results with the warmup periods removed.</returns>
     public static IReadOnlyList<VortexResult> RemoveWarmupPeriods(
         this IReadOnlyList<VortexResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int removePeriods = results
-            .FindIndex(static x => x.Pvi != null || x.Nvi != null);
-
-        return results.Remove(removePeriods);
-    }
+        => results.RemoveBeforeFirstValue(static x => x.Pvi != null || x.Nvi != null);
 
     // parameter validation
     /// <summary>

@@ -6,9 +6,10 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class Mama
 {
     /// <summary>
-    /// Removes the recommended warmup periods from the MAMA results.
+    /// Removes the warmup periods and the further periods MAMA needs for its values to converge.
     /// </summary>
-    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <param name="results">MAMA results to evaluate.</param>
+    /// <returns>MAMA results with the warmup periods removed.</returns>
     public static IReadOnlyList<MamaResult> RemoveWarmupPeriods(
         this IReadOnlyList<MamaResult> results) => results.Remove(50);
 

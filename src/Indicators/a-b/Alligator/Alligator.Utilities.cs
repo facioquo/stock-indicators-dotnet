@@ -24,20 +24,15 @@ public static partial class Alligator
     }
 
     /// <summary>
-    /// Removes the recommended quantity of results from the beginning of the results list.
+    /// Removes the warmup periods and the further periods Williams Alligator needs for its values to converge.
     /// </summary>
-    /// <param name="results">Alligator results to evaluate.</param>
-    /// <returns>A pruned list of Alligator results.</returns>
+    /// <param name="results">Williams Alligator results to evaluate.</param>
+    /// <returns>Williams Alligator results with the warmup periods removed.</returns>
     public static IReadOnlyList<AlligatorResult> RemoveWarmupPeriods(
         this IReadOnlyList<AlligatorResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int removePeriods = results
-          .FindIndex(static x => x.Jaw != null) + 251;
-
-        return results.Remove(removePeriods);
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.Jaw != null,
+            static i => i + 251);
 
     /// <summary>
     /// Validates the parameters for the Williams Alligator indicator.

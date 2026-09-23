@@ -23,9 +23,10 @@ public static partial class Gator
     }
 
     /// <summary>
-    /// Removes the recommended warmup periods from the Gator Oscillator results.
+    /// Removes the warmup periods and the further periods Gator Oscillator needs for its values to converge.
     /// </summary>
-    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <param name="results">Gator Oscillator results to evaluate.</param>
+    /// <returns>Gator Oscillator results with the warmup periods removed.</returns>
     public static IReadOnlyList<GatorResult> RemoveWarmupPeriods(
         this IReadOnlyList<GatorResult> results) => results.Remove(150);
 }

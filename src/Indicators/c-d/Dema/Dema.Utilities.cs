@@ -24,20 +24,15 @@ public static partial class Dema
         => (ema1.HasValue && ema2.HasValue) ? Calculate(ema1.Value, ema2.Value) : null;
 
     /// <summary>
-    /// Removes the recommended warmup periods from the DEMA results.
+    /// Removes the warmup periods and the further periods DEMA needs for its values to converge.
     /// </summary>
-    /// <param name="results">List of DEMA results.</param>
-    /// <returns>A list of DEMA results with the warmup periods removed.</returns>
+    /// <param name="results">DEMA results to evaluate.</param>
+    /// <returns>DEMA results with the warmup periods removed.</returns>
     public static IReadOnlyList<DemaResult> RemoveWarmupPeriods(
         this IReadOnlyList<DemaResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int n = results
-          .FindIndex(static x => x.Dema != null) + 1;
-
-        return results.Remove((2 * n) + 100);
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.Dema != null,
+            static i => 2 * i + 102);
 
     /// <summary>
     /// Validates the parameters for the DEMA calculation.

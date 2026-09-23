@@ -6,20 +6,15 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class Adx
 {
     /// <summary>
-    /// Removes the recommended warmup periods from the ADX results.
+    /// Removes the warmup periods and the further periods ADX needs for its values to converge.
     /// </summary>
-    /// <param name="results">List of ADX results.</param>
-    /// <returns>A list of ADX results with the warmup periods removed.</returns>
+    /// <param name="results">ADX results to evaluate.</param>
+    /// <returns>ADX results with the warmup periods removed.</returns>
     public static IReadOnlyList<AdxResult> RemoveWarmupPeriods(
         this IReadOnlyList<AdxResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int n = results
-            .FindIndex(static x => x.Pdi != null);
-
-        return results.Remove((2 * n) + 100);
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.Pdi != null,
+            static i => 2 * i + 100);
 
     /// <summary>
     /// Validates the parameters for the ADX calculation.

@@ -23,19 +23,13 @@ public static partial class Donchian
     }
 
     /// <summary>
-    /// Removes the recommended warmup periods from the Donchian Channel results.
+    /// Removes the leading Donchian Channels results that have no calculated value.
     /// </summary>
-    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <param name="results">Donchian Channels results to evaluate.</param>
+    /// <returns>Donchian Channels results with the warmup periods removed.</returns>
     public static IReadOnlyList<DonchianResult> RemoveWarmupPeriods(
         this IReadOnlyList<DonchianResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int removePeriods = results
-          .FindIndex(static x => x.Width != null);
-
-        return results.Remove(removePeriods);
-    }
+        => results.RemoveBeforeFirstValue(static x => x.Width != null);
 
     /// <summary>
     /// Validates the lookback periods for Donchian Channel calculations.

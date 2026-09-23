@@ -6,19 +6,15 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class ForceIndex
 {
     /// <summary>
-    /// Removes the recommended warmup periods from the Force Index results.
+    /// Removes the warmup periods and the further periods Force Index needs for its values to converge.
     /// </summary>
-    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <param name="results">Force Index results to evaluate.</param>
+    /// <returns>Force Index results with the warmup periods removed.</returns>
     public static IReadOnlyList<ForceIndexResult> RemoveWarmupPeriods(
         this IReadOnlyList<ForceIndexResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int n = results
-            .FindIndex(static x => x.ForceIndex != null);
-
-        return results.Remove(n + 100);
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.ForceIndex != null,
+            static i => i + 100);
 
     /// <summary>
     /// Validates the lookback periods for Force Index calculations.

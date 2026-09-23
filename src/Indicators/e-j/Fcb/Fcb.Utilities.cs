@@ -23,19 +23,13 @@ public static partial class Fcb
     }
 
     /// <summary>
-    /// Removes the recommended warmup periods from the FCB results.
+    /// Removes the leading Fractal Chaos Bands results that have no calculated value.
     /// </summary>
-    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <param name="results">Fractal Chaos Bands results to evaluate.</param>
+    /// <returns>Fractal Chaos Bands results with the warmup periods removed.</returns>
     public static IReadOnlyList<FcbResult> RemoveWarmupPeriods(
         this IReadOnlyList<FcbResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int removePeriods = results
-            .FindIndex(static x => x.UpperBand != null || x.LowerBand != null);
-
-        return results.Remove(removePeriods);
-    }
+        => results.RemoveBeforeFirstValue(static x => x.UpperBand != null || x.LowerBand != null);
 
     /// <summary>
     /// Validates the window span for FCB calculations.

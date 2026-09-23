@@ -27,20 +27,13 @@ public static partial class StdDevChannels
     }
 
     /// <summary>
-    /// Removes recommended warmup periods from the results.
+    /// Removes the leading Standard Deviation Channels results that have no calculated value.
     /// </summary>
-    /// <param name="results">List of results to process.</param>
-    /// <returns>A list of results with warmup periods removed.</returns>
+    /// <param name="results">Standard Deviation Channels results to evaluate.</param>
+    /// <returns>Standard Deviation Channels results with the warmup periods removed.</returns>
     public static IReadOnlyList<StdDevChannelsResult> RemoveWarmupPeriods(
         this IReadOnlyList<StdDevChannelsResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int removePeriods = results
-            .FindIndex(static x => x.UpperChannel != null || x.LowerChannel != null);
-
-        return results.Remove(removePeriods);
-    }
+        => results.RemoveBeforeFirstValue(static x => x.UpperChannel != null || x.LowerChannel != null);
 
     /// <summary>
     /// Validates the parameters for Standard Deviation Channels.

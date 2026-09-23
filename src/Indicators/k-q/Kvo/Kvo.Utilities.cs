@@ -5,20 +5,15 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class Kvo
 {
     /// <summary>
-    /// Removes the recommended warmup periods from the KVO (Klinger Volume Oscillator) results.
+    /// Removes the warmup periods and the further periods Klinger Volume Oscillator needs for its values to converge.
     /// </summary>
-    /// <param name="results">List of KVO results to process.</param>
-    /// <returns>A list of KVO results with the warmup periods removed.</returns>
+    /// <param name="results">Klinger Volume Oscillator results to evaluate.</param>
+    /// <returns>Klinger Volume Oscillator results with the warmup periods removed.</returns>
     public static IReadOnlyList<KvoResult> RemoveWarmupPeriods(
         this IReadOnlyList<KvoResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int l = results
-            .FindIndex(static x => x.Oscillator != null) - 1;
-
-        return results.Remove(l + 150);
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.Oscillator != null,
+            static i => i + 149);
 
     /// <summary>
     /// Validates the parameters for the KVO (Klinger Volume Oscillator) calculation.

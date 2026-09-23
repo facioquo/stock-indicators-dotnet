@@ -6,20 +6,15 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class Tema
 {
     /// <summary>
-    /// Removes the recommended warmup periods from the results.
+    /// Removes the warmup periods and the further periods TEMA needs for its values to converge.
     /// </summary>
-    /// <param name="results">List of TEMA results.</param>
-    /// <returns>A list of TEMA results with warmup periods removed.</returns>
+    /// <param name="results">TEMA results to evaluate.</param>
+    /// <returns>TEMA results with the warmup periods removed.</returns>
     public static IReadOnlyList<TemaResult> RemoveWarmupPeriods(
         this IReadOnlyList<TemaResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int n = results
-          .FindIndex(static x => x.Tema != null) + 1;
-
-        return results.Remove((3 * n) + 100);
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.Tema != null,
+            static i => 3 * i + 103);
 
     /// <summary>
     /// Validates the parameters for TEMA calculation.

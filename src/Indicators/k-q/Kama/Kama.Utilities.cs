@@ -6,20 +6,15 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class Kama
 {
     /// <summary>
-    /// Removes the recommended warmup periods from the KAMA results.
+    /// Removes the warmup periods and the further periods KAMA needs for its values to converge.
     /// </summary>
-    /// <param name="results">List of KAMA results to process.</param>
-    /// <returns>A list of KAMA results with the warmup periods removed.</returns>
+    /// <param name="results">KAMA results to evaluate.</param>
+    /// <returns>KAMA results with the warmup periods removed.</returns>
     public static IReadOnlyList<KamaResult> RemoveWarmupPeriods(
         this IReadOnlyList<KamaResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int erPeriods = results
-            .FindIndex(static x => x.Er != null);
-
-        return results.Remove(Math.Max(erPeriods + 100, 10 * erPeriods));
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.Er != null,
+            static i => Math.Max(i + 100, 10 * i));
 
     /// <summary>
     /// Validates the parameters for the KAMA calculation.

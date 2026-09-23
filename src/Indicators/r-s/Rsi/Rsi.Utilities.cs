@@ -6,19 +6,15 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class Rsi
 {
     /// <summary>
-    /// Removes the recommended warmup periods from the RSI results.
+    /// Removes the warmup periods and the further periods RSI needs for its values to converge.
     /// </summary>
-    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <param name="results">RSI results to evaluate.</param>
+    /// <returns>RSI results with the warmup periods removed.</returns>
     public static IReadOnlyList<RsiResult> RemoveWarmupPeriods(
         this IReadOnlyList<RsiResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int n = results
-            .FindIndex(static x => x.Rsi != null);
-
-        return results.Remove(10 * n);
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.Rsi != null,
+            static i => 10 * i);
 
     /// <summary>
     /// Validates the parameters for RSI calculations.

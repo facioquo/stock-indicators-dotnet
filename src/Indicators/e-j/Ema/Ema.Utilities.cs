@@ -48,20 +48,15 @@ public static partial class Ema
         => lastEma + (k * (newPrice - lastEma));
 
     /// <summary>
-    /// Removes the recommended warmup periods from the EMA results.
+    /// Removes the warmup periods and the further periods EMA needs for its values to converge.
     /// </summary>
-    /// <param name="results">List of EMA results.</param>
-    /// <returns>A list of EMA results with warmup periods removed.</returns>
+    /// <param name="results">EMA results to evaluate.</param>
+    /// <returns>EMA results with the warmup periods removed.</returns>
     public static IReadOnlyList<EmaResult> RemoveWarmupPeriods(
         this IReadOnlyList<EmaResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int n = results
-          .FindIndex(static x => x.Ema != null) + 1;
-
-        return results.Remove(n + 100);
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.Ema != null,
+            static i => i + 101);
 
     /// <summary>
     /// Validates the lookback periods for EMA calculations.

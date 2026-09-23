@@ -3,17 +3,14 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class BollingerBands
 {
     // remove recommended periods
-    /// <inheritdoc cref="ReusableExtensions.RemoveWarmupPeriods{T}(IReadOnlyList{T})"/>
+    /// <summary>
+    /// Removes the leading Bollinger Bands results that have no calculated value.
+    /// </summary>
+    /// <param name="results">Bollinger Bands results to evaluate.</param>
+    /// <returns>Bollinger Bands results with the warmup periods removed.</returns>
     public static IReadOnlyList<BollingerBandsResult> RemoveWarmupPeriods(
         this IReadOnlyList<BollingerBandsResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int removePeriods = results
-            .FindIndex(static x => x.Width != null);
-
-        return results.Remove(removePeriods);
-    }
+        => results.RemoveBeforeFirstValue(static x => x.Width != null);
 
     /// <summary>
     /// Bollinger Bands calculation for streaming scenarios.

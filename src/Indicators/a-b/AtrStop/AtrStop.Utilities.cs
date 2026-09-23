@@ -22,20 +22,13 @@ public static partial class AtrStop
     }
 
     /// <summary>
-    /// Removes the recommended warmup periods from the ATR Trailing Stop results.
+    /// Removes the leading ATR Trailing Stop results that have no calculated value.
     /// </summary>
-    /// <param name="results">List of ATR Trailing Stop results.</param>
-    /// <returns>A list of ATR Trailing Stop results with the warmup periods removed.</returns>
+    /// <param name="results">ATR Trailing Stop results to evaluate.</param>
+    /// <returns>ATR Trailing Stop results with the warmup periods removed.</returns>
     public static IReadOnlyList<AtrStopResult> RemoveWarmupPeriods(
         this IReadOnlyList<AtrStopResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int removePeriods = results
-            .FindIndex(static x => x.AtrStop != null);
-
-        return results.Remove(removePeriods);
-    }
+        => results.RemoveBeforeFirstValue(static x => x.AtrStop != null);
 
     /// <summary>
     /// Validates the parameters for the ATR Trailing Stop calculation.

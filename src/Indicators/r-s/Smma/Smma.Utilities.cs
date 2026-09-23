@@ -6,20 +6,15 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class Smma
 {
     /// <summary>
-    /// Removes the recommended warmup periods from the results.
+    /// Removes the warmup periods and the further periods SMMA needs for its values to converge.
     /// </summary>
-    /// <param name="results">List of SMMA results.</param>
-    /// <returns>A list of SMMA results with the warmup periods removed.</returns>
+    /// <param name="results">SMMA results to evaluate.</param>
+    /// <returns>SMMA results with the warmup periods removed.</returns>
     public static IReadOnlyList<SmmaResult> RemoveWarmupPeriods(
         this IReadOnlyList<SmmaResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int n = results
-            .FindIndex(static x => x.Smma != null) + 1;
-
-        return results.Remove(n + 100);
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.Smma != null,
+            static i => i + 101);
 
     /// <summary>
     /// Validates the lookback periods parameter.

@@ -6,20 +6,15 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class ChaikinOsc
 {
     /// <summary>
-    /// Removes the recommended warmup periods from the Chaikin Oscillator results.
+    /// Removes the warmup periods and the further periods Chaikin Oscillator needs for its values to converge.
     /// </summary>
-    /// <param name="results">List of Chaikin Oscillator results.</param>
-    /// <returns>A list of Chaikin Oscillator results with the warmup periods removed.</returns>
+    /// <param name="results">Chaikin Oscillator results to evaluate.</param>
+    /// <returns>Chaikin Oscillator results with the warmup periods removed.</returns>
     public static IReadOnlyList<ChaikinOscResult> RemoveWarmupPeriods(
         this IReadOnlyList<ChaikinOscResult> results)
-    {
-        ArgumentNullException.ThrowIfNull(results);
-
-        int s = results
-            .FindIndex(static x => x.Oscillator != null) + 1;
-
-        return results.Remove(s + 100);
-    }
+        => results.RemoveBeforeFirstValue(
+            static x => x.Oscillator != null,
+            static i => i + 101);
 
     /// <summary>
     /// Validates the parameters for the Chaikin Oscillator calculation.
