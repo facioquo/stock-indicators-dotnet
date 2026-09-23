@@ -227,10 +227,7 @@ public abstract partial class StreamHub<TIn, TOut> : IStreamHub<TIn, TOut>
         }
     }
 
-    /// <summary>
-    /// Adds a new item to the stream.
-    /// </summary>
-    /// <param name="newIn">New item to add.</param>
+    /// <inheritdoc/>
     /// <exception cref="InvalidOperationException">
     /// Called on a subscribed (non-root) hub. Add to the root hub instead.
     /// </exception>
@@ -240,10 +237,7 @@ public abstract partial class StreamHub<TIn, TOut> : IStreamHub<TIn, TOut>
         OnAdd(newIn, notify: true, null);
     }
 
-    /// <summary>
-    /// Adds a batch of new items to the stream.
-    /// </summary>
-    /// <param name="batchIn">Batch of new items to add.</param>
+    /// <inheritdoc/>
     /// <exception cref="InvalidOperationException">
     /// Called on a subscribed (non-root) hub. Add to the root hub instead.
     /// </exception>

@@ -354,6 +354,21 @@ public class BarHubTests : StreamHubTestBase, ITestBarObserver, ITestChainProvid
     }
 
     [TestMethod]
+    public void RefusedBar_WithoutSubscribers_LeavesCacheUntouched()
+    {
+        // refusing with nothing subscribed to BarRejected must not throw
+        BarHub hub = new(50);
+        hub.Add(Bars.Take(100)); // prunes [0..49]
+        DateTime headBefore = hub.Cache[0].Timestamp;
+
+        FluentActions.Invoking(() => hub.Add(Bars[10])).Should().NotThrow();
+        hub.Results.Should().HaveCount(50);
+        hub.Cache[0].Timestamp.Should().Be(headBefore);
+
+        hub.EndTransmission();
+    }
+
+    [TestMethod]
     public void BatchInsidePrunedHistory_ReportsEachRefusedBar()
     {
         // a batch refusal is per bar: each one the hub turns away is reported,

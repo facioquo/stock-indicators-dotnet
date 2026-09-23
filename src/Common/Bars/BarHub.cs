@@ -54,11 +54,28 @@ public class BarHub
     /// bar, instead of discarding it silently.
     /// </summary>
     /// <remarks>
-    /// Raised synchronously while the hub holds its cache lock, from
-    /// <see cref="StreamHub{TIn, TOut}.Add(TIn)"/> on a standalone hub or from
-    /// the provider notification on a subscribed one. The cache is unchanged.
+    /// Raised synchronously while the hub holds its cache lock, once per refused
+    /// bar, from either <c>Add</c> overload on a standalone hub or from the
+    /// provider notification on a subscribed one. The cache is unchanged.
+    /// <para>
+    /// When both <see cref="BarRejectionReason.PrunedHistory"/> and
+    /// <see cref="BarRejectionReason.CacheFull"/> apply, the reason is
+    /// <see cref="BarRejectionReason.PrunedHistory"/>.
+    /// </para>
+    /// <para>
+    /// Keep handlers fast and non-throwing: a slow handler blocks every other
+    /// caller on this hub, and an exception propagates out of <c>Add</c>,
+    /// stopping a batch at the refused bar.
+    /// </para>
     /// </remarks>
     public event EventHandler<BarRejectedEventArgs>? BarRejected;
+
+    /// <summary>
+    /// Raises <see cref="BarRejected"/>.
+    /// </summary>
+    /// <param name="e">The refused bar and the reason.</param>
+    protected virtual void OnBarRejected(BarRejectedEventArgs e)
+        => BarRejected?.Invoke(this, e);
 
     /// <inheritdoc/>
     protected override (IBar result, int index)
@@ -220,7 +237,7 @@ public class BarHub
             return false;
         }
 
-        BarRejected?.Invoke(this, new BarRejectedEventArgs(item, reason.Value));
+        OnBarRejected(new BarRejectedEventArgs(item, reason.Value));
         return true;
     }
 
