@@ -21,8 +21,16 @@ test('NuGet badge sits beside the title where the row has room', async ({ page }
     )
     expect(badge.x, `${width}px: right of the title`).toBeGreaterThan(name.x + name.width)
     expect(badge.x + badge.width, `${width}px: within the hero`).toBeLessThanOrEqual(main.x + main.width)
-    expect(badge.y, `${width}px: level with the title`).toBeGreaterThan(name.y)
-    expect(badge.y + badge.height).toBeLessThan(name.y + name.height)
+    const baseline = await page.locator('.VPHero .name').evaluate((el) => {
+      const probe = document.createElement('span')
+      probe.style.cssText = 'display:inline-block;width:0;height:0;vertical-align:baseline'
+      el.appendChild(probe)
+      const y = probe.getBoundingClientRect().top
+      probe.remove()
+      return y
+    })
+    expect(Math.abs(badge.y + badge.height - baseline), `${width}px: sits on the title baseline`)
+      .toBeLessThanOrEqual(2)
   }
 })
 

@@ -458,8 +458,10 @@ html:not(.dark) body {
       position: absolute;
       position-anchor: --hero-name;
       left: calc(anchor(right) + 1rem);
-      top: anchor(center);
-      translate: 0 -50%;
+      // The title's tight line-height puts its box bottom on the text baseline;
+      // sitting the badge there centers it on the lowercase letters, which
+      // read as the title's visual middle.
+      bottom: anchor(bottom);
     }
 
     .nuget-badge-body {
