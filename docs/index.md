@@ -21,9 +21,10 @@ hero:
 
 <script setup>
 import LandingCharts from './.vitepress/components/LandingCharts.vue'
+import NuGetBadge from './.vitepress/components/NuGetBadge.vue'
 </script>
 
-<a href="https://www.nuget.org/packages/FacioQuo.Stock.Indicators" aria-label="Get the NuGet package."><img src="https://img.shields.io/nuget/v/facioquo.stock.indicators?logo=NuGet&label=NuGet&color=blue&cacheSeconds=259200" alt="NuGet Package" /></a>
+<NuGetBadge class="nuget-badge-body" />
 
 **Stock Indicators for .NET** is a C# [library package](https://www.nuget.org/packages/FacioQuo.Stock.Indicators) that transforms batch and streaming financial market price data into technical indicators. Get moving averages, Relative Strength Index, Stochastic Oscillator, Parabolic SAR, and [many other indicators](/indicators).
 

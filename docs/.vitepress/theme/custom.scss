@@ -434,3 +434,36 @@ html:not(.dark) body {
     }
   }
 }
+
+// Landing page NuGet badge (see NuGetBadge.vue). It sits beside the hero
+// title when the title row has room for both and the browser supports anchor
+// positioning; otherwise it stays in the page body above the introduction.
+.nuget-badge {
+  margin: 0;
+  line-height: 0;
+}
+
+.VPHero .main > .nuget-badge-hero {
+  display: none;
+}
+
+@supports (anchor-name: --hero-name) {
+  @media (min-width: 600px) {
+    .VPHero .name {
+      anchor-name: --hero-name;
+    }
+
+    .VPHero .main > .nuget-badge-hero {
+      display: block;
+      position: absolute;
+      position-anchor: --hero-name;
+      left: calc(anchor(right) + 1rem);
+      top: anchor(center);
+      translate: 0 -50%;
+    }
+
+    .nuget-badge-body {
+      display: none;
+    }
+  }
+}

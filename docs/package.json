@@ -16,6 +16,7 @@
     "test:charts": "playwright test --project=charts",
     "test:a11y": "playwright test --project=a11y --project=analytics",
     "test:agents": "playwright test --project=agent-features",
+    "test:layout": "playwright test --project=layout",
     "test:links": "bash .vitepress/test-links.sh"
   },
   "devDependencies": {

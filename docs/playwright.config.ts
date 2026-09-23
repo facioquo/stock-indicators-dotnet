@@ -3,12 +3,15 @@ import { defineConfig, devices } from '@playwright/test'
 /**
  * Playwright configuration for the documentation site's browser tests.
  *
- * Two projects share one browser stack and one preview server:
- *   charts - visual chart rendering, mocked against static fixture data
- *   a11y   - axe-core WCAG 2.1 A/AA scan of every page in the sitemap
+ * All projects share one browser stack and one preview server:
+ *   charts         - visual chart rendering, mocked against static fixture data
+ *   a11y           - axe-core WCAG 2.1 A/AA scan of every page in the sitemap
+ *   agent-features - llms.txt, Markdown page actions, and WebMCP tools
+ *   analytics      - controls that keep test runs out of production analytics
+ *   layout         - page layout behavior (theme flash, landing hero)
  *
  * Run via the package scripts, or drive Playwright directly:
- *   pnpm run test          # both projects
+ *   pnpm run test          # all projects
  *   pnpm run test:charts
  *   pnpm run test:a11y
  *   pnpm exec playwright test --ui
@@ -52,6 +55,12 @@ export default defineConfig({
     {
       name: 'agent-features',
       testMatch: /agent-(features|artifacts)\.spec\.ts/,
+      fullyParallel: true,
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'layout',
+      testMatch: /(theme-flash|landing)\.spec\.ts/,
       fullyParallel: true,
       use: { ...devices['Desktop Chrome'] },
     },

@@ -4,6 +4,7 @@ import { useData } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import './custom.scss'
 import Contributors from '../components/Contributors.vue'
+import NuGetBadge from '../components/NuGetBadge.vue'
 import CopyOrDownloadAsMarkdownButtons from 'vitepress-plugin-llms/vitepress-components/CopyOrDownloadAsMarkdownButtons.vue'
 import { setupIndyChartsForVue } from '@facioquo/indy-charts/vue'
 import { DARK_SURFACE, LIGHT_SURFACE } from './chart-theme'
@@ -49,11 +50,17 @@ export default {
     // control is placed here instead, beside the hero title.
     const isHubPage = frontmatter.value.layout === 'home' && !frontmatter.value.isHome
 
+    // The homepage also renders its NuGet badge in the hero; custom.scss shows
+    // it beside the title only where the row has room (see `.nuget-badge-hero`).
+    const heroInfoAfter = isHubPage
+      ? () => h(CopyOrDownloadAsMarkdownButtons)
+      : frontmatter.value.isHome
+        ? () => h(NuGetBadge, { class: 'nuget-badge-hero' })
+        : undefined
+
     return h(DefaultTheme.Layout, null, {
       'nav-bar-title-after': () => h('span', { class: 'nav-title-below' }, 'for .NET'),
-      ...(isHubPage
-        ? { 'home-hero-info-after': () => h(CopyOrDownloadAsMarkdownButtons) }
-        : {})
+      ...(heroInfoAfter ? { 'home-hero-info-after': heroInfoAfter } : {})
     })
   },
   enhanceApp({ app }) {
