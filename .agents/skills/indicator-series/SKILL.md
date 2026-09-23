@@ -16,7 +16,7 @@ All files live in `src/Indicators/{category}/{Indicator}/`:
 | `{Indicator}List.cs` | List class + `To{Indicator}List()` extension |
 | `{Indicator}.Catalog.cs` | `CommonListing`, `SeriesListing`, `StreamListing`, `BufferListing` |
 | `{Indicator}Result.cs` | Result record |
-| `{Indicator}.Utilities.cs` | `Validate()` (internal), `Increment()` (public), `RemoveWarmupPeriods()` |
+| `{Indicator}.Utilities.cs` | `Validate()` (internal), `Increment()` (public), and a `RemoveWarmupPeriods()` overload only when values converge past the first calculated one or the result is not `IReusable` |
 | `I{Indicator}.cs` | Parameter interface (parameter properties only; NOT result properties) |
 
 Test files mirror in `tests/Library/Indicators/{category}/{Indicator}/`:

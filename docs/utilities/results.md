@@ -60,7 +60,7 @@ For range queries or filtering by value, use LINQ `.Where()` rather than repeate
 
 ## Remove warmup periods
 
-`results.RemoveWarmupPeriods()` trims the recommended initial warmup periods from indicator results — the early periods where an indicator is still converging and its values may be unreliable. An overload `.RemoveWarmupPeriods(removePeriods)` lets you specify the exact amount.
+`results.RemoveWarmupPeriods()` trims the initial warmup periods from indicator results. An overload `.RemoveWarmupPeriods(removePeriods)` lets you specify the exact amount.
 
 ```csharp
 // automatic — uses the indicator's recommended amount
@@ -72,22 +72,24 @@ IReadOnlyList<AdxResult> custom =
   bars.ToAdx(14).RemoveWarmupPeriods(114);
 ```
 
-See [individual indicator pages](/indicators) for each indicator's recommended pruning amount. Common values:
+For most indicators, the automatic amount is every leading result with no calculated value. Indicators whose values converge gradually, such as EMA and RSI, also remove the periods they need to converge. See [individual indicator pages](/indicators) for each indicator's recommended pruning amount. Common values:
 
-| Indicator | Recommended warmup |
-| --------- | ------------------ |
-| SMA(n) | n periods |
-| EMA(n) | 2×n periods |
-| RSI(n) | n + 250 periods |
+| Indicator | Removed warmup |
+| --------- | -------------- |
+| SMA(n) | n − 1 periods |
+| EMA(n) | n + 100 periods |
+| RSI(n) | 10×n periods |
 | ADX(n) | 2×n + 100 periods |
-| MACD | 250 periods |
+| MACD(fast, slow, signal) | slow + signal + 250 periods |
+
+When every result is still warming up, the automatic form returns an empty list.
 
 ::: info Limited availability
-The parameterless `.RemoveWarmupPeriods()` is not available on every indicator. When it isn't, use the `.RemoveWarmupPeriods(removePeriods)` overload to prune a specific amount.
+The parameterless `.RemoveWarmupPeriods()` is available on the indicators whose pages list it. For the others, use the `.RemoveWarmupPeriods(removePeriods)` overload to prune a specific amount.
 :::
 
 ::: warning 🚩 Auto-pruning is unstable on chained indicators
-Without a `removePeriods` value, the utility reverse-engineers the pruning amount. With unusual results or chained indicators, this can over-prune. Specify an explicit amount when chaining.
+Without a `removePeriods` value, the utility derives the pruning amount from the first calculated value. With unusual results or chained indicators, this can over-prune. Specify an explicit amount when chaining.
 
 ```csharp
 // AVOID: auto-pruning on chained indicators may remove too much
