@@ -82,6 +82,7 @@ public class CatalogShapeTests : TestBase
             foreach (IndicatorResult result in listing.Results)
             {
                 sb.Append("  - ").Append(result.DataName)
+                    .Append(" : ").Append(result.DataType)
                     .Append(" : reusable=").Append(result.IsReusable ? "true" : "false")
                     .Append('\n');
             }
