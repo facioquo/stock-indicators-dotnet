@@ -44,6 +44,32 @@ public class RemoveWarmupPeriodsTests
     }
 
     [TestMethod]
+    public void WithoutConvergence_RemovesLeadingNulls_ForFormerOverloads()
+    {
+        IReadOnlyList<AtrStopResult> atrStop = bars.ToAtrStop();
+        AssertLeadingNullsRemoved(atrStop, atrStop.RemoveWarmupPeriods(), static x => x.AtrStop is not null);
+
+        IReadOnlyList<PivotPointsResult> pivotPoints = bars.ToPivotPoints(BarInterval.Week);
+        AssertLeadingNullsRemoved(pivotPoints, pivotPoints.RemoveWarmupPeriods(), static x => x.PP is not null);
+
+        IReadOnlyList<RollingPivotsResult> rollingPivots = bars.ToRollingPivots(11, 9);
+        AssertLeadingNullsRemoved(rollingPivots, rollingPivots.RemoveWarmupPeriods(), static x => x.PP is not null);
+
+        IReadOnlyList<SuperTrendResult> superTrend = bars.ToSuperTrend();
+        AssertLeadingNullsRemoved(superTrend, superTrend.RemoveWarmupPeriods(), static x => x.SuperTrend is not null);
+
+        static void AssertLeadingNullsRemoved<T>(
+            IReadOnlyList<T> results, IReadOnlyList<T> sut, Func<T, bool> hasValue)
+        {
+            int leadingNulls = results.TakeWhile(x => !hasValue(x)).Count();
+
+            leadingNulls.Should().BePositive();
+            sut.Should().HaveCount(results.Count - leadingNulls);
+            hasValue(sut[0]).Should().BeTrue();
+        }
+    }
+
+    [TestMethod]
     public void AllWarmup_ReturnsEmpty()
     {
         IReadOnlyList<SmaResult> sut = Data.GetDefault(10)
