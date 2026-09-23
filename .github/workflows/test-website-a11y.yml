@@ -54,12 +54,15 @@ jobs:
       # every page in the sitemap. ANALYTICS_ENABLED is intentionally unset so
       # the build carries no gtag snippet; the suite additionally blocks and
       # fails on any analytics request.
-      #
-      # The agent-features project shares that build to validate agent-facing
-      # output: llms.txt identity, per-page Markdown, discovery files,
-      # redirects, canonical metadata, Markdown negotiation, and WebMCP tools.
-      - name: Test accessibility and agent features
-        run: pnpm exec playwright test --project=a11y --project=analytics --project=agent-features
+      - name: Test accessibility
+        run: pnpm run test:a11y
+
+      # Validates agent-facing output: llms.txt identity, per-page Markdown,
+      # discovery files, redirects, canonical metadata, Markdown negotiation,
+      # and WebMCP tools.
+      - name: Test agent features
+        if: ${{ !cancelled() }}
+        run: pnpm run test:agents
 
       - name: Upload report
         if: ${{ !cancelled() }}

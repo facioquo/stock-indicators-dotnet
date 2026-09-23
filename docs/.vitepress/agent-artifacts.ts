@@ -2,6 +2,7 @@ import { execSync } from 'child_process'
 import { createHash } from 'crypto'
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'fs'
 import path from 'path'
+import { markdownPath, pageRoute } from './routes'
 
 // Post-processes the agent-facing output of vitepress-plugin-llms so the
 // Markdown it emits is portable (no VitePress-only syntax), self-describing
@@ -96,36 +97,39 @@ export function stripVitePressSyntax(content: string): string {
 
 /**
  * Rewrites VitePress `::: type Title` containers as GitHub-style alert
- * blockquotes (`details` becomes a plain titled blockquote).
+ * blockquotes (`details` becomes a plain titled blockquote). Nested
+ * containers become nested blockquotes.
  */
 export function renderContainers(content: string): string {
   const out: string[] = []
   let fence: string | undefined
-  let inContainer = false
+  let depth = 0
 
   for (const line of content.split('\n')) {
+    const quote = '> '.repeat(depth)
     const marker = line.match(FENCE)?.[1]
     if (marker && (!fence || marker.startsWith(fence))) {
       fence = fence ? undefined : marker
     } else if (!fence) {
       const open = line.match(/^:::\s*(\w+)\s*(.*)$/)
-      if (open && !inContainer) {
-        inContainer = true
+      if (open) {
         const alert = ALERTS[open[1].toLowerCase()]
         const title = open[2].replace(/\{[^}]*\}/g, '').trim() // drops `{no-title}`-style attributes
-        if (alert) out.push(`> [!${alert}]`)
-        if (title) out.push(`> **${title}**`, '>')
+        const inner = `${quote}>`
+        if (alert) out.push(`${inner} [!${alert}]`)
+        if (title) out.push(`${inner} **${title}**`, inner)
+        depth++
         continue
       }
-      if (/^:::\s*$/.test(line) && inContainer) {
-        inContainer = false
-        if (out.at(-1) === '>') out.pop()
+      if (/^:::\s*$/.test(line) && depth > 0) {
+        if (out.at(-1) === quote.trimEnd()) out.pop()
+        depth--
         continue
       }
     }
-    if (!inContainer) out.push(line)
-    else if (line.trim()) out.push(`> ${line}`)
-    else if (fence || out.at(-1) !== '>') out.push('>')
+    if (!depth) out.push(line)
+    else if (line.trim()) out.push(`${quote}${line}`)
+    else if (fence || out.at(-1) !== quote.trimEnd()) out.push(quote.trimEnd())
   }
   return out.join('\n')
 }
@@ -223,13 +227,6 @@ function listFiles(dir: string, root = dir): string[] {
   })
 }
 
-/** Maps a page's Markdown output (`guide.md`) to its canonical HTML route (`/guide/`). */
-export function canonicalRoute(markdownFile: string, htmlFiles: Set<string>): string {
-  const base = markdownFile.replace(/\.md$/, '')
-  if (htmlFiles.has(`${base}/index.html`) && !htmlFiles.has(`${base}.html`)) return `/${base}/`
-  return base === 'index' ? '/' : `/${base}`
-}
-
 function writeSkillsIndex(outDir: string): void {
   const skillsDir = path.join(outDir, SKILLS_DIR)
   if (!existsSync(skillsDir)) return
@@ -257,20 +254,29 @@ function writeSkillsIndex(outDir: string): void {
   )
 }
 
-/** Rewrites the agent-facing artifacts in a built site; run from VitePress `buildEnd`. */
-export function writeAgentArtifacts(outDir: string, build: BuildInfo): void {
-  const files = listFiles(outDir)
-  const htmlFiles = new Set(files.filter((file) => file.endsWith('.html')))
-  const pages = files.filter((file) => file.endsWith('.md') && !file.startsWith('.well-known/'))
+/**
+ * Rewrites the agent-facing artifacts in a built site; run from VitePress
+ * `buildEnd` with the (rewritten) source path of every page.
+ */
+export function writeAgentArtifacts(outDir: string, sourcePages: string[], build: BuildInfo): void {
+  const pages = listFiles(outDir).filter((file) => file.endsWith('.md') && !file.startsWith('.well-known/'))
   const markdownRoutes = new Set(pages.map((file) => `/${file}`))
+  const routeByMarkdown = new Map(sourcePages.map((source) => {
+    const route = pageRoute(source)
+    return [markdownPath(route), route]
+  }))
 
-  const provenance = (file: string): Record<string, string> => ({
-    package: PACKAGE_ID,
-    docs_version: DOCS_VERSION,
-    canonical: `${SITE_URL}${canonicalRoute(file, htmlFiles)}`,
-    generated: build.generated,
-    ...(build.commit ? { commit: build.commit } : {}),
-  })
+  const provenance = (file: string): Record<string, string> => {
+    const route = routeByMarkdown.get(`/${file}`)
+    if (!route) throw new Error(`No source page produces /${file}; the llms plugin and routes.ts disagree.`)
+    return {
+      package: PACKAGE_ID,
+      docs_version: DOCS_VERSION,
+      canonical: `${SITE_URL}${route}`,
+      generated: build.generated,
+      ...(build.commit ? { commit: build.commit } : {}),
+    }
+  }
 
   for (const file of pages) {
     const target = path.join(outDir, file)

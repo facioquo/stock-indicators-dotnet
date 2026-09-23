@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url'
 import { defineConfig, type DefaultTheme, type HeadConfig } from 'vitepress'
 import llmstxt, { copyOrDownloadAsMarkdownButtons } from 'vitepress-plugin-llms'
 import { identityBlock, readBuildInfo, SITE_URL, writeAgentArtifacts } from './agent-artifacts'
+import { pageRoute } from './routes'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -473,12 +474,10 @@ export default defineConfig({
   // frontmatter `head` because vitepress-plugin-llms wraps `transformHead`.
   transformPageData(pageData, { siteConfig }) {
     if (pageData.isNotFound) return
-    const route = pageData.relativePath
-      .replace(/(^|\/)index\.md$/, '$1')
-      .replace(/\.md$/, '')
-    const url = `${SITE_URL}/${route}`
+    const url = `${SITE_URL}${pageRoute(pageData.relativePath)}`
     const head: HeadConfig[] = [
-      ['link', { rel: 'canonical', href: url }],
+      // html-proofer would otherwise test production rather than this build
+      ['link', { rel: 'canonical', href: url, 'data-proofer-ignore': '' }],
       ['meta', { property: 'og:url', content: url }],
       ['meta', { property: 'og:title', content: pageData.title || 'Stock Indicators for .NET' }],
       ['meta', { property: 'og:description', content: pageData.description || siteConfig.site.description }],
@@ -487,7 +486,8 @@ export default defineConfig({
   },
 
   buildEnd(siteConfig) {
-    writeAgentArtifacts(siteConfig.outDir, buildInfo)
+    const sourcePages = siteConfig.pages.map((page) => siteConfig.rewrites.map[page] ?? page)
+    writeAgentArtifacts(siteConfig.outDir, sourcePages, buildInfo)
   },
 
   srcDir: '.',

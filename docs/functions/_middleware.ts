@@ -1,9 +1,20 @@
 // Cloudflare Pages middleware: Markdown content negotiation for agents.
 // A page request that prefers `text/markdown` gets the page's generated `.md`
 // representation (the homepage gets `llms.txt`); everything else passes
-// through to the static site unchanged. Routes that never negotiate are
-// excluded from invocation in `.vitepress/public/_routes.json`.
+// through to the static site unchanged.
+//
+// `.vitepress/public/_routes.json` excludes static paths from invoking this
+// function at all. `markdownPath` independently passes through any path whose
+// last segment has a file extension, so a path missing from that exclude list
+// costs a function invocation (quota), never a wrong response.
 
+import { markdownPath } from '../.vitepress/routes'
+
+export { markdownPath }
+
+// The subset of Cloudflare's `EventContext` this middleware uses. A local
+// shape keeps @cloudflare/workers-types' global declarations, which conflict
+// with the DOM library, out of the docs' TypeScript and Playwright builds.
 interface PagesContext {
   request: Request
   next: () => Promise<Response>
@@ -28,28 +39,32 @@ export function prefersMarkdown(accept: string | null): boolean {
   return markdown > 0 && markdown >= quality(accept, 'text/html')
 }
 
-/** Maps a page route to its Markdown representation, or `undefined` for non-page paths. */
-export function markdownPath(pathname: string): string | undefined {
-  if (pathname === '/') return '/llms.txt'
-  const route = pathname.replace(/\/$/, '')
-  const leaf = route.slice(route.lastIndexOf('/') + 1)
-  return leaf.includes('.') ? undefined : `${route}.md`
+async function fetchMarkdown(
+  env: PagesContext['env'],
+  request: Request,
+  path: string
+): Promise<Response | undefined> {
+  try {
+    const asset = await env.ASSETS.fetch(new Request(new URL(path, request.url), { method: request.method }))
+    if (!asset.ok) return undefined
+    const response = new Response(asset.body, asset)
+    response.headers.set('Content-Type', 'text/markdown; charset=utf-8')
+    response.headers.set('Vary', 'Accept')
+    response.headers.set('Content-Location', path)
+    return response
+  } catch {
+    // A failed asset lookup degrades to the HTML page rather than an error.
+    return undefined
+  }
 }
 
 export async function onRequest({ request, next, env }: PagesContext): Promise<Response> {
-  const url = new URL(request.url)
-  const markdown = markdownPath(url.pathname)
+  const markdown = markdownPath(new URL(request.url).pathname)
   if (!markdown || (request.method !== 'GET' && request.method !== 'HEAD')) return next()
 
   if (prefersMarkdown(request.headers.get('Accept'))) {
-    const asset = await env.ASSETS.fetch(new Request(new URL(markdown, url), { method: request.method }))
-    if (asset.ok) {
-      const response = new Response(asset.body, asset)
-      response.headers.set('Content-Type', 'text/markdown; charset=utf-8')
-      response.headers.set('Vary', 'Accept')
-      response.headers.set('Content-Location', markdown)
-      return response
-    }
+    const response = await fetchMarkdown(env, request, markdown)
+    if (response) return response
   }
 
   // Same URL, different representations: caches must key on Accept.

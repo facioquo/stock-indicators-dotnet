@@ -7,6 +7,8 @@ User-agent: *
 Content-Signal: search=yes, ai-input=yes, ai-train=yes
 Allow: /
 
+# Named AI crawlers, current and legacy tokens (Claude-Web, anthropic-ai),
+# because agent-readiness scanners look for explicit AI rules.
 User-agent: GPTBot
 User-agent: OAI-SearchBot
 User-agent: ChatGPT-User

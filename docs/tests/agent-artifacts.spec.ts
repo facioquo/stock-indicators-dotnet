@@ -4,7 +4,9 @@ import { existsSync, readdirSync, readFileSync } from 'fs'
 import { dirname, join, relative, sep } from 'path'
 import { fileURLToPath } from 'url'
 import {
+  DOCS_VERSION,
   normalizeDocument,
+  PACKAGE_ID,
   renderContainers,
   rewriteInternalLinks,
   stripVitePressSyntax,
@@ -72,6 +74,13 @@ test.describe('Markdown normalization', () => {
       '```md',
       '::: tip inside code',
       '```',
+    ].join('\n'))
+  })
+
+  test('renders nested containers as nested quotes', () => {
+    const input = ['::: details Outer', 'a', '::: warning', 'b', ':::', 'c', ':::', 'after'].join('\n')
+    expect(renderContainers(input)).toBe([
+      '> **Outer**', '>', '> a', '> > [!WARNING]', '> > b', '> c', 'after',
     ].join('\n'))
   })
 
@@ -170,6 +179,12 @@ test.describe('Markdown negotiation middleware', () => {
 
     const missing = await onRequest(context(`${SITE_URL}/indicators/not-a-page`, 'text/markdown'))
     expect(missing.headers.get('Content-Type')).toBe('text/html')
+
+    const failing = await onRequest({
+      ...context(`${SITE_URL}/indicators/sma`, 'text/markdown'),
+      env: { ASSETS: { fetch: () => Promise.reject(new Error('binding fault')) } },
+    })
+    expect(failing.headers.get('Content-Type')).toBe('text/html')
   })
 })
 
@@ -199,7 +214,7 @@ test.describe('Build output', () => {
       const route = canonical.slice(SITE_URL.length)
       expect(isPage(route), `${file} → ${canonical}`).toBe(true)
       const html = route.endsWith('/') ? `${route.slice(1)}index.html` : `${route.slice(1)}.html`
-      expect(read(html), file).toContain(`<link rel="canonical" href="${canonical}">`)
+      expect(read(html), file).toContain(`<link rel="canonical" href="${canonical}"`)
 
       // no internal link should point at an HTML page that has a Markdown twin
       const htmlLinks = [...prose(content).matchAll(/\]\((\/[^)\s#]*)/g)]
@@ -251,7 +266,11 @@ test.describe('Build output', () => {
       const bytes = readFileSync(join(DIST, skill.url))
       expect(skill.type).toBe('skill-md')
       expect(skill.digest).toBe(`sha256:${createHash('sha256').update(bytes).digest('hex')}`)
-      expect(bytes.toString('utf8')).toContain('FacioQuo.Stock.Indicators')
+      // the hand-written skill must name the same identity as the generated output
+      const markdown = bytes.toString('utf8')
+      expect(markdown).toContain(`package: ${PACKAGE_ID}`)
+      expect(markdown).toContain(`docs_version: ${DOCS_VERSION}`)
+      expect(markdown).toContain(`dotnet add package ${PACKAGE_ID}`)
     }
   })
 
@@ -263,6 +282,7 @@ test.describe('Build output', () => {
     const canonical = [...read('sitemap.xml').matchAll(/<loc>([^<]+)<\/loc>/g)]
       .map((match) => match[1].slice(SITE_URL.length) || '/')
 
+    expect(rules.length).toBeGreaterThan(100)
     expect(rules.filter(([, target]) => !isPage(target))).toEqual([])
     expect(canonical.filter((route) => sources.has(route))).toEqual([])
   })
