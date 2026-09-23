@@ -116,6 +116,13 @@ barHub.Remove(badBar);  // finds the entry by timestamp, then rebuilds
 
 The hub automatically handles state rollback and recalculation when data arrives out of order or needs correction. To revise a single value in place, re-`Add` a bar with the same `Timestamp`; to drop data, remove it by timestamp with `RemoveRange(fromTimestamp, notify)`, by position with `RemoveAt(cacheIndex)`, or by bar with `Remove(bar)` (which locates the entry by timestamp). These mutations are **enforced to run on the root hub only** — the `BarHub` (or `TradeTickHub`) you add bars to. Calling `Add`, `RemoveAt`, `RemoveRange`, `Remove`, or `Reinitialize` on a subscribed/chained hub throws `InvalidOperationException`; mutate the root hub, which cascades every change to the dependent hubs (see [Thread safety](#thread-safety)).
 
+A bar older than everything the hub still holds is refused when it falls inside history the hub already pruned, or when the cache is full. `BarHub` raises `BarRejected` for each refusal, with the bar and a `BarRejectionReason`, and leaves its cache unchanged:
+
+```csharp
+barHub.BarRejected += (_, e) =>
+    logger.LogWarning("Refused {Timestamp}: {Reason}", e.Bar.Timestamp, e.Reason);
+```
+
 ## Performance characteristics
 
 - **Overhead:** ~20-30% slower than batch style for equivalent datasets

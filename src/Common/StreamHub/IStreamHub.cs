@@ -46,6 +46,13 @@ public interface IStreamHub<in TIn, out TOut> : IStreamObserver<TIn>, IStreamObs
     /// Add a single new item.
     /// We'll determine if it's new or an update.
     /// </summary>
+    /// <remarks>
+    /// An item timestamped before the oldest cached item is inserted in order
+    /// and observers rebuild from it, unless the hub can no longer represent
+    /// it. <see cref="BarHub"/> refuses a bar that falls inside history it
+    /// already pruned, or that arrives while its cache is full, and raises
+    /// <see cref="BarHub.BarRejected"/> for each refusal.
+    /// </remarks>
     /// <param name="newIn">
     /// New item to add
     /// </param>
@@ -55,6 +62,9 @@ public interface IStreamHub<in TIn, out TOut> : IStreamObserver<TIn>, IStreamObs
     /// Add a batch of new items.
     /// We'll determine if they're new or updated.
     /// </summary>
+    /// <remarks>
+    /// Each item follows the before-head policy of <see cref="Add(TIn)"/>.
+    /// </remarks>
     /// <param name="batchIn">
     /// Batch of new items to add
     /// </param>

@@ -35,7 +35,7 @@ public abstract partial class StreamHub<TIn, TOut> : IStreamHub<TIn, TOut>
     /// <remarks>
     /// Pruning is the one way a hub loses history it once held, so this records
     /// how far that loss reaches. What a hub does with the boundary is its own
-    /// policy — see <c>BarHub.RejectsBeforeHead</c> for the only one today.
+    /// policy — see <c>BarHub.TryRejectBeforeHead</c> for the only one today.
     /// <para>
     /// Monotonic, and never cleared: pruning is irreversible, and no reset path
     /// restores the discarded entries. <see cref="Reinitialize"/> in particular

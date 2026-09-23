@@ -49,6 +49,17 @@ public class BarHub
         IBarProvider<IBar> provider)
         : base(provider) => Reinitialize();
 
+    /// <summary>
+    /// Raised when the hub refuses a bar timestamped before its oldest cached
+    /// bar, instead of discarding it silently.
+    /// </summary>
+    /// <remarks>
+    /// Raised synchronously while the hub holds its cache lock, from
+    /// <see cref="StreamHub{TIn, TOut}.Add(TIn)"/> on a standalone hub or from
+    /// the provider notification on a subscribed one. The cache is unchanged.
+    /// </remarks>
+    public event EventHandler<BarRejectedEventArgs>? BarRejected;
+
     /// <inheritdoc/>
     protected override (IBar result, int index)
         ToIndicator(IBar item, int? indexHint)
@@ -90,7 +101,7 @@ public class BarHub
         {
             lock (CacheLock)
             {
-                if (RejectsBeforeHead(item))
+                if (TryRejectBeforeHead(item))
                 {
                     return;
                 }
@@ -106,7 +117,7 @@ public class BarHub
         // prune invalidate the decision in between.
         lock (CacheLock)
         {
-            if (RejectsBeforeHead(item))
+            if (TryRejectBeforeHead(item))
             {
                 return;
             }
@@ -151,7 +162,7 @@ public class BarHub
 
     /// <summary>
     /// Decides whether a bar arriving beneath <c>Cache[0]</c> has to be turned
-    /// away. Caller must hold <see cref="StreamHub{TIn, TOut}.CacheLock"/>.
+    /// away, reporting a refusal through <see cref="BarRejected"/>. Caller must hold <see cref="StreamHub{TIn, TOut}.CacheLock"/>.
     /// </summary>
     /// <remarks>
     /// Two things make such a bar unkeepable, and only these two:
@@ -186,16 +197,31 @@ public class BarHub
     /// </para>
     /// </remarks>
     /// <param name="item">Arriving bar.</param>
-    /// <returns><see langword="true"/> when the bar must be discarded.</returns>
-    private bool RejectsBeforeHead(IBar item)
+    /// <returns>
+    /// <see langword="true"/> when the bar was refused and
+    /// <see cref="BarRejected"/> raised.
+    /// </returns>
+    private bool TryRejectBeforeHead(IBar item)
     {
         if (Cache.Count == 0 || item.Timestamp >= Cache[0].Timestamp)
         {
             return false;
         }
 
-        return (PrunedThrough is DateTime prunedThrough && item.Timestamp <= prunedThrough)
-            || Cache.Count >= MaxCacheSize;
+        BarRejectionReason? reason
+            = PrunedThrough is DateTime prunedThrough && item.Timestamp <= prunedThrough
+                ? BarRejectionReason.PrunedHistory
+                : Cache.Count >= MaxCacheSize
+                    ? BarRejectionReason.CacheFull
+                    : null;
+
+        if (reason is null)
+        {
+            return false;
+        }
+
+        BarRejected?.Invoke(this, new BarRejectedEventArgs(item, reason.Value));
+        return true;
     }
 
     /// <summary>

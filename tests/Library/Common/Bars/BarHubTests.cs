@@ -204,8 +204,16 @@ public class BarHubTests : StreamHubTestBase, ITestBarObserver, ITestChainProvid
         Bar oldBar = bars[10]; // This is before bars[50]
         oldBar.Timestamp.Should().BeBefore(firstTimestamp);
 
-        // This should be silently ignored
+        List<BarRejectedEventArgs> rejected = [];
+        barHub.BarRejected += (_, e) => rejected.Add(e);
+
+        // refused, and reported rather than dropped silently (#2153);
+        // the cache is also full, and the pruned boundary takes precedence
         barHub.Add(oldBar);
+
+        rejected.Should().ContainSingle();
+        rejected[0].Bar.Should().BeSameAs(oldBar);
+        rejected[0].Reason.Should().Be(BarRejectionReason.PrunedHistory);
 
         // Cache size should remain unchanged
         barHub.Bars.Should().HaveCount(maxCacheSize);
@@ -278,8 +286,14 @@ public class BarHubTests : StreamHubTestBase, ITestBarObserver, ITestChainProvid
         Bar oldBar = bars[10];
         oldBar.Timestamp.Should().BeBefore(headTimestamp);
 
+        List<BarRejectedEventArgs> rejected = [];
+        observer.BarRejected += (_, e) => rejected.Add(e);
+
         // simulate a provider notification of a before-head bar
         observer.OnAdd(oldBar, notify: true, indexHint: null);
+
+        rejected.Should().ContainSingle()
+            .Which.Reason.Should().Be(BarRejectionReason.PrunedHistory);
 
         // ignored: cache unchanged
         observer.Results.Should().HaveCount(maxCacheSize);
@@ -304,8 +318,12 @@ public class BarHubTests : StreamHubTestBase, ITestBarObserver, ITestChainProvid
         Bar earlier = Bars[10];
         earlier.Timestamp.Should().BeBefore(headBefore);
 
+        bool rejected = false;
+        hub.BarRejected += (_, _) => rejected = true;
+
         hub.Add(earlier);
 
+        rejected.Should().BeFalse("an accepted bar is not reported as refused");
         hub.Results.Should().HaveCount(21, "the earlier bar is representable and must be kept");
         hub.Cache[0].Timestamp.Should().Be(earlier.Timestamp, "it sorts ahead of the seeded window");
         hub.Cache[1].Timestamp.Should().Be(headBefore, "the seeded window is otherwise untouched");
@@ -331,6 +349,27 @@ public class BarHubTests : StreamHubTestBase, ITestBarObserver, ITestChainProvid
         hub.Results.Should().HaveCount(30, "the ten leading bars must survive the batch");
         hub.Cache[0].Timestamp.Should().Be(Bars[40].Timestamp);
         hub.Cache.Select(b => b.Timestamp).Should().BeInAscendingOrder();
+
+        hub.EndTransmission();
+    }
+
+    [TestMethod]
+    public void BatchInsidePrunedHistory_ReportsEachRefusedBar()
+    {
+        // a batch refusal is per bar: each one the hub turns away is reported,
+        // and the bars it keeps raise nothing
+        BarHub hub = new(50);
+        hub.Add(Bars.Take(100)); // prunes [0..49]
+
+        List<BarRejectedEventArgs> rejected = [];
+        hub.BarRejected += (_, e) => rejected.Add(e);
+
+        hub.Add(Bars.Skip(5).Take(5).Concat(Bars.Skip(99).Take(2)));
+
+        rejected.Select(e => e.Bar.Timestamp)
+            .Should().Equal(Bars.Skip(5).Take(5).Select(b => b.Timestamp));
+        rejected.Should().OnlyContain(e => e.Reason == BarRejectionReason.PrunedHistory);
+        hub.Cache[^1].Timestamp.Should().Be(Bars[100].Timestamp, "the new bar is still added");
 
         hub.EndTransmission();
     }
@@ -396,7 +435,13 @@ public class BarHubTests : StreamHubTestBase, ITestBarObserver, ITestChainProvid
         DateTime headBefore = hub.Cache[0].Timestamp;
         headBefore.Should().Be(Bars[50].Timestamp);
 
+        List<BarRejectedEventArgs> rejected = [];
+        hub.BarRejected += (_, e) => rejected.Add(e);
+
         hub.Add(Bars[10]); // older than every retained bar
+
+        rejected.Should().ContainSingle()
+            .Which.Reason.Should().Be(BarRejectionReason.CacheFull);
 
         hub.Results.Should().HaveCount(maxCacheSize, "refusing must not shrink the cache");
         hub.Cache[0].Timestamp.Should().Be(headBefore, "the retained head must survive the refusal");
@@ -427,8 +472,13 @@ public class BarHubTests : StreamHubTestBase, ITestBarObserver, ITestChainProvid
         Bars[50].Timestamp.Should().BeAfter(Bars[48].Timestamp);
         Bars[50].Timestamp.Should().BeBefore(headBefore);
 
+        List<BarRejectedEventArgs> rejected = [];
+        hub.BarRejected += (_, e) => rejected.Add(e);
+
         hub.Add(Bars[50]);
 
+        rejected.Should().ContainSingle()
+            .Which.Reason.Should().Be(BarRejectionReason.CacheFull, "the bar sits above the prune boundary");
         hub.Results.Should().HaveCount(21, "refusing must not shrink the cache");
         hub.Cache[0].Timestamp.Should().Be(headBefore, "the retained head must survive");
         hub.Cache.Should().NotContain(b => b.Timestamp == Bars[50].Timestamp);
@@ -449,14 +499,20 @@ public class BarHubTests : StreamHubTestBase, ITestBarObserver, ITestChainProvid
 
         hub.Results.Should().HaveCount(49);
 
+        List<BarRejectedEventArgs> rejected = [];
+        hub.BarRejected += (_, e) => rejected.Add(e);
+
         // exactly at the boundary — refused, and `<=` is what makes it so
         hub.Add(Bars[49]);
+        rejected.Should().ContainSingle()
+            .Which.Reason.Should().Be(BarRejectionReason.PrunedHistory);
         hub.Results.Should().HaveCount(49, "a bar at the boundary is still inside pruned history");
         hub.Cache.Should().NotContain(b => b.Timestamp == Bars[49].Timestamp);
 
         // one step above it — accepted, with room to hold it
         hub.Add(Bars[50]);
         hub.Results.Should().HaveCount(50, "a bar above the boundary was never discarded");
+        rejected.Should().ContainSingle("accepting a bar raises nothing");
         hub.Cache[0].Timestamp.Should().Be(Bars[50].Timestamp);
     }
 
