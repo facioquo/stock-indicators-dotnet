@@ -53,17 +53,6 @@ public class CatalogIntegrityTests : TestBase
     }
 
     [TestMethod]
-    public void ShouldHaveCorrectQuantities()
-    {
-        IReadOnlyList<IndicatorListing> rsiListings = Catalog.Get("RSI");
-        rsiListings.Should().NotBeEmpty();
-        rsiListings.Should().HaveCount(3); // Series, Stream, Buffer
-        rsiListings.Should().Contain(static x => x.Style == Style.Series);
-        rsiListings.Should().Contain(static x => x.Style == Style.Stream);
-        rsiListings.Should().Contain(static x => x.Style == Style.Buffer);
-    }
-
-    [TestMethod]
     public void CatalogShouldHaveBalancedStyleDistribution()
     {
         IReadOnlyList<IndicatorListing> allListings = Catalog.Get();

@@ -12,18 +12,6 @@ namespace Catalogging;
 public class CatalogMetadataTests : TestBase
 {
     [TestMethod]
-    public void AllIndicatorsShouldHaveMethodNames()
-    {
-        IReadOnlyList<IndicatorListing> catalog = Catalog.Listings;
-        catalog.Should().NotBeEmpty();
-        foreach (IndicatorListing listing in catalog)
-        {
-            listing.MethodName.Should().NotBeNullOrWhiteSpace($"indicator {listing.Uiid} should have a method name for automation");
-            listing.MethodName.Should().StartWith("To");
-        }
-    }
-
-    [TestMethod]
     public void CatalogShouldSupportParameterTypeValidation()
     {
         IndicatorListing emaListing = Catalog.Listings.First(l => l.Uiid == "EMA" && l.Style == Style.Series);
@@ -31,29 +19,6 @@ public class CatalogMetadataTests : TestBase
         validAction.Should().NotThrow();
         Action invalidAction = () => emaListing.WithParamValue("lookbackPeriods", "invalid");
         invalidAction.Should().Throw<ArgumentException>();
-    }
-
-    [TestMethod]
-    public void CatalogShouldHaveValidStructure()
-    {
-        IReadOnlyList<IndicatorListing> catalog = Catalog.Listings;
-        catalog.Should().NotBeEmpty();
-        foreach (IndicatorListing listing in catalog)
-        {
-            listing.Uiid.Should().NotBeNullOrWhiteSpace();
-            listing.Name.Should().NotBeNullOrWhiteSpace();
-            listing.Style.Should().BeDefined();
-            listing.Category.Should().BeDefined();
-
-            if (listing.Results?.Count > 0)
-            {
-                foreach (IndicatorResult result in listing.Results)
-                {
-                    result.DataName.Should().NotBeNullOrWhiteSpace();
-                    result.DisplayName.Should().NotBeNullOrWhiteSpace();
-                }
-            }
-        }
     }
 
     [TestMethod]
@@ -67,7 +32,7 @@ public class CatalogMetadataTests : TestBase
             listing.Name.Should().NotBeNullOrWhiteSpace();
             listing.Style.Should().BeDefined();
             listing.Category.Should().BeDefined();
-            listing.MethodName.Should().NotBeNullOrWhiteSpace();
+            listing.MethodName.Should().NotBeNullOrWhiteSpace($"indicator {listing.Uiid} should have a method name for automation");
             listing.MethodName.Should().StartWith("To");
 
             if (listing.Parameters != null)
