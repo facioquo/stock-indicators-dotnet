@@ -41,7 +41,7 @@ Use the [Discussions](https://github.com/facioquo/stock-indicators-dotnet/discus
 
 - Read this first: [A Step by Step Guide to Making Your First GitHub Contribution](https://codeburst.io/a-step-by-step-guide-to-making-your-first-github-contribution-5302260a2940).  I also have a discussion [on Forking](https://github.com/facioquo/stock-indicators-dotnet/discussions/503) if you have questions.
 - If you want to work on something specific, please mention your intention on the related [Issue](https://github.com/facioquo/stock-indicators-dotnet/issues).  If an Issue does not exist for your contribution, please create one before starting.  This will help us reserve that feature and avoid duplicative efforts.
-- If you are adding a new indicator, the easiest way to do this is to copy the folder of an existing indicator and rename everything using the same naming conventions and taxonomy.  All new indicators should include [tests](#testing).
+- If you are adding a new indicator, the easiest way to do this is to copy the folder of an existing indicator and rename everything using the same [naming conventions](https://github.com/facioquo/stock-indicators-dotnet/blob/main/src/AGENTS.md#per-indicator-facade-class) and taxonomy.  All new indicators should include [tests](#testing).
 - Do not commingle multiple contributions on different topics.  Please keep changes small and separate.
 
 ### Initial setup

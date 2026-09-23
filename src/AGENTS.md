@@ -77,6 +77,10 @@ A new fully-streamable indicator costs **seven files plus a documentation page**
 
 If a new indicator exceeds these guidelines by a wide margin without algorithmic justification, treat the excess as accidental complexity and look for a missing shared kernel (see `Ema.Increment`, `Sma.Average`, `Tr.Increment`, `Atr.Increment` in `Common/`-adjacent siblings). Documentation under `docs/indicators/{Name}.md` and a test set under `tests/Library/Indicators/{a-b|c-d|e-j|k-q|r-s|t-z}/{Name}/*Tests.cs` are required and have their own budgets.
 
+## Per-indicator facade class
+
+`public static partial class {Name}` is the indicator's facade, not its Series implementation. Its partial declarations across the files above hold the entry point for every style (`To{Name}`, `To{Name}List`, `To{Name}Hub`), the shared utilities, and the catalog listings. Style-specific types carry a suffix: `{Name}Hub`, `{Name}List`, `{Name}Result`, and the `I{Name}` interface. Never give the facade a style suffix; an `EmaSeries` class would hold `ToEmaList` and `ToEmaHub`.
+
 ## Boundaries
 
 ✅ Always use Series results as the canonical numerical reference — Stream/Buffer must match exactly
