@@ -1,3 +1,4 @@
+import type { SearchIndexEntry } from '../agent-artifacts'
 import { markdownPath } from '../routes'
 
 interface WebMcpTool {
@@ -30,14 +31,6 @@ interface WebMcpDocument extends Document {
 
 interface WebMcpNavigator extends Navigator {
   modelContext?: ModelContext
-}
-
-interface SearchIndexEntry {
-  title: string
-  url: string
-  description: string
-  headings: string[]
-  text: string
 }
 
 interface IndexedPage {
@@ -188,7 +181,7 @@ export function installWebMcpTools(): void {
     {
       name: 'get_documentation_page',
       title: 'Get a documentation page as Markdown',
-      description: 'Return the complete Markdown, with provenance frontmatter, for one page in the documentation index, such as a result from search_documentation. This operation does not change site or user data.',
+      description: 'Return the complete Markdown, with provenance frontmatter, for one page in the documentation index, such as a result URL from search_documentation. Fails with an error when no indexed page matches. This operation does not change site or user data.',
       inputSchema: {
         type: 'object',
         properties: {
@@ -196,7 +189,7 @@ export function installWebMcpTools(): void {
             type: 'string',
             minLength: 1,
             maxLength: MAX_PATH_LENGTH,
-            description: 'Page path or URL on this site, such as /indicators/rsi or /indicators/rsi.md.'
+            description: 'Page path or URL on this site, such as /indicators/rsi, /indicators/rsi.md, or a result URL from search_documentation.'
           }
         },
         required: ['path'],

@@ -193,10 +193,13 @@ test('WebMCP exposes read-only documentation tools', async ({ page }) => {
   ])
   expect(result.pages[0].title).toBe('Relative Strength Index (RSI)')
   expect(result.pages[0].markdown).toMatch(/^---\nurl: \/indicators\/rsi\.md\n[\s\S]*?\ncanonical: https:\/\/dotnet\.stockindicators\.dev\/indicators\/rsi\n/)
-  for (const outcome of result.invalidPaths) {
-    expect(outcome).toMatch(/path must contain|No documentation page matches/)
-  }
+  const tooShortOrLong = /path must contain between 1 and 200 characters/
+  const notIndexed = /No documentation page matches/
   expect(result.invalidPaths).toHaveLength(9)
+  result.invalidPaths.forEach((outcome, index) => {
+    // '' and the 201-character path fail validation; every other input is well-formed but not indexed
+    expect(outcome).toMatch(index === 0 || index === 8 ? tooShortOrLong : notIndexed)
+  })
   expect(result.currentPage).toMatchObject({
     url: 'http://localhost:4173/indicators/sma.md'
   })
