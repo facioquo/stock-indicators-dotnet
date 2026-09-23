@@ -22,15 +22,6 @@ public static partial class AtrStop
     }
 
     /// <summary>
-    /// Removes the leading ATR Trailing Stop results that have no calculated value.
-    /// </summary>
-    /// <param name="results">ATR Trailing Stop results to evaluate.</param>
-    /// <returns>ATR Trailing Stop results with the warmup periods removed.</returns>
-    public static IReadOnlyList<AtrStopResult> RemoveWarmupPeriods(
-        this IReadOnlyList<AtrStopResult> results)
-        => results.RemoveBeforeFirstValue(static x => x.AtrStop != null);
-
-    /// <summary>
     /// Validates the parameters for the ATR Trailing Stop calculation.
     /// </summary>
     /// <param name="lookbackPeriods">Quantity of periods in lookback window.</param>

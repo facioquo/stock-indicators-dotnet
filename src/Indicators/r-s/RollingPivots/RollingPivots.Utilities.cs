@@ -6,15 +6,6 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class RollingPivots
 {
     /// <summary>
-    /// Removes the leading Rolling Pivot Points results that have no calculated value.
-    /// </summary>
-    /// <param name="results">Rolling Pivot Points results to evaluate.</param>
-    /// <returns>Rolling Pivot Points results with the warmup periods removed.</returns>
-    public static IReadOnlyList<RollingPivotsResult> RemoveWarmupPeriods(
-        this IReadOnlyList<RollingPivotsResult> results)
-        => results.RemoveBeforeFirstValue(static x => x.PP != null);
-
-    /// <summary>
     /// Returns the minimum number of source items required to produce a valid Rolling Pivot result
     /// (equivalent to windowPeriods + offsetPeriods, the item count before the first non-null result).
     /// </summary>

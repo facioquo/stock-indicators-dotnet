@@ -24,15 +24,6 @@ public static partial class SuperTrend
     }
 
     /// <summary>
-    /// Removes the leading SuperTrend results that have no calculated value.
-    /// </summary>
-    /// <param name="results">SuperTrend results to evaluate.</param>
-    /// <returns>SuperTrend results with the warmup periods removed.</returns>
-    public static IReadOnlyList<SuperTrendResult> RemoveWarmupPeriods(
-        this IReadOnlyList<SuperTrendResult> results)
-        => results.RemoveBeforeFirstValue(static x => x.SuperTrend != null);
-
-    /// <summary>
     /// Validates the parameters for SuperTrend calculation.
     /// </summary>
     /// <param name="lookbackPeriods">Number of periods for the lookback.</param>

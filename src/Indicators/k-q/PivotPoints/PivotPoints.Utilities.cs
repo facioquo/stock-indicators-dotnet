@@ -18,13 +18,4 @@ public static partial class PivotPoints
 
     private static readonly DayOfWeek firstDayOfWeek
         = invariantCulture.DateTimeFormat.FirstDayOfWeek;
-
-    /// <summary>
-    /// Removes the leading Pivot Points results that have no calculated value.
-    /// </summary>
-    /// <param name="results">Pivot Points results to evaluate.</param>
-    /// <returns>Pivot Points results with the warmup periods removed.</returns>
-    public static IReadOnlyList<PivotPointsResult> RemoveWarmupPeriods(
-        this IReadOnlyList<PivotPointsResult> results)
-        => results.RemoveBeforeFirstValue(static x => x.PP != null);
 }
