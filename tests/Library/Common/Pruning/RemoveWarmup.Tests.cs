@@ -28,4 +28,18 @@ public class RemoveWarmup : TestBase
 
         sut.Should().BeEmpty();
     }
+
+    [TestMethod]
+    public void AllWarmup_ReturnsEmpty()
+    {
+        List<Bar> tooFew = [.. Bars.Take(10)];
+
+        tooFew.ToSma(20).RemoveWarmupPeriods().Should().BeEmpty();
+        tooFew.ToEma(20).RemoveWarmupPeriods().Should().BeEmpty();
+    }
+
+    [TestMethod]
+    public void NullResults_Throws()
+        => Assert.ThrowsExactly<ArgumentNullException>(
+            static () => ((IReadOnlyList<SmaResult>)null!).RemoveWarmupPeriods());
 }
