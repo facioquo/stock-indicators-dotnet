@@ -9,7 +9,7 @@ public record IndicatorResult
     /// <summary>
     /// The <see cref="ChartPane"/> value for a result drawn on the price axis.
     /// </summary>
-    public const string PricePane = "Price";
+    public static string PricePane { get; } = "Price";
 
     /// <summary>
     /// Gets or sets the display name of the result.
