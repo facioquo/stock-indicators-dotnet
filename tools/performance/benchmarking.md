@@ -49,6 +49,7 @@ Useful but intentionally **not** committed as baselines. Run ad-hoc with `--filt
 
 - `StyleComparison` (`Perf.StyleComparison.cs`) — cross-style ratio view; overlaps the core three suites, so it adds no new regression signal.
 - `StreamExternal` (`Perf.StreamExternal.cs`) — EMA series-vs-stream microcheck.
+- `StreamCrossover` (`Perf.StreamCrossover.cs`) — cost of one new bar at each history length: re-running Series versus adding to a warm hub. It's the evidence for the incremental-arrival guidance in `docs/guide/styles/index.md`.
 - `ManualTestDirect` (`Perf.ManualTestDirect.cs`) — large-N spot harness (below).
 
 ## Manual / large-N spot harness
