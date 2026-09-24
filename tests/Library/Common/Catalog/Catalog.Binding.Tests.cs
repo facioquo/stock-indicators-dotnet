@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Reflection;
 
 namespace Catalogging;
@@ -9,6 +10,7 @@ namespace Catalogging;
 /// - each <c>Parameters[].ParameterName</c> resolves to a method parameter, in order
 /// - each <c>Parameters[].IsRequired</c> agrees with whether C# lets a caller omit it
 ///   and still get the behavior the listing describes
+/// - each parameter the method takes as an enum lists that enum's values in <c>EnumOptions</c>
 /// </summary>
 /// <remarks>
 /// These names are plain strings in the <c>*.Catalog.cs</c> definitions, so the
@@ -237,6 +239,82 @@ public class CatalogBindingTests : TestBase
           + "the listing describes; catalog-driven code generation reads it to decide whether to "
           + "emit one, so an understated value produces source that does not compile and a default "
           + "the shorter overload ignores produces a silently different indicator");
+    }
+
+    [TestMethod]
+    public void EveryEnumParameterListsItsValues()
+    {
+        List<string> violations = [];
+        int enumParameters = 0;
+
+        foreach (IndicatorListing listing in Catalog.Get())
+        {
+            if (listing.Parameters is null or { Count: 0 })
+            {
+                continue;
+            }
+
+            string[] catalogNames = listing.Parameters
+                .Select(static p => p.ParameterName)
+                .ToArray();
+
+            MethodInfo method = CatalogReflection.GetOverloads(listing.MethodName)
+                .FirstOrDefault(m => CatalogReflection.IsContiguousRun(
+                    catalogNames, CatalogReflection.GetParameterNames(m)));
+
+            if (method is null)
+            {
+                continue; // reported by EveryParameterNameMatchesMethodSignature
+            }
+
+            string identity = CatalogReflection.Describe(listing);
+            int offset = CatalogReflection.IndexOfRun(
+                catalogNames, CatalogReflection.GetParameterNames(method));
+
+            for (int i = 0; i < listing.Parameters.Count; i++)
+            {
+                IndicatorParam param = listing.Parameters[i];
+                Type clrType = method.GetParameters()[offset + i].ParameterType;
+                Type enumType = Nullable.GetUnderlyingType(clrType) ?? clrType;
+
+                if (!enumType.IsEnum)
+                {
+                    if (param.DataType == "enum" || param.EnumOptions is not null)
+                    {
+                        violations.Add(
+                            $"{identity}: '{param.ParameterName}' is catalogued as an enum, "
+                          + $"but '{listing.MethodName}' takes {clrType.Name}");
+                    }
+
+                    continue;
+                }
+
+                enumParameters++;
+
+                Dictionary<int, string> expected = Enum.GetValues(enumType)
+                    .Cast<object>()
+                    .ToDictionary(
+                        static v => Convert.ToInt32(v, CultureInfo.InvariantCulture),
+                        static v => v.ToString()!);
+
+                if (param.DataType != "enum"
+                 || param.EnumOptions?.OrderBy(static kv => kv.Key)
+                        .SequenceEqual(expected.OrderBy(static kv => kv.Key)) != true)
+                {
+                    violations.Add(
+                        $"{identity}: '{param.ParameterName}' takes {enumType.Name}, but is catalogued "
+                      + $"as '{param.DataType}' with options "
+                      + $"[{string.Join(", ", (param.EnumOptions ?? []).Select(static kv => $"{kv.Key}={kv.Value}"))}]");
+                }
+            }
+        }
+
+        enumParameters.Should().BePositive("the catalog lists indicators that take enum parameters");
+
+        string.Join(Environment.NewLine, violations).Should().BeEmpty(
+            "a parameter whose method takes an enum must be catalogued through AddEnumParameter, "
+          + "so EnumOptions names every value the method accepts; without it a catalog-driven "
+          + "consumer can only offer an unvalidated number");
     }
 
     [TestMethod]

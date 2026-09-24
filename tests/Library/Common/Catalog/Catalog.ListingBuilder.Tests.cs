@@ -7,6 +7,7 @@ namespace Catalogging;
 /// - required fields (name/id/results)
 /// - duplicate parameters/results handling
 /// - multiple non-reusable results support
+/// - inheriting a base listing copies every member, without sharing it
 /// </summary>
 [TestClass]
 public class CatalogListingBuilderTests : TestBase
@@ -146,5 +147,30 @@ public class CatalogListingBuilderTests : TestBase
         result.Should().NotBeNull();
         result.Results.Should().HaveCount(2);
         result.Results.Should().AllSatisfy(static r => r.IsReusable.Should().BeFalse());
+    }
+
+    [TestMethod]
+    public void InheritedListingCopiesEveryMember()
+    {
+        IndicatorListing common = new CatalogListingBuilder()
+            .WithName("Test Indicator")
+            .WithId("TEST")
+            .WithCategory(Category.PriceTrend)
+            .AddParameter<int>("lookbackPeriods", "Lookback Period", "Test description",
+                isRequired: true, defaultValue: 14, minimum: 1, maximum: 250)
+            .AddEnumParameter<EndType>("endType", "End Type", defaultValue: EndType.HighLow)
+            .AddResult("TestResult", "Test Result", ResultType.Channel, isReusable: true)
+            .Build();
+
+        IndicatorListing series = new CatalogListingBuilder(common)
+            .WithStyle(Style.Series)
+            .WithMethodName("ToTest")
+            .Build();
+
+        series.Parameters.Should().BeEquivalentTo(common.Parameters);
+        series.Results.Should().BeEquivalentTo(common.Results);
+
+        series.Parameters[1].EnumOptions.Should()
+            .NotBeSameAs(common.Parameters[1].EnumOptions);
     }
 }

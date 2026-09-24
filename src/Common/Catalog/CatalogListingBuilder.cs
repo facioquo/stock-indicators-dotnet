@@ -41,33 +41,21 @@ internal class CatalogListingBuilder
         _methodName = baseListing.MethodName;
         CurrentStyle = baseListing.Style;
 
-        // Deep copy parameters to avoid shared references
+        // `with` copies every property, so one added later is never silently dropped;
+        // EnumOptions is a mutable dictionary, so each copy gets its own.
         if (baseListing.Parameters != null)
         {
             foreach (IndicatorParam param in baseListing.Parameters)
             {
-                _parameters.Add(new IndicatorParam {
-                    ParameterName = param.ParameterName,
-                    DisplayName = param.DisplayName,
-                    Description = param.Description,
-                    DataType = param.DataType,
-                    IsRequired = param.IsRequired,
-                    DefaultValue = param.DefaultValue,
-                    Minimum = param.Minimum,
-                    Maximum = param.Maximum
+                _parameters.Add(param with {
+                    EnumOptions = param.EnumOptions is null ? null : new(param.EnumOptions)
                 });
             }
         }
 
-        // Deep copy results to avoid shared references
         foreach (IndicatorResult result in baseListing.Results)
         {
-            _results.Add(new IndicatorResult {
-                DataName = result.DataName,
-                DisplayName = result.DisplayName,
-                DataType = result.DataType,
-                IsReusable = result.IsReusable
-            });
+            _results.Add(result with { });
         }
     }
 
