@@ -60,7 +60,7 @@ Start with **Batch (Series)** style unless you have a specific need for incremen
 
 ### Bars that arrive one at a time
 
-Don't re-run a Series method for every new bar. Its cost grows with the history it recalculates, while a stream hub's cost per new bar stays flat, and the hub gets cheaper after only a few dozen bars of history. Measured for EMA, SMA, RSI and MACD, the Series method catches up with the hub at about 12 to 25 bars. At 1,000 bars it costs 40 to 110 times as much per bar. To measure it on your own hardware, run the `StreamCrossover` benchmark in `tools/performance`.
+Don't re-run a Series method for every new bar. Its cost grows with the history it recalculates, while a stream hub's cost per new bar stays flat. For EMA, SMA, RSI and MACD, the hub is already cheaper once the history passes about 12 to 20 bars, and at 1,000 bars the Series method costs 40 to 110 times as much per bar. To measure it on your own hardware, run the `StreamCrossover` benchmark in `tools/performance`.
 
 ## Getting started
 
