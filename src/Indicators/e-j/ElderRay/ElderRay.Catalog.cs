@@ -11,10 +11,10 @@ public static partial class ElderRay
             .WithId("ELDER-RAY")
             .WithCategory(Category.PriceTrend)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", defaultValue: 13, minimum: 1, maximum: 250)
-            .AddResult(nameof(ElderRayResult.Ema), "EMA", ResultType.Default)
-            .AddResult(nameof(ElderRayResult.BullPower), "Bull Power", ResultType.Default)
-            .AddResult(nameof(ElderRayResult.BearPower), "Bear Power", ResultType.Default)
-            .AddResult(nameof(ElderRayResult.Value), "Elder Ray", ResultType.Default, isReusable: true) // Calculated value (BullPower + BearPower) for IReusable.Value
+            .AddResult(nameof(ElderRayResult.Ema), "EMA", IndicatorResult.PricePane, ResultType.Default)
+            .AddResult(nameof(ElderRayResult.BullPower), "Bull Power", "ElderRay", ResultType.Default)
+            .AddResult(nameof(ElderRayResult.BearPower), "Bear Power", "ElderRay", ResultType.Default)
+            .AddResult(nameof(ElderRayResult.Value), "Elder Ray", "ElderRay", ResultType.Default, isReusable: true) // Calculated value (BullPower + BearPower) for IReusable.Value
             .Build();
 
     /// <summary>

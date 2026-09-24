@@ -13,10 +13,10 @@ public static partial class Keltner
             .AddParameter<int>("emaPeriods", "EMA Periods", defaultValue: 20, minimum: 2, maximum: 250)
             .AddParameter<double>("multiplier", "Multiplier", defaultValue: 2.0, minimum: 0.01, maximum: 10.0)
             .AddParameter<int>("atrPeriods", "ATR Periods", defaultValue: 10, minimum: 2, maximum: 250)
-            .AddResult(nameof(KeltnerResult.UpperBand), "Upper Band", ResultType.Default)
-            .AddResult(nameof(KeltnerResult.Centerline), "Centerline", ResultType.Default, isReusable: true)
-            .AddResult(nameof(KeltnerResult.LowerBand), "Lower Band", ResultType.Default)
-            .AddResult(nameof(KeltnerResult.Width), "Width", ResultType.Default)
+            .AddResult(nameof(KeltnerResult.UpperBand), "Upper Band", IndicatorResult.PricePane, ResultType.Default)
+            .AddResult(nameof(KeltnerResult.Centerline), "Centerline", IndicatorResult.PricePane, ResultType.Default, isReusable: true)
+            .AddResult(nameof(KeltnerResult.LowerBand), "Lower Band", IndicatorResult.PricePane, ResultType.Default)
+            .AddResult(nameof(KeltnerResult.Width), "Width", "Width", ResultType.Default)
             .Build();
 
     /// <summary>

@@ -252,18 +252,21 @@ internal class CatalogListingBuilder
     /// literal so a renamed result property fails the build.
     /// </param>
     /// <param name="displayName">Display name of the result.</param>
+    /// <param name="chartPane">Chart pane: <see cref="IndicatorResult.PricePane"/>, a named pane, or <c>null</c> when not charted.</param>
     /// <param name="dataType">Type of the result.</param>
     /// <param name="isReusable">Whether this is the reusable result.</param>
     /// <returns>Builder instance for method chaining.</returns>
     internal CatalogListingBuilder AddResult(
         string dataName,
         string displayName,
+        string? chartPane,
         ResultType dataType = ResultType.Default,
         bool isReusable = false)
     {
         _results.Add(new IndicatorResult {
             DataName = dataName,
             DisplayName = displayName,
+            ChartPane = chartPane,
             DataType = dataType,
             IsReusable = isReusable
         });
@@ -277,9 +280,9 @@ internal class CatalogListingBuilder
     /// <returns>Builder instance for method chaining.</returns>
     internal CatalogListingBuilder AddPriceHlcResult()
     {
-        AddResult("High", "High", ResultType.Default, false);
-        AddResult("Low", "Low", ResultType.Default, false);
-        AddResult("Close", "Close", ResultType.Default, false);
+        AddResult("High", "High", IndicatorResult.PricePane, ResultType.Default, false);
+        AddResult("Low", "Low", IndicatorResult.PricePane, ResultType.Default, false);
+        AddResult("Close", "Close", IndicatorResult.PricePane, ResultType.Default, false);
         return this;
     }
 

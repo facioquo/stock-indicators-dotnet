@@ -10,10 +10,10 @@ public static partial class Gator
             .WithName("Gator Oscillator")
             .WithId("GATOR")
             .WithCategory(Category.Oscillator)
-            .AddResult(nameof(GatorResult.Upper), "Upper", ResultType.Default, false)
-            .AddResult(nameof(GatorResult.Lower), "Lower", ResultType.Default, false)
-            .AddResult(nameof(GatorResult.UpperIsExpanding), "Upper Is Expanding", ResultType.Default, false)
-            .AddResult(nameof(GatorResult.LowerIsExpanding), "Lower Is Expanding", ResultType.Default, false)
+            .AddResult(nameof(GatorResult.Upper), "Upper", "Gator", ResultType.Default, false)
+            .AddResult(nameof(GatorResult.Lower), "Lower", "Gator", ResultType.Default, false)
+            .AddResult(nameof(GatorResult.UpperIsExpanding), "Upper Is Expanding", null, ResultType.Default, false)
+            .AddResult(nameof(GatorResult.LowerIsExpanding), "Lower Is Expanding", null, ResultType.Default, false)
             .Build();
 
     /// <summary>

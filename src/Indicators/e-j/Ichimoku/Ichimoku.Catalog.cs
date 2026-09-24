@@ -13,11 +13,11 @@ public static partial class Ichimoku
             .AddParameter<int>("tenkanPeriods", "Tenkan Periods", defaultValue: 9, minimum: 1, maximum: 250)
             .AddParameter<int>("kijunPeriods", "Kijun Periods", defaultValue: 26, minimum: 2, maximum: 250)
             .AddParameter<int>("senkouBPeriods", "Senkou B Periods", defaultValue: 52, minimum: 3, maximum: 250)
-            .AddResult(nameof(IchimokuResult.TenkanSen), "Tenkan-sen", ResultType.Default, isReusable: true)
-            .AddResult(nameof(IchimokuResult.KijunSen), "Kijun-sen", ResultType.Default)
-            .AddResult(nameof(IchimokuResult.SenkouSpanA), "Senkou Span A", ResultType.Default)
-            .AddResult(nameof(IchimokuResult.SenkouSpanB), "Senkou Span B", ResultType.Default)
-            .AddResult(nameof(IchimokuResult.ChikouSpan), "Chikou Span", ResultType.Default)
+            .AddResult(nameof(IchimokuResult.TenkanSen), "Tenkan-sen", IndicatorResult.PricePane, ResultType.Default, isReusable: true)
+            .AddResult(nameof(IchimokuResult.KijunSen), "Kijun-sen", IndicatorResult.PricePane, ResultType.Default)
+            .AddResult(nameof(IchimokuResult.SenkouSpanA), "Senkou Span A", IndicatorResult.PricePane, ResultType.Default)
+            .AddResult(nameof(IchimokuResult.SenkouSpanB), "Senkou Span B", IndicatorResult.PricePane, ResultType.Default)
+            .AddResult(nameof(IchimokuResult.ChikouSpan), "Chikou Span", IndicatorResult.PricePane, ResultType.Default)
             .Build();
 
     /// <summary>

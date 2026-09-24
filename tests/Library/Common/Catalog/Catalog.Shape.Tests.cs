@@ -84,6 +84,7 @@ public class CatalogShapeTests : TestBase
                 sb.Append("  - ").Append(result.DataName)
                     .Append(" : ").Append(result.DataType)
                     .Append(" : reusable=").Append(result.IsReusable ? "true" : "false")
+                    .Append(" : pane=").Append(result.ChartPane ?? "(none)")
                     .Append('\n');
             }
 

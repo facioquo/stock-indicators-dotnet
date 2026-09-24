@@ -12,8 +12,8 @@ public static partial class VolatilityStop
             .WithCategory(Category.StopAndReverse)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", description: "Number of periods for the volatility calculation", isRequired: false, defaultValue: 7, minimum: 1, maximum: 50)
             .AddParameter<double>("multiplier", "Multiplier", description: "Multiplier for the volatility calculation", isRequired: false, defaultValue: 3.0, minimum: 0.1, maximum: 10.0)
-            .AddResult(nameof(VolatilityStopResult.Sar), "Stop and Reverse", ResultType.Default, isReusable: true)
-            .AddResult(nameof(VolatilityStopResult.IsStop), "Is Stop", ResultType.Default)
+            .AddResult(nameof(VolatilityStopResult.Sar), "Stop and Reverse", IndicatorResult.PricePane, ResultType.Default, isReusable: true)
+            .AddResult(nameof(VolatilityStopResult.IsStop), "Is Stop", null, ResultType.Default)
             .Build();
 
     /// <summary>

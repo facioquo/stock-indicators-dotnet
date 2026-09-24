@@ -92,6 +92,9 @@ Each `IndicatorListing` describes one indicator-and-style combination. This is t
 | `DataName` | `string` | Result property name (e.g. `"Ema"`) |
 | `DataType` | `ResultType` | Charting/display hint |
 | `IsReusable` | `bool` | `true` for the field exposed as the chainable `IReusable.Value` |
+| `ChartPane` | `string?` | Chart pane the result draws in: `"Price"` (`IndicatorResult.PricePane`) for the price axis, another name for a separate pane, `null` when not charted |
+
+Results with the same `ChartPane` share units, so group a listing's results by it and draw each group as one chart. Bollinger Bands, for example, puts its bands on `"Price"` and `PercentB`, `ZScore` and `Width` each in a pane of its own. A `null` pane marks a flag or pattern code, such as a PSAR reversal, which has no axis to draw on.
 
 Example — inspect an indicator's inputs:
 

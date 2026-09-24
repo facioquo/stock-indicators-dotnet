@@ -14,13 +14,13 @@ public static partial class Beta
             .AddSeriesParameter("sourceMrkt", "Market Prices")
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", isRequired: true, defaultValue: 50, minimum: 1, maximum: 250)
             .AddEnumParameter<BetaType>("type", "Beta Type", defaultValue: BetaType.Standard)
-            .AddResult(nameof(BetaResult.Beta), "Beta", ResultType.Default, isReusable: true)
-            .AddResult(nameof(BetaResult.BetaUp), "Beta Up", ResultType.Default)
-            .AddResult(nameof(BetaResult.BetaDown), "Beta Down", ResultType.Default)
-            .AddResult(nameof(BetaResult.Ratio), "Ratio", ResultType.Default)
-            .AddResult(nameof(BetaResult.Convexity), "Convexity", ResultType.Default)
-            .AddResult(nameof(BetaResult.ReturnsEval), "Returns Eval", ResultType.Default)
-            .AddResult(nameof(BetaResult.ReturnsMrkt), "Returns Mrkt", ResultType.Default)
+            .AddResult(nameof(BetaResult.Beta), "Beta", "Beta", ResultType.Default, isReusable: true)
+            .AddResult(nameof(BetaResult.BetaUp), "Beta Up", "Beta", ResultType.Default)
+            .AddResult(nameof(BetaResult.BetaDown), "Beta Down", "Beta", ResultType.Default)
+            .AddResult(nameof(BetaResult.Ratio), "Ratio", "Ratio", ResultType.Default)
+            .AddResult(nameof(BetaResult.Convexity), "Convexity", "Convexity", ResultType.Default)
+            .AddResult(nameof(BetaResult.ReturnsEval), "Returns Eval", "Returns", ResultType.Default)
+            .AddResult(nameof(BetaResult.ReturnsMrkt), "Returns Mrkt", "Returns", ResultType.Default)
             .Build();
 
     /// <summary>

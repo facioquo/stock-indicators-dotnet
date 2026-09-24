@@ -12,8 +12,8 @@ public static partial class Awesome
             .WithCategory(Category.Oscillator)
             .AddParameter<int>("fastPeriods", "Fast Periods", defaultValue: 5, minimum: 1, maximum: 100)
             .AddParameter<int>("slowPeriods", "Slow Periods", defaultValue: 34, minimum: 1, maximum: 250)
-            .AddResult(nameof(AwesomeResult.Oscillator), "Oscillator", ResultType.Default, isReusable: true)
-            .AddResult(nameof(AwesomeResult.Normalized), "Normalized", ResultType.Default)
+            .AddResult(nameof(AwesomeResult.Oscillator), "Oscillator", "Oscillator", ResultType.Default, isReusable: true)
+            .AddResult(nameof(AwesomeResult.Normalized), "Normalized", "Normalized", ResultType.Default)
             .Build();
 
     /// <summary>

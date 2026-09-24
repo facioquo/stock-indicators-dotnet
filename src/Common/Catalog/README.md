@@ -16,7 +16,7 @@ internal static readonly IndicatorListing SeriesListing = new CatalogListingBuil
         .AddParameter<int>("lookbackPeriods", "Lookback Period",
                 description: "Number of periods for the EMA calculation",
                 isRequired: true, defaultValue: 20, minimum: 2, maximum: 250)
-        .AddResult(nameof(EmaResult.Ema), "EMA", ResultType.Default, isReusable: true)
+        .AddResult(nameof(EmaResult.Ema), "EMA", IndicatorResult.PricePane, ResultType.Default, isReusable: true)
         .Build();
 ```
 

@@ -23,7 +23,7 @@ public class CatalogListingBuilderTests : TestBase
             .WithCategory(Category.MovingAverage)
             .AddParameter<int>("lookbackPeriods", "Lookback Period",
                 description: "Test description", isRequired: true)
-            .AddResult("TestResult", "Test Result", ResultType.Default, isReusable: true)
+            .AddResult("TestResult", "Test Result", IndicatorResult.PricePane, ResultType.Default, isReusable: true)
             .Build();        // Assert
         listing.Name.Should().Be("Test Indicator");
         listing.Uiid.Should().Be("TEST");
@@ -57,7 +57,7 @@ public class CatalogListingBuilderTests : TestBase
             .WithId("TEST")
             .WithStyle(Style.Series)
             .WithCategory(Category.MovingAverage)
-            .AddResult("TestResult", "Test Result", ResultType.Default, isReusable: true)
+            .AddResult("TestResult", "Test Result", IndicatorResult.PricePane, ResultType.Default, isReusable: true)
             .AddPriceHlcResult()
             .Build();
 
@@ -78,7 +78,7 @@ public class CatalogListingBuilderTests : TestBase
                 .WithId("TEST")
                 .WithStyle(Style.Series)
                 .WithCategory(Category.MovingAverage)
-                .AddResult("TestResult", "Test Result", ResultType.Default, isReusable: true)
+                .AddResult("TestResult", "Test Result", IndicatorResult.PricePane, ResultType.Default, isReusable: true)
                 .Build());
 
     [TestMethod]
@@ -89,7 +89,7 @@ public class CatalogListingBuilderTests : TestBase
                 .WithName("Test Indicator")
                 .WithStyle(Style.Series)
                 .WithCategory(Category.MovingAverage)
-                .AddResult("TestResult", "Test Result", ResultType.Default, isReusable: true)
+                .AddResult("TestResult", "Test Result", IndicatorResult.PricePane, ResultType.Default, isReusable: true)
                 .Build());
 
     [TestMethod]
@@ -114,7 +114,7 @@ public class CatalogListingBuilderTests : TestBase
                 .WithCategory(Category.MovingAverage)
                 .AddParameter<int>("param", "Parameter 1")
                 .AddParameter<string>("param", "Parameter 2")
-                .AddResult("TestResult", "Test Result", ResultType.Default, isReusable: true)
+                .AddResult("TestResult", "Test Result", IndicatorResult.PricePane, ResultType.Default, isReusable: true)
                 .Build());
 
     [TestMethod]
@@ -126,8 +126,8 @@ public class CatalogListingBuilderTests : TestBase
                 .WithId("TEST")
                 .WithStyle(Style.Series)
                 .WithCategory(Category.MovingAverage)
-                .AddResult("result", "Result 1", ResultType.Default, isReusable: true)
-                .AddResult("result", "Result 2", ResultType.Default)
+                .AddResult("result", "Result 1", IndicatorResult.PricePane, ResultType.Default, isReusable: true)
+                .AddResult("result", "Result 2", IndicatorResult.PricePane, ResultType.Default)
                 .Build());
 
     [TestMethod]
@@ -139,8 +139,8 @@ public class CatalogListingBuilderTests : TestBase
             .WithId("TEST")
             .WithStyle(Style.Series)
             .WithCategory(Category.MovingAverage)
-            .AddResult("result1", "Result 1", ResultType.Default)
-            .AddResult("result2", "Result 2", ResultType.Default)
+            .AddResult("result1", "Result 1", IndicatorResult.PricePane, ResultType.Default)
+            .AddResult("result2", "Result 2", IndicatorResult.PricePane, ResultType.Default)
             .Build();
 
         // Assert - This should now be valid for ISeries models
@@ -159,7 +159,7 @@ public class CatalogListingBuilderTests : TestBase
             .AddParameter<int>("lookbackPeriods", "Lookback Period", "Test description",
                 isRequired: true, defaultValue: 14, minimum: 1, maximum: 250)
             .AddEnumParameter<EndType>("endType", "End Type", defaultValue: EndType.HighLow)
-            .AddResult("TestResult", "Test Result", ResultType.Channel, isReusable: true)
+            .AddResult("TestResult", "Test Result", IndicatorResult.PricePane, ResultType.Channel, isReusable: true)
             .Build();
 
         IndicatorListing series = new CatalogListingBuilder(common)

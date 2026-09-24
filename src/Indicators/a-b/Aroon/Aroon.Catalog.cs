@@ -11,9 +11,9 @@ public static partial class Aroon
             .WithId("AROON")
             .WithCategory(Category.PriceTrend)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", defaultValue: 25, minimum: 1, maximum: 250)
-            .AddResult(nameof(AroonResult.AroonUp), "Aroon Up", ResultType.Default)
-            .AddResult(nameof(AroonResult.AroonDown), "Aroon Down", ResultType.Default)
-            .AddResult(nameof(AroonResult.Oscillator), "Oscillator", ResultType.Default, isReusable: true)
+            .AddResult(nameof(AroonResult.AroonUp), "Aroon Up", "Aroon", ResultType.Default)
+            .AddResult(nameof(AroonResult.AroonDown), "Aroon Down", "Aroon", ResultType.Default)
+            .AddResult(nameof(AroonResult.Oscillator), "Oscillator", "Oscillator", ResultType.Default, isReusable: true)
             .Build();
 
     /// <summary>

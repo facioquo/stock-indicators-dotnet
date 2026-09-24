@@ -12,12 +12,12 @@ public static partial class RenkoAtr
             .WithCategory(Category.PriceTrend)
             .AddParameter<int>("atrPeriods", "ATR Periods", description: "Number of periods for the ATR calculation", isRequired: false, defaultValue: 14, minimum: 1, maximum: 100)
             .AddEnumParameter<EndType>("endType", "End Type", description: "Type of price to use for the calculation", isRequired: false, defaultValue: EndType.Close)
-            .AddResult(nameof(RenkoResult.Open), "Open", ResultType.Default)
-            .AddResult(nameof(RenkoResult.High), "High", ResultType.Default)
-            .AddResult(nameof(RenkoResult.Low), "Low", ResultType.Default)
-            .AddResult(nameof(RenkoResult.Close), "Close", ResultType.Default, isReusable: true)
-            .AddResult(nameof(RenkoResult.Volume), "Volume", ResultType.Default)
-            .AddResult(nameof(RenkoResult.IsUp), "Is Up", ResultType.Default)
+            .AddResult(nameof(RenkoResult.Open), "Open", IndicatorResult.PricePane, ResultType.Default)
+            .AddResult(nameof(RenkoResult.High), "High", IndicatorResult.PricePane, ResultType.Default)
+            .AddResult(nameof(RenkoResult.Low), "Low", IndicatorResult.PricePane, ResultType.Default)
+            .AddResult(nameof(RenkoResult.Close), "Close", IndicatorResult.PricePane, ResultType.Default, isReusable: true)
+            .AddResult(nameof(RenkoResult.Volume), "Volume", "Volume", ResultType.Default)
+            .AddResult(nameof(RenkoResult.IsUp), "Is Up", null, ResultType.Default)
             .Build();
 
     /// <summary>

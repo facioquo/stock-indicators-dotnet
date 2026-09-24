@@ -12,9 +12,9 @@ public static partial class StdDevChannels
             .WithCategory(Category.PriceChannel)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", description: "Number of periods for the standard deviation calculation", isRequired: false, defaultValue: 20, minimum: 1, maximum: 250)
             .AddParameter<double>("stdDeviations", "Standard Deviations", description: "Number of standard deviations for the channels", isRequired: false, defaultValue: 2.0, minimum: 0.01, maximum: 10.0)
-            .AddResult(nameof(StdDevChannelsResult.UpperChannel), "Upper Channel", ResultType.Default)
-            .AddResult(nameof(StdDevChannelsResult.Centerline), "Centerline", ResultType.Default, isReusable: true)
-            .AddResult(nameof(StdDevChannelsResult.LowerChannel), "Lower Channel", ResultType.Default)
+            .AddResult(nameof(StdDevChannelsResult.UpperChannel), "Upper Channel", IndicatorResult.PricePane, ResultType.Default)
+            .AddResult(nameof(StdDevChannelsResult.Centerline), "Centerline", IndicatorResult.PricePane, ResultType.Default, isReusable: true)
+            .AddResult(nameof(StdDevChannelsResult.LowerChannel), "Lower Channel", IndicatorResult.PricePane, ResultType.Default)
             .Build();
 
     /// <summary>

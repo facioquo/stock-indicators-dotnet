@@ -11,8 +11,8 @@ public static partial class FisherTransform
             .WithId("FISHER")
             .WithCategory(Category.PriceTransform)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", defaultValue: 10, minimum: 1, maximum: 250)
-            .AddResult(nameof(FisherTransformResult.Fisher), "Fisher", ResultType.Default, isReusable: true)
-            .AddResult(nameof(FisherTransformResult.Trigger), "Trigger", ResultType.Default)
+            .AddResult(nameof(FisherTransformResult.Fisher), "Fisher", "Fisher", ResultType.Default, isReusable: true)
+            .AddResult(nameof(FisherTransformResult.Trigger), "Trigger", "Fisher", ResultType.Default)
             .Build();
 
     /// <summary>

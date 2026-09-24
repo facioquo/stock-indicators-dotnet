@@ -12,13 +12,13 @@ public static partial class PivotPoints
             .WithCategory(Category.PriceTrend)
             .AddEnumParameter<BarInterval>("windowSize", "Window Size", description: "Size of the window for pivot calculation", isRequired: false, defaultValue: BarInterval.Month)
             .AddEnumParameter<PivotPointType>("pointType", "Point Type", description: "Type of pivot points to calculate", isRequired: false, defaultValue: PivotPointType.Standard)
-            .AddResult(nameof(PivotPointsResult.R3), "Resistance 3", ResultType.Default)
-            .AddResult(nameof(PivotPointsResult.R2), "Resistance 2", ResultType.Default)
-            .AddResult(nameof(PivotPointsResult.R1), "Resistance 1", ResultType.Default)
-            .AddResult(nameof(PivotPointsResult.PP), "Pivot Point", ResultType.Default, isReusable: true)
-            .AddResult(nameof(PivotPointsResult.S1), "Support 1", ResultType.Default)
-            .AddResult(nameof(PivotPointsResult.S2), "Support 2", ResultType.Default)
-            .AddResult(nameof(PivotPointsResult.S3), "Support 3", ResultType.Default)
+            .AddResult(nameof(PivotPointsResult.R3), "Resistance 3", IndicatorResult.PricePane, ResultType.Default)
+            .AddResult(nameof(PivotPointsResult.R2), "Resistance 2", IndicatorResult.PricePane, ResultType.Default)
+            .AddResult(nameof(PivotPointsResult.R1), "Resistance 1", IndicatorResult.PricePane, ResultType.Default)
+            .AddResult(nameof(PivotPointsResult.PP), "Pivot Point", IndicatorResult.PricePane, ResultType.Default, isReusable: true)
+            .AddResult(nameof(PivotPointsResult.S1), "Support 1", IndicatorResult.PricePane, ResultType.Default)
+            .AddResult(nameof(PivotPointsResult.S2), "Support 2", IndicatorResult.PricePane, ResultType.Default)
+            .AddResult(nameof(PivotPointsResult.S3), "Support 3", IndicatorResult.PricePane, ResultType.Default)
             .Build();
 
     /// <summary>

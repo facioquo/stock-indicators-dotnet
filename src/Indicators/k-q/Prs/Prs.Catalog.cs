@@ -22,8 +22,8 @@ public static partial class Prs
             .AddSeriesParameter("sourceEval", "Source Evaluated", description: "Source data to be evaluated")
             .AddSeriesParameter("sourceBase", "Source Base", description: "Base source data for comparison")
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", description: "Number of periods for the PRS calculation", isRequired: true, defaultValue: 20, minimum: 1, maximum: 250)
-            .AddResult(nameof(PrsResult.Prs), "PRS", ResultType.Default, isReusable: true)
-            .AddResult(nameof(PrsResult.PrsPercent), "PRS %", ResultType.Default)
+            .AddResult(nameof(PrsResult.Prs), "PRS", "Prs", ResultType.Default, isReusable: true)
+            .AddResult(nameof(PrsResult.PrsPercent), "PRS %", "PrsPercent", ResultType.Default)
             .Build();
 
     /// <summary>

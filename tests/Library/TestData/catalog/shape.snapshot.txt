@@ -3,54 +3,54 @@ Method: ToAdl
 Parameters:
   (none)
 Results:
-  - Adl : Default : reusable=true
+  - Adl : Default : reusable=true : pane=Adl
 
 ### ADL / Buffer
 Method: ToAdlList
 Parameters:
   (none)
 Results:
-  - Adl : Default : reusable=true
+  - Adl : Default : reusable=true : pane=Adl
 
 ### ADL / Stream
 Method: ToAdlHub
 Parameters:
   (none)
 Results:
-  - Adl : Default : reusable=true
+  - Adl : Default : reusable=true : pane=Adl
 
 ### ADX / Series
 Method: ToAdx
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Pdi : Default : reusable=false
-  - Mdi : Default : reusable=false
-  - Dx : Default : reusable=false
-  - Adx : Default : reusable=true
-  - Adxr : Default : reusable=false
+  - Pdi : Default : reusable=false : pane=Adx
+  - Mdi : Default : reusable=false : pane=Adx
+  - Dx : Default : reusable=false : pane=Adx
+  - Adx : Default : reusable=true : pane=Adx
+  - Adxr : Default : reusable=false : pane=Adx
 
 ### ADX / Buffer
 Method: ToAdxList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Pdi : Default : reusable=false
-  - Mdi : Default : reusable=false
-  - Dx : Default : reusable=false
-  - Adx : Default : reusable=true
-  - Adxr : Default : reusable=false
+  - Pdi : Default : reusable=false : pane=Adx
+  - Mdi : Default : reusable=false : pane=Adx
+  - Dx : Default : reusable=false : pane=Adx
+  - Adx : Default : reusable=true : pane=Adx
+  - Adxr : Default : reusable=false : pane=Adx
 
 ### ADX / Stream
 Method: ToAdxHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Pdi : Default : reusable=false
-  - Mdi : Default : reusable=false
-  - Dx : Default : reusable=false
-  - Adx : Default : reusable=true
-  - Adxr : Default : reusable=false
+  - Pdi : Default : reusable=false : pane=Adx
+  - Mdi : Default : reusable=false : pane=Adx
+  - Dx : Default : reusable=false : pane=Adx
+  - Adx : Default : reusable=true : pane=Adx
+  - Adxr : Default : reusable=false : pane=Adx
 
 ### ALLIGATOR / Series
 Method: ToAlligator
@@ -62,9 +62,9 @@ Parameters:
   - lipsPeriods : Int32 : optional
   - lipsOffset : Int32 : optional
 Results:
-  - Jaw : Default : reusable=false
-  - Teeth : Default : reusable=false
-  - Lips : Default : reusable=true
+  - Jaw : Default : reusable=false : pane=Price
+  - Teeth : Default : reusable=false : pane=Price
+  - Lips : Default : reusable=true : pane=Price
 
 ### ALLIGATOR / Buffer
 Method: ToAlligatorList
@@ -76,9 +76,9 @@ Parameters:
   - lipsPeriods : Int32 : optional
   - lipsOffset : Int32 : optional
 Results:
-  - Jaw : Default : reusable=false
-  - Teeth : Default : reusable=false
-  - Lips : Default : reusable=true
+  - Jaw : Default : reusable=false : pane=Price
+  - Teeth : Default : reusable=false : pane=Price
+  - Lips : Default : reusable=true : pane=Price
 
 ### ALLIGATOR / Stream
 Method: ToAlligatorHub
@@ -90,9 +90,9 @@ Parameters:
   - lipsPeriods : Int32 : optional
   - lipsOffset : Int32 : optional
 Results:
-  - Jaw : Default : reusable=false
-  - Teeth : Default : reusable=false
-  - Lips : Default : reusable=true
+  - Jaw : Default : reusable=false : pane=Price
+  - Teeth : Default : reusable=false : pane=Price
+  - Lips : Default : reusable=true : pane=Price
 
 ### ALMA / Series
 Method: ToAlma
@@ -101,7 +101,7 @@ Parameters:
   - offset : Double : optional
   - sigma : Double : optional
 Results:
-  - Alma : Default : reusable=true
+  - Alma : Default : reusable=true : pane=Price
 
 ### ALMA / Buffer
 Method: ToAlmaList
@@ -110,7 +110,7 @@ Parameters:
   - offset : Double : optional
   - sigma : Double : optional
 Results:
-  - Alma : Default : reusable=true
+  - Alma : Default : reusable=true : pane=Price
 
 ### ALMA / Stream
 Method: ToAlmaHub
@@ -119,61 +119,61 @@ Parameters:
   - offset : Double : optional
   - sigma : Double : optional
 Results:
-  - Alma : Default : reusable=true
+  - Alma : Default : reusable=true : pane=Price
 
 ### AROON / Series
 Method: ToAroon
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - AroonUp : Default : reusable=false
-  - AroonDown : Default : reusable=false
-  - Oscillator : Default : reusable=true
+  - AroonUp : Default : reusable=false : pane=Aroon
+  - AroonDown : Default : reusable=false : pane=Aroon
+  - Oscillator : Default : reusable=true : pane=Oscillator
 
 ### AROON / Buffer
 Method: ToAroonList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - AroonUp : Default : reusable=false
-  - AroonDown : Default : reusable=false
-  - Oscillator : Default : reusable=true
+  - AroonUp : Default : reusable=false : pane=Aroon
+  - AroonDown : Default : reusable=false : pane=Aroon
+  - Oscillator : Default : reusable=true : pane=Oscillator
 
 ### AROON / Stream
 Method: ToAroonHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - AroonUp : Default : reusable=false
-  - AroonDown : Default : reusable=false
-  - Oscillator : Default : reusable=true
+  - AroonUp : Default : reusable=false : pane=Aroon
+  - AroonDown : Default : reusable=false : pane=Aroon
+  - Oscillator : Default : reusable=true : pane=Oscillator
 
 ### ATR / Series
 Method: ToAtr
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Tr : Default : reusable=false
-  - Atr : Default : reusable=false
-  - Atrp : Default : reusable=true
+  - Tr : Default : reusable=false : pane=Atr
+  - Atr : Default : reusable=false : pane=Atr
+  - Atrp : Default : reusable=true : pane=Atrp
 
 ### ATR / Buffer
 Method: ToAtrList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Tr : Default : reusable=false
-  - Atr : Default : reusable=false
-  - Atrp : Default : reusable=true
+  - Tr : Default : reusable=false : pane=Atr
+  - Atr : Default : reusable=false : pane=Atr
+  - Atrp : Default : reusable=true : pane=Atrp
 
 ### ATR / Stream
 Method: ToAtrHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Tr : Default : reusable=false
-  - Atr : Default : reusable=false
-  - Atrp : Default : reusable=true
+  - Tr : Default : reusable=false : pane=Atr
+  - Atr : Default : reusable=false : pane=Atr
+  - Atrp : Default : reusable=true : pane=Atrp
 
 ### ATR-STOP / Series
 Method: ToAtrStop
@@ -182,10 +182,10 @@ Parameters:
   - multiplier : Double : optional
   - endType : enum : optional
 Results:
-  - AtrStop : Default : reusable=true
-  - BuyStop : Default : reusable=false
-  - SellStop : Default : reusable=false
-  - Atr : Default : reusable=false
+  - AtrStop : Default : reusable=true : pane=Price
+  - BuyStop : Default : reusable=false : pane=Price
+  - SellStop : Default : reusable=false : pane=Price
+  - Atr : Default : reusable=false : pane=Atr
 
 ### ATR-STOP / Buffer
 Method: ToAtrStopList
@@ -194,10 +194,10 @@ Parameters:
   - multiplier : Double : optional
   - endType : enum : optional
 Results:
-  - AtrStop : Default : reusable=true
-  - BuyStop : Default : reusable=false
-  - SellStop : Default : reusable=false
-  - Atr : Default : reusable=false
+  - AtrStop : Default : reusable=true : pane=Price
+  - BuyStop : Default : reusable=false : pane=Price
+  - SellStop : Default : reusable=false : pane=Price
+  - Atr : Default : reusable=false : pane=Atr
 
 ### ATR-STOP / Stream
 Method: ToAtrStopHub
@@ -206,10 +206,10 @@ Parameters:
   - multiplier : Double : optional
   - endType : enum : optional
 Results:
-  - AtrStop : Default : reusable=true
-  - BuyStop : Default : reusable=false
-  - SellStop : Default : reusable=false
-  - Atr : Default : reusable=false
+  - AtrStop : Default : reusable=true : pane=Price
+  - BuyStop : Default : reusable=false : pane=Price
+  - SellStop : Default : reusable=false : pane=Price
+  - Atr : Default : reusable=false : pane=Atr
 
 ### AWESOME / Series
 Method: ToAwesome
@@ -217,8 +217,8 @@ Parameters:
   - fastPeriods : Int32 : optional
   - slowPeriods : Int32 : optional
 Results:
-  - Oscillator : Default : reusable=true
-  - Normalized : Default : reusable=false
+  - Oscillator : Default : reusable=true : pane=Oscillator
+  - Normalized : Default : reusable=false : pane=Normalized
 
 ### AWESOME / Buffer
 Method: ToAwesomeList
@@ -226,8 +226,8 @@ Parameters:
   - fastPeriods : Int32 : optional
   - slowPeriods : Int32 : optional
 Results:
-  - Oscillator : Default : reusable=true
-  - Normalized : Default : reusable=false
+  - Oscillator : Default : reusable=true : pane=Oscillator
+  - Normalized : Default : reusable=false : pane=Normalized
 
 ### AWESOME / Stream
 Method: ToAwesomeHub
@@ -235,29 +235,29 @@ Parameters:
   - fastPeriods : Int32 : optional
   - slowPeriods : Int32 : optional
 Results:
-  - Oscillator : Default : reusable=true
-  - Normalized : Default : reusable=false
+  - Oscillator : Default : reusable=true : pane=Oscillator
+  - Normalized : Default : reusable=false : pane=Normalized
 
 ### BARPART / Series
 Method: ToBarPart
 Parameters:
   - candlePart : enum : required
 Results:
-  - Value : Default : reusable=true
+  - Value : Default : reusable=true : pane=Price
 
 ### BARPART / Buffer
 Method: ToBarPartList
 Parameters:
   - candlePart : enum : required
 Results:
-  - Value : Default : reusable=true
+  - Value : Default : reusable=true : pane=Price
 
 ### BARPART / Stream
 Method: ToBarPartHub
 Parameters:
   - candlePart : enum : required
 Results:
-  - Value : Default : reusable=true
+  - Value : Default : reusable=true : pane=Price
 
 ### BB / Series
 Method: ToBollingerBands
@@ -265,12 +265,12 @@ Parameters:
   - lookbackPeriods : Int32 : optional
   - standardDeviations : Double : optional
 Results:
-  - Sma : Default : reusable=false
-  - UpperBand : Default : reusable=false
-  - LowerBand : Default : reusable=false
-  - PercentB : Default : reusable=true
-  - ZScore : Default : reusable=false
-  - Width : Default : reusable=false
+  - Sma : Default : reusable=false : pane=Price
+  - UpperBand : Default : reusable=false : pane=Price
+  - LowerBand : Default : reusable=false : pane=Price
+  - PercentB : Default : reusable=true : pane=PercentB
+  - ZScore : Default : reusable=false : pane=ZScore
+  - Width : Default : reusable=false : pane=Width
 
 ### BB / Buffer
 Method: ToBollingerBandsList
@@ -278,12 +278,12 @@ Parameters:
   - lookbackPeriods : Int32 : optional
   - standardDeviations : Double : optional
 Results:
-  - Sma : Default : reusable=false
-  - UpperBand : Default : reusable=false
-  - LowerBand : Default : reusable=false
-  - PercentB : Default : reusable=true
-  - ZScore : Default : reusable=false
-  - Width : Default : reusable=false
+  - Sma : Default : reusable=false : pane=Price
+  - UpperBand : Default : reusable=false : pane=Price
+  - LowerBand : Default : reusable=false : pane=Price
+  - PercentB : Default : reusable=true : pane=PercentB
+  - ZScore : Default : reusable=false : pane=ZScore
+  - Width : Default : reusable=false : pane=Width
 
 ### BB / Stream
 Method: ToBollingerBandsHub
@@ -291,12 +291,12 @@ Parameters:
   - lookbackPeriods : Int32 : optional
   - standardDeviations : Double : optional
 Results:
-  - Sma : Default : reusable=false
-  - UpperBand : Default : reusable=false
-  - LowerBand : Default : reusable=false
-  - PercentB : Default : reusable=true
-  - ZScore : Default : reusable=false
-  - Width : Default : reusable=false
+  - Sma : Default : reusable=false : pane=Price
+  - UpperBand : Default : reusable=false : pane=Price
+  - LowerBand : Default : reusable=false : pane=Price
+  - PercentB : Default : reusable=true : pane=PercentB
+  - ZScore : Default : reusable=false : pane=ZScore
+  - Width : Default : reusable=false : pane=Width
 
 ### BETA / Series
 Method: ToBeta
@@ -306,55 +306,55 @@ Parameters:
   - lookbackPeriods : Int32 : required
   - type : enum : optional
 Results:
-  - Beta : Default : reusable=true
-  - BetaUp : Default : reusable=false
-  - BetaDown : Default : reusable=false
-  - Ratio : Default : reusable=false
-  - Convexity : Default : reusable=false
-  - ReturnsEval : Default : reusable=false
-  - ReturnsMrkt : Default : reusable=false
+  - Beta : Default : reusable=true : pane=Beta
+  - BetaUp : Default : reusable=false : pane=Beta
+  - BetaDown : Default : reusable=false : pane=Beta
+  - Ratio : Default : reusable=false : pane=Ratio
+  - Convexity : Default : reusable=false : pane=Convexity
+  - ReturnsEval : Default : reusable=false : pane=Returns
+  - ReturnsMrkt : Default : reusable=false : pane=Returns
 
 ### BOP / Series
 Method: ToBop
 Parameters:
   - smoothPeriods : Int32 : optional
 Results:
-  - Bop : Default : reusable=true
+  - Bop : Default : reusable=true : pane=Bop
 
 ### BOP / Buffer
 Method: ToBopList
 Parameters:
   - smoothPeriods : Int32 : optional
 Results:
-  - Bop : Default : reusable=true
+  - Bop : Default : reusable=true : pane=Bop
 
 ### BOP / Stream
 Method: ToBopHub
 Parameters:
   - smoothPeriods : Int32 : optional
 Results:
-  - Bop : Default : reusable=true
+  - Bop : Default : reusable=true : pane=Bop
 
 ### CCI / Series
 Method: ToCci
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Cci : Default : reusable=true
+  - Cci : Default : reusable=true : pane=Cci
 
 ### CCI / Buffer
 Method: ToCciList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Cci : Default : reusable=true
+  - Cci : Default : reusable=true : pane=Cci
 
 ### CCI / Stream
 Method: ToCciHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Cci : Default : reusable=true
+  - Cci : Default : reusable=true : pane=Cci
 
 ### CHAIKIN-OSC / Series
 Method: ToChaikinOsc
@@ -362,10 +362,10 @@ Parameters:
   - fastPeriods : Int32 : optional
   - slowPeriods : Int32 : optional
 Results:
-  - MoneyFlowMultiplier : Default : reusable=false
-  - MoneyFlowVolume : Default : reusable=false
-  - Adl : Default : reusable=false
-  - Oscillator : Default : reusable=true
+  - MoneyFlowMultiplier : Default : reusable=false : pane=MoneyFlowMultiplier
+  - MoneyFlowVolume : Default : reusable=false : pane=MoneyFlowVolume
+  - Adl : Default : reusable=false : pane=Adl
+  - Oscillator : Default : reusable=true : pane=Oscillator
 
 ### CHAIKIN-OSC / Buffer
 Method: ToChaikinOscList
@@ -373,10 +373,10 @@ Parameters:
   - fastPeriods : Int32 : optional
   - slowPeriods : Int32 : optional
 Results:
-  - MoneyFlowMultiplier : Default : reusable=false
-  - MoneyFlowVolume : Default : reusable=false
-  - Adl : Default : reusable=false
-  - Oscillator : Default : reusable=true
+  - MoneyFlowMultiplier : Default : reusable=false : pane=MoneyFlowMultiplier
+  - MoneyFlowVolume : Default : reusable=false : pane=MoneyFlowVolume
+  - Adl : Default : reusable=false : pane=Adl
+  - Oscillator : Default : reusable=true : pane=Oscillator
 
 ### CHAIKIN-OSC / Stream
 Method: ToChaikinOscHub
@@ -384,10 +384,10 @@ Parameters:
   - fastPeriods : Int32 : optional
   - slowPeriods : Int32 : optional
 Results:
-  - MoneyFlowMultiplier : Default : reusable=false
-  - MoneyFlowVolume : Default : reusable=false
-  - Adl : Default : reusable=false
-  - Oscillator : Default : reusable=true
+  - MoneyFlowMultiplier : Default : reusable=false : pane=MoneyFlowMultiplier
+  - MoneyFlowVolume : Default : reusable=false : pane=MoneyFlowVolume
+  - Adl : Default : reusable=false : pane=Adl
+  - Oscillator : Default : reusable=true : pane=Oscillator
 
 ### CHEXIT / Series
 Method: ToChandelier
@@ -396,7 +396,7 @@ Parameters:
   - multiplier : Double : optional
   - type : enum : optional
 Results:
-  - ChandelierExit : Default : reusable=true
+  - ChandelierExit : Default : reusable=true : pane=Price
 
 ### CHEXIT / Buffer
 Method: ToChandelierList
@@ -405,7 +405,7 @@ Parameters:
   - multiplier : Double : optional
   - type : enum : optional
 Results:
-  - ChandelierExit : Default : reusable=true
+  - ChandelierExit : Default : reusable=true : pane=Price
 
 ### CHEXIT / Stream
 Method: ToChandelierHub
@@ -414,76 +414,76 @@ Parameters:
   - multiplier : Double : optional
   - type : enum : optional
 Results:
-  - ChandelierExit : Default : reusable=true
+  - ChandelierExit : Default : reusable=true : pane=Price
 
 ### CHOP / Series
 Method: ToChop
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Chop : Default : reusable=true
+  - Chop : Default : reusable=true : pane=Chop
 
 ### CHOP / Buffer
 Method: ToChopList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Chop : Default : reusable=true
+  - Chop : Default : reusable=true : pane=Chop
 
 ### CHOP / Stream
 Method: ToChopHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Chop : Default : reusable=true
+  - Chop : Default : reusable=true : pane=Chop
 
 ### CMF / Series
 Method: ToCmf
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - MoneyFlowMultiplier : Default : reusable=false
-  - MoneyFlowVolume : Default : reusable=false
-  - Cmf : Default : reusable=true
+  - MoneyFlowMultiplier : Default : reusable=false : pane=MoneyFlowMultiplier
+  - MoneyFlowVolume : Default : reusable=false : pane=MoneyFlowVolume
+  - Cmf : Default : reusable=true : pane=Cmf
 
 ### CMF / Buffer
 Method: ToCmfList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - MoneyFlowMultiplier : Default : reusable=false
-  - MoneyFlowVolume : Default : reusable=false
-  - Cmf : Default : reusable=true
+  - MoneyFlowMultiplier : Default : reusable=false : pane=MoneyFlowMultiplier
+  - MoneyFlowVolume : Default : reusable=false : pane=MoneyFlowVolume
+  - Cmf : Default : reusable=true : pane=Cmf
 
 ### CMF / Stream
 Method: ToCmfHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - MoneyFlowMultiplier : Default : reusable=false
-  - MoneyFlowVolume : Default : reusable=false
-  - Cmf : Default : reusable=true
+  - MoneyFlowMultiplier : Default : reusable=false : pane=MoneyFlowMultiplier
+  - MoneyFlowVolume : Default : reusable=false : pane=MoneyFlowVolume
+  - Cmf : Default : reusable=true : pane=Cmf
 
 ### CMO / Series
 Method: ToCmo
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Cmo : Default : reusable=true
+  - Cmo : Default : reusable=true : pane=Cmo
 
 ### CMO / Buffer
 Method: ToCmoList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Cmo : Default : reusable=true
+  - Cmo : Default : reusable=true : pane=Cmo
 
 ### CMO / Stream
 Method: ToCmoHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Cmo : Default : reusable=true
+  - Cmo : Default : reusable=true : pane=Cmo
 
 ### CORR / Series
 Method: ToCorrelation
@@ -492,11 +492,11 @@ Parameters:
   - sourceB : IReadOnlyList<T> where T : IReusable : required
   - lookbackPeriods : Int32 : required
 Results:
-  - VarianceA : Default : reusable=false
-  - VarianceB : Default : reusable=false
-  - Covariance : Default : reusable=false
-  - Correlation : Default : reusable=true
-  - RSquared : Default : reusable=false
+  - VarianceA : Default : reusable=false : pane=Variance
+  - VarianceB : Default : reusable=false : pane=Variance
+  - Covariance : Default : reusable=false : pane=Variance
+  - Correlation : Default : reusable=true : pane=Correlation
+  - RSquared : Default : reusable=false : pane=Correlation
 
 ### CRSI / Series
 Method: ToConnorsRsi
@@ -505,11 +505,11 @@ Parameters:
   - streakPeriods : Int32 : optional
   - rankPeriods : Int32 : optional
 Results:
-  - Streak : Default : reusable=false
-  - Rsi : Default : reusable=false
-  - RsiStreak : Default : reusable=false
-  - PercentRank : Default : reusable=false
-  - ConnorsRsi : Default : reusable=true
+  - Streak : Default : reusable=false : pane=Streak
+  - Rsi : Default : reusable=false : pane=ConnorsRsi
+  - RsiStreak : Default : reusable=false : pane=ConnorsRsi
+  - PercentRank : Default : reusable=false : pane=ConnorsRsi
+  - ConnorsRsi : Default : reusable=true : pane=ConnorsRsi
 
 ### CRSI / Buffer
 Method: ToConnorsRsiList
@@ -518,11 +518,11 @@ Parameters:
   - streakPeriods : Int32 : optional
   - rankPeriods : Int32 : optional
 Results:
-  - Streak : Default : reusable=false
-  - Rsi : Default : reusable=false
-  - RsiStreak : Default : reusable=false
-  - PercentRank : Default : reusable=false
-  - ConnorsRsi : Default : reusable=true
+  - Streak : Default : reusable=false : pane=Streak
+  - Rsi : Default : reusable=false : pane=ConnorsRsi
+  - RsiStreak : Default : reusable=false : pane=ConnorsRsi
+  - PercentRank : Default : reusable=false : pane=ConnorsRsi
+  - ConnorsRsi : Default : reusable=true : pane=ConnorsRsi
 
 ### CRSI / Stream
 Method: ToConnorsRsiHub
@@ -531,107 +531,107 @@ Parameters:
   - streakPeriods : Int32 : optional
   - rankPeriods : Int32 : optional
 Results:
-  - Streak : Default : reusable=false
-  - Rsi : Default : reusable=false
-  - RsiStreak : Default : reusable=false
-  - PercentRank : Default : reusable=false
-  - ConnorsRsi : Default : reusable=true
+  - Streak : Default : reusable=false : pane=Streak
+  - Rsi : Default : reusable=false : pane=ConnorsRsi
+  - RsiStreak : Default : reusable=false : pane=ConnorsRsi
+  - PercentRank : Default : reusable=false : pane=ConnorsRsi
+  - ConnorsRsi : Default : reusable=true : pane=ConnorsRsi
 
 ### DEMA / Series
 Method: ToDema
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Dema : Default : reusable=true
+  - Dema : Default : reusable=true : pane=Price
 
 ### DEMA / Buffer
 Method: ToDemaList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Dema : Default : reusable=true
+  - Dema : Default : reusable=true : pane=Price
 
 ### DEMA / Stream
 Method: ToDemaHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Dema : Default : reusable=true
+  - Dema : Default : reusable=true : pane=Price
 
 ### DOJI / Series
 Method: ToDoji
 Parameters:
   - maxPriceChangePercent : Double : optional
 Results:
-  - Match : Default : reusable=true
+  - Match : Default : reusable=true : pane=(none)
 
 ### DOJI / Buffer
 Method: ToDojiList
 Parameters:
   - maxPriceChangePercent : Double : optional
 Results:
-  - Match : Default : reusable=true
+  - Match : Default : reusable=true : pane=(none)
 
 ### DOJI / Stream
 Method: ToDojiHub
 Parameters:
   - maxPriceChangePercent : Double : optional
 Results:
-  - Match : Default : reusable=true
+  - Match : Default : reusable=true : pane=(none)
 
 ### DONCHIAN / Series
 Method: ToDonchian
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - UpperBand : Default : reusable=false
-  - Centerline : Default : reusable=true
-  - LowerBand : Default : reusable=false
-  - Width : Default : reusable=false
+  - UpperBand : Default : reusable=false : pane=Price
+  - Centerline : Default : reusable=true : pane=Price
+  - LowerBand : Default : reusable=false : pane=Price
+  - Width : Default : reusable=false : pane=Width
 
 ### DONCHIAN / Buffer
 Method: ToDonchianList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - UpperBand : Default : reusable=false
-  - Centerline : Default : reusable=true
-  - LowerBand : Default : reusable=false
-  - Width : Default : reusable=false
+  - UpperBand : Default : reusable=false : pane=Price
+  - Centerline : Default : reusable=true : pane=Price
+  - LowerBand : Default : reusable=false : pane=Price
+  - Width : Default : reusable=false : pane=Width
 
 ### DONCHIAN / Stream
 Method: ToDonchianHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - UpperBand : Default : reusable=false
-  - Centerline : Default : reusable=true
-  - LowerBand : Default : reusable=false
-  - Width : Default : reusable=false
+  - UpperBand : Default : reusable=false : pane=Price
+  - Centerline : Default : reusable=true : pane=Price
+  - LowerBand : Default : reusable=false : pane=Price
+  - Width : Default : reusable=false : pane=Width
 
 ### DPO / Series
 Method: ToDpo
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Dpo : Default : reusable=true
-  - Sma : Default : reusable=false
+  - Dpo : Default : reusable=true : pane=Dpo
+  - Sma : Default : reusable=false : pane=Price
 
 ### DPO / Buffer
 Method: ToDpoList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Dpo : Default : reusable=true
-  - Sma : Default : reusable=false
+  - Dpo : Default : reusable=true : pane=Dpo
+  - Sma : Default : reusable=false : pane=Price
 
 ### DPO / Stream
 Method: ToDpoHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Dpo : Default : reusable=true
-  - Sma : Default : reusable=false
+  - Dpo : Default : reusable=true : pane=Dpo
+  - Sma : Default : reusable=false : pane=Price
 
 ### DYNAMIC / Series
 Method: ToDynamic
@@ -639,7 +639,7 @@ Parameters:
   - lookbackPeriods : Int32 : required
   - kFactor : Double : optional
 Results:
-  - Dynamic : Default : reusable=true
+  - Dynamic : Default : reusable=true : pane=Price
 
 ### DYNAMIC / Buffer
 Method: ToDynamicList
@@ -647,7 +647,7 @@ Parameters:
   - lookbackPeriods : Int32 : required
   - kFactor : Double : optional
 Results:
-  - Dynamic : Default : reusable=true
+  - Dynamic : Default : reusable=true : pane=Price
 
 ### DYNAMIC / Stream
 Method: ToDynamicHub
@@ -655,148 +655,148 @@ Parameters:
   - lookbackPeriods : Int32 : required
   - kFactor : Double : optional
 Results:
-  - Dynamic : Default : reusable=true
+  - Dynamic : Default : reusable=true : pane=Price
 
 ### ELDER-RAY / Series
 Method: ToElderRay
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Ema : Default : reusable=false
-  - BullPower : Default : reusable=false
-  - BearPower : Default : reusable=false
-  - Value : Default : reusable=true
+  - Ema : Default : reusable=false : pane=Price
+  - BullPower : Default : reusable=false : pane=ElderRay
+  - BearPower : Default : reusable=false : pane=ElderRay
+  - Value : Default : reusable=true : pane=ElderRay
 
 ### ELDER-RAY / Buffer
 Method: ToElderRayList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Ema : Default : reusable=false
-  - BullPower : Default : reusable=false
-  - BearPower : Default : reusable=false
-  - Value : Default : reusable=true
+  - Ema : Default : reusable=false : pane=Price
+  - BullPower : Default : reusable=false : pane=ElderRay
+  - BearPower : Default : reusable=false : pane=ElderRay
+  - Value : Default : reusable=true : pane=ElderRay
 
 ### ELDER-RAY / Stream
 Method: ToElderRayHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Ema : Default : reusable=false
-  - BullPower : Default : reusable=false
-  - BearPower : Default : reusable=false
-  - Value : Default : reusable=true
+  - Ema : Default : reusable=false : pane=Price
+  - BullPower : Default : reusable=false : pane=ElderRay
+  - BearPower : Default : reusable=false : pane=ElderRay
+  - Value : Default : reusable=true : pane=ElderRay
 
 ### EMA / Series
 Method: ToEma
 Parameters:
   - lookbackPeriods : Int32 : required
 Results:
-  - Ema : Default : reusable=true
+  - Ema : Default : reusable=true : pane=Price
 
 ### EMA / Buffer
 Method: ToEmaList
 Parameters:
   - lookbackPeriods : Int32 : required
 Results:
-  - Ema : Default : reusable=true
+  - Ema : Default : reusable=true : pane=Price
 
 ### EMA / Stream
 Method: ToEmaHub
 Parameters:
   - lookbackPeriods : Int32 : required
 Results:
-  - Ema : Default : reusable=true
+  - Ema : Default : reusable=true : pane=Price
 
 ### EPMA / Series
 Method: ToEpma
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Epma : Default : reusable=true
+  - Epma : Default : reusable=true : pane=Price
 
 ### EPMA / Buffer
 Method: ToEpmaList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Epma : Default : reusable=true
+  - Epma : Default : reusable=true : pane=Price
 
 ### EPMA / Stream
 Method: ToEpmaHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Epma : Default : reusable=true
+  - Epma : Default : reusable=true : pane=Price
 
 ### FCB / Series
 Method: ToFcb
 Parameters:
   - windowSpan : Int32 : optional
 Results:
-  - UpperBand : Default : reusable=true
-  - LowerBand : Default : reusable=false
+  - UpperBand : Default : reusable=true : pane=Price
+  - LowerBand : Default : reusable=false : pane=Price
 
 ### FCB / Buffer
 Method: ToFcbList
 Parameters:
   - windowSpan : Int32 : optional
 Results:
-  - UpperBand : Default : reusable=true
-  - LowerBand : Default : reusable=false
+  - UpperBand : Default : reusable=true : pane=Price
+  - LowerBand : Default : reusable=false : pane=Price
 
 ### FCB / Stream
 Method: ToFcbHub
 Parameters:
   - windowSpan : Int32 : optional
 Results:
-  - UpperBand : Default : reusable=true
-  - LowerBand : Default : reusable=false
+  - UpperBand : Default : reusable=true : pane=Price
+  - LowerBand : Default : reusable=false : pane=Price
 
 ### FISHER / Series
 Method: ToFisherTransform
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Fisher : Default : reusable=true
-  - Trigger : Default : reusable=false
+  - Fisher : Default : reusable=true : pane=Fisher
+  - Trigger : Default : reusable=false : pane=Fisher
 
 ### FISHER / Buffer
 Method: ToFisherTransformList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Fisher : Default : reusable=true
-  - Trigger : Default : reusable=false
+  - Fisher : Default : reusable=true : pane=Fisher
+  - Trigger : Default : reusable=false : pane=Fisher
 
 ### FISHER / Stream
 Method: ToFisherTransformHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Fisher : Default : reusable=true
-  - Trigger : Default : reusable=false
+  - Fisher : Default : reusable=true : pane=Fisher
+  - Trigger : Default : reusable=false : pane=Fisher
 
 ### FORCE / Series
 Method: ToForceIndex
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - ForceIndex : Default : reusable=true
+  - ForceIndex : Default : reusable=true : pane=ForceIndex
 
 ### FORCE / Buffer
 Method: ToForceIndexList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - ForceIndex : Default : reusable=true
+  - ForceIndex : Default : reusable=true : pane=ForceIndex
 
 ### FORCE / Stream
 Method: ToForceIndexHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - ForceIndex : Default : reusable=true
+  - ForceIndex : Default : reusable=true : pane=ForceIndex
 
 ### FRACTAL / Series
 Method: ToFractal
@@ -804,8 +804,8 @@ Parameters:
   - windowSpan : Int32 : optional
   - endType : enum : optional
 Results:
-  - FractalBear : Default : reusable=false
-  - FractalBull : Default : reusable=true
+  - FractalBear : Default : reusable=false : pane=Price
+  - FractalBull : Default : reusable=true : pane=Price
 
 ### FRACTAL / Buffer
 Method: ToFractalList
@@ -813,8 +813,8 @@ Parameters:
   - windowSpan : Int32 : optional
   - endType : enum : optional
 Results:
-  - FractalBear : Default : reusable=false
-  - FractalBull : Default : reusable=true
+  - FractalBear : Default : reusable=false : pane=Price
+  - FractalBull : Default : reusable=true : pane=Price
 
 ### FRACTAL / Stream
 Method: ToFractalHub
@@ -822,143 +822,143 @@ Parameters:
   - windowSpan : Int32 : optional
   - endType : enum : optional
 Results:
-  - FractalBear : Default : reusable=false
-  - FractalBull : Default : reusable=true
+  - FractalBear : Default : reusable=false : pane=Price
+  - FractalBull : Default : reusable=true : pane=Price
 
 ### GATOR / Series
 Method: ToGator
 Parameters:
   (none)
 Results:
-  - Upper : Default : reusable=false
-  - Lower : Default : reusable=false
-  - UpperIsExpanding : Default : reusable=false
-  - LowerIsExpanding : Default : reusable=false
+  - Upper : Default : reusable=false : pane=Gator
+  - Lower : Default : reusable=false : pane=Gator
+  - UpperIsExpanding : Default : reusable=false : pane=(none)
+  - LowerIsExpanding : Default : reusable=false : pane=(none)
 
 ### GATOR / Buffer
 Method: ToGatorList
 Parameters:
   (none)
 Results:
-  - Upper : Default : reusable=false
-  - Lower : Default : reusable=false
-  - UpperIsExpanding : Default : reusable=false
-  - LowerIsExpanding : Default : reusable=false
+  - Upper : Default : reusable=false : pane=Gator
+  - Lower : Default : reusable=false : pane=Gator
+  - UpperIsExpanding : Default : reusable=false : pane=(none)
+  - LowerIsExpanding : Default : reusable=false : pane=(none)
 
 ### GATOR / Stream
 Method: ToGatorHub
 Parameters:
   (none)
 Results:
-  - Upper : Default : reusable=false
-  - Lower : Default : reusable=false
-  - UpperIsExpanding : Default : reusable=false
-  - LowerIsExpanding : Default : reusable=false
+  - Upper : Default : reusable=false : pane=Gator
+  - Lower : Default : reusable=false : pane=Gator
+  - UpperIsExpanding : Default : reusable=false : pane=(none)
+  - LowerIsExpanding : Default : reusable=false : pane=(none)
 
 ### HEIKINASHI / Series
 Method: ToHeikinAshi
 Parameters:
   (none)
 Results:
-  - Open : Default : reusable=false
-  - High : Default : reusable=false
-  - Low : Default : reusable=false
-  - Close : Default : reusable=true
-  - Volume : Default : reusable=false
+  - Open : Default : reusable=false : pane=Price
+  - High : Default : reusable=false : pane=Price
+  - Low : Default : reusable=false : pane=Price
+  - Close : Default : reusable=true : pane=Price
+  - Volume : Default : reusable=false : pane=Volume
 
 ### HEIKINASHI / Buffer
 Method: ToHeikinAshiList
 Parameters:
   (none)
 Results:
-  - Open : Default : reusable=false
-  - High : Default : reusable=false
-  - Low : Default : reusable=false
-  - Close : Default : reusable=true
-  - Volume : Default : reusable=false
+  - Open : Default : reusable=false : pane=Price
+  - High : Default : reusable=false : pane=Price
+  - Low : Default : reusable=false : pane=Price
+  - Close : Default : reusable=true : pane=Price
+  - Volume : Default : reusable=false : pane=Volume
 
 ### HEIKINASHI / Stream
 Method: ToHeikinAshiHub
 Parameters:
   (none)
 Results:
-  - Open : Default : reusable=false
-  - High : Default : reusable=false
-  - Low : Default : reusable=false
-  - Close : Default : reusable=true
-  - Volume : Default : reusable=false
+  - Open : Default : reusable=false : pane=Price
+  - High : Default : reusable=false : pane=Price
+  - Low : Default : reusable=false : pane=Price
+  - Close : Default : reusable=true : pane=Price
+  - Volume : Default : reusable=false : pane=Volume
 
 ### HMA / Series
 Method: ToHma
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Hma : Default : reusable=true
+  - Hma : Default : reusable=true : pane=Price
 
 ### HMA / Buffer
 Method: ToHmaList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Hma : Default : reusable=true
+  - Hma : Default : reusable=true : pane=Price
 
 ### HMA / Stream
 Method: ToHmaHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Hma : Default : reusable=true
+  - Hma : Default : reusable=true : pane=Price
 
 ### HTL / Series
 Method: ToHtTrendline
 Parameters:
   (none)
 Results:
-  - DcPeriods : Default : reusable=false
-  - Trendline : Default : reusable=true
-  - SmoothPrice : Default : reusable=false
+  - DcPeriods : Default : reusable=false : pane=DcPeriods
+  - Trendline : Default : reusable=true : pane=Price
+  - SmoothPrice : Default : reusable=false : pane=Price
 
 ### HTL / Buffer
 Method: ToHtTrendlineList
 Parameters:
   (none)
 Results:
-  - DcPeriods : Default : reusable=false
-  - Trendline : Default : reusable=true
-  - SmoothPrice : Default : reusable=false
+  - DcPeriods : Default : reusable=false : pane=DcPeriods
+  - Trendline : Default : reusable=true : pane=Price
+  - SmoothPrice : Default : reusable=false : pane=Price
 
 ### HTL / Stream
 Method: ToHtTrendlineHub
 Parameters:
   (none)
 Results:
-  - DcPeriods : Default : reusable=false
-  - Trendline : Default : reusable=true
-  - SmoothPrice : Default : reusable=false
+  - DcPeriods : Default : reusable=false : pane=DcPeriods
+  - Trendline : Default : reusable=true : pane=Price
+  - SmoothPrice : Default : reusable=false : pane=Price
 
 ### HURST / Series
 Method: ToHurst
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - HurstExponent : Default : reusable=true
-  - HurstExponentAL : Default : reusable=false
+  - HurstExponent : Default : reusable=true : pane=Hurst
+  - HurstExponentAL : Default : reusable=false : pane=Hurst
 
 ### HURST / Buffer
 Method: ToHurstList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - HurstExponent : Default : reusable=true
-  - HurstExponentAL : Default : reusable=false
+  - HurstExponent : Default : reusable=true : pane=Hurst
+  - HurstExponentAL : Default : reusable=false : pane=Hurst
 
 ### HURST / Stream
 Method: ToHurstHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - HurstExponent : Default : reusable=true
-  - HurstExponentAL : Default : reusable=false
+  - HurstExponent : Default : reusable=true : pane=Hurst
+  - HurstExponentAL : Default : reusable=false : pane=Hurst
 
 ### ICHIMOKU / Series
 Method: ToIchimoku
@@ -967,11 +967,11 @@ Parameters:
   - kijunPeriods : Int32 : optional
   - senkouBPeriods : Int32 : optional
 Results:
-  - TenkanSen : Default : reusable=true
-  - KijunSen : Default : reusable=false
-  - SenkouSpanA : Default : reusable=false
-  - SenkouSpanB : Default : reusable=false
-  - ChikouSpan : Default : reusable=false
+  - TenkanSen : Default : reusable=true : pane=Price
+  - KijunSen : Default : reusable=false : pane=Price
+  - SenkouSpanA : Default : reusable=false : pane=Price
+  - SenkouSpanB : Default : reusable=false : pane=Price
+  - ChikouSpan : Default : reusable=false : pane=Price
 
 ### ICHIMOKU / Buffer
 Method: ToIchimokuList
@@ -980,11 +980,11 @@ Parameters:
   - kijunPeriods : Int32 : optional
   - senkouBPeriods : Int32 : optional
 Results:
-  - TenkanSen : Default : reusable=true
-  - KijunSen : Default : reusable=false
-  - SenkouSpanA : Default : reusable=false
-  - SenkouSpanB : Default : reusable=false
-  - ChikouSpan : Default : reusable=false
+  - TenkanSen : Default : reusable=true : pane=Price
+  - KijunSen : Default : reusable=false : pane=Price
+  - SenkouSpanA : Default : reusable=false : pane=Price
+  - SenkouSpanB : Default : reusable=false : pane=Price
+  - ChikouSpan : Default : reusable=false : pane=Price
 
 ### ICHIMOKU / Stream
 Method: ToIchimokuHub
@@ -993,11 +993,11 @@ Parameters:
   - kijunPeriods : Int32 : optional
   - senkouBPeriods : Int32 : optional
 Results:
-  - TenkanSen : Default : reusable=true
-  - KijunSen : Default : reusable=false
-  - SenkouSpanA : Default : reusable=false
-  - SenkouSpanB : Default : reusable=false
-  - ChikouSpan : Default : reusable=false
+  - TenkanSen : Default : reusable=true : pane=Price
+  - KijunSen : Default : reusable=false : pane=Price
+  - SenkouSpanA : Default : reusable=false : pane=Price
+  - SenkouSpanB : Default : reusable=false : pane=Price
+  - ChikouSpan : Default : reusable=false : pane=Price
 
 ### KAMA / Series
 Method: ToKama
@@ -1006,8 +1006,8 @@ Parameters:
   - fastPeriods : Int32 : optional
   - slowPeriods : Int32 : optional
 Results:
-  - Er : Default : reusable=false
-  - Kama : Default : reusable=true
+  - Er : Default : reusable=false : pane=Er
+  - Kama : Default : reusable=true : pane=Price
 
 ### KAMA / Buffer
 Method: ToKamaList
@@ -1016,8 +1016,8 @@ Parameters:
   - fastPeriods : Int32 : optional
   - slowPeriods : Int32 : optional
 Results:
-  - Er : Default : reusable=false
-  - Kama : Default : reusable=true
+  - Er : Default : reusable=false : pane=Er
+  - Kama : Default : reusable=true : pane=Price
 
 ### KAMA / Stream
 Method: ToKamaHub
@@ -1026,8 +1026,8 @@ Parameters:
   - fastPeriods : Int32 : optional
   - slowPeriods : Int32 : optional
 Results:
-  - Er : Default : reusable=false
-  - Kama : Default : reusable=true
+  - Er : Default : reusable=false : pane=Er
+  - Kama : Default : reusable=true : pane=Price
 
 ### KELTNER / Series
 Method: ToKeltner
@@ -1036,10 +1036,10 @@ Parameters:
   - multiplier : Double : optional
   - atrPeriods : Int32 : optional
 Results:
-  - UpperBand : Default : reusable=false
-  - Centerline : Default : reusable=true
-  - LowerBand : Default : reusable=false
-  - Width : Default : reusable=false
+  - UpperBand : Default : reusable=false : pane=Price
+  - Centerline : Default : reusable=true : pane=Price
+  - LowerBand : Default : reusable=false : pane=Price
+  - Width : Default : reusable=false : pane=Width
 
 ### KELTNER / Buffer
 Method: ToKeltnerList
@@ -1048,10 +1048,10 @@ Parameters:
   - multiplier : Double : optional
   - atrPeriods : Int32 : optional
 Results:
-  - UpperBand : Default : reusable=false
-  - Centerline : Default : reusable=true
-  - LowerBand : Default : reusable=false
-  - Width : Default : reusable=false
+  - UpperBand : Default : reusable=false : pane=Price
+  - Centerline : Default : reusable=true : pane=Price
+  - LowerBand : Default : reusable=false : pane=Price
+  - Width : Default : reusable=false : pane=Width
 
 ### KELTNER / Stream
 Method: ToKeltnerHub
@@ -1060,10 +1060,10 @@ Parameters:
   - multiplier : Double : optional
   - atrPeriods : Int32 : optional
 Results:
-  - UpperBand : Default : reusable=false
-  - Centerline : Default : reusable=true
-  - LowerBand : Default : reusable=false
-  - Width : Default : reusable=false
+  - UpperBand : Default : reusable=false : pane=Price
+  - Centerline : Default : reusable=true : pane=Price
+  - LowerBand : Default : reusable=false : pane=Price
+  - Width : Default : reusable=false : pane=Width
 
 ### KVO / Series
 Method: ToKvo
@@ -1072,8 +1072,8 @@ Parameters:
   - slowPeriods : Int32 : optional
   - signalPeriods : Int32 : optional
 Results:
-  - Oscillator : Default : reusable=true
-  - Signal : Default : reusable=false
+  - Oscillator : Default : reusable=true : pane=Kvo
+  - Signal : Default : reusable=false : pane=Kvo
 
 ### KVO / Buffer
 Method: ToKvoList
@@ -1082,8 +1082,8 @@ Parameters:
   - slowPeriods : Int32 : optional
   - signalPeriods : Int32 : optional
 Results:
-  - Oscillator : Default : reusable=true
-  - Signal : Default : reusable=false
+  - Oscillator : Default : reusable=true : pane=Kvo
+  - Signal : Default : reusable=false : pane=Kvo
 
 ### KVO / Stream
 Method: ToKvoHub
@@ -1092,8 +1092,8 @@ Parameters:
   - slowPeriods : Int32 : optional
   - signalPeriods : Int32 : optional
 Results:
-  - Oscillator : Default : reusable=true
-  - Signal : Default : reusable=false
+  - Oscillator : Default : reusable=true : pane=Kvo
+  - Signal : Default : reusable=false : pane=Kvo
 
 ### MA-ENV / Series
 Method: ToMaEnvelopes
@@ -1102,9 +1102,9 @@ Parameters:
   - percentOffset : Double : optional
   - movingAverageType : enum : optional
 Results:
-  - Centerline : Default : reusable=true
-  - UpperEnvelope : Default : reusable=false
-  - LowerEnvelope : Default : reusable=false
+  - Centerline : Default : reusable=true : pane=Price
+  - UpperEnvelope : Default : reusable=false : pane=Price
+  - LowerEnvelope : Default : reusable=false : pane=Price
 
 ### MA-ENV / Buffer
 Method: ToMaEnvelopesList
@@ -1113,9 +1113,9 @@ Parameters:
   - percentOffset : Double : optional
   - movingAverageType : enum : optional
 Results:
-  - Centerline : Default : reusable=true
-  - UpperEnvelope : Default : reusable=false
-  - LowerEnvelope : Default : reusable=false
+  - Centerline : Default : reusable=true : pane=Price
+  - UpperEnvelope : Default : reusable=false : pane=Price
+  - LowerEnvelope : Default : reusable=false : pane=Price
 
 ### MA-ENV / Stream
 Method: ToMaEnvelopesHub
@@ -1124,9 +1124,9 @@ Parameters:
   - percentOffset : Double : optional
   - movingAverageType : enum : optional
 Results:
-  - Centerline : Default : reusable=true
-  - UpperEnvelope : Default : reusable=false
-  - LowerEnvelope : Default : reusable=false
+  - Centerline : Default : reusable=true : pane=Price
+  - UpperEnvelope : Default : reusable=false : pane=Price
+  - LowerEnvelope : Default : reusable=false : pane=Price
 
 ### MACD / Series
 Method: ToMacd
@@ -1135,9 +1135,9 @@ Parameters:
   - slowPeriods : Int32 : optional
   - signalPeriods : Int32 : optional
 Results:
-  - Macd : Default : reusable=true
-  - Signal : Default : reusable=false
-  - Histogram : Bar : reusable=false
+  - Macd : Default : reusable=true : pane=Macd
+  - Signal : Default : reusable=false : pane=Macd
+  - Histogram : Bar : reusable=false : pane=Macd
 
 ### MACD / Buffer
 Method: ToMacdList
@@ -1146,9 +1146,9 @@ Parameters:
   - slowPeriods : Int32 : optional
   - signalPeriods : Int32 : optional
 Results:
-  - Macd : Default : reusable=true
-  - Signal : Default : reusable=false
-  - Histogram : Bar : reusable=false
+  - Macd : Default : reusable=true : pane=Macd
+  - Signal : Default : reusable=false : pane=Macd
+  - Histogram : Bar : reusable=false : pane=Macd
 
 ### MACD / Stream
 Method: ToMacdHub
@@ -1157,9 +1157,9 @@ Parameters:
   - slowPeriods : Int32 : optional
   - signalPeriods : Int32 : optional
 Results:
-  - Macd : Default : reusable=true
-  - Signal : Default : reusable=false
-  - Histogram : Bar : reusable=false
+  - Macd : Default : reusable=true : pane=Macd
+  - Signal : Default : reusable=false : pane=Macd
+  - Histogram : Bar : reusable=false : pane=Macd
 
 ### MAMA / Series
 Method: ToMama
@@ -1167,8 +1167,8 @@ Parameters:
   - fastLimit : Double : optional
   - slowLimit : Double : optional
 Results:
-  - Mama : Default : reusable=true
-  - Fama : Default : reusable=false
+  - Mama : Default : reusable=true : pane=Price
+  - Fama : Default : reusable=false : pane=Price
 
 ### MAMA / Buffer
 Method: ToMamaList
@@ -1176,8 +1176,8 @@ Parameters:
   - fastLimit : Double : optional
   - slowLimit : Double : optional
 Results:
-  - Mama : Default : reusable=true
-  - Fama : Default : reusable=false
+  - Mama : Default : reusable=true : pane=Price
+  - Fama : Default : reusable=false : pane=Price
 
 ### MAMA / Stream
 Method: ToMamaHub
@@ -1185,71 +1185,71 @@ Parameters:
   - fastLimit : Double : optional
   - slowLimit : Double : optional
 Results:
-  - Mama : Default : reusable=true
-  - Fama : Default : reusable=false
+  - Mama : Default : reusable=true : pane=Price
+  - Fama : Default : reusable=false : pane=Price
 
 ### MARUBOZU / Series
 Method: ToMarubozu
 Parameters:
   - minBodyPercent : Double : optional
 Results:
-  - Match : Default : reusable=true
+  - Match : Default : reusable=true : pane=(none)
 
 ### MARUBOZU / Buffer
 Method: ToMarubozuList
 Parameters:
   - minBodyPercent : Double : optional
 Results:
-  - Match : Default : reusable=true
+  - Match : Default : reusable=true : pane=(none)
 
 ### MARUBOZU / Stream
 Method: ToMarubozuHub
 Parameters:
   - minBodyPercent : Double : optional
 Results:
-  - Match : Default : reusable=true
+  - Match : Default : reusable=true : pane=(none)
 
 ### MFI / Series
 Method: ToMfi
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Mfi : Default : reusable=true
+  - Mfi : Default : reusable=true : pane=Mfi
 
 ### MFI / Buffer
 Method: ToMfiList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Mfi : Default : reusable=true
+  - Mfi : Default : reusable=true : pane=Mfi
 
 ### MFI / Stream
 Method: ToMfiHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Mfi : Default : reusable=true
+  - Mfi : Default : reusable=true : pane=Mfi
 
 ### OBV / Series
 Method: ToObv
 Parameters:
   (none)
 Results:
-  - Obv : Default : reusable=true
+  - Obv : Default : reusable=true : pane=Obv
 
 ### OBV / Buffer
 Method: ToObvList
 Parameters:
   (none)
 Results:
-  - Obv : Default : reusable=true
+  - Obv : Default : reusable=true : pane=Obv
 
 ### OBV / Stream
 Method: ToObvHub
 Parameters:
   (none)
 Results:
-  - Obv : Default : reusable=true
+  - Obv : Default : reusable=true : pane=Obv
 
 ### PIVOT-POINTS / Series
 Method: ToPivotPoints
@@ -1257,13 +1257,13 @@ Parameters:
   - windowSize : enum : optional
   - pointType : enum : optional
 Results:
-  - R3 : Default : reusable=false
-  - R2 : Default : reusable=false
-  - R1 : Default : reusable=false
-  - PP : Default : reusable=true
-  - S1 : Default : reusable=false
-  - S2 : Default : reusable=false
-  - S3 : Default : reusable=false
+  - R3 : Default : reusable=false : pane=Price
+  - R2 : Default : reusable=false : pane=Price
+  - R1 : Default : reusable=false : pane=Price
+  - PP : Default : reusable=true : pane=Price
+  - S1 : Default : reusable=false : pane=Price
+  - S2 : Default : reusable=false : pane=Price
+  - S3 : Default : reusable=false : pane=Price
 
 ### PIVOT-POINTS / Buffer
 Method: ToPivotPointsList
@@ -1271,13 +1271,13 @@ Parameters:
   - windowSize : enum : optional
   - pointType : enum : optional
 Results:
-  - R3 : Default : reusable=false
-  - R2 : Default : reusable=false
-  - R1 : Default : reusable=false
-  - PP : Default : reusable=true
-  - S1 : Default : reusable=false
-  - S2 : Default : reusable=false
-  - S3 : Default : reusable=false
+  - R3 : Default : reusable=false : pane=Price
+  - R2 : Default : reusable=false : pane=Price
+  - R1 : Default : reusable=false : pane=Price
+  - PP : Default : reusable=true : pane=Price
+  - S1 : Default : reusable=false : pane=Price
+  - S2 : Default : reusable=false : pane=Price
+  - S3 : Default : reusable=false : pane=Price
 
 ### PIVOT-POINTS / Stream
 Method: ToPivotPointsHub
@@ -1285,13 +1285,13 @@ Parameters:
   - windowSize : enum : optional
   - pointType : enum : optional
 Results:
-  - R3 : Default : reusable=false
-  - R2 : Default : reusable=false
-  - R1 : Default : reusable=false
-  - PP : Default : reusable=true
-  - S1 : Default : reusable=false
-  - S2 : Default : reusable=false
-  - S3 : Default : reusable=false
+  - R3 : Default : reusable=false : pane=Price
+  - R2 : Default : reusable=false : pane=Price
+  - R1 : Default : reusable=false : pane=Price
+  - PP : Default : reusable=true : pane=Price
+  - S1 : Default : reusable=false : pane=Price
+  - S2 : Default : reusable=false : pane=Price
+  - S3 : Default : reusable=false : pane=Price
 
 ### PIVOTS / Series
 Method: ToPivots
@@ -1301,12 +1301,12 @@ Parameters:
   - maxTrendPeriods : Int32 : optional
   - endType : enum : optional
 Results:
-  - HighPoint : Default : reusable=false
-  - LowPoint : Default : reusable=false
-  - HighLine : Default : reusable=false
-  - LowLine : Default : reusable=false
-  - HighTrend : Default : reusable=false
-  - LowTrend : Default : reusable=false
+  - HighPoint : Default : reusable=false : pane=Price
+  - LowPoint : Default : reusable=false : pane=Price
+  - HighLine : Default : reusable=false : pane=Price
+  - LowLine : Default : reusable=false : pane=Price
+  - HighTrend : Default : reusable=false : pane=(none)
+  - LowTrend : Default : reusable=false : pane=(none)
 
 ### PIVOTS / Buffer
 Method: ToPivotsList
@@ -1316,12 +1316,12 @@ Parameters:
   - maxTrendPeriods : Int32 : optional
   - endType : enum : optional
 Results:
-  - HighPoint : Default : reusable=false
-  - LowPoint : Default : reusable=false
-  - HighLine : Default : reusable=false
-  - LowLine : Default : reusable=false
-  - HighTrend : Default : reusable=false
-  - LowTrend : Default : reusable=false
+  - HighPoint : Default : reusable=false : pane=Price
+  - LowPoint : Default : reusable=false : pane=Price
+  - HighLine : Default : reusable=false : pane=Price
+  - LowLine : Default : reusable=false : pane=Price
+  - HighTrend : Default : reusable=false : pane=(none)
+  - LowTrend : Default : reusable=false : pane=(none)
 
 ### PIVOTS / Stream
 Method: ToPivotsHub
@@ -1331,12 +1331,12 @@ Parameters:
   - maxTrendPeriods : Int32 : optional
   - endType : enum : optional
 Results:
-  - HighPoint : Default : reusable=false
-  - LowPoint : Default : reusable=false
-  - HighLine : Default : reusable=false
-  - LowLine : Default : reusable=false
-  - HighTrend : Default : reusable=false
-  - LowTrend : Default : reusable=false
+  - HighPoint : Default : reusable=false : pane=Price
+  - LowPoint : Default : reusable=false : pane=Price
+  - HighLine : Default : reusable=false : pane=Price
+  - LowLine : Default : reusable=false : pane=Price
+  - HighTrend : Default : reusable=false : pane=(none)
+  - LowTrend : Default : reusable=false : pane=(none)
 
 ### PMO / Series
 Method: ToPmo
@@ -1345,8 +1345,8 @@ Parameters:
   - smoothPeriods : Int32 : optional
   - signalPeriods : Int32 : optional
 Results:
-  - Pmo : Default : reusable=true
-  - Signal : Default : reusable=false
+  - Pmo : Default : reusable=true : pane=Pmo
+  - Signal : Default : reusable=false : pane=Pmo
 
 ### PMO / Buffer
 Method: ToPmoList
@@ -1355,8 +1355,8 @@ Parameters:
   - smoothPeriods : Int32 : optional
   - signalPeriods : Int32 : optional
 Results:
-  - Pmo : Default : reusable=true
-  - Signal : Default : reusable=false
+  - Pmo : Default : reusable=true : pane=Pmo
+  - Signal : Default : reusable=false : pane=Pmo
 
 ### PMO / Stream
 Method: ToPmoHub
@@ -1365,8 +1365,8 @@ Parameters:
   - smoothPeriods : Int32 : optional
   - signalPeriods : Int32 : optional
 Results:
-  - Pmo : Default : reusable=true
-  - Signal : Default : reusable=false
+  - Pmo : Default : reusable=true : pane=Pmo
+  - Signal : Default : reusable=false : pane=Pmo
 
 ### PRS / Series
 Method: ToPrs
@@ -1375,8 +1375,8 @@ Parameters:
   - sourceBase : IReadOnlyList<T> where T : IReusable : required
   - lookbackPeriods : Int32 : required
 Results:
-  - Prs : Default : reusable=true
-  - PrsPercent : Default : reusable=false
+  - Prs : Default : reusable=true : pane=Prs
+  - PrsPercent : Default : reusable=false : pane=PrsPercent
 
 ### PSAR / Series
 Method: ToParabolicSar
@@ -1384,8 +1384,8 @@ Parameters:
   - accelerationStep : Double : optional
   - maxAccelerationFactor : Double : optional
 Results:
-  - Sar : Default : reusable=true
-  - IsReversal : Default : reusable=false
+  - Sar : Default : reusable=true : pane=Price
+  - IsReversal : Default : reusable=false : pane=(none)
 
 ### PSAR / Buffer
 Method: ToParabolicSarList
@@ -1393,8 +1393,8 @@ Parameters:
   - accelerationStep : Double : optional
   - maxAccelerationFactor : Double : optional
 Results:
-  - Sar : Default : reusable=true
-  - IsReversal : Default : reusable=false
+  - Sar : Default : reusable=true : pane=Price
+  - IsReversal : Default : reusable=false : pane=(none)
 
 ### PSAR / Stream
 Method: ToParabolicSarHub
@@ -1402,8 +1402,8 @@ Parameters:
   - accelerationStep : Double : optional
   - maxAccelerationFactor : Double : optional
 Results:
-  - Sar : Default : reusable=true
-  - IsReversal : Default : reusable=false
+  - Sar : Default : reusable=true : pane=Price
+  - IsReversal : Default : reusable=false : pane=(none)
 
 ### PVO / Series
 Method: ToPvo
@@ -1412,9 +1412,9 @@ Parameters:
   - slowPeriods : Int32 : optional
   - signalPeriods : Int32 : optional
 Results:
-  - Pvo : Default : reusable=true
-  - Signal : Default : reusable=false
-  - Histogram : Default : reusable=false
+  - Pvo : Default : reusable=true : pane=Pvo
+  - Signal : Default : reusable=false : pane=Pvo
+  - Histogram : Default : reusable=false : pane=Pvo
 
 ### PVO / Buffer
 Method: ToPvoList
@@ -1423,9 +1423,9 @@ Parameters:
   - slowPeriods : Int32 : optional
   - signalPeriods : Int32 : optional
 Results:
-  - Pvo : Default : reusable=true
-  - Signal : Default : reusable=false
-  - Histogram : Default : reusable=false
+  - Pvo : Default : reusable=true : pane=Pvo
+  - Signal : Default : reusable=false : pane=Pvo
+  - Histogram : Default : reusable=false : pane=Pvo
 
 ### PVO / Stream
 Method: ToPvoHub
@@ -1434,9 +1434,9 @@ Parameters:
   - slowPeriods : Int32 : optional
   - signalPeriods : Int32 : optional
 Results:
-  - Pvo : Default : reusable=true
-  - Signal : Default : reusable=false
-  - Histogram : Default : reusable=false
+  - Pvo : Default : reusable=true : pane=Pvo
+  - Signal : Default : reusable=false : pane=Pvo
+  - Histogram : Default : reusable=false : pane=Pvo
 
 ### RENKO / Series
 Method: ToRenko
@@ -1444,12 +1444,12 @@ Parameters:
   - brickSize : Decimal : required
   - endType : enum : optional
 Results:
-  - Open : Default : reusable=false
-  - High : Default : reusable=false
-  - Low : Default : reusable=false
-  - Close : Default : reusable=true
-  - Volume : Default : reusable=false
-  - IsUp : Default : reusable=false
+  - Open : Default : reusable=false : pane=Price
+  - High : Default : reusable=false : pane=Price
+  - Low : Default : reusable=false : pane=Price
+  - Close : Default : reusable=true : pane=Price
+  - Volume : Default : reusable=false : pane=Volume
+  - IsUp : Default : reusable=false : pane=(none)
 
 ### RENKO / Buffer
 Method: ToRenkoList
@@ -1457,12 +1457,12 @@ Parameters:
   - brickSize : Decimal : required
   - endType : enum : optional
 Results:
-  - Open : Default : reusable=false
-  - High : Default : reusable=false
-  - Low : Default : reusable=false
-  - Close : Default : reusable=true
-  - Volume : Default : reusable=false
-  - IsUp : Default : reusable=false
+  - Open : Default : reusable=false : pane=Price
+  - High : Default : reusable=false : pane=Price
+  - Low : Default : reusable=false : pane=Price
+  - Close : Default : reusable=true : pane=Price
+  - Volume : Default : reusable=false : pane=Volume
+  - IsUp : Default : reusable=false : pane=(none)
 
 ### RENKO / Stream
 Method: ToRenkoHub
@@ -1470,12 +1470,12 @@ Parameters:
   - brickSize : Decimal : required
   - endType : enum : optional
 Results:
-  - Open : Default : reusable=false
-  - High : Default : reusable=false
-  - Low : Default : reusable=false
-  - Close : Default : reusable=true
-  - Volume : Default : reusable=false
-  - IsUp : Default : reusable=false
+  - Open : Default : reusable=false : pane=Price
+  - High : Default : reusable=false : pane=Price
+  - Low : Default : reusable=false : pane=Price
+  - Close : Default : reusable=true : pane=Price
+  - Volume : Default : reusable=false : pane=Volume
+  - IsUp : Default : reusable=false : pane=(none)
 
 ### RENKO-ATR / Series
 Method: ToRenkoAtr
@@ -1483,33 +1483,33 @@ Parameters:
   - atrPeriods : Int32 : optional
   - endType : enum : optional
 Results:
-  - Open : Default : reusable=false
-  - High : Default : reusable=false
-  - Low : Default : reusable=false
-  - Close : Default : reusable=true
-  - Volume : Default : reusable=false
-  - IsUp : Default : reusable=false
+  - Open : Default : reusable=false : pane=Price
+  - High : Default : reusable=false : pane=Price
+  - Low : Default : reusable=false : pane=Price
+  - Close : Default : reusable=true : pane=Price
+  - Volume : Default : reusable=false : pane=Volume
+  - IsUp : Default : reusable=false : pane=(none)
 
 ### ROC / Series
 Method: ToRoc
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Roc : Default : reusable=true
+  - Roc : Default : reusable=true : pane=Roc
 
 ### ROC / Buffer
 Method: ToRocList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Roc : Default : reusable=true
+  - Roc : Default : reusable=true : pane=Roc
 
 ### ROC / Stream
 Method: ToRocHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Roc : Default : reusable=true
+  - Roc : Default : reusable=true : pane=Roc
 
 ### ROC-WB / Series
 Method: ToRocWb
@@ -1518,10 +1518,10 @@ Parameters:
   - emaPeriods : Int32 : optional
   - stdDevPeriods : Int32 : optional
 Results:
-  - Roc : Default : reusable=true
-  - RocEma : Default : reusable=false
-  - UpperBand : Default : reusable=false
-  - LowerBand : Default : reusable=false
+  - Roc : Default : reusable=true : pane=RocWb
+  - RocEma : Default : reusable=false : pane=RocWb
+  - UpperBand : Default : reusable=false : pane=RocWb
+  - LowerBand : Default : reusable=false : pane=RocWb
 
 ### ROC-WB / Buffer
 Method: ToRocWbList
@@ -1530,10 +1530,10 @@ Parameters:
   - emaPeriods : Int32 : optional
   - stdDevPeriods : Int32 : optional
 Results:
-  - Roc : Default : reusable=true
-  - RocEma : Default : reusable=false
-  - UpperBand : Default : reusable=false
-  - LowerBand : Default : reusable=false
+  - Roc : Default : reusable=true : pane=RocWb
+  - RocEma : Default : reusable=false : pane=RocWb
+  - UpperBand : Default : reusable=false : pane=RocWb
+  - LowerBand : Default : reusable=false : pane=RocWb
 
 ### ROC-WB / Stream
 Method: ToRocWbHub
@@ -1542,10 +1542,10 @@ Parameters:
   - emaPeriods : Int32 : optional
   - stdDevPeriods : Int32 : optional
 Results:
-  - Roc : Default : reusable=true
-  - RocEma : Default : reusable=false
-  - UpperBand : Default : reusable=false
-  - LowerBand : Default : reusable=false
+  - Roc : Default : reusable=true : pane=RocWb
+  - RocEma : Default : reusable=false : pane=RocWb
+  - UpperBand : Default : reusable=false : pane=RocWb
+  - LowerBand : Default : reusable=false : pane=RocWb
 
 ### ROLLING-PIVOTS / Series
 Method: ToRollingPivots
@@ -1554,13 +1554,13 @@ Parameters:
   - offsetPeriods : Int32 : optional
   - pointType : enum : optional
 Results:
-  - R3 : Default : reusable=false
-  - R2 : Default : reusable=false
-  - R1 : Default : reusable=false
-  - PP : Default : reusable=true
-  - S1 : Default : reusable=false
-  - S2 : Default : reusable=false
-  - S3 : Default : reusable=false
+  - R3 : Default : reusable=false : pane=Price
+  - R2 : Default : reusable=false : pane=Price
+  - R1 : Default : reusable=false : pane=Price
+  - PP : Default : reusable=true : pane=Price
+  - S1 : Default : reusable=false : pane=Price
+  - S2 : Default : reusable=false : pane=Price
+  - S3 : Default : reusable=false : pane=Price
 
 ### ROLLING-PIVOTS / Buffer
 Method: ToRollingPivotsList
@@ -1569,13 +1569,13 @@ Parameters:
   - offsetPeriods : Int32 : optional
   - pointType : enum : optional
 Results:
-  - R3 : Default : reusable=false
-  - R2 : Default : reusable=false
-  - R1 : Default : reusable=false
-  - PP : Default : reusable=true
-  - S1 : Default : reusable=false
-  - S2 : Default : reusable=false
-  - S3 : Default : reusable=false
+  - R3 : Default : reusable=false : pane=Price
+  - R2 : Default : reusable=false : pane=Price
+  - R1 : Default : reusable=false : pane=Price
+  - PP : Default : reusable=true : pane=Price
+  - S1 : Default : reusable=false : pane=Price
+  - S2 : Default : reusable=false : pane=Price
+  - S3 : Default : reusable=false : pane=Price
 
 ### ROLLING-PIVOTS / Stream
 Method: ToRollingPivotsHub
@@ -1584,118 +1584,118 @@ Parameters:
   - offsetPeriods : Int32 : optional
   - pointType : enum : optional
 Results:
-  - R3 : Default : reusable=false
-  - R2 : Default : reusable=false
-  - R1 : Default : reusable=false
-  - PP : Default : reusable=true
-  - S1 : Default : reusable=false
-  - S2 : Default : reusable=false
-  - S3 : Default : reusable=false
+  - R3 : Default : reusable=false : pane=Price
+  - R2 : Default : reusable=false : pane=Price
+  - R1 : Default : reusable=false : pane=Price
+  - PP : Default : reusable=true : pane=Price
+  - S1 : Default : reusable=false : pane=Price
+  - S2 : Default : reusable=false : pane=Price
+  - S3 : Default : reusable=false : pane=Price
 
 ### RSI / Series
 Method: ToRsi
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Rsi : Default : reusable=true
+  - Rsi : Default : reusable=true : pane=Rsi
 
 ### RSI / Buffer
 Method: ToRsiList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Rsi : Default : reusable=true
+  - Rsi : Default : reusable=true : pane=Rsi
 
 ### RSI / Stream
 Method: ToRsiHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Rsi : Default : reusable=true
+  - Rsi : Default : reusable=true : pane=Rsi
 
 ### SLOPE / Series
 Method: ToSlope
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Slope : Default : reusable=true
-  - Intercept : Default : reusable=false
-  - StdDev : Default : reusable=false
-  - RSquared : Default : reusable=false
-  - Line : Default : reusable=false
+  - Slope : Default : reusable=true : pane=Slope
+  - Intercept : Default : reusable=false : pane=Intercept
+  - StdDev : Default : reusable=false : pane=StdDev
+  - RSquared : Default : reusable=false : pane=RSquared
+  - Line : Default : reusable=false : pane=Price
 
 ### SLOPE / Buffer
 Method: ToSlopeList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Slope : Default : reusable=true
-  - Intercept : Default : reusable=false
-  - StdDev : Default : reusable=false
-  - RSquared : Default : reusable=false
-  - Line : Default : reusable=false
+  - Slope : Default : reusable=true : pane=Slope
+  - Intercept : Default : reusable=false : pane=Intercept
+  - StdDev : Default : reusable=false : pane=StdDev
+  - RSquared : Default : reusable=false : pane=RSquared
+  - Line : Default : reusable=false : pane=Price
 
 ### SLOPE / Stream
 Method: ToSlopeHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Slope : Default : reusable=true
-  - Intercept : Default : reusable=false
-  - StdDev : Default : reusable=false
-  - RSquared : Default : reusable=false
-  - Line : Default : reusable=false
+  - Slope : Default : reusable=true : pane=Slope
+  - Intercept : Default : reusable=false : pane=Intercept
+  - StdDev : Default : reusable=false : pane=StdDev
+  - RSquared : Default : reusable=false : pane=RSquared
+  - Line : Default : reusable=false : pane=Price
 
 ### SMA / Series
 Method: ToSma
 Parameters:
   - lookbackPeriods : Int32 : required
 Results:
-  - Sma : Default : reusable=true
+  - Sma : Default : reusable=true : pane=Price
 
 ### SMA / Buffer
 Method: ToSmaList
 Parameters:
   - lookbackPeriods : Int32 : required
 Results:
-  - Sma : Default : reusable=true
+  - Sma : Default : reusable=true : pane=Price
 
 ### SMA / Stream
 Method: ToSmaHub
 Parameters:
   - lookbackPeriods : Int32 : required
 Results:
-  - Sma : Default : reusable=true
+  - Sma : Default : reusable=true : pane=Price
 
 ### SMA-ANALYSIS / Series
 Method: ToSmaAnalysis
 Parameters:
   - lookbackPeriods : Int32 : required
 Results:
-  - Sma : Default : reusable=true
-  - Mad : Default : reusable=false
-  - Mse : Default : reusable=false
-  - Mape : Default : reusable=false
+  - Sma : Default : reusable=true : pane=Price
+  - Mad : Default : reusable=false : pane=Mad
+  - Mse : Default : reusable=false : pane=Mse
+  - Mape : Default : reusable=false : pane=Mape
 
 ### SMA-ANALYSIS / Buffer
 Method: ToSmaAnalysisList
 Parameters:
   - lookbackPeriods : Int32 : required
 Results:
-  - Sma : Default : reusable=true
-  - Mad : Default : reusable=false
-  - Mse : Default : reusable=false
-  - Mape : Default : reusable=false
+  - Sma : Default : reusable=true : pane=Price
+  - Mad : Default : reusable=false : pane=Mad
+  - Mse : Default : reusable=false : pane=Mse
+  - Mape : Default : reusable=false : pane=Mape
 
 ### SMA-ANALYSIS / Stream
 Method: ToSmaAnalysisHub
 Parameters:
   - lookbackPeriods : Int32 : required
 Results:
-  - Sma : Default : reusable=true
-  - Mad : Default : reusable=false
-  - Mse : Default : reusable=false
-  - Mape : Default : reusable=false
+  - Sma : Default : reusable=true : pane=Price
+  - Mad : Default : reusable=false : pane=Mad
+  - Mse : Default : reusable=false : pane=Mse
+  - Mape : Default : reusable=false : pane=Mape
 
 ### SMI / Series
 Method: ToSmi
@@ -1705,8 +1705,8 @@ Parameters:
   - secondSmoothPeriods : Int32 : optional
   - signalPeriods : Int32 : optional
 Results:
-  - Smi : Default : reusable=true
-  - Signal : Default : reusable=false
+  - Smi : Default : reusable=true : pane=Smi
+  - Signal : Default : reusable=false : pane=Smi
 
 ### SMI / Buffer
 Method: ToSmiList
@@ -1716,8 +1716,8 @@ Parameters:
   - secondSmoothPeriods : Int32 : optional
   - signalPeriods : Int32 : optional
 Results:
-  - Smi : Default : reusable=true
-  - Signal : Default : reusable=false
+  - Smi : Default : reusable=true : pane=Smi
+  - Signal : Default : reusable=false : pane=Smi
 
 ### SMI / Stream
 Method: ToSmiHub
@@ -1727,29 +1727,29 @@ Parameters:
   - secondSmoothPeriods : Int32 : optional
   - signalPeriods : Int32 : optional
 Results:
-  - Smi : Default : reusable=true
-  - Signal : Default : reusable=false
+  - Smi : Default : reusable=true : pane=Smi
+  - Signal : Default : reusable=false : pane=Smi
 
 ### SMMA / Series
 Method: ToSmma
 Parameters:
   - lookbackPeriods : Int32 : required
 Results:
-  - Smma : Default : reusable=true
+  - Smma : Default : reusable=true : pane=Price
 
 ### SMMA / Buffer
 Method: ToSmmaList
 Parameters:
   - lookbackPeriods : Int32 : required
 Results:
-  - Smma : Default : reusable=true
+  - Smma : Default : reusable=true : pane=Price
 
 ### SMMA / Stream
 Method: ToSmmaHub
 Parameters:
   - lookbackPeriods : Int32 : required
 Results:
-  - Smma : Default : reusable=true
+  - Smma : Default : reusable=true : pane=Price
 
 ### STARC / Series
 Method: ToStarcBands
@@ -1758,9 +1758,9 @@ Parameters:
   - multiplier : Double : optional
   - atrPeriods : Int32 : optional
 Results:
-  - UpperBand : Default : reusable=false
-  - Centerline : Default : reusable=true
-  - LowerBand : Default : reusable=false
+  - UpperBand : Default : reusable=false : pane=Price
+  - Centerline : Default : reusable=true : pane=Price
+  - LowerBand : Default : reusable=false : pane=Price
 
 ### STARC / Buffer
 Method: ToStarcBandsList
@@ -1769,9 +1769,9 @@ Parameters:
   - multiplier : Double : optional
   - atrPeriods : Int32 : optional
 Results:
-  - UpperBand : Default : reusable=false
-  - Centerline : Default : reusable=true
-  - LowerBand : Default : reusable=false
+  - UpperBand : Default : reusable=false : pane=Price
+  - Centerline : Default : reusable=true : pane=Price
+  - LowerBand : Default : reusable=false : pane=Price
 
 ### STARC / Stream
 Method: ToStarcBandsHub
@@ -1780,9 +1780,9 @@ Parameters:
   - multiplier : Double : optional
   - atrPeriods : Int32 : optional
 Results:
-  - UpperBand : Default : reusable=false
-  - Centerline : Default : reusable=true
-  - LowerBand : Default : reusable=false
+  - UpperBand : Default : reusable=false : pane=Price
+  - Centerline : Default : reusable=true : pane=Price
+  - LowerBand : Default : reusable=false : pane=Price
 
 ### STC / Series
 Method: ToStc
@@ -1791,7 +1791,7 @@ Parameters:
   - fastPeriods : Int32 : optional
   - slowPeriods : Int32 : optional
 Results:
-  - Stc : Default : reusable=true
+  - Stc : Default : reusable=true : pane=Stc
 
 ### STC / Buffer
 Method: ToStcList
@@ -1800,7 +1800,7 @@ Parameters:
   - fastPeriods : Int32 : optional
   - slowPeriods : Int32 : optional
 Results:
-  - Stc : Default : reusable=true
+  - Stc : Default : reusable=true : pane=Stc
 
 ### STC / Stream
 Method: ToStcHub
@@ -1809,28 +1809,28 @@ Parameters:
   - fastPeriods : Int32 : optional
   - slowPeriods : Int32 : optional
 Results:
-  - Stc : Default : reusable=true
+  - Stc : Default : reusable=true : pane=Stc
 
 ### STDEV / Series
 Method: ToStdDev
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - StdDev : Default : reusable=true
+  - StdDev : Default : reusable=true : pane=StdDev
 
 ### STDEV / Buffer
 Method: ToStdDevList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - StdDev : Default : reusable=true
+  - StdDev : Default : reusable=true : pane=StdDev
 
 ### STDEV / Stream
 Method: ToStdDevHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - StdDev : Default : reusable=true
+  - StdDev : Default : reusable=true : pane=StdDev
 
 ### STDEV-CHANNELS / Series
 Method: ToStdDevChannels
@@ -1838,9 +1838,9 @@ Parameters:
   - lookbackPeriods : Int32 : optional
   - stdDeviations : Double : optional
 Results:
-  - UpperChannel : Default : reusable=false
-  - Centerline : Default : reusable=true
-  - LowerChannel : Default : reusable=false
+  - UpperChannel : Default : reusable=false : pane=Price
+  - Centerline : Default : reusable=true : pane=Price
+  - LowerChannel : Default : reusable=false : pane=Price
 
 ### STOCH / Series
 Method: ToStoch
@@ -1849,8 +1849,8 @@ Parameters:
   - signalPeriods : Int32 : optional
   - smoothPeriods : Int32 : optional
 Results:
-  - Oscillator : Default : reusable=true
-  - Signal : Default : reusable=false
+  - Oscillator : Default : reusable=true : pane=Stoch
+  - Signal : Default : reusable=false : pane=Stoch
 
 ### STOCH / Buffer
 Method: ToStochList
@@ -1859,8 +1859,8 @@ Parameters:
   - signalPeriods : Int32 : optional
   - smoothPeriods : Int32 : optional
 Results:
-  - Oscillator : Default : reusable=true
-  - Signal : Default : reusable=false
+  - Oscillator : Default : reusable=true : pane=Stoch
+  - Signal : Default : reusable=false : pane=Stoch
 
 ### STOCH / Stream
 Method: ToStochHub
@@ -1869,8 +1869,8 @@ Parameters:
   - signalPeriods : Int32 : optional
   - smoothPeriods : Int32 : optional
 Results:
-  - Oscillator : Default : reusable=true
-  - Signal : Default : reusable=false
+  - Oscillator : Default : reusable=true : pane=Stoch
+  - Signal : Default : reusable=false : pane=Stoch
 
 ### STOCH-RSI / Series
 Method: ToStochRsi
@@ -1880,8 +1880,8 @@ Parameters:
   - signalPeriods : Int32 : optional
   - smoothPeriods : Int32 : optional
 Results:
-  - StochRsi : Default : reusable=true
-  - Signal : Default : reusable=false
+  - StochRsi : Default : reusable=true : pane=StochRsi
+  - Signal : Default : reusable=false : pane=StochRsi
 
 ### STOCH-RSI / Buffer
 Method: ToStochRsiList
@@ -1891,8 +1891,8 @@ Parameters:
   - signalPeriods : Int32 : optional
   - smoothPeriods : Int32 : optional
 Results:
-  - StochRsi : Default : reusable=true
-  - Signal : Default : reusable=false
+  - StochRsi : Default : reusable=true : pane=StochRsi
+  - Signal : Default : reusable=false : pane=StochRsi
 
 ### STOCH-RSI / Stream
 Method: ToStochRsiHub
@@ -1902,8 +1902,8 @@ Parameters:
   - signalPeriods : Int32 : optional
   - smoothPeriods : Int32 : optional
 Results:
-  - StochRsi : Default : reusable=true
-  - Signal : Default : reusable=false
+  - StochRsi : Default : reusable=true : pane=StochRsi
+  - Signal : Default : reusable=false : pane=StochRsi
 
 ### SUPERTREND / Series
 Method: ToSuperTrend
@@ -1911,9 +1911,9 @@ Parameters:
   - lookbackPeriods : Int32 : optional
   - multiplier : Double : optional
 Results:
-  - SuperTrend : Default : reusable=false
-  - UpperBand : Default : reusable=false
-  - LowerBand : Default : reusable=false
+  - SuperTrend : Default : reusable=false : pane=Price
+  - UpperBand : Default : reusable=false : pane=Price
+  - LowerBand : Default : reusable=false : pane=Price
 
 ### SUPERTREND / Buffer
 Method: ToSuperTrendList
@@ -1921,9 +1921,9 @@ Parameters:
   - lookbackPeriods : Int32 : optional
   - multiplier : Double : optional
 Results:
-  - SuperTrend : Default : reusable=false
-  - UpperBand : Default : reusable=false
-  - LowerBand : Default : reusable=false
+  - SuperTrend : Default : reusable=false : pane=Price
+  - UpperBand : Default : reusable=false : pane=Price
+  - LowerBand : Default : reusable=false : pane=Price
 
 ### SUPERTREND / Stream
 Method: ToSuperTrendHub
@@ -1931,9 +1931,9 @@ Parameters:
   - lookbackPeriods : Int32 : optional
   - multiplier : Double : optional
 Results:
-  - SuperTrend : Default : reusable=false
-  - UpperBand : Default : reusable=false
-  - LowerBand : Default : reusable=false
+  - SuperTrend : Default : reusable=false : pane=Price
+  - UpperBand : Default : reusable=false : pane=Price
+  - LowerBand : Default : reusable=false : pane=Price
 
 ### T3 / Series
 Method: ToT3
@@ -1941,7 +1941,7 @@ Parameters:
   - lookbackPeriods : Int32 : optional
   - volumeFactor : Double : optional
 Results:
-  - T3 : Default : reusable=true
+  - T3 : Default : reusable=true : pane=Price
 
 ### T3 / Buffer
 Method: ToT3List
@@ -1949,7 +1949,7 @@ Parameters:
   - lookbackPeriods : Int32 : optional
   - volumeFactor : Double : optional
 Results:
-  - T3 : Default : reusable=true
+  - T3 : Default : reusable=true : pane=Price
 
 ### T3 / Stream
 Method: ToT3Hub
@@ -1957,70 +1957,70 @@ Parameters:
   - lookbackPeriods : Int32 : optional
   - volumeFactor : Double : optional
 Results:
-  - T3 : Default : reusable=true
+  - T3 : Default : reusable=true : pane=Price
 
 ### TEMA / Series
 Method: ToTema
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Tema : Default : reusable=true
+  - Tema : Default : reusable=true : pane=Price
 
 ### TEMA / Buffer
 Method: ToTemaList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Tema : Default : reusable=true
+  - Tema : Default : reusable=true : pane=Price
 
 ### TEMA / Stream
 Method: ToTemaHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Tema : Default : reusable=true
+  - Tema : Default : reusable=true : pane=Price
 
 ### TR / Series
 Method: ToTr
 Parameters:
   (none)
 Results:
-  - Tr : Default : reusable=true
+  - Tr : Default : reusable=true : pane=Tr
 
 ### TR / Buffer
 Method: ToTrList
 Parameters:
   (none)
 Results:
-  - Tr : Default : reusable=true
+  - Tr : Default : reusable=true : pane=Tr
 
 ### TR / Stream
 Method: ToTrHub
 Parameters:
   (none)
 Results:
-  - Tr : Default : reusable=true
+  - Tr : Default : reusable=true : pane=Tr
 
 ### TRIX / Series
 Method: ToTrix
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Trix : Default : reusable=true
+  - Trix : Default : reusable=true : pane=Trix
 
 ### TRIX / Buffer
 Method: ToTrixList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Trix : Default : reusable=true
+  - Trix : Default : reusable=true : pane=Trix
 
 ### TRIX / Stream
 Method: ToTrixHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Trix : Default : reusable=true
+  - Trix : Default : reusable=true : pane=Trix
 
 ### TSI / Series
 Method: ToTsi
@@ -2029,8 +2029,8 @@ Parameters:
   - smoothPeriods : Int32 : optional
   - signalPeriods : Int32 : optional
 Results:
-  - Tsi : Default : reusable=true
-  - Signal : Default : reusable=false
+  - Tsi : Default : reusable=true : pane=Tsi
+  - Signal : Default : reusable=false : pane=Tsi
 
 ### TSI / Buffer
 Method: ToTsiList
@@ -2039,8 +2039,8 @@ Parameters:
   - smoothPeriods : Int32 : optional
   - signalPeriods : Int32 : optional
 Results:
-  - Tsi : Default : reusable=true
-  - Signal : Default : reusable=false
+  - Tsi : Default : reusable=true : pane=Tsi
+  - Signal : Default : reusable=false : pane=Tsi
 
 ### TSI / Stream
 Method: ToTsiHub
@@ -2049,29 +2049,29 @@ Parameters:
   - smoothPeriods : Int32 : optional
   - signalPeriods : Int32 : optional
 Results:
-  - Tsi : Default : reusable=true
-  - Signal : Default : reusable=false
+  - Tsi : Default : reusable=true : pane=Tsi
+  - Signal : Default : reusable=false : pane=Tsi
 
 ### ULCER / Series
 Method: ToUlcerIndex
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - UlcerIndex : Default : reusable=true
+  - UlcerIndex : Default : reusable=true : pane=UlcerIndex
 
 ### ULCER / Buffer
 Method: ToUlcerIndexList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - UlcerIndex : Default : reusable=true
+  - UlcerIndex : Default : reusable=true : pane=UlcerIndex
 
 ### ULCER / Stream
 Method: ToUlcerIndexHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - UlcerIndex : Default : reusable=true
+  - UlcerIndex : Default : reusable=true : pane=UlcerIndex
 
 ### UO / Series
 Method: ToUltimate
@@ -2080,7 +2080,7 @@ Parameters:
   - middlePeriods : Int32 : optional
   - longPeriods : Int32 : optional
 Results:
-  - Ultimate : Default : reusable=true
+  - Ultimate : Default : reusable=true : pane=Ultimate
 
 ### UO / Buffer
 Method: ToUltimateList
@@ -2089,7 +2089,7 @@ Parameters:
   - middlePeriods : Int32 : optional
   - longPeriods : Int32 : optional
 Results:
-  - Ultimate : Default : reusable=true
+  - Ultimate : Default : reusable=true : pane=Ultimate
 
 ### UO / Stream
 Method: ToUltimateHub
@@ -2098,7 +2098,7 @@ Parameters:
   - middlePeriods : Int32 : optional
   - longPeriods : Int32 : optional
 Results:
-  - Ultimate : Default : reusable=true
+  - Ultimate : Default : reusable=true : pane=Ultimate
 
 ### VOL-STOP / Series
 Method: ToVolatilityStop
@@ -2106,8 +2106,8 @@ Parameters:
   - lookbackPeriods : Int32 : optional
   - multiplier : Double : optional
 Results:
-  - Sar : Default : reusable=true
-  - IsStop : Default : reusable=false
+  - Sar : Default : reusable=true : pane=Price
+  - IsStop : Default : reusable=false : pane=(none)
 
 ### VOL-STOP / Buffer
 Method: ToVolatilityStopList
@@ -2115,8 +2115,8 @@ Parameters:
   - lookbackPeriods : Int32 : optional
   - multiplier : Double : optional
 Results:
-  - Sar : Default : reusable=true
-  - IsStop : Default : reusable=false
+  - Sar : Default : reusable=true : pane=Price
+  - IsStop : Default : reusable=false : pane=(none)
 
 ### VOL-STOP / Stream
 Method: ToVolatilityStopHub
@@ -2124,116 +2124,116 @@ Parameters:
   - lookbackPeriods : Int32 : optional
   - multiplier : Double : optional
 Results:
-  - Sar : Default : reusable=true
-  - IsStop : Default : reusable=false
+  - Sar : Default : reusable=true : pane=Price
+  - IsStop : Default : reusable=false : pane=(none)
 
 ### VORTEX / Series
 Method: ToVortex
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Pvi : Default : reusable=true
-  - Nvi : Default : reusable=false
+  - Pvi : Default : reusable=true : pane=Vortex
+  - Nvi : Default : reusable=false : pane=Vortex
 
 ### VORTEX / Buffer
 Method: ToVortexList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Pvi : Default : reusable=true
-  - Nvi : Default : reusable=false
+  - Pvi : Default : reusable=true : pane=Vortex
+  - Nvi : Default : reusable=false : pane=Vortex
 
 ### VORTEX / Stream
 Method: ToVortexHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - Pvi : Default : reusable=true
-  - Nvi : Default : reusable=false
+  - Pvi : Default : reusable=true : pane=Vortex
+  - Nvi : Default : reusable=false : pane=Vortex
 
 ### VWAP / Series
 Method: ToVwap
 Parameters:
   - startDate : DateTime : optional
 Results:
-  - Vwap : Default : reusable=true
+  - Vwap : Default : reusable=true : pane=Price
 
 ### VWAP / Buffer
 Method: ToVwapList
 Parameters:
   - startDate : DateTime : optional
 Results:
-  - Vwap : Default : reusable=true
+  - Vwap : Default : reusable=true : pane=Price
 
 ### VWAP / Stream
 Method: ToVwapHub
 Parameters:
   - startDate : DateTime : optional
 Results:
-  - Vwap : Default : reusable=true
+  - Vwap : Default : reusable=true : pane=Price
 
 ### VWMA / Series
 Method: ToVwma
 Parameters:
   - lookbackPeriods : Int32 : required
 Results:
-  - Vwma : Default : reusable=true
+  - Vwma : Default : reusable=true : pane=Price
 
 ### VWMA / Buffer
 Method: ToVwmaList
 Parameters:
   - lookbackPeriods : Int32 : required
 Results:
-  - Vwma : Default : reusable=true
+  - Vwma : Default : reusable=true : pane=Price
 
 ### VWMA / Stream
 Method: ToVwmaHub
 Parameters:
   - lookbackPeriods : Int32 : required
 Results:
-  - Vwma : Default : reusable=true
+  - Vwma : Default : reusable=true : pane=Price
 
 ### WILLR / Series
 Method: ToWilliamsR
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - WilliamsR : Default : reusable=true
+  - WilliamsR : Default : reusable=true : pane=WilliamsR
 
 ### WILLR / Buffer
 Method: ToWilliamsRList
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - WilliamsR : Default : reusable=true
+  - WilliamsR : Default : reusable=true : pane=WilliamsR
 
 ### WILLR / Stream
 Method: ToWilliamsRHub
 Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
-  - WilliamsR : Default : reusable=true
+  - WilliamsR : Default : reusable=true : pane=WilliamsR
 
 ### WMA / Series
 Method: ToWma
 Parameters:
   - lookbackPeriods : Int32 : required
 Results:
-  - Wma : Default : reusable=true
+  - Wma : Default : reusable=true : pane=Price
 
 ### WMA / Buffer
 Method: ToWmaList
 Parameters:
   - lookbackPeriods : Int32 : required
 Results:
-  - Wma : Default : reusable=true
+  - Wma : Default : reusable=true : pane=Price
 
 ### WMA / Stream
 Method: ToWmaHub
 Parameters:
   - lookbackPeriods : Int32 : required
 Results:
-  - Wma : Default : reusable=true
+  - Wma : Default : reusable=true : pane=Price
 
 ### ZIGZAG / Series
 Method: ToZigZag
@@ -2241,8 +2241,8 @@ Parameters:
   - endType : enum : optional
   - percentChange : Decimal : optional
 Results:
-  - ZigZag : Default : reusable=true
-  - PointType : Default : reusable=false
-  - RetraceHigh : Default : reusable=false
-  - RetraceLow : Default : reusable=false
+  - ZigZag : Default : reusable=true : pane=Price
+  - PointType : Default : reusable=false : pane=(none)
+  - RetraceHigh : Default : reusable=false : pane=Price
+  - RetraceLow : Default : reusable=false : pane=Price
 

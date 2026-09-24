@@ -10,7 +10,7 @@ public static partial class Adl
             .WithName("Accumulation Distribution Line (ADL)")
             .WithId("ADL")
             .WithCategory(Category.VolumeBased)
-            .AddResult(nameof(AdlResult.Adl), "Accumulation Distribution Line (ADL)", ResultType.Default, isReusable: true)
+            .AddResult(nameof(AdlResult.Adl), "Accumulation Distribution Line (ADL)", "Adl", ResultType.Default, isReusable: true)
             .Build();
 
     /// <summary>

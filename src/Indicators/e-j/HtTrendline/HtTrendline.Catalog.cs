@@ -10,9 +10,9 @@ public static partial class HtTrendline
             .WithName("Hilbert Transform Instantaneous Trendline")
             .WithId("HTL")
             .WithCategory(Category.MovingAverage)
-            .AddResult(nameof(HtlResult.DcPeriods), "Dominant Cycle Periods", ResultType.Default)
-            .AddResult(nameof(HtlResult.Trendline), "Trendline", ResultType.Default, isReusable: true)
-            .AddResult(nameof(HtlResult.SmoothPrice), "Smooth Price", ResultType.Default)
+            .AddResult(nameof(HtlResult.DcPeriods), "Dominant Cycle Periods", "DcPeriods", ResultType.Default)
+            .AddResult(nameof(HtlResult.Trendline), "Trendline", IndicatorResult.PricePane, ResultType.Default, isReusable: true)
+            .AddResult(nameof(HtlResult.SmoothPrice), "Smooth Price", IndicatorResult.PricePane, ResultType.Default)
             .Build();
 
     /// <summary>

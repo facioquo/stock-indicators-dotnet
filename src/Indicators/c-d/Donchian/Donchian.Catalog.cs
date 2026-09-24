@@ -11,10 +11,10 @@ public static partial class Donchian
             .WithId("DONCHIAN")
             .WithCategory(Category.PriceChannel)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", defaultValue: 20, minimum: 1, maximum: 250)
-            .AddResult(nameof(DonchianResult.UpperBand), "Upper Band", ResultType.Default)
-            .AddResult(nameof(DonchianResult.Centerline), "Centerline", ResultType.Default, isReusable: true)
-            .AddResult(nameof(DonchianResult.LowerBand), "Lower Band", ResultType.Default)
-            .AddResult(nameof(DonchianResult.Width), "Width", ResultType.Default)
+            .AddResult(nameof(DonchianResult.UpperBand), "Upper Band", IndicatorResult.PricePane, ResultType.Default)
+            .AddResult(nameof(DonchianResult.Centerline), "Centerline", IndicatorResult.PricePane, ResultType.Default, isReusable: true)
+            .AddResult(nameof(DonchianResult.LowerBand), "Lower Band", IndicatorResult.PricePane, ResultType.Default)
+            .AddResult(nameof(DonchianResult.Width), "Width", "Width", ResultType.Default)
             .Build();
 
     /// <summary>
