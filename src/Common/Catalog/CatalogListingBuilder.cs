@@ -53,10 +53,7 @@ internal class CatalogListingBuilder
             }
         }
 
-        foreach (IndicatorResult result in baseListing.Results)
-        {
-            _results.Add(result with { });
-        }
+        _results.AddRange(baseListing.Results);
     }
 
     /// <summary>
