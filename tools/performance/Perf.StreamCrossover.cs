@@ -54,7 +54,8 @@ public class StreamCrossover
 
         internal Feed(IReadOnlyList<Bar> prefix, Action<BarHub> attach)
         {
-            // at steady state the cache is full, so each arrival also prunes one bar
+            // the engine's first 100 calls fill the cache, so every row times the full, pruning state;
+            // the floor keeps each indicator's lookback window in the cache
             provider = new BarHub(Math.Max(prefix.Count, 100));
             attach(provider);
             provider.Add(prefix);
