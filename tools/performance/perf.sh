@@ -36,6 +36,7 @@ BASELINE_CLASSES=(
   Performance.SeriesIndicators
   Performance.BufferIndicators
   Performance.StreamIndicators
+  Performance.StreamObserver
   Performance.Utility
   Performance.UtilityNullMath
   Performance.UtilityStdDev

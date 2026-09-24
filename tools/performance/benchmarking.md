@@ -36,6 +36,7 @@ The **baseline set** is exactly what `dotnet run -c Release` (no arguments) prod
 | `SeriesIndicators` | `Perf.Series.cs` | every indicator, Series style |
 | `BufferIndicators` | `Perf.Buffer.cs` | every indicator, BufferList style |
 | `StreamIndicators` | `Perf.Stream.cs` | every indicator, StreamHub style |
+| `StreamObserver` | `Perf.StreamObserver.cs` | per-tick StreamHub delivery: provider alone, an `OnAdd`-only observer, and EMA/SMA/RSI/MACD hubs |
 | `Utility` | `Perf.Utility.cs` | shared conversion/utility hot paths |
 | `UtilityNullMath` | `Perf.Utility.NullMath.cs` | null-math helpers |
 | `UtilityStdDev` | `Perf.Utility.StdDev.cs` | standard-deviation helper |

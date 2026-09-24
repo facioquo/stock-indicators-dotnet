@@ -11,13 +11,14 @@ public static class Program
         if (args?.Length == 0)
         {
             // With no filter, run the official BASELINE SET.
-            // This is the single source of truth for what `perf.ps1 reset`
-            // and `perf.ps1 evaluate` cover. Keep this list in sync with the
-            // $BaselineClasses list in perf.ps1.
+            // This is the single source of truth for what `perf.sh reset`
+            // and `perf.sh evaluate` cover. Keep this list in sync with
+            // BASELINE_CLASSES in perf.sh.
             // example: dotnet run -c Release
             BenchmarkRunner.Run<SeriesIndicators>(config);   // every indicator, Series style
             BenchmarkRunner.Run<BufferIndicators>(config);   // every indicator, BufferList style
             BenchmarkRunner.Run<StreamIndicators>(config);   // every indicator, StreamHub style
+            BenchmarkRunner.Run<StreamObserver>(config);     // per-tick StreamHub delivery path
             BenchmarkRunner.Run<Utility>(config);            // shared conversion/utility hot paths
             BenchmarkRunner.Run<UtilityNullMath>(config);    // null-math helpers
             BenchmarkRunner.Run<UtilityStdDev>(config);      // standard-deviation helper
