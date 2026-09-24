@@ -31,37 +31,22 @@ public class StreamObserver
     }
 
     [Benchmark]
-    public double EmaHub()
-    {
-        BarHub provider = new();
-        AddOnlyObserver<EmaResult> observer = new(provider.ToEmaHub(n));
-        Stream(provider);
-        return observer.Last;
-    }
+    public double EmaHub() => StreamThrough(static provider => provider.ToEmaHub(n));
 
     [Benchmark]
-    public double SmaHub()
-    {
-        BarHub provider = new();
-        AddOnlyObserver<SmaResult> observer = new(provider.ToSmaHub(n));
-        Stream(provider);
-        return observer.Last;
-    }
+    public double SmaHub() => StreamThrough(static provider => provider.ToSmaHub(n));
 
     [Benchmark]
-    public double RsiHub()
-    {
-        BarHub provider = new();
-        AddOnlyObserver<RsiResult> observer = new(provider.ToRsiHub(n));
-        Stream(provider);
-        return observer.Last;
-    }
+    public double RsiHub() => StreamThrough(static provider => provider.ToRsiHub(n));
 
     [Benchmark]
-    public double MacdHub()
+    public double MacdHub() => StreamThrough(static provider => provider.ToMacdHub(12, 26, 9));
+
+    private static double StreamThrough<T>(Func<BarHub, IStreamObservable<T>> chain)
+        where T : IReusable
     {
         BarHub provider = new();
-        AddOnlyObserver<MacdResult> observer = new(provider.ToMacdHub(12, 26, 9));
+        AddOnlyObserver<T> observer = new(chain(provider));
         Stream(provider);
         return observer.Last;
     }
@@ -80,11 +65,19 @@ public class StreamObserver
         where T : IReusable
     {
         private readonly IDisposable subscription;
+        private Exception fault;
 
         internal AddOnlyObserver(IStreamObservable<T> provider)
             => subscription = provider.Subscribe(this);
 
-        internal double Last { get; private set; }
+        // a faulted run must not be timed as a clean one
+        internal double Last
+        {
+            get => fault is null
+                ? field
+                : throw new InvalidOperationException("The observed hub faulted.", fault);
+            private set;
+        }
 
         public bool IsSubscribed { get; private set; } = true;
 
@@ -100,7 +93,7 @@ public class StreamObserver
 
         public void OnPrune(DateTime toTimestamp) { }
 
-        public void OnError(Exception exception) { }
+        public void OnError(Exception exception) => fault = exception;
 
         public void OnCompleted() { }
     }
