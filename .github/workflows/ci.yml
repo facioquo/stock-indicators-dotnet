@@ -129,7 +129,6 @@ jobs:
         continue-on-error: true
 
   gate:
-    name: gate
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: ["lint-and-test", "test-regression"]
