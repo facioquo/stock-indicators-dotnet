@@ -128,8 +128,8 @@ jobs:
           coverage-reports: test-results/unit/**/coverage.cobertura.xml
         continue-on-error: true
 
-  lint-full:
-    name: linting (full)
+  gate:
+    name: gate
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: ["lint-and-test", "test-regression"]
