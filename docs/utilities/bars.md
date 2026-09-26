@@ -117,7 +117,25 @@ TradeTickHub tickHub = new();
 TradeTickAggregatorHub oneMinHub = tickHub.ToTradeTickAggregatorHub(BarInterval.OneMinute);
 ```
 
-Both aggregator hubs accept an optional `fillGaps` flag (default `false`): when `true`, synthetic zero-volume bars bridge silent buckets, carrying the prior bar's `Close` into `Open`, `High`, `Low`, and `Close`. Consumers needing a different gap policy should pre-process the upstream stream; a native `GapFillMode` enum is on the v3.1 roadmap.
+Both aggregator hubs accept a `GapFillMode` to control how silent buckets — periods with no upstream input — are handled:
+
+| value | behavior |
+| ----- | -------- |
+| `None` (default) | Silent buckets are omitted from the output stream. |
+| `ForwardFill` | Silent buckets are filled with zero-volume bars, carrying the prior bar's `Close` into `Open`, `High`, `Low`, and `Close`. |
+| `Interpolate` | Silent buckets are filled with zero-volume bars whose `Open`, `High`, `Low`, and `Close` are linearly interpolated between the prior bar's `Close` and the next real bar's `Open` (the next real tick's price, for ticks), evenly spaced across the missing buckets. |
+
+```csharp
+// bar → bar
+BarAggregatorHub fiveMinHub = barHub.ToBarAggregatorHub(BarInterval.FiveMinutes, GapFillMode.Interpolate);
+
+// tick → bar
+TradeTickAggregatorHub oneMinHub = tickHub.ToTradeTickAggregatorHub(BarInterval.OneMinute, GapFillMode.Interpolate);
+```
+
+An optional `fillGaps` boolean overload also remains for convenience: `fillGaps: false` (default) is equivalent to `GapFillMode.None`, and `fillGaps: true` is equivalent to `GapFillMode.ForwardFill`. Volume is always `0` on a synthesized bar, regardless of mode. `Interpolate` prices are not rounded; a quotient that does not terminate (e.g. two silent buckets, which divide the move into thirds) carries full `decimal` precision.
+
+`Interpolate` also looks ahead: each synthesized bar uses the next real bar's `Open`, so its value is not knowable at its own timestamp. A backtest that trades on interpolated bars acts on data it could not have had yet; use `ForwardFill` when look-ahead matters. When a late or revised input changes that next bar, the hub regenerates the affected gap bars, so revising the `Open` of the bar after a long gap costs time proportional to the gap length.
 
 ## Extended candle properties
 
