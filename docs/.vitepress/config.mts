@@ -50,6 +50,11 @@ gtag('js', new Date());
 gtag('config', 'G-7602GXEZ0R', { cookie_flags: 'SameSite=Lax; Secure' });`],
 ]
 
+// Single source for the default theme: feeds both `appearance` below and the
+// early dark-mode script, so they can't drift apart.
+const APPEARANCE_FALLBACK = 'dark'
+const APPEARANCE_KEY = 'vitepress-theme-appearance'
+
 // Shared top-level navigation — referenced once and reused in every sidebar context
 const siteNav = {
   text: 'Documentation',
@@ -71,7 +76,7 @@ export default defineConfig({
   description: "Transform price quotes into trading insights.",
 
   // Default to dark theme (toggle still available)
-  appearance: 'dark',
+  appearance: APPEARANCE_FALLBACK,
 
   sitemap: {
     hostname: SITE_URL
@@ -98,6 +103,20 @@ export default defineConfig({
     // against the body background at runtime.
     ['meta', { name: 'color-scheme', content: 'dark' }],
     ['style', {}, 'html, body { background-color: var(--vp-c-bg, #1b1b1f); }'],
+
+    // Duplicates VitePress's own dark-mode script (#2169): Cloudflare Rocket
+    // Loader rewrites every <script> tag's type on this zone and re-inserts
+    // it after the page renders, so the deployed site's `.dark` class — and
+    // everything gated on it, not just the canvas above — arrives late.
+    // `data-cfasync="false"` is Rocket Loader's documented opt-out; only this
+    // copy carries it, so it alone still runs at parse time.
+    ['script', { id: 'check-dark-mode-early', 'data-cfasync': 'false' },
+      `;(() => {
+        const preference = localStorage.getItem('${APPEARANCE_KEY}') || '${APPEARANCE_FALLBACK}'
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (!preference || preference === 'auto' ? prefersDark : preference === 'dark')
+          document.documentElement.classList.add('dark')
+      })()`],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:image', content: `${SITE_URL}/assets/social-banner.png` }],
     ['meta', { name: 'twitter:card', content: 'summary' }],
