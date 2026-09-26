@@ -141,25 +141,6 @@ if (rsiList.Count > 0)
 
 ## Usage patterns
 
-### Simulating a data stream
-
-```csharp
-SmaList smaList = new(20);
-
-foreach (var bar in streamingBars)
-{
-    // add new bar
-    smaList.Add(bar);
-
-    // list auto-adds incremental SMA value
-    if (smaList.Count > 0)
-    {
-        SmaResult latest = smaList[^1];
-        Console.WriteLine($"{latest.Timestamp:d}: SMA = {latest.Sma:N2}");
-    }
-}
-```
-
 ### Batch addition with incremental updates
 
 ```csharp
@@ -168,16 +149,51 @@ SmaList smaList = new(20);
 // add initial batch
 smaList.Add(historicalBars);
 
-// then add new bars incrementally
-while (newBar = GetNextBar())
+// then add new bars incrementally, e.g. from a polling loop
+Bar? newBar = await GetNextBarAsync();
+while (newBar is not null)
 {
     smaList.Add(newBar);
-    if (smaList.Count > 0)
-    {
-        ProcessLatestResult(smaList[^1]);
-    }
+    ProcessLatestResult(smaList[^1]);
+
+    newBar = await GetNextBarAsync();
 }
 ```
+
+## WebSocket/SSE integration
+
+A live WebSocket or SSE feed delivers bars one message at a time, not as a collection you can enumerate up front. Only add through a buffer list when the feed guarantees chronological order — see the [order warning](#basic-usage) above; an out-of-order feed needs a [Stream hub](/guide/styles/stream) instead.
+
+A callback-based client can invoke its event handler concurrently, and a lock around `Add` only prevents corruption — it does not restore arrival order once two callbacks race for it, and a buffer list mis-computes silently on an out-of-order `Add`. Drive `Add` from a single sequential receive loop instead, so only one bar is ever in flight:
+
+```csharp
+SmaList smaList = new(20);
+using ClientWebSocket socket = new();
+await socket.ConnectAsync(feedUri, CancellationToken.None);
+
+byte[] buffer = new byte[4096];
+
+while (socket.State == WebSocketState.Open)
+{
+    WebSocketReceiveResult result = await socket.ReceiveAsync(buffer, CancellationToken.None);
+    if (result.MessageType == WebSocketMessageType.Close)
+    {
+        break;
+    }
+
+    // assumes each bar message fits in one frame; accumulate until
+    // result.EndOfMessage if your feed can fragment a single bar
+    WebSocketBar wsBar = ParseBar(buffer.AsSpan(0, result.Count));
+
+    Bar bar = new(wsBar.Timestamp, wsBar.Open, wsBar.High, wsBar.Low, wsBar.Close, wsBar.Volume);
+    smaList.Add(bar);
+
+    SmaResult latest = smaList[^1];
+    Console.WriteLine($"{latest.Timestamp:d}: SMA = {latest.Sma:N2}");
+}
+```
+
+`ReceiveAsync` returns one message at a time, so `Add` and every read of `smaList` happen on this one loop — no lock needed. If your client library only exposes a callback rather than a receive loop you control, have the callback enqueue onto a single-consumer `Channel<Bar>`, and do the `Add` and every read from the one loop that drains it, instead of locking around `Add` in the callback.
 
 ## See also
 

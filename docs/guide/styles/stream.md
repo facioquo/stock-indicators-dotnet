@@ -257,18 +257,10 @@ SmaHub smaHub = barHub.ToSmaHub(20);
 object hubLock = new();
 
 // WebSocket message handler (may be invoked concurrently)
-async Task OnBarReceived(WebSocketBar wsBar)
+void OnBarReceived(WebSocketBar wsBar)
 {
     // convert WebSocket bar to library Bar
-    Bar bar = new()
-    {
-        Timestamp = wsBar.Timestamp,
-        Open = wsBar.Open,
-        High = wsBar.High,
-        Low = wsBar.Low,
-        Close = wsBar.Close,
-        Volume = wsBar.Volume
-    };
+    Bar bar = new(wsBar.Timestamp, wsBar.Open, wsBar.High, wsBar.Low, wsBar.Close, wsBar.Volume);
 
     // update hub through the single-writer gate -
     // all observers cascade automatically
