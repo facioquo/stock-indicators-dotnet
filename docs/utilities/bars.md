@@ -117,7 +117,19 @@ TradeTickHub tickHub = new();
 TradeTickAggregatorHub oneMinHub = tickHub.ToTradeTickAggregatorHub(BarInterval.OneMinute);
 ```
 
-Both aggregator hubs accept an optional `fillGaps` flag (default `false`): when `true`, synthetic zero-volume bars bridge silent buckets, carrying the prior bar's `Close` into `Open`, `High`, `Low`, and `Close`. Consumers needing a different gap policy should pre-process the upstream stream; a native `GapFillMode` enum is on the v3.1 roadmap.
+Both aggregator hubs accept a `GapFillMode` to control how silent buckets — periods with no upstream input — are handled:
+
+| value | behavior |
+| ----- | -------- |
+| `None` (default) | Silent buckets are omitted from the output stream. |
+| `ForwardFill` | Silent buckets are filled with zero-volume bars, carrying the prior bar's `Close` into `Open`, `High`, `Low`, and `Close`. |
+| `Interpolate` | Silent buckets are filled with zero-volume bars whose `Open`, `High`, `Low`, and `Close` are linearly interpolated between the prior bar's `Close` and the next real bar's `Open`, evenly spaced across the missing buckets. |
+
+```csharp
+BarAggregatorHub fiveMinHub = barHub.ToBarAggregatorHub(BarInterval.FiveMinutes, GapFillMode.Interpolate);
+```
+
+An optional `fillGaps` boolean overload also remains for convenience: `fillGaps: false` (default) is equivalent to `GapFillMode.None`, and `fillGaps: true` is equivalent to `GapFillMode.ForwardFill`. Volume is always `0` on a synthesized bar, regardless of mode. `Interpolate` prices are not rounded; a quotient that does not terminate (e.g. a gap of 3) carries full `decimal` precision.
 
 ## Extended candle properties
 

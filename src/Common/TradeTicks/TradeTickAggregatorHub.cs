@@ -4,13 +4,16 @@ namespace FacioQuo.Stock.Indicators;
 /// Streaming hub for aggregating raw tick data into OHLCV price bars.
 /// </summary>
 /// <remarks>
-/// Gap behavior: by default (<c>fillGaps: false</c>) the hub emits only
-/// the bars that incoming ticks actually populate — buckets with no
-/// upstream activity are not synthesized. Set <c>fillGaps: true</c> to
-/// synthesize zero-volume bars carrying the prior bar's close as
-/// O/H/L/C through the silent period. Consumers that need a different
-/// fill policy (e.g. interpolation) should pre-process the input stream
-/// before subscribing this hub.
+/// Gap behavior: by default (<see cref="GapFillMode.None"/>, or
+/// the equivalent <c>fillGaps: false</c>) the hub emits only the bars that
+/// incoming ticks actually populate — buckets with no upstream activity are
+/// not synthesized. <see cref="GapFillMode.ForwardFill"/>
+/// (equivalent to <c>fillGaps: true</c>) synthesizes zero-volume bars
+/// carrying the prior bar's close as O/H/L/C through the silent period.
+/// <see cref="GapFillMode.Interpolate"/> instead synthesizes
+/// zero-volume bars whose O/H/L/C are linearly interpolated between the
+/// prior bar's close and the arriving tick's price, evenly spaced across the
+/// missing buckets.
 /// </remarks>
 public class TradeTickAggregatorHub
     : BarProvider<ITradeTick, IBar>
@@ -32,6 +35,20 @@ public class TradeTickAggregatorHub
         IStreamObservable<ITradeTick> provider,
         BarInterval barInterval,
         bool fillGaps = false)
+        : this(provider, barInterval, fillGaps ? GapFillMode.ForwardFill : GapFillMode.None)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TradeTickAggregatorHub"/> class.
+    /// </summary>
+    /// <param name="provider">The tick data provider.</param>
+    /// <param name="barInterval">The period size to aggregate to.</param>
+    /// <param name="gapFillMode">How silent buckets are handled.</param>
+    public TradeTickAggregatorHub(
+        IStreamObservable<ITradeTick> provider,
+        BarInterval barInterval,
+        GapFillMode gapFillMode)
         : base(provider)
     {
         if (barInterval == BarInterval.Month)
@@ -49,7 +66,7 @@ public class TradeTickAggregatorHub
         }
 
         AggregationPeriod = agg;
-        FillGaps = fillGaps;
+        GapFillMode = gapFillMode;
         Name = $"TRADE-TICK-AGG({barInterval})";
 
         // Keep execution IDs for 100x the aggregation period or at least 1 hour
@@ -71,6 +88,21 @@ public class TradeTickAggregatorHub
         IStreamObservable<ITradeTick> provider,
         TimeSpan timeSpan,
         bool fillGaps = false)
+        : this(provider, timeSpan, fillGaps ? GapFillMode.ForwardFill : GapFillMode.None)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TradeTickAggregatorHub"/> class.
+    /// </summary>
+    /// <param name="provider">The tick data provider.</param>
+    /// <param name="timeSpan">The time span to aggregate to.</param>
+    /// <param name="gapFillMode">How silent buckets are handled.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the time span is less than or equal to zero.</exception>
+    public TradeTickAggregatorHub(
+        IStreamObservable<ITradeTick> provider,
+        TimeSpan timeSpan,
+        GapFillMode gapFillMode)
         : base(provider)
     {
         if (timeSpan <= TimeSpan.Zero)
@@ -80,7 +112,7 @@ public class TradeTickAggregatorHub
         }
 
         AggregationPeriod = timeSpan;
-        FillGaps = fillGaps;
+        GapFillMode = gapFillMode;
         Name = $"TRADE-TICK-AGG({timeSpan})";
 
         // Keep execution IDs for 100x the aggregation period or at least 1 hour
@@ -95,13 +127,27 @@ public class TradeTickAggregatorHub
     /// Gets a value indicating whether gap filling is enabled.
     /// </summary>
     /// <remarks>
-    /// When <c>true</c>, buckets that have no upstream activity between
-    /// the last emitted bar and the next active bucket are filled with
-    /// zero-volume synthetic bars whose O/H/L/C all carry forward the
-    /// prior bar's close. When <c>false</c> (default), silent buckets
-    /// are simply omitted from the output stream.
+    /// Equivalent to <c>GapFillMode != GapFillMode.None</c>. When <c>true</c>,
+    /// buckets that have no upstream activity between the last emitted bar
+    /// and the next active bucket are filled with zero-volume synthetic
+    /// bars. See <see cref="GapFillMode"/> for the specific fill policy
+    /// (forward carry or interpolation). When <c>false</c> (default),
+    /// silent buckets are simply omitted from the output stream.
     /// </remarks>
-    public bool FillGaps { get; }
+    public bool FillGaps => GapFillMode != GapFillMode.None;
+
+    /// <summary>
+    /// Gets the gap-fill policy applied to silent buckets.
+    /// </summary>
+    /// <remarks>
+    /// <see cref="GapFillMode.None"/> (default) omits silent
+    /// buckets. <see cref="GapFillMode.ForwardFill"/> carries the
+    /// prior bar's close forward as O/H/L/C. <see cref="GapFillMode.Interpolate"/>
+    /// linearly interpolates O/H/L/C between the prior bar's close and the
+    /// arriving tick's price across the missing buckets. Volume is always
+    /// zero for a synthesized bar, regardless of mode.
+    /// </remarks>
+    public GapFillMode GapFillMode { get; }
 
     /// <summary>
     /// Gets the aggregation period.
@@ -197,21 +243,34 @@ public class TradeTickAggregatorHub
             }
 
             // Handle gap filling if enabled and moving to future bar
-            if (FillGaps && isFutureBar && _currentBar != null)
+            if (GapFillMode != GapFillMode.None && isFutureBar && _currentBar != null)
             {
                 DateTime lastBarTimestamp = _currentBarTimestamp;
                 DateTime nextExpectedBarTimestamp = lastBarTimestamp.Add(AggregationPeriod);
 
+                // Interpolation anchors: the last real close and the
+                // arriving tick's price, spread evenly across the gap steps.
+                decimal startPrice = _currentBar.Close;
+                decimal endPrice = item.Price;
+                long gapSteps = ((barTimestamp - lastBarTimestamp).Ticks / AggregationPeriod.Ticks) - 1;
+                long step = 0;
+
                 // Fill gaps between last bar and current bar
                 while (nextExpectedBarTimestamp < barTimestamp)
                 {
-                    // Create a gap-fill bar with carried-forward prices
+                    step++;
+
+                    decimal gapPrice = GapFillMode == GapFillMode.Interpolate
+                        ? startPrice + ((endPrice - startPrice) * step / (gapSteps + 1))
+                        : startPrice;
+
+                    // Create a gap-fill bar with carried-forward or interpolated prices
                     Bar gapBar = new(
                         Timestamp: nextExpectedBarTimestamp,
-                        Open: _currentBar.Close,
-                        High: _currentBar.Close,
-                        Low: _currentBar.Close,
-                        Close: _currentBar.Close,
+                        Open: gapPrice,
+                        High: gapPrice,
+                        Low: gapPrice,
+                        Close: gapPrice,
                         Volume: 0m);
 
                     // Add gap bar directly to cache

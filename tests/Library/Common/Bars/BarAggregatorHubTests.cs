@@ -507,6 +507,7 @@ public class BarAggregatorHubTests : StreamHubTestBase, ITestBarObserver, ITestC
             fillGaps: true);
 
         aggregator.FillGaps.Should().BeTrue();
+        aggregator.GapFillMode.Should().Be(GapFillMode.ForwardFill);
         aggregator.AggregationPeriod.Should().Be(TimeSpan.FromMinutes(15));
 
         aggregator.Unsubscribe();
@@ -712,6 +713,279 @@ public class BarAggregatorHubTests : StreamHubTestBase, ITestBarObserver, ITestC
         freshHub.Unsubscribe();
         lateSource.EndTransmission();
         freshSource.EndTransmission();
+    }
+
+    [TestMethod]
+    public void GapFillMode_None_ViaEnumOverload_OmitsSilentBuckets()
+    {
+        List<Bar> minuteBars =
+        [
+            new(DateTime.Parse("2023-11-09 10:00", invariantCulture), 100, 105, 99, 102, 1000),
+            // Gap: 10:01, 10:02 missing
+            new(DateTime.Parse("2023-11-09 10:03", invariantCulture), 105, 108, 104, 106, 1300),
+        ];
+
+        BarHub provider = new();
+        BarAggregatorHub aggregator = provider.ToBarAggregatorHub(
+            BarInterval.OneMinute,
+            GapFillMode.None);
+
+        foreach (Bar q in minuteBars)
+        {
+            provider.Add(q);
+        }
+
+        aggregator.GapFillMode.Should().Be(GapFillMode.None);
+        aggregator.FillGaps.Should().BeFalse();
+
+        IReadOnlyList<IBar> results = aggregator.Results;
+        results.Should().HaveCount(2);
+        results[0].Timestamp.Should().Be(DateTime.Parse("2023-11-09 10:00", invariantCulture));
+        results[1].Timestamp.Should().Be(DateTime.Parse("2023-11-09 10:03", invariantCulture));
+
+        aggregator.Unsubscribe();
+        provider.EndTransmission();
+    }
+
+    [TestMethod]
+    public void GapFillMode_ForwardFill_ViaEnumOverload_MatchesLegacyBehavior()
+    {
+        List<Bar> minuteBars =
+        [
+            new(DateTime.Parse("2023-11-09 10:00", invariantCulture), 100, 105, 99, 102, 1000),
+            // Gap: 10:01 missing
+            new(DateTime.Parse("2023-11-09 10:02", invariantCulture), 105, 108, 104, 106, 1300),
+        ];
+
+        BarHub provider = new();
+        BarAggregatorHub aggregator = provider.ToBarAggregatorHub(
+            BarInterval.OneMinute,
+            GapFillMode.ForwardFill);
+
+        foreach (Bar q in minuteBars)
+        {
+            provider.Add(q);
+        }
+
+        aggregator.GapFillMode.Should().Be(GapFillMode.ForwardFill);
+        aggregator.FillGaps.Should().BeTrue();
+
+        IReadOnlyList<IBar> results = aggregator.Results;
+        results.Should().HaveCount(3);
+
+        // Gap bar carries the prior bar's close forward, same as fillGaps: true
+        IBar gapBar = results[1];
+        gapBar.Timestamp.Should().Be(DateTime.Parse("2023-11-09 10:01", invariantCulture));
+        gapBar.Open.Should().Be(102m);
+        gapBar.High.Should().Be(102m);
+        gapBar.Low.Should().Be(102m);
+        gapBar.Close.Should().Be(102m);
+        gapBar.Volume.Should().Be(0m);
+
+        aggregator.Unsubscribe();
+        provider.EndTransmission();
+    }
+
+    [TestMethod]
+    public void GapFillMode_Interpolate_LinearlyInterpolatesPrices()
+    {
+        List<Bar> minuteBars =
+        [
+            new(DateTime.Parse("2023-11-09 10:00", invariantCulture), 100, 105, 99, 102, 1000),
+            // Gaps: 10:01, 10:02, 10:03 missing
+            new(DateTime.Parse("2023-11-09 10:04", invariantCulture), 105, 108, 104, 106, 1300),
+        ];
+
+        BarHub provider = new();
+        BarAggregatorHub aggregator = provider.ToBarAggregatorHub(
+            BarInterval.OneMinute,
+            GapFillMode.Interpolate);
+
+        foreach (Bar q in minuteBars)
+        {
+            provider.Add(q);
+        }
+
+        aggregator.GapFillMode.Should().Be(GapFillMode.Interpolate);
+        aggregator.FillGaps.Should().BeTrue();
+
+        IReadOnlyList<IBar> results = aggregator.Results;
+
+        // Should have 5 bars: 10:00, 10:01-10:03 (interpolated), 10:04
+        results.Should().HaveCount(5);
+
+        // Linearly interpolated between 10:00's close (102) and 10:04's
+        // open (105) across the 3 missing buckets: 102.75, 103.50, 104.25
+        decimal[] expected = [102.75m, 103.50m, 104.25m];
+        for (int i = 1; i <= 3; i++)
+        {
+            IBar gapBar = results[i];
+            gapBar.Open.Should().Be(expected[i - 1]);
+            gapBar.High.Should().Be(expected[i - 1]);
+            gapBar.Low.Should().Be(expected[i - 1]);
+            gapBar.Close.Should().Be(expected[i - 1]);
+            gapBar.Volume.Should().Be(0m);
+        }
+
+        aggregator.Unsubscribe();
+        provider.EndTransmission();
+    }
+
+    [TestMethod]
+    public void LateArrival_IntoGapFilledBucket_ReplacesGapBar()
+    {
+        // A gap-filled bucket (10:01) is later populated by a real,
+        // late-arriving bar. The rebuild triggered by the past-bar path
+        // must replace the synthetic gap bar with the real one — not
+        // leave the gap bar in place or duplicate an entry — and any
+        // still-open gap after it must recompute from the new real data.
+
+        BarHub provider = new();
+        BarAggregatorHub aggregator = provider.ToBarAggregatorHub(
+            BarInterval.OneMinute,
+            GapFillMode.ForwardFill);
+
+        // 10:00 real bar
+        provider.Add(new Bar(
+            DateTime.Parse("2023-11-09 10:00", invariantCulture), 100m, 105m, 99m, 102m, 1000m));
+
+        // 10:03 real bar closes the 10:00 bucket, gap-filling 10:01 and 10:02
+        // (both carry 10:00's close of 102)
+        provider.Add(new Bar(
+            DateTime.Parse("2023-11-09 10:03", invariantCulture), 105m, 108m, 104m, 106m, 1300m));
+
+        IReadOnlyList<IBar> resultsBeforeLateArrival = aggregator.Results;
+        resultsBeforeLateArrival.Should().HaveCount(4);
+        resultsBeforeLateArrival[1].Close.Should().Be(102m); // gap bar, pre-replacement
+
+        // Late arrival lands squarely in the gap-filled 10:01 bucket
+        provider.Add(new Bar(
+            DateTime.Parse("2023-11-09 10:01", invariantCulture), 150m, 160m, 140m, 155m, 500m));
+
+        IReadOnlyList<IBar> results = aggregator.Results;
+
+        // Still 4 bars: the gap bar at 10:01 was replaced, not duplicated
+        results.Should().HaveCount(4);
+
+        results[0].Timestamp.Should().Be(DateTime.Parse("2023-11-09 10:00", invariantCulture));
+        results[0].Open.Should().Be(100m);
+        results[0].Close.Should().Be(102m);
+
+        // 10:01 now holds the real late bar's own OHLCV, not the gap fill
+        IBar realBar = results[1];
+        realBar.Timestamp.Should().Be(DateTime.Parse("2023-11-09 10:01", invariantCulture));
+        realBar.Open.Should().Be(150m);
+        realBar.High.Should().Be(160m);
+        realBar.Low.Should().Be(140m);
+        realBar.Close.Should().Be(155m);
+        realBar.Volume.Should().Be(500m);
+
+        // 10:02 is still gap-filled, but now carries forward the real
+        // 10:01 close (155) instead of the stale value (102)
+        IBar recomputedGap = results[2];
+        recomputedGap.Timestamp.Should().Be(DateTime.Parse("2023-11-09 10:02", invariantCulture));
+        recomputedGap.Open.Should().Be(155m);
+        recomputedGap.High.Should().Be(155m);
+        recomputedGap.Low.Should().Be(155m);
+        recomputedGap.Close.Should().Be(155m);
+        recomputedGap.Volume.Should().Be(0m);
+
+        // 10:03 is unaffected
+        IBar finalBar = results[3];
+        finalBar.Timestamp.Should().Be(DateTime.Parse("2023-11-09 10:03", invariantCulture));
+        finalBar.Open.Should().Be(105m);
+        finalBar.High.Should().Be(108m);
+        finalBar.Low.Should().Be(104m);
+        finalBar.Close.Should().Be(106m);
+        finalBar.Volume.Should().Be(1300m);
+
+        aggregator.Unsubscribe();
+        provider.EndTransmission();
+    }
+
+    [TestMethod]
+    public void LateArrival_IntoGapFilledBucket_ReplacesGapBar_Interpolate()
+    {
+        // Same shape as the ForwardFill version above, but under Interpolate
+        // a late arrival moves both interpolation anchors: it becomes the
+        // start anchor for the gap bar(s) still ahead of it, so a downstream
+        // gap must recompute from the new real value, not the stale one.
+
+        BarHub provider = new();
+        BarAggregatorHub aggregator = provider.ToBarAggregatorHub(
+            BarInterval.OneMinute,
+            GapFillMode.Interpolate);
+
+        // 10:00 real bar
+        provider.Add(new Bar(
+            DateTime.Parse("2023-11-09 10:00", invariantCulture), 100m, 105m, 99m, 102m, 1000m));
+
+        // 10:03 real bar closes the 10:00 bucket, interpolating 10:01 and
+        // 10:02 between 10:00's close (102) and 10:03's open (105)
+        provider.Add(new Bar(
+            DateTime.Parse("2023-11-09 10:03", invariantCulture), 105m, 108m, 104m, 106m, 1300m));
+
+        aggregator.Results[1].Close.Should().Be(103m); // gap bar, pre-replacement
+        aggregator.Results[2].Close.Should().Be(104m); // gap bar, pre-replacement
+
+        // Late arrival lands squarely in the interpolated 10:01 bucket
+        provider.Add(new Bar(
+            DateTime.Parse("2023-11-09 10:01", invariantCulture), 150m, 160m, 140m, 155m, 500m));
+
+        IReadOnlyList<IBar> results = aggregator.Results;
+        results.Should().HaveCount(4);
+
+        // 10:01 now holds the real late bar's own OHLCV, not the gap fill
+        IBar realBar = results[1];
+        realBar.Timestamp.Should().Be(DateTime.Parse("2023-11-09 10:01", invariantCulture));
+        realBar.Close.Should().Be(155m);
+
+        // 10:02 recomputes between the new 10:01 close (155) and 10:03's
+        // open (105): 155 + (105-155)*1/2 = 130, not the stale 104
+        IBar recomputedGap = results[2];
+        recomputedGap.Timestamp.Should().Be(DateTime.Parse("2023-11-09 10:02", invariantCulture));
+        recomputedGap.Open.Should().Be(130m);
+        recomputedGap.High.Should().Be(130m);
+        recomputedGap.Low.Should().Be(130m);
+        recomputedGap.Close.Should().Be(130m);
+        recomputedGap.Volume.Should().Be(0m);
+
+        aggregator.Unsubscribe();
+        provider.EndTransmission();
+    }
+
+    [TestMethod]
+    public void GapFillMode_Interpolate_DoesNotRoundNonTerminatingQuotients()
+    {
+        // Anchors 100 and 101 across 2 gap steps land on 1/3 and 2/3 —
+        // neither terminates in decimal. GapFillMode.Interpolate does not
+        // round; this pins the full-precision decimal value so a future
+        // change can't silently start rounding (or stop).
+        List<Bar> minuteBars =
+        [
+            new(DateTime.Parse("2023-11-09 10:00", invariantCulture), 100, 100, 100, 100, 1000),
+            // Gaps: 10:01, 10:02 missing
+            new(DateTime.Parse("2023-11-09 10:03", invariantCulture), 101, 101, 101, 101, 1300),
+        ];
+
+        BarHub provider = new();
+        BarAggregatorHub aggregator = provider.ToBarAggregatorHub(
+            BarInterval.OneMinute,
+            GapFillMode.Interpolate);
+
+        foreach (Bar q in minuteBars)
+        {
+            provider.Add(q);
+        }
+
+        IReadOnlyList<IBar> results = aggregator.Results;
+        results.Should().HaveCount(4);
+
+        results[1].Close.Should().Be(100.33333333333333333333333333m);
+        results[2].Close.Should().Be(100.66666666666666666666666667m);
+
+        aggregator.Unsubscribe();
+        provider.EndTransmission();
     }
 }
 

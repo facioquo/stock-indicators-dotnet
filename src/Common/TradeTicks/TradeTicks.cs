@@ -28,6 +28,19 @@ public static class TradeTicks
     /// Creates a TradeTickAggregatorHub that aggregates ticks from the provider into OHLCV price bars.
     /// </summary>
     /// <param name="tickProvider">The tick provider to aggregate.</param>
+    /// <param name="barInterval">The period size to aggregate to.</param>
+    /// <param name="gapFillMode">How silent buckets are handled.</param>
+    /// <returns>A new instance of TradeTickAggregatorHub.</returns>
+    public static TradeTickAggregatorHub ToTradeTickAggregatorHub(
+        this IStreamObservable<ITradeTick> tickProvider,
+        BarInterval barInterval,
+        GapFillMode gapFillMode)
+        => new(tickProvider, barInterval, gapFillMode);
+
+    /// <summary>
+    /// Creates a TradeTickAggregatorHub that aggregates ticks from the provider into OHLCV price bars.
+    /// </summary>
+    /// <param name="tickProvider">The tick provider to aggregate.</param>
     /// <param name="timeSpan">The time span to aggregate to.</param>
     /// <param name="fillGaps">Whether to fill gaps by carrying forward the last known price.</param>
     /// <returns>A new instance of TradeTickAggregatorHub.</returns>
@@ -36,4 +49,17 @@ public static class TradeTicks
         TimeSpan timeSpan,
         bool fillGaps = false)
         => new(tickProvider, timeSpan, fillGaps);
+
+    /// <summary>
+    /// Creates a TradeTickAggregatorHub that aggregates ticks from the provider into OHLCV price bars.
+    /// </summary>
+    /// <param name="tickProvider">The tick provider to aggregate.</param>
+    /// <param name="timeSpan">The time span to aggregate to.</param>
+    /// <param name="gapFillMode">How silent buckets are handled.</param>
+    /// <returns>A new instance of TradeTickAggregatorHub.</returns>
+    public static TradeTickAggregatorHub ToTradeTickAggregatorHub(
+        this IStreamObservable<ITradeTick> tickProvider,
+        TimeSpan timeSpan,
+        GapFillMode gapFillMode)
+        => new(tickProvider, timeSpan, gapFillMode);
 }

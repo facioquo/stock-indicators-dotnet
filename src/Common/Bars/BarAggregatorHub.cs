@@ -4,13 +4,16 @@ namespace FacioQuo.Stock.Indicators;
 /// Streaming hub for aggregating bars into larger time periods.
 /// </summary>
 /// <remarks>
-/// Gap behavior: by default (<c>fillGaps: false</c>) the hub emits only
-/// the bars that incoming bars actually populate — buckets with no
-/// upstream input are not synthesized. Set <c>fillGaps: true</c> to
-/// synthesize zero-volume bars carrying the prior bar's close as
-/// O/H/L/C through the silent period. Consumers that need a different
-/// fill policy (e.g. interpolation) should pre-process the input stream
-/// before subscribing this hub.
+/// Gap behavior: by default (<see cref="GapFillMode.None"/>, or
+/// the equivalent <c>fillGaps: false</c>) the hub emits only the bars that
+/// incoming bars actually populate — buckets with no upstream input are not
+/// synthesized. <see cref="GapFillMode.ForwardFill"/> (equivalent
+/// to <c>fillGaps: true</c>) synthesizes zero-volume bars carrying the prior
+/// bar's close as O/H/L/C through the silent period.
+/// <see cref="GapFillMode.Interpolate"/> instead synthesizes
+/// zero-volume bars whose O/H/L/C are linearly interpolated between the
+/// prior bar's close and the arriving bar's open, evenly spaced across the
+/// missing buckets.
 /// </remarks>
 public class BarAggregatorHub
     : BarProvider<IBar, IBar>
@@ -35,6 +38,24 @@ public class BarAggregatorHub
         IBarProvider<IBar> provider,
         BarInterval barInterval,
         bool fillGaps = false)
+        : this(provider, barInterval, fillGaps ? GapFillMode.ForwardFill : GapFillMode.None)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BarAggregatorHub"/> class.
+    /// </summary>
+    /// <param name="provider">The bar provider.</param>
+    /// <param name="barInterval">The period size to aggregate to.</param>
+    /// <param name="gapFillMode">How silent buckets are handled.</param>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="barInterval"/> is <see cref="BarInterval.Month"/>,
+    /// which is not supported in streaming mode.
+    /// </exception>
+    public BarAggregatorHub(
+        IBarProvider<IBar> provider,
+        BarInterval barInterval,
+        GapFillMode gapFillMode)
         : base(provider)
     {
         if (barInterval == BarInterval.Month)
@@ -53,7 +74,7 @@ public class BarAggregatorHub
                 nameof(barInterval));
         }
 
-        FillGaps = fillGaps;
+        GapFillMode = gapFillMode;
         Name = $"BAR-AGG({barInterval})";
 
         Reinitialize();
@@ -70,6 +91,21 @@ public class BarAggregatorHub
         IBarProvider<IBar> provider,
         TimeSpan timeSpan,
         bool fillGaps = false)
+        : this(provider, timeSpan, fillGaps ? GapFillMode.ForwardFill : GapFillMode.None)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BarAggregatorHub"/> class.
+    /// </summary>
+    /// <param name="provider">The bar provider.</param>
+    /// <param name="timeSpan">The time span to aggregate to.</param>
+    /// <param name="gapFillMode">How silent buckets are handled.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the time span is less than or equal to zero.</exception>
+    public BarAggregatorHub(
+        IBarProvider<IBar> provider,
+        TimeSpan timeSpan,
+        GapFillMode gapFillMode)
         : base(provider)
     {
         if (timeSpan <= TimeSpan.Zero)
@@ -79,7 +115,7 @@ public class BarAggregatorHub
         }
 
         AggregationPeriod = timeSpan;
-        FillGaps = fillGaps;
+        GapFillMode = gapFillMode;
         Name = $"BAR-AGG({timeSpan})";
 
         Reinitialize();
@@ -89,13 +125,27 @@ public class BarAggregatorHub
     /// Gets a value indicating whether gap filling is enabled.
     /// </summary>
     /// <remarks>
-    /// When <c>true</c>, buckets that have no upstream input between
-    /// the last emitted bar and the next active bucket are filled with
-    /// zero-volume synthetic bars whose O/H/L/C all carry forward the
-    /// prior bar's close. When <c>false</c> (default), silent buckets
+    /// Equivalent to <c>GapFillMode != GapFillMode.None</c>. When <c>true</c>,
+    /// buckets that have no upstream input between the last emitted bar and
+    /// the next active bucket are filled with zero-volume synthetic bars.
+    /// See <see cref="GapFillMode"/> for the specific fill policy (forward
+    /// carry or interpolation). When <c>false</c> (default), silent buckets
     /// are simply omitted from the output stream.
     /// </remarks>
-    public bool FillGaps { get; }
+    public bool FillGaps => GapFillMode != GapFillMode.None;
+
+    /// <summary>
+    /// Gets the gap-fill policy applied to silent buckets.
+    /// </summary>
+    /// <remarks>
+    /// <see cref="GapFillMode.None"/> (default) omits silent
+    /// buckets. <see cref="GapFillMode.ForwardFill"/> carries the
+    /// prior bar's close forward as O/H/L/C. <see cref="GapFillMode.Interpolate"/>
+    /// linearly interpolates O/H/L/C between the prior bar's close and the
+    /// arriving bar's open across the missing buckets. Volume is always zero
+    /// for a synthesized bar, regardless of mode.
+    /// </remarks>
+    public GapFillMode GapFillMode { get; }
 
     /// <summary>
     /// Gets the aggregation period.
@@ -178,21 +228,36 @@ public class BarAggregatorHub
             }
 
             // Handle gap filling if enabled and moving to future bar
-            if (FillGaps && isFutureBar && _currentBar != null)
+            if (GapFillMode != GapFillMode.None && isFutureBar && _currentBar != null)
             {
                 DateTime lastBarTimestamp = _currentBarTimestamp;
                 DateTime nextExpectedBarTimestamp = lastBarTimestamp.Add(AggregationPeriod);
 
+                // Interpolation anchors: the last real close and the
+                // arriving bar's open, spread evenly across the gap steps.
+                decimal startPrice = _currentBar.Close;
+                decimal endPrice = item.Open;
+                long gapSteps = AggregationPeriod > TimeSpan.Zero
+                    ? ((barTimestamp - lastBarTimestamp).Ticks / AggregationPeriod.Ticks) - 1
+                    : 0;
+                long step = 0;
+
                 // Fill gaps between last bar and current bar
                 while (AggregationPeriod > TimeSpan.Zero && nextExpectedBarTimestamp < barTimestamp)
                 {
-                    // Create a gap-fill bar with carried-forward prices
+                    step++;
+
+                    decimal gapPrice = GapFillMode == GapFillMode.Interpolate
+                        ? startPrice + ((endPrice - startPrice) * step / (gapSteps + 1))
+                        : startPrice;
+
+                    // Create a gap-fill bar with carried-forward or interpolated prices
                     Bar gapBar = new(
                         Timestamp: nextExpectedBarTimestamp,
-                        Open: _currentBar.Close,
-                        High: _currentBar.Close,
-                        Low: _currentBar.Close,
-                        Close: _currentBar.Close,
+                        Open: gapPrice,
+                        High: gapPrice,
+                        Low: gapPrice,
+                        Close: gapPrice,
                         Volume: 0m);
 
                     // Add gap bar using base class logic
@@ -373,6 +438,19 @@ public static partial class Bars
     /// Creates a BarAggregatorHub that aggregates bars from the provider into larger time periods.
     /// </summary>
     /// <param name="barProvider">The bar provider to aggregate.</param>
+    /// <param name="barInterval">The period size to aggregate to.</param>
+    /// <param name="gapFillMode">How silent buckets are handled.</param>
+    /// <returns>A new instance of BarAggregatorHub.</returns>
+    public static BarAggregatorHub ToBarAggregatorHub(
+        this IBarProvider<IBar> barProvider,
+        BarInterval barInterval,
+        GapFillMode gapFillMode)
+        => new(barProvider, barInterval, gapFillMode);
+
+    /// <summary>
+    /// Creates a BarAggregatorHub that aggregates bars from the provider into larger time periods.
+    /// </summary>
+    /// <param name="barProvider">The bar provider to aggregate.</param>
     /// <param name="timeSpan">The time span to aggregate to.</param>
     /// <param name="fillGaps">Whether to fill gaps by carrying forward the last known price.</param>
     /// <returns>A new instance of BarAggregatorHub.</returns>
@@ -381,4 +459,17 @@ public static partial class Bars
         TimeSpan timeSpan,
         bool fillGaps = false)
         => new(barProvider, timeSpan, fillGaps);
+
+    /// <summary>
+    /// Creates a BarAggregatorHub that aggregates bars from the provider into larger time periods.
+    /// </summary>
+    /// <param name="barProvider">The bar provider to aggregate.</param>
+    /// <param name="timeSpan">The time span to aggregate to.</param>
+    /// <param name="gapFillMode">How silent buckets are handled.</param>
+    /// <returns>A new instance of BarAggregatorHub.</returns>
+    public static BarAggregatorHub ToBarAggregatorHub(
+        this IBarProvider<IBar> barProvider,
+        TimeSpan timeSpan,
+        GapFillMode gapFillMode)
+        => new(barProvider, timeSpan, gapFillMode);
 }
