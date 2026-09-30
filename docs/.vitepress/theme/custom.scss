@@ -70,6 +70,18 @@ html:not(.dark) body {
   }
 }
 
+// Phone portrait: tighten the wrapped title lines and the card padding
+// that VitePress sets for the single-column stack (1.25 and 1.5rem).
+@media (max-width: 639px) {
+  .VPHero .name {
+    line-height: 1.1;
+  }
+
+  .VPFeatures .VPFeature .box {
+    padding: 1rem;
+  }
+}
+
 .VPFeatures {
 
   .VPImage {
