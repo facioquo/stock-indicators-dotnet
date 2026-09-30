@@ -36,10 +36,9 @@ html:not(.dark) body {
 .VPHero {
   background-color: var(--vp-c-bg);
 
-  // Below 600px, keep VitePress's own responsive .name font-size (2rem):
-  // the fixed 2.5em size only fits once the hero has room to spare — the
-  // same 600px point the NuGet badge below already treats as "has room" —
-  // and overflow-wrap guards any word still too wide for a narrower one.
+  // Below 640px (VitePress's own hero breakpoint), keep its responsive .name
+  // font-size (2rem): the fixed 2.5em size and the NuGet badge beside the
+  // title only fit from there. overflow-wrap guards any word still too wide.
   .name {
     color: var(--vp-c-text-1);
     max-width: 100% !important;
@@ -475,7 +474,7 @@ html:not(.dark) body {
 }
 
 @supports (anchor-name: --hero-name) {
-  @media (min-width: 600px) {
+  @media (min-width: 640px) {
     .VPHero .name {
       anchor-name: --hero-name;
     }
