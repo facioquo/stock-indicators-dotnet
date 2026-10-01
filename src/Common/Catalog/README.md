@@ -30,7 +30,10 @@ internal static readonly IndicatorListing SeriesListing =
 - Every style shares the ID and metadata of the `CommonListing`.
 - Parameter names exactly match the method signature.
 - A result's `dataName` uses `nameof(TResult.Property)` so a renamed result property fails the build.
-- `isRequired: false` means a caller may omit the argument **and get `defaultValue`**. That holds in exactly two shapes: the parameter carries a C# default equal to `defaultValue`, or the listing declares no `defaultValue` at all and so promises nothing (VWAP's `startDate`, omittable via `ToVwap(bars)`). If the argument can only be dropped by selecting a shorter overload that behaves differently while the listing still advertises a default — as `ToPrs(sourceEval, sourceBase)` does, computing no `PrsPercent` — mark it `isRequired: true` so a catalog-driven caller does not silently get a different indicator, and reach that overload with `WithoutParam(name)` instead. `EveryParameterIsRequiredMatchesCallability` enforces all three cases.
+- `isRequired: false` promises a caller may omit the argument **and get `defaultValue`**. That holds in exactly two shapes:
+  - the parameter carries a C# default equal to `defaultValue`, or
+  - the listing declares no `defaultValue` and so promises nothing (VWAP's `startDate`, omittable via `ToVwap(bars)`).
+- When the argument can only be dropped by choosing a shorter overload that behaves differently — `ToPrs(sourceEval, sourceBase)` computes no `PrsPercent` — mark it `isRequired: true` and reach that overload with `WithoutParam(name)`, so a catalog-driven caller never silently gets a different indicator. `EveryParameterIsRequiredMatchesCallability` enforces these rules.
 
 ## Querying and executing
 

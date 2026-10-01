@@ -49,7 +49,10 @@ The base computes `restoreIndex` as the last `ProviderCache` index to keep (`Ind
 
 ## Catalog
 
-`PopulateCatalog()` in `Catalog/Catalog.Listings.cs` registers every listing into the private `_listings` field. `tests/Library/Common/Catalog/Catalog.Metrics.Tests.cs` asserts the exact per-style listing counts; update it whenever a listing is added or removed. `Catalog.Shape.Tests.cs` compares the catalog against `tests/Library/TestData/catalog/shape.snapshot.txt`; regenerate it with `UPDATE_CATALOG_SHAPE=1` set when listings change deliberately.
+`PopulateCatalog()` in `Catalog/Catalog.Listings.cs` registers every listing into the private `_listings` field. Two tests in `tests/Library/Common/Catalog/` pin the result:
+
+- `Catalog.Metrics.Tests.cs` asserts the exact per-style listing counts; update it whenever a listing is added or removed.
+- `Catalog.Shape.Tests.cs` compares the catalog against `tests/Library/TestData/catalog/shape.snapshot.txt`; regenerate it with `UPDATE_CATALOG_SHAPE=1` set when listings change deliberately.
 
 ## Boundaries
 
