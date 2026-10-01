@@ -1,42 +1,16 @@
 # Performance baselines
 
-Committed BenchmarkDotNet baseline artifacts used for performance regression
-checks. For how to run benchmarks and refresh these files, see the canonical
-[benchmarking guide](../benchmarking.md).
+Committed BenchmarkDotNet results that `detect-regressions.sh` compares new runs against. To run benchmarks or refresh these files, see the [benchmarking guide](../benchmarking.md); it also lists which suites form the [baseline set](../benchmarking.md#the-baseline-set).
 
-## What is stored here
+## Files
 
-Two files per baseline suite:
+Each suite in the baseline set has two files, which `perf.sh reset` copies from `BenchmarkDotNet.Artifacts/results/`:
 
-- `Performance.<Suite>-report-full.json` — machine-readable (regression input)
-- `Performance.<Suite>-report-github.md` — human-readable tables (committed for review)
+- `Performance.<Suite>-report-full.json` — machine-readable; the input to regression detection
+- `Performance.<Suite>-report-github.md` — human-readable tables for review
 
-## Baseline set
+Both are committed. This folder's `.gitignore` excludes only `*.zip` exports.
 
-These suites are the committed baseline (matches the no-arg `dotnet run -c Release`
-default in `Program.cs` and `BASELINE_CLASSES` in `perf.sh`):
+`perf.sh reset` lists any `Performance.*` file here whose suite is no longer in the baseline set; `perf.sh reset --prune` deletes them.
 
-- `SeriesIndicators`, `BufferIndicators`, `StreamIndicators` — every indicator, per style
-- `Utility`, `UtilityNullMath`, `UtilityStdDev` — shared hot paths / helpers
-
-`StyleComparison`, `StreamExternal`, and `ManualTestDirect` are diagnostics and
-are **not** baselined here.
-
-## Refresh and check
-
-Run from the repository root:
-
-```bash
-# Regenerate all baseline files (run + copy)
-bash tools/performance/perf.sh reset
-
-# Compare current results against these baselines
-bash tools/performance/perf.sh evaluate
-```
-
-## Notes
-
-- The `-github.md` and `-report-full.json` files are committed on purpose; only
-  `*.zip` archives are git-ignored here.
-- Keep baseline refreshes tied to intentional, verified performance work.
-- Historical pre-fix snapshots were retired; use git history/tags for older baselines.
+Refresh baselines only for intentional, verified performance work, in the same change. Use git history for older baselines.

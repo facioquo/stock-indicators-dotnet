@@ -1,131 +1,126 @@
 # Performance benchmarking guide
 
-Canonical guide for running indicator performance benchmarks, refreshing baselines, and checking for regressions. Uses [BenchmarkDotNet](https://benchmarkdotnet.org/) under `tools/performance`.
+How to run indicator performance benchmarks, refresh their baselines, and check for regressions with [BenchmarkDotNet](https://benchmarkdotnet.org/) in `tools/performance`. For baseline file conventions, see the [baselines README](baselines/README.md).
 
-> **Not the same as correctness (regression) baselines** in `tools/baselining/`,
-> which capture expected indicator *output values*
-> (`dotnet run --project tools/baselining -- --all`). This guide is only about
-> *performance* (timing) baselines.
+> [!NOTE]
+> This guide covers timing baselines only. Regression baselines of indicator output values come from the [baseline generator](../baselining/README.md).
 
-## TL;DR — one script, three workflows
+## Workflows
 
-Run everything through `perf.sh` from the repository root. Requires `jq` for `evaluate`/`spot`.
+Run everything through `perf.sh` from the repository root. `evaluate` and `spot` need `jq`.
 
 ```bash
-# 1. Spot check: one indicator vs baseline (fast; recommended dev-loop check)
+# Spot check: one indicator against the baselines (quick dev-loop check)
 bash tools/performance/perf.sh spot Ema
-bash tools/performance/perf.sh spot Adx Stream        # single style
+bash tools/performance/perf.sh spot Adx Stream        # one style: Series, Buffer, Stream, or All
 
-# 2. Evaluate: full suite, report regressions/improvements vs baselines
+# Evaluate: full suite, report regressions and improvements against the baselines
 bash tools/performance/perf.sh evaluate
 
-# 3. Reset baselines: full suite, replace committed baselines
+# Reset: full suite, replace the committed baselines
 bash tools/performance/perf.sh reset
+bash tools/performance/perf.sh reset --prune          # also delete baseline files no longer in the set
 ```
 
-`reset` and `evaluate` run the full suite (~1 hour). `spot` is quick.
+`reset` and `evaluate` run the full suite, about an hour; `spot` runs one indicator.
 
-**Keep runs comparable.** The commands above intentionally take no tuning options (no `--job`, `--warmupCount`, threshold, etc.). Each suite pins its own BenchmarkDotNet job in code, so plain runs compare apples-to-apples with the committed baselines. Only add flags for raw exploration (see below), never for baseline comparison.
+These commands take no tuning options (`--job`, `--warmupCount`, thresholds). Each suite pins its BenchmarkDotNet job in code, so plain runs stay comparable with the committed baselines. Add options only for exploratory runs.
 
 ## The baseline set
 
-The **baseline set** is exactly what `dotnet run -c Release` (no arguments) produces, and what `perf.sh reset`/`evaluate` cover:
+The baseline set is what `dotnet run -c Release` runs with no arguments, and what `perf.sh reset` and `evaluate` cover:
 
-| Suite | File (`Perf.*.cs`) | Coverage |
-| ----- | ------------------ | -------- |
+| Suite | File | Coverage |
+| ----- | ---- | -------- |
 | `SeriesIndicators` | `Perf.Series.cs` | every indicator, Series style |
 | `BufferIndicators` | `Perf.Buffer.cs` | every indicator, BufferList style |
 | `StreamIndicators` | `Perf.Stream.cs` | every indicator, StreamHub style |
 | `StreamObserver` | `Perf.StreamObserver.cs` | per-tick StreamHub delivery: provider alone, an `OnAdd`-only observer, and EMA/SMA/RSI/MACD hubs |
-| `Utility` | `Perf.Utility.cs` | shared conversion/utility hot paths |
+| `Utility` | `Perf.Utility.cs` | shared conversion and utility hot paths |
 | `UtilityNullMath` | `Perf.Utility.NullMath.cs` | null-math helpers |
 | `UtilityStdDev` | `Perf.Utility.StdDev.cs` | standard-deviation helper |
 
-The list lives in two places that must stay in sync: the no-arg run in `Program.cs` and `BASELINE_CLASSES` in `perf.sh`.
+Two lists define the set and must stay in sync: the no-argument run in `Program.cs` and `BASELINE_CLASSES` in `perf.sh`.
 
-### Not baselined (diagnostics)
+### Diagnostics (not baselined)
 
-Useful but intentionally **not** committed as baselines. Run ad-hoc with `--filter`:
+Run these with `--filter` (see [raw runs](#raw-benchmarkdotnet-runs)):
 
-- `StyleComparison` (`Perf.StyleComparison.cs`) — cross-style ratio view; overlaps the core three suites, so it adds no new regression signal.
-- `StreamExternal` (`Perf.StreamExternal.cs`) — EMA series-vs-stream microcheck.
-- `StreamCrossover` (`Perf.StreamCrossover.cs`) — cost of one new bar at each history length: re-running Series versus adding to a warm hub. It's the evidence for the incremental-arrival guidance in `docs/guide/styles/index.md`.
-- `StyleWallTime` (`Perf.StyleWallTime.cs`) — total time to process a whole dataset in each style, from 10 to 5,000 bars, for comparing styles on historical data.
-- `ManualTestDirect` (`Perf.ManualTestDirect.cs`) — large-N spot harness (below).
+- `StyleComparison` (`Perf.StyleComparison.cs`) — cross-style ratios; overlaps the three per-style suites, so it adds no regression signal.
+- `StreamExternal` (`Perf.StreamExternal.cs`) — EMA Series-versus-stream microcheck.
+- `StreamCrossover` (`Perf.StreamCrossover.cs`) — cost of one new bar at each history length: re-running Series versus adding to a warm hub. It backs the incremental-arrival guidance in [`docs/guide/styles/index.md`](../../docs/guide/styles/index.md).
+- `StyleWallTime` (`Perf.StyleWallTime.cs`) — total time to process a whole dataset in each style, from 10 to 5,000 bars.
+- `ManualTestDirect` (`Perf.ManualTestDirect.cs`) — large-N harness for one indicator, below.
 
-## Manual / large-N spot harness
+## Large-N harness
 
-`ManualTestDirect` validates a single indicator at large bar counts without the full catalog overhead. It is separate from `perf.sh spot` (which compares the real suites to baselines); `ManualTestDirect` has no baseline.
+`ManualTestDirect` runs one indicator at large bar counts without the full suite. Unlike `perf.sh spot`, it has no baseline. Environment variables select the indicator (`PERF_TEST_KEYWORD`, default `sma`), bar count (`PERF_TEST_PERIODS`, default 500,000), and cache cap (`PERF_TEST_CAP`, default the bar count).
 
 ```bash
 cd tools/performance
 
-# 500k bars for EMA across enabled styles
+# 500k bars of EMA
 PERF_TEST_KEYWORD=ema PERF_TEST_PERIODS=500000 dotnet run -c Release -- --filter "Performance.ManualTestDirect*"
 
-# Force the steady-state pruning path (cap < periods)
+# cap below the bar count to exercise steady-state pruning
 PERF_TEST_KEYWORD=adl PERF_TEST_PERIODS=500000 PERF_TEST_CAP=100000 dotnet run -c Release -- --filter "Performance.ManualTestDirect*"
 ```
 
 ## Raw BenchmarkDotNet runs
 
-For exploration only (not baseline comparison). Always `-c Release`; pass BDN args after `--`:
+For exploration, not baseline comparison. Always use `-c Release`, and pass BenchmarkDotNet arguments after `--`:
 
 ```bash
 cd tools/performance
 
-dotnet run -c Release                                # full baseline suite
+dotnet run -c Release                                   # full baseline suite
 dotnet run -c Release -- --filter "*SeriesIndicators*"  # one suite
-dotnet run -c Release -- --filter "*.ToEmaBatch"     # one method
+dotnet run -c Release -- --filter "*.ToEmaBatch"        # one method
+dotnet run -c Release -- --list flat                    # list every benchmark
 ```
 
-Artifacts land in `BenchmarkDotNet.Artifacts/results/`:
+Results land in `tools/performance/BenchmarkDotNet.Artifacts/results/`:
 
-- `Performance.*-report-full.json` — machine-readable (regression input)
+- `Performance.*-report-full.json` — machine-readable; the regression input
 - `Performance.*-report-github.md` — human-readable tables
 
-## Regression detection details
+## Regression detection
 
-`perf.sh evaluate` and `perf.sh spot` call `detect-regressions.sh`, which pairs each `*-report-full.json` in `BenchmarkDotNet.Artifacts/results/` with the same-named file in `baselines/` and compares per method. Only suites present in the results are compared, so a spot run compares just what it ran.
+`perf.sh evaluate` and `perf.sh spot` call `detect-regressions.sh`, which pairs each `*-report-full.json` in the results folder with the same-named file in `baselines/` and compares mean time per method. It compares only the suites present in the results, so a spot run compares just what it ran.
 
-Run it directly if you already have results (requires `jq`):
+To compare results you already have:
 
 ```bash
-# Directory mode (default): pair all current results with baselines
+# pair all current results with baselines (default threshold 10%)
 bash tools/performance/detect-regressions.sh
 
-# Custom threshold (default 10%)
+# custom threshold, in percent
 bash tools/performance/detect-regressions.sh --threshold 15
 
-# Explicit single-suite comparison
+# one explicit pair; file paths resolve from the current directory
 bash tools/performance/detect-regressions.sh \
-  --baseline-file baselines/Performance.StreamIndicators-report-full.json \
-  --current-file  BenchmarkDotNet.Artifacts/results/Performance.StreamIndicators-report-full.json
+  --baseline-file tools/performance/baselines/Performance.StreamIndicators-report-full.json \
+  --current-file  tools/performance/BenchmarkDotNet.Artifacts/results/Performance.StreamIndicators-report-full.json
 ```
 
-Exit codes: `0` no regressions, `1` regressions found, `2` usage/IO error.
+Exit codes: `0` no regressions, `1` regressions found, `2` usage or I/O error.
 
 ## VS Code tasks
 
-- **Perf: Spot check (indicator vs baseline)** → `perf.sh spot` (prompts indicator + style)
-- **Perf: Evaluate against baselines** → `perf.sh evaluate`
-- **Perf: Reset baselines** → `perf.sh reset`
+- `Perf: Spot check (indicator vs baseline)` — `perf.sh spot`, prompting for indicator and style
+- `Perf: Evaluate against baselines` — `perf.sh evaluate`
+- `Perf: Reset baselines` — `perf.sh reset`
+- `Test: Performance (all)`, `(Series)`, `(Buffer)`, `(Stream)` — raw runs of the full baseline suite or one per-style suite
 
 ## CI workflows
 
-All are `workflow_dispatch` (manual) and informational only. **Do not gate merges on absolute CI timings** — baselines are captured on a developer machine and CI runners differ, so cross-machine comparisons are noisy.
+All three run on manual dispatch and are informational. Baselines come from a developer machine and CI runners differ, so do not gate merges on CI timings.
 
 - `test-performance.yml` — full baseline suite
 - `test-performance-comparison.yml` — `StyleComparison` diagnostic
-- `test-performance-manual.yml` — targeted `ManualTestDirect` for one indicator
+- `test-performance-manual.yml` — `ManualTestDirect` for one indicator
 
-## Best practices
+## Practices
 
-- Use `spot` in the dev loop; use `reset` only for intentional, verified perf work.
-- Never add tuning options to baseline/evaluate/spot runs — it breaks comparability.
-- Keep baseline refreshes paired with the perf-shifting change that motivated them.
-
-## References
-
-- [Baselines README](baselines/README.md) — file conventions
-- [BenchmarkDotNet documentation](https://benchmarkdotnet.org/)
+- Use `spot` in the dev loop; run `reset` only for intentional, verified performance work.
+- Commit a baseline refresh with the change that shifted performance.

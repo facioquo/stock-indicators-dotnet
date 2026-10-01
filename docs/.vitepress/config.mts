@@ -243,7 +243,6 @@ export default defineConfig({
         }
       ],
       '/migration/v3': [siteNav],
-      '/performance': [siteNav],
       '/contributing': [siteNav],
       '/about': [siteNav],
       '/indicators': [
