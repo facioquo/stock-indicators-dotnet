@@ -5,7 +5,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "@codacy/codacy-mcp@latest"
+        "@codacy/codacy-mcp"
       ],
       "env": {
         "CODACY_ACCOUNT_TOKEN": "${input:codacy_account_token}"
@@ -16,7 +16,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "@upstash/context7-mcp@latest"
+        "@upstash/context7-mcp"
       ]
     },
     "microsoft-learn": {
@@ -29,6 +29,7 @@
       "id": "codacy_account_token",
       "type": "promptString",
       "description": "Your personal Codacy Account API token (from app.codacy.com → Account). Required.",
+      "default": "",
       "password": true
     }
   ]

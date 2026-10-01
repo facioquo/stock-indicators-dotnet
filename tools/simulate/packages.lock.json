@@ -4,11 +4,11 @@
     "net10.0": {
       "JKorf.Coinbase.Net": {
         "type": "Direct",
-        "requested": "[4.5.0, )",
-        "resolved": "4.5.0",
-        "contentHash": "VFnfwuO0sREdsm+0p4VZoGqZMCHjLCVexOsmw/xiCiTeNGmCxaxa+p0Xqjfp2cHR/ic7qkHYZMIqytPSPuywSw==",
+        "requested": "[4.7.0, )",
+        "resolved": "4.7.0",
+        "contentHash": "Pmf3ujFYVqzijnGJpb8AtW6j2qcZhj3wZq3SXLRfuFoEK3mbs56+YRZihcvsLJtAHQBk5+FXIlFXPTnGJQ+IvQ==",
         "dependencies": {
-          "CryptoExchange.Net": "12.5.0",
+          "CryptoExchange.Net": "13.1.0",
           "Microsoft.IdentityModel.JsonWebTokens": "8.15.0"
         }
       },
@@ -20,8 +20,8 @@
       },
       "CryptoExchange.Net": {
         "type": "Transitive",
-        "resolved": "12.5.0",
-        "contentHash": "EAhJIs6dXCMecA9SClVO6Y5IvDvxcIhkw0cpNre69GEUVQvhSZCMwP6+ayAVFY4pr2Vs8XidZtM4OLGkYyNwcw==",
+        "resolved": "13.1.0",
+        "contentHash": "GQa87ZG9bNJuWbaOaZmDREXZa2Lpwx0wu18hxWpCtLvYKkGjHPyM07qOar7FvfIsX/hMuqaD97/sCiKxEjc1Ow==",
         "dependencies": {
           "Microsoft.Extensions.Configuration.Binder": "10.0.1",
           "Microsoft.Extensions.Http": "10.0.1",

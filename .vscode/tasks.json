@@ -127,9 +127,15 @@
     },
     {
       "label": "Install: .NET tools",
-      "detail": "Restore NuGet tools from manifest and install the C# language server",
+      "detail": "Restore .NET tools from manifest",
       "type": "shell",
-      "command": "dotnet tool restore && (dotnet tool install --global csharp-ls || dotnet tool update --global csharp-ls)"
+      "command": "dotnet tool restore"
+    },
+    {
+      "label": "Update: .NET tools",
+      "detail": "Update .NET Tools in manifest (except GitVersion)",
+      "type": "shell",
+      "command": "dotnet tool update --all && dotnet tool install gitversion.tool@6.6.0 --allow-downgrade"
     },
     {
       "label": "Install: All code dependencies",
@@ -145,9 +151,11 @@
       "label": "Update: All code dependencies",
       "detail": "Update (upgrade) .NET and NPM packages",
       "dependsOn": [
+        "Update: .NET tools",
         "Update: .NET packages",
         "Update: Node packages",
-        "Install: Browsers for website tests"
+        "Install: Browsers for website tests",
+        "Update: Skills"
       ],
       "dependsOrder": "parallel"
     },
@@ -217,6 +225,12 @@
       "options": {
         "cwd": "${workspaceFolder}/docs"
       }
+    },
+    {
+      "label": "Update: Skills",
+      "detail": "Update external agents skills defined in skills-lock.json",
+      "type": "shell",
+      "command": "npx skills update --project --all"
     },
     {
       "label": "Clean: Website build cache",
