@@ -1,38 +1,24 @@
-# GitHub configuration and agentics primitives
+# GitHub configuration
 
-This directory contains GitHub Copilot configuration files and GitHub Actions workflows.
-
-> AGENTS: read this entire file before proceeding to edit files in this folder.
-
-## Primary directive
-
-Ensure developers and AI agents across all organization repositories receive consistent, spec-compliant guidance primitives that enable autonomous, correct operation without human intervention.
-
-## Secondary directives
-
-1. All primitive files (agents, instructions, skills) contain no repository-specific content — org names, hardcoded paths, agent names, and schedules belong in AGENTS.md only, keeping primitives portable and reusable across repositories (not as important as primary)
-2. Select the correct primitive type for each task (agent vs. instruction vs. skill vs. prompt) — preventing misfiled content that degrades guidance quality (not as important as #1)
-3. Maintain hierarchy compliance in all files — no upward references from skills to instructions or AGENTS.md, ensuring discovery chains function correctly (not as important as #2)
-
-## Directory structure
+This folder holds GitHub Actions workflows, issue templates, and Copilot instruction files.
 
 ```plaintext
 .github/
-├── instructions/    # File-pattern routing instruction files
-├── workflows/       # GitHub Actions workflows
-│   └── *.yml        # CI/CD pipeline definitions
-├── ISSUE_TEMPLATE/  # GitHub issue templates
-└── AGENTS.md        # Authoring conventions and guardrails (this file)
+├── workflows/       # CI, website, package deploy, and performance workflows
+├── instructions/    # Copilot file-pattern routing to skills
+├── ISSUE_TEMPLATE/  # Bug report and feature request forms
+└── zizmor.yml       # Workflow security-scan configuration
 ```
 
-Agent skills live in `/.agents/skills/`, not in `.github/`.
+## Workflows
+
+- `ci.yml` is the primary pipeline; its `gate` job is the required status check and skips draft pull requests.
+- `lint-workflows.yml` runs actionlint and zizmor (`--min-severity=medium`) on every workflow change. Run `pipx run zizmor .github/workflows` locally before pushing one.
 
 ## Boundaries
 
-⚠️ Ask before deleting any instruction file — verify no `applyTo` pattern depends on it
+✅ Always keep an instruction file to a pointer at the skill that owns the guidance
 
-🚫 Never create instruction files for cross-cutting concerns or frameworks — use skills instead
+⚠️ Ask before deleting an instruction file — check what its `applyTo` pattern routes first
 
-🚫 Never place skill files here — skills belong in `/.agents/skills/`
-
-🚫 Never reference AGENTS.md or instruction files using #file: tokens from inside skill files
+🚫 Never place skills here — they live in `.agents/skills/`

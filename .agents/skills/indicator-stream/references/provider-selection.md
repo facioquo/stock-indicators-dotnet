@@ -1,125 +1,50 @@
 # Provider selection
 
-## Provider classification
+Use this when choosing a hub's base class, or when the hub does not emit exactly one final result per input item.
 
-| Provider Base | Input | Output | Use Case | Examples |
-| ------------- | ----- | ------ | -------- | -------- |
-| `ChainHub<IReusable, TResult>` | Single value | `IReusable` | Chainable indicators | EMA, SMA, RSI, MACD |
-| `ChainHub<IBar, TResult>` | OHLCV | `IReusable` | Bar-driven, chainable output | ADX, ATR, CCI, OBV |
-| `BarProvider<IBar, TResult>` | OHLCV | `IResult` | Bar transformation | HeikinAshi, Renko |
+## Base classes
 
-## ChainHub<IReusable, TResult>
+| Base class | Type constraint | Downstream use | Examples |
+| ---------- | --------------- | -------------- | -------- |
+| `ChainHub<IReusable, TResult>` | `TResult : IReusable` | Chainable | `EmaHub`, `SmaHub`, `RsiHub`, `MacdHub` |
+| `ChainHub<IBar, TResult>` | `TResult : IReusable` | Chainable | `AdxHub`, `AtrHub`, `CciHub`, `ObvHub` |
+| `StreamHub<IBar, TResult>` | `TResult : ISeries` | Terminal | `DonchianHub`, `KeltnerHub`, `VortexHub`, `IchimokuHub` |
+| `StreamHub<IReusable, TResult>` | `TResult : ISeries` | Terminal | `AlligatorHub`, `MaEnvelopesHub` |
+| `BarProvider<IBar, TResult>` | `TResult : IBar` | Bar source for other hubs | `HeikinAshiHub`, `RenkoHub` |
 
-**Most common pattern** (~45 indicators): Chainable input and output, supports EMA → RSI → SMA chains
+- Choose `ChainHub` when the result implements `IReusable` (it has one meaningful `Value`), so other hubs can chain from it.
+- Choose `StreamHub` directly only when the result is a plain `ISeries` with several bands or lines and no single `Value`.
+- Choose `BarProvider` when the result is itself a bar (its result record derives from `Bar`), so bar-input hubs can subscribe to it.
+- A hub whose input is another hub's typed result (`StcHub : ChainHub<MacdResult, StcResult>`, `GatorHub : StreamHub<AlligatorResult, GatorResult>`) is a compound hub; follow [compound hubs](compound-hubs.md).
 
-**Examples**: EMA, SMA, RSI, MACD, Trix, TSI, TEMA, DEMA
+## Test interfaces
 
-```csharp
-public class EmaHub : ChainHub<IReusable, EmaResult>, IEma
-{
-    internal EmaHub(IChainProvider<IReusable> provider, int lookbackPeriods)
-        : base(provider)
-    {
-        Ema.Validate(lookbackPeriods);
-        LookbackPeriods = lookbackPeriods;
-        Reinitialize();
-    }
-}
-```
+| Hub input | Observer interface | Add `ITestChainProvider` when |
+| --------- | ------------------ | ----------------------------- |
+| `IReusable` (or another hub's chainable result) | `ITestChainObserver` | base is `ChainHub` |
+| `IBar` | `ITestBarObserver` | base is `ChainHub` or `BarProvider` |
 
-## ChainHub<IBar, TResult>
+The testing-standards skill owns the methods each interface requires.
 
-**Bar-driven input, chainable output** (~15 indicators): Requires OHLCV data, produces single chainable `IReusable` output
+## Hubs that are not one-result-per-input
 
-**Examples**: ADX, ATR, Aroon, CCI, CMF, OBV
+The default `OnAdd` calls `ToIndicator` once and appends one result. Override `OnAdd` (taking `CacheLock` yourself, as the base does) when that does not hold:
 
-```csharp
-public class AdxHub : ChainHub<IBar, AdxResult>, IAdx
-{
-    // Requires bar data, produces chainable AdxResult
-}
-```
+- **Lookahead results** (`FractalHub`, `DpoHub`, `PivotsHub`): a result becomes calculable only after later items arrive. Call `base.OnAdd`, then recompute the earlier position and notify with `NotifyObserversOnRebuild`, or call `Rebuild` from that timestamp.
+- **Zero or many outputs per input** (`RenkoHub`): emit through `AppendCache` from `OnAdd`, override `Properties` with bit 1 set (`new(0b00000010)`) so same-timestamp results append instead of triggering a rebuild, and override `ShouldPruneOnProviderPrune => false` because result timestamps do not align with provider pruning. Make `ToIndicator` throw; it is unused.
 
-## BarProvider<IBar, TResult>
+A hub that keeps position-based state (absolute indexes, item counters) overrides `PruneState(DateTime)` to adjust it when the cache front is pruned; `EpmaHub` is the reference. A hub that opts out of pruning overrides `OnProviderPrune(DateTime)` instead.
 
-**Bar transformation** (~3 indicators): Bar input transforms to bar-like output (`IResult`, not necessarily `IBar`)
+## Aggregator hubs
 
-**Examples**: HeikinAshi, Renko, BarHub
+`BarAggregatorHub` (`src/Common/Bars/`) and `TradeTickAggregatorHub` (`src/Common/TradeTicks/`) bucket bars or ticks into larger periods and derive from `BarProvider<TIn, IBar>`. Extend this pattern for a new quantizer rather than writing bespoke bucketing:
 
-```csharp
-public class HeikinAshiHub : BarProvider<IBar, HeikinAshiResult>
-{
-    // Bar in, bar-like result out
-}
-```
+- Offer a `BarInterval` constructor and a `TimeSpan` constructor. The `BarInterval` constructor throws for `BarInterval.Month`, which has no fixed `TimeSpan`.
+- Take an optional `fillGaps` flag, default `false` (empty buckets are omitted). When `true`, synthesize zero-volume bars whose open, high, low, and close all carry the prior bar's close.
+- In `OnAdd`, round the input timestamp down to its bucket, then update the forming bar in place (replace `Cache[^1]` and notify with `NotifyObserversOnRebuild`) or append a new bucket. Call `Rebuild` for input that lands in an earlier bucket.
+- Override `Rebuild(DateTime)` to round the timestamp down to the bucket boundary before calling `base.Rebuild`. Without it, a mid-bucket rebuild keeps the partial bar and the replay appends a duplicate.
+- In `RollbackState`, clear the forming bar and remove duplicate-detection tracker entries later than `ProviderCache[restoreIndex].Timestamp`.
 
-## StreamHub<TProviderResult, TResult>
+## Self-rooted source hubs
 
-**Compound hubs** (~2 indicators): Indicators that require an internal hub dependency
-
-**Examples**: StochRSI (requires RSI), Gator (requires Alligator)
-
-**Pattern**: Two constructors - one that creates the internal hub, one that accepts an existing hub:
-
-```csharp
-public class StochRsiHub : ChainHub<IReusable, StochRsiResult>
-{
-    // Constructor 1: Creates internal RSI hub from provider
-    internal StochRsiHub(
-        IChainProvider<IReusable> provider,
-        int rsiPeriods = 14,
-        int stochPeriods = 14)
-        : this(provider.ToRsiHub(rsiPeriods), stochPeriods)  // Delegates to constructor 2
-    { }
-
-    // Constructor 2: Accepts existing RSI hub (used internally, avoids duplicate hubs)
-    internal StochRsiHub(RsiHub rsiHub, int stochPeriods = 14)
-        : base(rsiHub)  // Base receives the hub as provider
-    {
-        ArgumentNullException.ThrowIfNull(rsiHub);
-        StochRsi.Validate(rsiHub.LookbackPeriods, stochPeriods);
-        RsiPeriods = rsiHub.LookbackPeriods;
-        StochPeriods = stochPeriods;
-        Reinitialize();
-    }
-}
-```
-
-**Extension methods**: Provide both overloads with clear documentation:
-
-```csharp
-public static StochRsiHub ToStochRsiHub(
-    this IChainProvider<IReusable> chainProvider,
-    int rsiPeriods = 14,
-    int stochPeriods = 14)
-    => new(chainProvider, rsiPeriods, stochPeriods);
-
-/// <summary>
-/// Creates a new Stochastic RSI hub, using RSI values from an existing RSI hub.
-/// </summary>
-/// <remarks>
-/// This extension overrides normal chaining and enables reuse of the existing
-/// <see cref="RsiHub"/> in its internal construction.
-/// <para>IMPORTANT: This is not a normal chaining approach.</para>
-/// Do not use this if you want a StochRSI of an RSI hub.</remarks>
-public static StochRsiHub ToStochRsiHub(
-    this RsiHub rsiHub,
-    int stochPeriods = 14)
-    => new(rsiHub, stochPeriods);
-```
-
-**Key principles**:
-
-1. **Avoid duplicate hubs** - Internal hub construction prevents redundant calculations
-2. **Delegate constructors** - Constructor 1 calls constructor 2 with created hub
-3. **Base receives hub** - Pass the internal hub to base class (not original provider)
-4. **Document overrides** - Clearly mark the hub-accepting extension as non-standard chaining
-5. **Avoid RollbackState override** - Compound hubs typically rely on their internal hub's state management; only override when maintaining additional derived state beyond what the internal hub exposes. Example: `StochRsiHub` overrides `RollbackState` to rebuild oscillator state (`_rsiMaxWindow`, `_rsiMinWindow`, `kBuffer`, `signalBuffer`) from cached RSI results. See "Compound hub state" pattern in `rollback-patterns.md` for the accepted exception and implementation pattern
-
-## Test interface mapping
-
-| Provider Base | Observer Interface | Provider Interface |
-| ------------- | ------------------ | ------------------ |
-| `ChainHub<IReusable, T>` | `ITestChainObserver` | `ITestChainProvider` |
-| `ChainHub<IBar, T>` | `ITestChainObserver` | `ITestChainProvider` |
-| `BarProvider<IBar, T>` | `ITestBarObserver` | `ITestChainProvider` |
+`BarHub` and `TradeTickHub` originate a stream and pass an inert `BaseProvider<T>` to the base constructor. Indicator hubs never use this; do not add new `BaseProvider<T>` derivations without asking.

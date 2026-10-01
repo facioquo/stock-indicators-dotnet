@@ -5,12 +5,6 @@ node_modules/
 .vitepress/.temp/
 package-lock.json
 
-# Legacy Jekyll (can be removed after migration)
-_site/
-vendor/
-.bundle/
-.temp/
-
 # Playwright test artifacts
 tests/results/
 playwright-report/

@@ -1,96 +1,71 @@
-# .NET source code development
+# Library source
 
-This folder contains the Stock Indicators library source code.
-
-## Implementation guidance
-
-Load the relevant skill before working in this folder. See the skills index in the root [AGENTS.md](../AGENTS.md#skills-for-development).
-
-For the streaming framework and shared types under `Common/` (StreamHub, BufferLists, Catalog, Bars, aggregator hubs, thread-safety contract, `RollbackState` semantics), see [Common/AGENTS.md](Common/AGENTS.md).
+This folder holds the library source. Load the matching skill from the root AGENTS.md before changing an indicator; read [Common/AGENTS.md](Common/AGENTS.md) before changing the streaming, buffer, or catalog framework.
 
 ## Technical constraints
 
-**Performance & compatibility:**
+- **Targets** — net10.0, net9.0, and net8.0 must all build and pass tests.
+- **Complexity** — single-pass O(n) unless mathematically impossible.
+- **Warmup** — the count of null warmup results is deterministic; when it is not obvious from the parameters, expose it as a static `WarmupPeriod(...)` helper in `{Name}.Utilities.cs`, as `Hma` and `StochRsi` do.
+- **Precision** — use `double` for speed; escalate to `decimal` only when rounding affects financial correctness.
+- **Allocation** — the result list plus minimal working buffers only.
+- **Thread safety** — Series calculations are stateless; each hub and list isolates its own state.
+- **Compatibility** — removing a public member or changing a default is a breaking, MAJOR-version change. A rename keeps the old name as an `[Obsolete]` shim in `Obsolete/` until the next major version.
 
-- Targets: net10.0, net9.0, net8.0 (all must build and pass tests)
-- Complexity: Single-pass O(n) unless mathematically impossible
-- Warmup: Provide deterministic WarmupPeriod helper for each indicator
-- Precision: Use double for speed; escalate to decimal only when rounding affects financial correctness
-- Allocation: Result list + minimal working buffers only
-- Thread safety: Stateless calculations are thread-safe; streaming hubs isolate instance state
-- Backward compatibility: Renaming public members or altering defaults requires MAJOR version bump
+## Errors
 
-**Error conventions:**
+- Throw `ArgumentOutOfRangeException` for an invalid numeric parameter and `ArgumentException` for semantic misuse such as insufficient history.
+- Include the parameter name and the offending value in the message.
+- Never swallow an exception; wrap one only to add context.
 
-- Use ArgumentOutOfRangeException for invalid numeric parameter ranges
-- Use ArgumentException for semantic misuse (e.g., insufficient history)
-- Never swallow exceptions; wrap only to add context
-- Messages MUST include parameter name and offending value when relevant
+## NaN handling
 
-## NaN handling policy
+Calculations use non-nullable `double` internally and let NaN propagate, as IEEE 754 defines.
 
-This library uses non-nullable double types internally for performance, with intentional NaN propagation:
+- Use `double.NaN` for a value that cannot be calculated and for uninitialized state — never a sentinel such as 0 or -1, and never `double?`.
+- Accept NaN inputs and let them propagate. Bar validation rejects null or missing bars, never NaN property values.
+- Convert NaN to `null` with `.NaN2Null()` only at the result boundary; a chainable `Value` converts back with `.Null2NaN()`.
+- Guard a variable denominator with a ternary (`denom != 0 ? num / denom : double.NaN`), choosing NaN, 0, or null by mathematical meaning.
+- Compare to zero exactly (`== 0`, `!= 0`); never use an epsilon.
 
-**Core principles:**
+## Series is canonical
 
-1. Natural propagation - NaN values propagate through calculations (any operation with NaN produces NaN)
-2. Internal representation - Use double.NaN internally when a value cannot be calculated
-3. External representation - Convert NaN to null (via .NaN2Null()) only at final result boundary
-4. No rejection - Never reject NaN inputs; allow them to flow through the system
-5. Performance first - Non-nullable double provides significant performance gains
+Series results come from authoritative publications and manually verified calculations. BufferList and StreamHub results must match Series exactly once warmed up; on a mismatch, fix Buffer or Stream unless the Series and its reference data are verifiably wrong.
 
-**Implementation guidelines:**
+## Result types
 
-- Division by zero - Guard variable denominators with ternary checks (e.g., `denom != 0 ? num / denom : double.NaN`)
-- No epsilon comparisons - Use exact zero comparison (!= 0 or == 0), never epsilon values
-- NaN propagation - Accept NaN inputs and allow natural propagation
-- State initialization - Use double.NaN for uninitialized state instead of sentinel values
+Mirror `Indicators/e-j/Ema/EmaResult.cs`: a `[Serializable] public record` with positional parameters, `Timestamp` first, `double?` values that are null during warmup, and one-line XML docs per parameter.
 
-See Common/README.md for complete policy documentation.
-
-## Series as the canonical reference
-
-- Series indicators are the canonical source of truth for numerical correctness
-- Series results are based on authoritative publications and manually verified calculations
-- Stream and Buffer implementations must match Series results for same inputs once warmed up
-- For discrepancies, fix Stream/Buffer unless there is verified issue with Series and reference data
-
-## Result type convention
-
-Indicator result types are `public record` declarations with positional parameters, `Timestamp` first, nullable `double?` for warmup-period values, and `IReusable` implementation when the result is intended to chain into downstream indicators. The reusable value projection is a calculated `Value` property (not a constructor parameter) that calls `.Null2NaN()` so chained NaN propagation behaves predictably.
-
-Canonical reference: `src/Indicators/e-j/Ema/EmaResult.cs` (`EmaResult`). When adding a new indicator, mirror this shape — positional record, `Timestamp` first, `[Serializable]` attribute, `[JsonIgnore]` on the chainable `Value` projection, single-line xmldoc per parameter. Multi-output indicators (e.g. Bollinger Bands, MACD) follow the same skeleton with additional positional parameters; only one property maps to `Value` and that property is the one flagged `isReusable: true` in the catalog listing.
-
-## Cost of a new streamable indicator
-
-A new fully-streamable indicator costs **seven files plus a documentation page**, with ceremony excluding the math itself bounded to roughly 300–400 lines:
-
-| File | Purpose | Size guideline (Ema baseline) |
-| ---- | ------- | ------------------------------ |
-| `I{Name}.cs` | Public interface | ~15 LOC |
-| `{Name}Result.cs` | Result `record` | ~20 LOC |
-| `{Name}.Utilities.cs` | Validation + helpers | ~80 LOC |
-| `{Name}.Series.cs` | Canonical batch implementation | ~60 LOC |
-| `{Name}List.cs` | Incremental `BufferList` form | ~120 LOC |
-| `{Name}Hub.cs` | Live `StreamHub` form | ~75 LOC |
-| `{Name}.Catalog.cs` | Catalog listing builders (Common/Series/Buffer/Stream) | ~45 LOC |
-
-If a new indicator exceeds these guidelines by a wide margin without algorithmic justification, treat the excess as accidental complexity and look for a missing shared kernel (see `Ema.Increment`, `Sma.Average`, `Tr.Increment`, `Atr.Increment` in `Common/`-adjacent siblings). Documentation under `docs/indicators/{Name}.md` and a test set under `tests/Library/Indicators/{a-b|c-d|e-j|k-q|r-s|t-z}/{Name}/*Tests.cs` are required and have their own budgets.
+- A result meant to chain implements `IReusable` through a calculated `[JsonIgnore] Value` property (not a constructor parameter) that calls `.Null2NaN()`.
+- A multi-output result maps exactly one property to `Value` — the one its catalog listing flags `isReusable: true`.
 
 ## Per-indicator facade class
 
-`public static partial class {Name}` is the indicator's facade, not its Series implementation. Its partial declarations across the files above hold the entry point for every style (`To{Name}`, `To{Name}List`, `To{Name}Hub`), the shared utilities, and the catalog listings. Style-specific types carry a suffix: `{Name}Hub`, `{Name}List`, `{Name}Result`, and the `I{Name}` interface. Never give the facade a style suffix; an `EmaSeries` class would hold `ToEmaList` and `ToEmaHub`.
+`public static partial class {Name}` is the indicator's facade, not its Series implementation. Its partial files hold every style's entry point (`To{Name}`, `To{Name}List`, `To{Name}Hub`), the shared utilities, and the catalog listings.
+
+- Style-specific types carry a suffix: `{Name}Hub`, `{Name}List`, `{Name}Result`, and the `I{Name}` parameter interface.
+- Never give the facade a style suffix; an `EmaSeries` class would hold `ToEmaList` and `ToEmaHub`.
+
+## Size budget for a streamable indicator
+
+Ceremony around the math stays near these Ema sizes. A file far over budget without algorithmic cause signals a missing shared kernel — reuse one such as `Ema.Increment`, `Sma.Increment`, `Tr.Increment`, or `Atr.Increment`.
+
+| File | Budget |
+| ---- | ------ |
+| `I{Name}.cs` | ~15 lines |
+| `{Name}Result.cs` | ~20 lines |
+| `{Name}.Utilities.cs` | ~80 lines |
+| `{Name}.Series.cs` | ~60 lines |
+| `{Name}List.cs` | ~120 lines |
+| `{Name}Hub.cs` | ~75 lines |
+| `{Name}.Catalog.cs` | ~45 lines |
 
 ## Boundaries
 
-✅ Always use Series results as the canonical numerical reference — Stream/Buffer must match exactly
+✅ Always keep warmup length deterministic for given parameters
 
-✅ Always provide a deterministic `WarmupPeriod` property for every indicator
+⚠️ Ask before changing a public API member's name, signature, or default value
 
-⚠️ Ask before changing any public API member name, signature, or default value — requires MAJOR version bump
+🚫 Never use epsilon comparisons
 
-🚫 Never use epsilon comparisons — use exact zero checks (`!= 0`, `== 0`)
-
-🚫 Never swallow exceptions; wrap only to add context
-
-🚫 Never use nullable `double?` internally for performance — use `double.NaN` for uninitialized state
+🚫 Never use `double?` for internal state

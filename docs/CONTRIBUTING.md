@@ -28,7 +28,7 @@ If you have general interest in contributing, but are not sure where to start, p
 
 ## Reporting bugs and feature requests
 
-If you suspect a problem, please [report a bug Issue](https://github.com/facioquo/stock-indicators-dotnet/issues/new?labels=bug&template=bug_report.md) with a detailed description of the problem, steps to reproduce, code samples, and any reference materials.  For enhancements, [create a feature Issue](https://github.com/facioquo/stock-indicators-dotnet/issues/new?labels=enhancement&template=feature_request.md).
+If you suspect a problem, please [report a bug Issue](https://github.com/facioquo/stock-indicators-dotnet/issues/new?labels=bug&template=bug_report.yml) with a detailed description of the problem, steps to reproduce, code samples, and any reference materials.  For enhancements, [create a feature Issue](https://github.com/facioquo/stock-indicators-dotnet/issues/new?labels=enhancement&template=feature_request.yml).
 
 Use the [Discussions](https://github.com/facioquo/stock-indicators-dotnet/discussions) area for general ideation and help/usage questions.
 
@@ -103,24 +103,21 @@ That is everything most contributors need. For the baseline set, single-style sp
 
 This site uses [VitePress](https://vitepress.dev) with Vue components and Markdown. Our documentation site code is in the `docs` folder. Build the site locally to test that it works properly.
 
+The site renders charts with the `@facioquo/indy-charts` package from GitHub Packages, so installing needs a token with `read:packages` access, stored in your user-level `~/.npmrc` (not the project `.npmrc`):
+
 ```bash
 # one-time: grant your gh CLI token read:packages access
 gh auth refresh --scopes read:packages
 
-# print and copy token
-gh auth token
-```
-
-```shell
-# ~/Users/{username}/.npmrc
-@facioquo:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken={token}
+# write the registry and token to your user-level ~/.npmrc
+pnpm config set @facioquo:registry https://npm.pkg.github.com
+pnpm config set "//npm.pkg.github.com/:_authToken" "$(gh auth token)"
 ```
 
 ```bash
-# run dev server for documentation site from /docs folder
-# site opens at http://localhost:5173/
+# from the docs folder; the site opens at http://localhost:5173/
 cd docs
+pnpm install
 pnpm run docs:dev
 ```
 
@@ -135,11 +132,9 @@ When adding or updating indicators:
 
 - Use Lighthouse in Chrome, or
 - Run the automated task: **Tasks: Run Task** → `Test: Website a11y (axe-core)`, or
-- Run it manually: `pnpm run test:a11y` (builds, then scans every sitemap page
-  with axe-core against WCAG 2.1 A/AA; tests the `localhost` build, not production)
+- Run it manually: `pnpm run test:a11y` (builds, then scans every sitemap page with axe-core against WCAG 2.1 A/AA; tests the `localhost` build, not production)
 
-Broken-link checking is a separate task, `Test: Website links (htmlproofer)`, or
-`pnpm run test:links`.
+Broken-link checking is a separate task, `Test: Website links (htmlproofer)`, or `pnpm run test:links`.
 
 ## Submitting changes
 
@@ -190,7 +185,7 @@ GitVersion automatically determines version suffixes based on the branch:
   - CI builds: `3.0.1-ci.345` (includes build metadata)
   - Production: `3.0.1` (no suffix)
 - **v2 branch** (support): Legacy compatibility line, produces stable `2.x.x` maintenance patch versions only (no preview suffix) — accepts security/compatibility fixes, not new features
-- **Release branches** (`v4`, `v5`, … matching the next major): Produce `x.x.x-preview.N` versions while the next major version is under development. None are active today — the `v3` release branch was promoted to `main` at the v3.0 GA cutover
+- **Release branches** (`v4`, `v5`, … matching the next major): Produce `x.x.x-preview.N` versions while the next major version is under development
 - **Feature branches**: `x.x.x-{branch-name}.N` (branch name becomes suffix)
 
 ### Controlling version increments

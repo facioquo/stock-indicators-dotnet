@@ -1,195 +1,97 @@
 # RollbackState patterns
 
-## When to override RollbackState
+Use this when adding a field that carries state between `ToIndicator` calls, or when a hub test fails Series parity after late arrival, removal, or rebuild.
 
-Override `RollbackState(int restoreIndex)` when the hub maintains stateful fields.
-The base class computes `restoreIndex = IndexBefore(fromTimestamp)` before calling this method — `-1` means reset everything, `>= 0` is the last `ProviderCache` index to preserve.
+The base class computes `restoreIndex` as the last `ProviderCache` index before the rollback timestamp (`-1` when none), calls `RollbackState`, then removes later results and replays from `restoreIndex + 1` through `ToIndicator`. Restore state to exactly what it was after processing `ProviderCache[restoreIndex]`, reading only `ProviderCache[0..restoreIndex]`.
 
-| State Type | Requires Override | Examples |
-| ---------- | ----------------- | -------- |
-| Rolling windows | Yes | `RollingWindowMax`, `RollingWindowMin` |
-| Buffered values | Yes | Raw K buffer in Stoch |
-| Running averages | Yes | EMA state, Wilder's smoothing |
-| Previous values | Yes | `_prevValue`, `_prevHigh` |
-| Simple counters | Maybe | `_warmupCount` if affects calculations |
-| Stateless lookups | No | Pure cache-based calculations |
+## When to override
 
-## Pattern: Simple rolling window
+| State | Override | Reference |
+| ----- | -------- | --------- |
+| Window buffer (`CircularDoubleBuffer`, `Queue<double>`) | Yes | `DonchianHub`, `SmaHub` |
+| Smoothed average (Wilder, EMA kept in a field) | Yes | `RsiHub`, `AdxHub` |
+| Previous-value scalar (`_prevClose`) | Yes | `ChandelierHub` |
+| Counter or position tracker | Yes, plus `PruneState` | `EpmaHub` |
+| Only reads `ProviderCache` and `Cache[i - 1]` | No | `EmaHub`, `GatorHub` |
+
+Prefer reading `Cache[i - 1]` inside `ToIndicator` over storing a copy of the previous result; it removes the need for an override.
+
+## Pattern: window buffer
+
+Refill the last `LookbackPeriods` provider values, inclusive of `restoreIndex` (`DonchianHub`, `SmaHub`):
 
 ```csharp
-private readonly RollingWindowMax<double> _window;
-
 protected override void RollbackState(int restoreIndex)
 {
-    _window.Clear();
+    _highBuffer.Clear();
+    _lowBuffer.Clear();
 
-    if (restoreIndex < 0) return;
+    if (restoreIndex < 0)
+    {
+        return;
+    }
 
     int startIdx = Math.Max(0, restoreIndex + 1 - LookbackPeriods);
-
     for (int p = startIdx; p <= restoreIndex; p++)
     {
-        _window.Add(ProviderCache[p].Value);
+        IBar bar = ProviderCache[p];
+        _highBuffer.Add((double)bar.High);
+        _lowBuffer.Add((double)bar.Low);
     }
 }
 ```
 
-**Reference**: `ChandelierHub.RollbackState`
+A second-stage buffer (smoothing over computed values) is prefilled the same way, recomputing each of its last `SmoothPeriods` entries from the provider window; `StochHub` is the reference.
 
-## Pattern: Complex with buffer prefill
+## Pattern: path-dependent smoothing
 
-```csharp
-private readonly RollingWindowMax<double> _highWindow;
-private readonly RollingWindowMin<double> _lowWindow;
-private readonly Queue<double> _rawKBuffer;
+Wilder and EMA smoothing depend on every value since initialization, so a truncated replay window breaks Series parity. Recover state in two tiers (`RsiHub`, `AdxHub`):
 
-protected override void RollbackState(int restoreIndex)
-{
-    // Clear all state
-    _highWindow.Clear();
-    _lowWindow.Clear();
-    _rawKBuffer.Clear();
-
-    if (restoreIndex < 0) return;
-
-    // Rebuild windows
-    int windowStart = Math.Max(0, restoreIndex + 1 - LookbackPeriods);
-    for (int p = windowStart; p <= restoreIndex; p++)
-    {
-        IBar q = ProviderCache[p];
-        _highWindow.Add((double)q.High);
-        _lowWindow.Add((double)q.Low);
-    }
-
-    // Prefill buffer for smoothing
-    int bufferStart = Math.Max(0, restoreIndex + 1 - SmoothPeriods);
-    for (int p = bufferStart; p <= restoreIndex; p++)
-    {
-        double rawK = CalculateRawK(p);
-        _rawKBuffer.Enqueue(rawK);
-    }
-}
-```
-
-**Reference**: `StochHub.RollbackState`
-
-## Pattern: Wilder's smoothing state
+1. Record a snapshot after each item in `ToIndicator`: `_rollback.Add(item.Timestamp, (_avgGain, _avgLoss));` with `RollbackRing<TState>` (`src/Common/StreamHub/RollbackRing.cs`, 32 entries by default).
+2. In `RollbackState`, reset fields, then try the ring. On a miss, replay from the first calculable index to `restoreIndex`.
 
 ```csharp
-private double _avgGain = double.NaN;
-private double _avgLoss = double.NaN;
-private double _prevValue = double.NaN;
+private readonly RollbackRing<(double AvgGain, double AvgLoss)> _rollback = new();
 
 protected override void RollbackState(int restoreIndex)
 {
     _avgGain = double.NaN;
     _avgLoss = double.NaN;
-    _prevValue = double.NaN;
 
-    if (restoreIndex < 0) return;
-
-
-    // Replay warmup period to rebuild Wilder's smoothing state
-    int startIdx = Math.Max(0, restoreIndex + 1 - (2 * LookbackPeriods));
-    for (int p = startIdx; p <= restoreIndex; p++)
+    if (restoreIndex < LookbackPeriods)
     {
-        double value = ProviderCache[p].Value;
-        if (!double.IsNaN(_prevValue))
-        {
-            double gain = value > _prevValue ? value - _prevValue : 0;
-            double loss = value < _prevValue ? _prevValue - value : 0;
-
-            if (p >= LookbackPeriods)
-            {
-                _avgGain = ((_avgGain * (LookbackPeriods - 1)) + gain) / LookbackPeriods;
-                _avgLoss = ((_avgLoss * (LookbackPeriods - 1)) + loss) / LookbackPeriods;
-            }
-        }
-        _prevValue = value;
-    }
-}
-```
-
-**Reference**: `AdxHub.RollbackState`
-
-## Pattern: Previous value tracking
-
-```csharp
-// Only when a hub keeps a running scalar it cannot re-read from the cache.
-private double _prevValue = double.NaN;
-
-protected override void RollbackState(int restoreIndex)
-{
-    if (restoreIndex < 0)
-    {
-        _prevValue = double.NaN;
         return;
     }
 
-    // Restore the running value from the cache at the restore index
-    _prevValue = restoreIndex >= LookbackPeriods
-        ? Cache[restoreIndex].Value
-        : double.NaN;
-}
-```
-
-**Note**: prefer reading `Cache[i - 1]` directly inside `ToIndicator` over storing a duplicate previous-value field — that is exactly why `EmaHub` needs **no** `RollbackState` override. Reach for this stored-state pattern only when the value cannot be recovered from the cache.
-
-## Pattern: Compound hub state
-
-For compound hubs that maintain state beyond the internal hub's results:
-
-```csharp
-private readonly RollingWindowMax<double> _rsiMaxWindow;
-private readonly RollingWindowMin<double> _rsiMinWindow;
-private readonly Queue<double> kBuffer;
-private readonly Queue<double> signalBuffer;
-
-protected override void RollbackState(int restoreIndex)
-{
-    // Clear all compound state
-    _rsiMaxWindow.Clear();
-    _rsiMinWindow.Clear();
-    kBuffer.Clear();
-    signalBuffer.Clear();
-
-    if (restoreIndex < 0) return;
-
-    // Replay compound hub processing using cached internal hub results
-    for (int i = 0; i <= restoreIndex; i++)
+    if (_rollback.TryGet(
+        ProviderCache[restoreIndex].Timestamp,
+        out (double AvgGain, double AvgLoss) snapshot))
     {
-        double rsiValue = ProviderCache[i].Value;  // ProviderCache holds RSI results
-        if (!double.IsNaN(rsiValue))
-        {
-            _ = UpdateOscillatorState(rsiValue);  // Rebuild compound state
-        }
+        _avgGain = snapshot.AvgGain;
+        _avgLoss = snapshot.AvgLoss;
+        return;
     }
+
+    // full replay: seed at the first calculable index, then smooth through restoreIndex
 }
 ```
 
-**Reference**: `StochRsiHub.RollbackState`
+The ring makes near-tail rollbacks (live corrections, forming-bar updates) O(1); deeper rollbacks fall back to the O(n) replay. A same-timestamp `Add` replaces the newest snapshot, so repeated forming-bar updates occupy one slot.
 
-**Note**: Most compound hubs do NOT need RollbackState override. Only override when maintaining additional state beyond the internal hub's results. See `compound-hubs.md` for details.
+## Pattern: previous-value scalar
 
-## Key principles
-
-1. **Clear all stateful fields first** - Reset to initial state
-2. **Receive `restoreIndex` directly** - Base class computes `IndexBefore(fromTimestamp)`; `-1` means reset everything, `>= 0` is the last index to preserve
-3. **Guard on `restoreIndex < 0`** - Return early after clearing state; nothing to replay
-4. **Replay from warmup start** - Calculate `startIdx` with lookback period
-5. **Rebuild incrementally** - Process each cached item in order up to `restoreIndex` (inclusive)
-6. **Match ToIndicator logic** - Use same calculations as normal processing
-
-**Critical**: The item at the rollback timestamp is recalculated when it arrives via normal processing. Do NOT include it in the replay loop.
-
-## Anti-patterns to avoid
-
-**Inline rebuild detection in ToIndicator**:
+Read the scalar back from the provider at `restoreIndex` instead of replaying (`ChandelierHub`):
 
 ```csharp
-// WRONG - Don't do this!
-bool needsRebuild = (i != _lastProcessedIndex + 1);
-if (needsRebuild) { /* rebuild logic */ }
+_prevClose = restoreIndex >= 0
+    ? (double)ProviderCache[restoreIndex].Close
+    : double.NaN;
 ```
 
-**Use RollbackState override instead** - Framework calls it automatically.
+## Pattern: position trackers and pruning
+
+`ProviderCache` indexes shift when the cache front is pruned. A hub that tracks absolute positions sets its counters from `restoreIndex` in `RollbackState` (`itemsAdded = restoreIndex + 1`) and accumulates the pruned offset in `PruneState(DateTime)`. `RollbackState` must not reset the pruning offset; `EpmaHub` is the reference.
+
+## Compound hubs
+
+A compound hub replays its own processing over the inner hub's cached results; see [compound hubs](compound-hubs.md#rollbackstate).

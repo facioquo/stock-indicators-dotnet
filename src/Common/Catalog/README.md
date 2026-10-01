@@ -1,92 +1,41 @@
-# Indicator Catalog — Developer Guide
+# Indicator catalog
 
-Concise reference for building, discovering, and executing indicator listings.
+Developer guide for authoring indicator catalog listings.
 
-## Authoring listings (fluent builder)
+## Authoring listings
 
-Use `IndicatorDefinitionBuilder` inside each indicator’s `*.Catalog.cs` to define metadata once per style:
+Each indicator defines its listings in `{Name}.Catalog.cs`: a `CommonListing` with the shared name, ID, category, parameters, and results, then one listing per style built from it.
 
 ```csharp
-internal static readonly IndicatorListing SeriesListing = new CatalogListingBuilder()
+internal static readonly IndicatorListing CommonListing =
+    new CatalogListingBuilder()
         .WithName("Exponential Moving Average")
         .WithId("EMA")
-        .WithStyle(Style.Series)
         .WithCategory(Category.MovingAverage)
-        .WithMethodName("ToEma")
-        .AddParameter<int>("lookbackPeriods", "Lookback Period",
-                description: "Number of periods for the EMA calculation",
-                isRequired: true, defaultValue: 20, minimum: 2, maximum: 250)
+        .AddParameter<int>("lookbackPeriods", "Lookback Period", description: "Number of periods for the EMA calculation", isRequired: true, defaultValue: 20, minimum: 2, maximum: 250)
         .AddResult(nameof(EmaResult.Ema), "EMA", IndicatorResult.PricePane, ResultType.Default, isReusable: true)
+        .Build();
+
+internal static readonly IndicatorListing SeriesListing =
+    new CatalogListingBuilder(CommonListing)
+        .WithStyle(Style.Series)
+        .WithMethodName("ToEma")
         .Build();
 ```
 
-Core builder methods: `.WithName`, `.WithId`, `.WithStyle`, `.WithCategory`, `.WithMethodName`, `.AddParameter<T>`, `.AddEnumParameter<TEnum>`, `.AddDateParameter`, `.AddSeriesParameter`, `.AddResult`, `.Build`.
+`StreamListing` and `BufferListing` follow the same shape with their own style and method name. Register every listing in `PopulateCatalog()` in `Catalog.Listings.cs`.
 
 ### Multi-style rules
 
-- Use the same ID across styles (e.g., EMA)
-- Define separate listings: `SeriesListing`, `StreamListing`, `BufferListing`
-- Parameter names must exactly match method signatures
-- Result `dataName` uses `nameof(TResult.Property)` so a renamed result property fails the build
+- Every style shares the ID and metadata of the `CommonListing`.
+- Parameter names exactly match the method signature.
+- A result's `dataName` uses `nameof(TResult.Property)` so a renamed result property fails the build.
 - `isRequired: false` means a caller may omit the argument **and get `defaultValue`**. That holds in exactly two shapes: the parameter carries a C# default equal to `defaultValue`, or the listing declares no `defaultValue` at all and so promises nothing (VWAP's `startDate`, omittable via `ToVwap(bars)`). If the argument can only be dropped by selecting a shorter overload that behaves differently while the listing still advertises a default — as `ToPrs(sourceEval, sourceBase)` does, computing no `PrsPercent` — mark it `isRequired: true` so a catalog-driven caller does not silently get a different indicator, and reach that overload with `WithoutParam(name)` instead. `EveryParameterIsRequiredMatchesCallability` enforces all three cases.
 
-## Catalog and registry access
+## Querying and executing
 
-`IndicatorCatalog.Catalog` contains all listings; `IndicatorRegistry` is the query façade.
+The public API — `Catalog.Get(...)`, `Catalog.Search(...)`, the `ListingExecutionBuilder` fluent execution, `IndicatorConfig`, and the JSON and Markdown exports — is documented for library users at [docs/utilities/catalog.md](../../../docs/utilities/catalog.md).
 
-```csharp
-// all listings
-IReadOnlyList<IndicatorListing> allListings = IndicatorRegistry.Get();
+## Tests
 
-// lookups
-IReadOnlyList<IndicatorListing> rsiListings = IndicatorRegistry.GetById("RSI"); // all styles
-IndicatorListing? emaSeriesListing = IndicatorRegistry.GetByIdAndStyle("EMA", Style.Series); // single
-IReadOnlyList<IndicatorListing> streamListings = IndicatorRegistry.GetByStyle(Style.Stream);
-IReadOnlyList<IndicatorListing> momentumListings = IndicatorRegistry.GetByCategory(Category.Momentum);
-IReadOnlyList<IndicatorListing> searchResults = IndicatorRegistry.Search("ema");
-```
-
-## Executing via the catalog
-
-Typed, fluent execution via `CatalogExecutionBuilder`:
-
-```csharp
-IndicatorListing indicatorListing = IndicatorRegistry
-        .GetByIdAndStyle("EMA", Style.Series)
-        ?? throw new InvalidOperationException("Indicator 'EMA' (Series) not found.");
-
-IReadOnlyList<EmaResult> emaResults = indicatorListing
-                .From(bars)
-                .WithParamValue("lookbackPeriods", 20)
-                .Execute<EmaResult>();
-```
-
-Dynamic shortcuts via `CatalogUtility` (no generic type required):
-
-```csharp
-// by ID + Style (typed)
-IReadOnlyList<EmaResult> emaResultsById = bars.ExecuteById<EmaResult>("EMA", Style.Series, new() { ["lookbackPeriods"] = 20 });
-
-// from JSON config (typed)
-string rsiConfigJson = "{\"id\":\"RSI\",\"style\":\"Series\",\"parameters\":{\"lookbackPeriods\":14}}";
-IReadOnlyList<RsiResult> rsiResultsFromJson = bars.ExecuteFromJson<RsiResult>(rsiConfigJson);
-```
-
-Config round-trip via `IndicatorConfig`:
-
-```csharp
-IndicatorConfig emaConfig = new IndicatorConfig {
-        Id = "EMA",
-        Style = Style.Series,
-        Parameters = new() { ["lookbackPeriods"] = 20 }
-};
-IReadOnlyList<EmaResult> emaResultsFromConfig = emaConfig.Execute<EmaResult>(bars);
-```
-
-## Best practices
-
-1. Parameter names must match method signatures exactly
-2. Include min/max constraints where sensible
-3. Keep catalog listings in `*.Catalog.cs` files alongside the indicator
-4. Provide clear parameter/result descriptions
-5. Add unit tests for catalog integrity and execution
+`tests/Library/Common/Catalog/` checks listing integrity, binding to real method signatures, executability, and per-style counts (`Catalog.Metrics.Tests.cs`). Every new listing must pass them.

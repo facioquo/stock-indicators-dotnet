@@ -1,98 +1,48 @@
 # Documentation website
 
-This folder contains the VitePress documentation site for Stock Indicators at [dotnet.stockindicators.dev](https://dotnet.stockindicators.dev).
+This folder is the VitePress 2 source for [dotnet.stockindicators.dev](https://dotnet.stockindicators.dev), deployed to Cloudflare Pages.
 
-Load #skill:vitepress for VitePress configuration, routing, theme, and component guidance.
+- Writing or restructuring a page → load the documentation skill.
+- Changing `.vitepress/` config, theme, routing, or components → load the vitepress skill.
+- Any Markdown edit → the markdown skill governs formatting and linting.
 
-Load #skill:markdown for general Markdown authoring standards, linting workflow, and validation.
+## Commands
 
-## Quick start
+Run from `docs/`. The first `pnpm install` needs GitHub Packages auth for `@facioquo/indy-charts`; set it up once per the [local development steps](README.md#local-development).
 
 ```bash
-# one-time per gh CLI token (see "Indy Charts" below for why)
-gh auth refresh --scopes read:packages
-
-# from /docs folder — opens at http://localhost:5173/
 pnpm install
-pnpm run docs:dev
+pnpm run docs:dev        # http://localhost:5173/
+pnpm run docs:build      # output in .vitepress/dist/
+pnpm run docs:preview    # serve the build on port 4173
+pnpm run test            # Playwright suites; see package.json for per-project scripts
+pnpm run test:links      # broken-link check over a fresh build
 ```
 
-## Indy Charts
-
-Indy Charts ([`@facioquo/indy-charts`](https://github.com/facioquo/stock-charts/pkgs/npm/indy-charts)) is a public npm package hosted in the facioquo GitHub org's [GitHub Packages](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#installing-a-package) registry, with source code in the [`facioquo/stock-charts`](https://github.com/facioquo/stock-charts) repository. It is not, and must not be, published to the npmjs.org public registry.
-
-## Local development auth to enable `pnpm install` or `pnpm add`
-
-Extend the scopes of your local GitHub CLI (`gh`) auth token with `gh auth refresh --scopes read:packages`, confirm with `gh auth status`, then store in your user level `~/.npmrc` (not in the project `.npmrc`), which is read at a trusted level where variable expansion is not restricted.
-
-```bash
-# Write to your user-level ~/.npmrc (not the project .npmrc)
-pnpm config set @facioquo:registry https://npm.pkg.github.com
-pnpm config set "//npm.pkg.github.com/:_authToken" "$(gh auth token)"
-```
-
-Then `pnpm install` (or the equivalent VS Code task) pulls the package.
-
-## Build and preview
-
-```bash
-# Production build
-pnpm run docs:build
-
-# Preview production build (port 4173)
-pnpm run docs:preview
-```
+Inspect rendered pages with the Playwright MCP tools against the dev server.
 
 ## Agent-facing output
 
 The site serves AI agents alongside people. `pnpm run test:agents` validates everything below against a fresh build.
 
-- `vitepress-plugin-llms` emits `llms.txt`, `llms-full.txt`, and a `.md` twin of every page; `.vitepress/agent-artifacts.ts` then post-processes them in `buildEnd` (identity and provenance frontmatter, `.md` link targets, containers rendered as GitHub alerts, resolved `{{ $frontmatter.* }}` templates) and writes the Agent Skills index.
+- `vitepress-plugin-llms` emits `llms.txt`, `llms-full.txt`, and a `.md` twin of every page; `.vitepress/agent-artifacts.ts` post-processes them in `buildEnd` and writes the Agent Skills index.
+  - Post-processing adds identity and provenance frontmatter, rewrites link targets to `.md`, renders containers as GitHub alerts, and resolves `{{ $frontmatter.* }}` templates.
 - `agent-artifacts.ts` also writes `search-index.json` from the pages `llms.txt` lists; the WebMCP tools in `theme/webmcp.ts` search it and use it as the allowlist for direct page retrieval.
 - Agent Skills live in `.vitepress/public/.well-known/agent-skills/<name>/SKILL.md`; the index and digests are generated.
-- Cloudflare Pages config lives in `.vitepress/public/`: `_headers`, `_redirects`, `_routes.json`, and `robots.txt`.
 - `.vitepress/routes.ts` owns the route rules (page route, `.md` path) that the config, the artifact writer, and the middleware share; the patched plugin applies the same directory-index rule.
-- `functions/_middleware.ts` serves a page's `.md` twin when a request prefers `Accept: text/markdown`. Keep static paths listed under `exclude` in `_routes.json` so they never invoke the function. Run it locally with `pnpm exec wrangler pages dev .vitepress/dist` after a build.
+- `functions/_middleware.ts` serves a page's `.md` twin when a request prefers `Accept: text/markdown`. Run it locally with `pnpm exec wrangler pages dev .vitepress/dist` after a build.
+- Cloudflare Pages config lives in `.vitepress/public/`: `_headers`, `_redirects`, `_routes.json`, and `robots.txt`. Keep static paths listed under `exclude` in `_routes.json` so they never invoke the middleware.
 
-## Visual inspection with Playwright
+## Content conventions
 
-Use the Playwright MCP tool to visually inspect docs work against the dev server.
+- Put static assets in `.vitepress/public/assets/`.
+- Use Markdown image syntax for local images so VitePress emits `width`/`height`; reserve HTML `<img>` for remote images it cannot measure.
+- Write callouts as VitePress containers (`::: tip`, `::: info`, `::: note`, `::: important`, `::: warning`, `::: caution`, `::: danger`, `::: details`), not GitHub alert blocks. Text after the name replaces the title; `{no-title}` drops it.
 
-Start the dev server first (port 5173):
+## Boundaries
 
-```bash
-# from /docs folder
-pnpm run docs:dev
-```
+✅ Always add a new page to the `sidebar` in `.vitepress/config.mts` — `llms.txt` derives its table of contents from it; add non-page Markdown to `srcExclude` instead
 
-Then use the #tool:playwright MCP tool to navigate, screenshot, and inspect pages:
+✅ Always add the old path to `.vitepress/public/_redirects` when a published URL changes
 
-- Navigate to `http://localhost:5173/<page-path>` to inspect any page
-- Take screenshots to verify layout, typography, and component rendering
-- Inspect element state, check link targets, and validate page structure
-
-## Content guidelines
-
-- Add indicator pages to the `indicators/` directory
-- Place image assets in `.vitepress/public/assets/`
-- Prefer Markdown image syntax (`![alt](image.png)`) for local images — VitePress measures them at build time and emits `width`/`height`, which prevents layout shift. Reserve HTML `<img>` for remote images (badges, shields) that cannot be measured
-- Optimize images to webp (example): `cwebp -resize 832 0 -q 100 input.png -o output.webp`
-- All pages require YAML front matter with title, description, and layout metadata
-- Never add arbitrary linebreaks in Markdown prose or list items due to line length
-
-## VitePress alert blocks
-
-Use VitePress native container syntax instead of GitHub alert syntax in docs pages:
-
-- `::: tip ✨` — helpful suggestions
-- `::: note` — neutral asides and clarifications
-- `::: important` — points the reader must not miss
-- `::: warning 🚩` — important warnings
-- `::: caution` — actions with a risk of adverse outcome
-- `::: danger` — critical warnings
-- `::: info` — informational highlights (default)
-- `::: details` — collapsible sections
-
-Text after the container name replaces the default title. To drop the title bar entirely, use the `no-title` attribute: `::: tip {no-title}`.
-
-GitHub alert blocks (`> [!NOTE]`, `> [!WARNING]`) are still preferred in non-website Markdown files.
+🚫 Never publish `@facioquo/indy-charts` to the npmjs.org registry or commit a registry token to the project `.npmrc`

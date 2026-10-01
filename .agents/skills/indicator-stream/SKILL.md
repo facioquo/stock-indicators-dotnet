@@ -1,127 +1,109 @@
 ---
 name: indicator-stream
-description: Implement StreamHub real-time indicators with O(1) performance. Use for ChainHub or BarProvider implementations. Covers provider selection, RollbackState patterns, performance anti-patterns, and comprehensive testing with StreamHubTestBase.
+description: Implement StreamHub real-time indicators — base-class choice (ChainHub, BarProvider, StreamHub), constructor and ToIndicator conventions, RollbackState overrides, per-tick performance rules, compound hubs, and the stream-specific test interfaces. Use when creating or editing a src/Indicators/**/{Name}Hub.cs file or its {Name}HubTests.cs, when a hub test fails Series parity after late arrival, removal, or pruning, or when a Stream benchmark shows a hub is slow.
 ---
 
 # StreamHub indicator development
 
-## Provider selection
+A hub computes one result per provider item, incrementally, and must match the Series result exactly — including after late arrivals, removals, and pruning. The indicator-series skill owns the full per-indicator file set and completion checklist; this skill covers only the hub.
 
-| Provider Base | Input | Output | Use Case |
-| ------------- | ----- | ------ | -------- |
-| `ChainHub<IReusable, TResult>` | Single value | IReusable | Chainable indicators |
-| `ChainHub<IBar, TResult>` | OHLCV | IReusable | Bar-driven, chainable output |
-| `BarProvider<IBar, TResult>` | OHLCV | IBar | Bar-to-bar transformation |
-| `BarProvider<TIn, TOut>` (self-rooted) | None | TOut | Source hubs with no upstream — bootstrap with an inert sentinel provider |
-| `StreamHub<TProviderResult, TResult>` | Any hub result | Any result | Compound hubs (internal hub dependency) |
+Load the reference that matches the moment:
 
-Self-rooted source hubs (those that originate a stream rather than transform another hub's output) take an inert sentinel provider so the base-class constructor has something to subscribe to; the sentinel rejects subscriptions and carries no cache.
+- Choosing a base class, or the hub is not one-result-per-input (aggregator, Renko-style) → [provider selection](references/provider-selection.md)
+- Adding any stateful field, or a hub test fails after late arrival or removal → [rollback patterns](references/rollback-patterns.md)
+- Writing `ToIndicator`, or a Stream benchmark is slow → [performance patterns](references/performance-patterns.md)
+- The hub needs another hub's output as input (StochRSI on RSI, Gator on Alligator) → [compound hubs](references/compound-hubs.md)
 
-## Aggregator / quantizer hubs
+## Choose a base class
 
-Hubs that bucket small bars (or raw ticks) into larger time periods derive from `BarProvider<TIn, IBar>`. Conventions:
+| Input | Output | Base class | Example |
+| ----- | ------ | ---------- | ------- |
+| Single value | Chainable (`IReusable`) | `ChainHub<IReusable, TResult>` | `EmaHub`, `RsiHub` |
+| OHLCV bar | Chainable (`IReusable`) | `ChainHub<IBar, TResult>` | `AdxHub`, `AtrHub` |
+| OHLCV bar | Multi-value, not chainable | `StreamHub<IBar, TResult>` | `DonchianHub`, `KeltnerHub` |
+| Single value | Multi-value, not chainable | `StreamHub<IReusable, TResult>` | `AlligatorHub` |
+| OHLCV bar | Bar (`IBar`) | `BarProvider<IBar, TResult>` | `HeikinAshiHub`, `RenkoHub` |
 
-- Constructors accept a `BarInterval` enum **and** a custom `TimeSpan` overload; the enum overload throws for month-or-longer periods (use `TimeSpan` instead) since calendar arithmetic is not a fixed `TimeSpan`.
-- Take an optional `fillGaps` flag. Default `false` (silent buckets are simply omitted from the output stream); `true` synthesizes zero-volume bars whose `Open`/`High`/`Low`/`Close` all carry forward the prior bar's close through the silent period.
-- Round the input timestamp down to the current bucket on every `OnAdd`, then either update the current bar in place or emit a new bucket.
-- Override `Rebuild(DateTime)` to align the requested rebuild timestamp to the bucket boundary before delegating to base — an upstream rebuild whose timestamp is mid-bucket must clear the in-cache partial bar, not duplicate it.
-- Implement `RollbackState(int)` to reset the in-flight bar state and prune any per-input tracker (e.g. duplicate-detection map) past the rollback point.
+`ChainHub` requires `TResult : IReusable`; `BarProvider` requires `TResult : IBar`. Only those two can feed downstream hubs.
 
-Aggregator hubs ship full StreamHub semantics: late-arriving inputs whose timestamp lands in an already-emitted bucket trigger a `Rebuild` of that bucket; downstream observers see the corrected sequence.
+## Hub shape
 
-## Performance targets
-
-Use the project's performance-analysis document as the source of truth for measured overhead bands; the categorical targets below are guidance, not contracts.
-
-| Band | StreamHub overhead | Status |
-| ---- | ------------------ | ------ |
-| Target | ≤ 1.5x | ✅ meets target |
-| Acceptable | 1.5x – 3x | ✅ acceptable |
-| Review | 3x – framework floor | ⚠️ investigate |
-| Critical | indicator-specific algorithmic issue (e.g. O(n²)) | 🔴 fix |
-
-The "framework floor" is the per-tick overhead inherent to the observer pattern, cache management, and read-only collection wrappers. Simple stateless indicators routinely measure 6–11x against Series while still achieving tens of thousands of bars per second; this is acceptable. Optimization effort should target indicator-specific algorithmic issues, not the framework floor.
-
-Forbid O(n²) recalculation — rebuild entire history on each tick:
+Follow `EmaHub` (`src/Indicators/e-j/Ema/EmaHub.cs`):
 
 ```csharp
-// WRONG
-for (int k = 0; k <= i; k++) { subset.Add(cache[k]); }
-var result = subset.ToIndicator();
+public class EmaHub
+    : ChainHub<IReusable, EmaResult>, IEma
+{
+    internal EmaHub(
+        IChainProvider<IReusable> provider,
+        int lookbackPeriods) : base(provider)
+    {
+        Ema.Validate(lookbackPeriods);
+        LookbackPeriods = lookbackPeriods;
+        K = 2d / (lookbackPeriods + 1);
+        Name = $"EMA({lookbackPeriods})";
+
+        ValidateCacheSize(lookbackPeriods, Name);
+        Reinitialize();
+    }
+
+    protected override (EmaResult result, int index)
+        ToIndicator(IReusable item, int? indexHint)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+        int i = indexHint ?? ProviderCache.IndexOf(item, true);
+        // compute from ProviderCache[i], Cache[i - 1], and incremental state
+        // ...
+        return (result, i);
+    }
+}
 ```
 
-O(1) incremental update:
+- The constructor is `internal`; the public entry point is a `To{Name}Hub(this IChainProvider<IReusable> …)` or `(this IBarProvider<IBar> …)` extension in the indicator's static partial class.
+- Initialize every field `ToIndicator` reads before calling `Reinitialize()`, and call it last: it replays the provider's existing history through `ToIndicator`.
+- Set `Name` in the constructor; the base `ToString()` returns it and the hub test asserts it.
+- Call `ValidateCacheSize(warmupPeriods, Name)` with the indicator's warmup length so a too-small `MaxCacheSize` fails at construction.
 
-```csharp
-// CORRECT
-_avgGain = ((_avgGain * (period - 1)) + gain) / period;
-```
+## Per-tick cost
 
-Use `RollingWindowMax/Min` utilities instead of O(n) linear scans.
+`ToIndicator` runs once per provider item. Its cost must not grow with history length: read `Cache[i - 1]` or keep incremental state, never re-run a Series method or loop back to index 0. A scan bounded by the lookback window is acceptable. The performance-testing skill owns the overhead targets and benchmark authoring.
 
-## Thread safety contract
+## Rollback state
 
-StreamHub mutating operations (`Add`, `Rebuild`, `RemoveRange`, `RemoveAt`) hold a private monitor for the duration of cache mutation, and observer notification happens **inside** the lock so subscribers cannot desynchronize. Subclasses must not release the lock before notifying observers.
-
-The base class also carries a rebuilding flag that suppresses self-recursive `Rebuild` while replaying provider items through `OnAdd`. Observer cascading is still allowed and desired. Subclass code must not bypass this flag.
-
-The public `Results` surface is a **live read-only view** over the cache, not an immutable snapshot — and `.ToList()`/`.ToArray()` on it enumerate that live view *without* the lock, so they can still throw or tear under a concurrent writer. A consumer on a different thread must call `Snapshot()` (an atomic, immutable copy taken under the hub's `CacheLock`) instead.
-
-## RollbackState pattern
-
-Override when maintaining stateful fields.
-The base class computes `restoreIndex` via `IndexBefore` before calling this method.
-`restoreIndex` is the last `ProviderCache` index to preserve, or `-1` to reset everything.
+Any field that carries state between `ToIndicator` calls (buffers, running sums, smoothed averages, previous values) needs a `RollbackState(int restoreIndex)` override. `restoreIndex` is the last `ProviderCache` index to keep, or `-1` to reset everything; rebuild state as if items `[0..restoreIndex]` had just been processed. The base class owns the call order and locking (documented in `src/Common/AGENTS.md`).
 
 ```csharp
 protected override void RollbackState(int restoreIndex)
 {
     _window.Clear();
-    if (restoreIndex < 0) return;
+    if (restoreIndex < 0) { return; }
+
     int startIdx = Math.Max(0, restoreIndex + 1 - LookbackPeriods);
     for (int p = startIdx; p <= restoreIndex; p++)
+    {
         _window.Add(ProviderCache[p].Value);
+    }
 }
 ```
 
-Replay up to `restoreIndex` (inclusive). The item at the rollback timestamp is recalculated via normal processing.
+A hub whose `ToIndicator` reads only `ProviderCache` and `Cache` (like `EmaHub`) needs no override.
 
-## Testing requirements
+## Tests
 
-- Inherit `StreamHubTestBase`
-- Abstract method (compile error if missing): `ToStringOverride_ReturnsExpectedName()`
-- Implement ONE observer interface:
-  - `ITestChainObserver` (most indicators — chain input): inherits `ITestBarObserver`, adds `ChainObserver_ChainedProvider_MatchesSeriesExactly()`
-  - `ITestBarObserver` (direct bar input only): `BarObserver_WithWarmupLateArrivalAndRemoval_MatchesSeriesExactly()`, `WithCachePruning_MatchesSeriesExactly()`
-- If hub acts as chain provider, also implement `ITestChainProvider`: `ChainProvider_MatchesSeriesExactly()`
+`{Name}HubTests` inherits `StreamHubTestBase`. Pick the observer interface by input type — `ITestChainObserver` for `IReusable` input, `ITestBarObserver` for `IBar` input — and add `ITestChainProvider` when the hub derives from `ChainHub` or `BarProvider`. The testing-standards skill owns the required methods and assertion patterns.
 
-## Required implementation
+## Hub-specific completion items
 
-- [ ] Source code: `src/**/{IndicatorName}Hub.cs` file exists
-  - [ ] Uses appropriate provider base (ChainHub or BarProvider)
-  - [ ] Validates parameters in constructor; calls Reinitialize() as needed
-  - [ ] Implements O(1) state updates; avoids O(n²) recalculation
-  - [ ] Overrides RollbackState() when maintaining stateful fields
-  - [ ] Overrides ToString() with concise hub name
-- [ ] Unit testing: `tests/Library/Indicators/**/{IndicatorName}HubTests.cs` exists
-  - [ ] Inherits StreamHubTestBase with correct test interfaces
-  - [ ] Comprehensive rollback validation present
-  - [ ] Verifies Series parity
-- [ ] **Catalog registration**: Registered in `Catalog.Listings.cs`
-- [ ] **Performance benchmark**: Add to `tools/performance/Perf.Stream.cs`
-- [ ] **Public documentation**: Update `docs/indicators/{IndicatorName}.md`
-- [ ] **Regression tests**: Add to `tests/Library/Indicators/**/{IndicatorName}RegressionTests.cs`
-- [ ] **Migration guide**: Update `docs/migration/v3.md` for notable and breaking changes from v2
+- `src/Indicators/{range}/{Name}/{Name}Hub.cs` holds the hub class and its `To{Name}Hub` extension.
+- Every stateful field is restored by `RollbackState` and, if it tracks absolute positions, adjusted by `PruneState`.
+- `tests/Library/Indicators/{range}/{Name}/{Name}HubTests.cs` passes, including late-arrival, removal, and pruning parity.
+- `tools/performance/Perf.Stream.cs` has a benchmark for the hub.
 
-## References
+## Do not do these
 
-- [Provider selection](references/provider-selection.md)
-- [Rollback patterns](references/rollback-patterns.md)
-- [Performance patterns](references/performance-patterns.md)
-- [Compound hubs](references/compound-hubs.md)
-
-## Constraints
-
-- O(n²) recalculation is forbidden; all updates must be O(1)
-- `RollbackState(int restoreIndex)` receives the last index to preserve (`-1` = reset all); replay is inclusive of `restoreIndex`, exclusive of the rollback timestamp
-- Series parity required: results must be numerically identical to StaticSeries
+- Do not recompute history inside `ToIndicator` (calling `.To{Name}()` on a subset, or looping from index 0). It turns streaming into O(n²).
+- Do not detect rebuilds inside `ToIndicator` (for example by comparing `i` to a last-processed index). The base class calls `RollbackState` for every rollback.
+- Do not re-emit results or touch `Cache` from `RollbackState`. The base class removes and replays results after it returns.
+- Do not create a hub inside `ToIndicator`. Construct any internal hub once, in the constructor.
+- Do not store a `CircularDoubleBuffer` in a `readonly` field. It is a mutable struct, so `Add` on a readonly field mutates a copy and the window never fills.
+- Do not call `Add`, `RemoveAt`, `RemoveRange`, or a second `Reinitialize` on a subscribed hub. They throw on non-root hubs; drive changes through the root `BarHub` or `TradeTickHub`.
