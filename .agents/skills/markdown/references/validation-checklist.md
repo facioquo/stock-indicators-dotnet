@@ -1,52 +1,30 @@
 # Markdown validation checklist
 
-Complete validation checklist for Markdown files before committing.
+Use this after the lint run passes, before committing a Markdown change. Each item is one markdownlint cannot verify.
 
-## Automated linting
+## Structure
 
-- [ ] Zero errors from `npx markdownlint-cli2 --no-globs {filepath}`
-- [ ] All structural issues auto-fixed
-- [ ] All lists use hyphen bullets
-- [ ] All headers are ATX style
-- [ ] Blank lines around headers and code blocks
+- [ ] `npx markdownlint-cli2 --no-globs <file>` reports zero errors.
+- [ ] Headers are sentence case and skip no level.
+- [ ] Every paragraph, list item, and table cell is one source line.
+- [ ] Every fence has a language identifier.
+- [ ] The file ends with one trailing newline and no footer, separator, or date stamp.
 
-## Manual semantic review
+## Rendering target
 
-- [ ] All headers are sentence case
-- [ ] All bold labels at list start are sentence case
-- [ ] Proper nouns capitalized (GitHub, TypeScript, MADR)
-- [ ] Articles, prepositions, conjunctions lowercase
+- [ ] Callouts match where the file renders: `:::` containers on docs-site pages, GitHub alerts elsewhere.
+- [ ] Vue components appear only on docs-site pages.
+- [ ] Mermaid appears only in GitHub-rendered files, with quoted labels, `<br/>` line breaks, and stroke styling.
+- [ ] Every image has alt text.
 
-## Reference syntax
+## References
 
-- [ ] No backticks around #file: tokens
-- [ ] No trailing punctuation after #file: tokens
-- [ ] Entry point files use plain-text path mentions, not #file:
-- [ ] Skill references use #skill: for loading, links for optional
-- [ ] Tool references use #tool:server/name format
-- [ ] Agent references use `AgentName` in docs, AgentName in agents
+- [ ] Every relative link resolves to an existing file, and every `#anchor` to an existing heading.
+- [ ] Skills, tools, and agents are named in prose; none is backtick-wrapped.
+- [ ] No `#file:`, `#skill:`, or `#tool:` markers.
+- [ ] A skill links only to files inside its own folder.
 
-## Content quality
+## Content
 
-- [ ] All internal markdown links resolve to existing files
-- [ ] All code fences have language identifiers
-- [ ] Headers follow sequential hierarchy (no skipping levels)
-- [ ] Lists use proper indentation
-- [ ] Mermaid diagrams use stroke styling (no fill colors)
-- [ ] HTML uses only allowed elements
-- [ ] All images have alt text
-
-## Repository-specific
-
-- [ ] File follows organizational voice (present tense, imperative)
-- [ ] No historical context or migration details
-- [ ] Content is actionable for autonomous agents
-- [ ] No duplicate content (single source of truth)
-
-## Pre-commit final check
-
-- [ ] Run `npx markdownlint-cli2 --no-globs {filepath}` — zero errors
-- [ ] Preview rendered markdown in VS Code (`Ctrl+Shift+V`)
-- [ ] Verify all links clickable and resolve
-- [ ] Verify all diagrams render correctly
-- [ ] File ready for commit
+- [ ] Present tense; no history, "previously", or migration narrative.
+- [ ] No rule restated from another file — link or name its owner instead.
