@@ -1,165 +1,96 @@
 ---
 name: indicator-catalog
-description: Create and register indicator catalog entries for automation. Use for Catalog.cs files, CatalogListingBuilder patterns, parameter/result definitions, and PopulateCatalog registration.
+description: Write `{Name}.Catalog.cs` listings with `CatalogListingBuilder` — parameters, results, chart panes, `isRequired` and `isReusable` rules — register them in `Catalog.Listings.cs`, refresh the catalog shape snapshot, and write `{Name}CatalogTests`. Use when creating or editing a `src/Indicators/**/{Name}.Catalog.cs` file, adding or renaming an indicator parameter or result property, editing `src/Common/Catalog/Catalog.Listings.cs`, or when a test under `tests/Library/Common/Catalog/` fails.
 ---
 
 # Indicator catalog development
 
-## File
+The catalog drives automated execution, code generation, and charting, so every listing must bind to a real method, parameter, and result property. The tests in `tests/Library/Common/Catalog/` enforce most rules below across every listing.
 
-`src/Indicators/{category}/{Indicator}/{Indicator}.Catalog.cs`
+## Listing file
 
-## Builder pattern
+`src/Indicators/{folder}/{Name}/{Name}.Catalog.cs` declares one `CommonListing` and one listing per supported style. `src/Indicators/e-j/Ema/Ema.Catalog.cs` is the reference:
 
 ```csharp
 public static partial class Ema
 {
-    /// <summary>
-    /// EMA Common Base Listing
-    /// </summary>
     internal static readonly IndicatorListing CommonListing =
         new CatalogListingBuilder()
             .WithName("Exponential Moving Average")
             .WithId("EMA")
             .WithCategory(Category.MovingAverage)
-            .AddParameter<int>("lookbackPeriods", "Lookback Period",
-                description: "Number of periods for the EMA calculation",
-                isRequired: true, defaultValue: 20, minimum: 2, maximum: 250)
-            .AddResult(nameof(EmaResult.Ema), "EMA", ResultType.Default, isReusable: true)
+            .AddParameter<int>("lookbackPeriods", "Lookback Period", description: "Number of periods for the EMA calculation", isRequired: true, defaultValue: 20, minimum: 2, maximum: 250)
+            .AddResult(nameof(EmaResult.Ema), "EMA", IndicatorResult.PricePane, ResultType.Default, isReusable: true)
             .Build();
 
-    /// <summary>
-    /// EMA Series Listing
-    /// </summary>
     internal static readonly IndicatorListing SeriesListing =
         new CatalogListingBuilder(CommonListing)
             .WithStyle(Style.Series)
             .WithMethodName("ToEma")
             .Build();
 
-    /// <summary>
-    /// EMA Stream Listing
-    /// </summary>
-    internal static readonly IndicatorListing StreamListing =
-        new CatalogListingBuilder(CommonListing)
-            .WithStyle(Style.Stream)
-            .WithMethodName("ToEmaHub")
-            .Build();
-
-    /// <summary>
-    /// EMA Buffer Listing
-    /// </summary>
-    internal static readonly IndicatorListing BufferListing =
-        new CatalogListingBuilder(CommonListing)
-            .WithStyle(Style.Buffer)
-            .WithMethodName("ToEmaList")
-            .Build();
+    // BufferListing: Style.Buffer + "ToEmaList"; StreamListing: Style.Stream + "ToEmaHub"
 }
 ```
 
-## Method naming
+- Set `.WithMethodName()` only on style listings: `To{Name}` for Series, `To{Name}List` for Buffer, `To{Name}Hub` for Stream.
+- `Build()` derives `ResultRecordType` from the method name, so a method of the wrong style reports the wrong result shape.
+- `WithId` sets the UIID that names the regression baseline file (`{uiid-lowercase}.standard.json`) and the `Catalog.Get(id, style)` lookup.
+- Pick the `Category` an existing peer uses; MACD, Ichimoku, and Pivot Points are `PriceTrend`, and Beta and ATR are `PriceCharacteristic`.
 
-| Style | Pattern | Example |
-| ----- | ------- | ------- |
-| Series | `To{Name}` | `ToEma` |
-| Stream | `To{Name}Hub` | `ToEmaHub` |
-| Buffer | `To{Name}List` | `ToEmaList` |
+## Parameters
 
-`.WithMethodName()` must be in style-specific listings, NOT in `CommonListing`.
+| Builder method | Parameter type |
+| -------------- | -------------- |
+| `AddParameter<T>()` | `int`, `double`, `decimal`, and other primitive values; always pass `minimum` and `maximum` |
+| `AddEnumParameter<T>()` | Enums |
+| `AddDateParameter()` | `DateTime` |
+| `AddSeriesParameter()` | An `IReadOnlyList<IReusable>` input, such as the comparison series of Beta, Correlation, and PRS |
 
-`IndicatorListing.ResultRecordType` is derived from the method name when the listing is built — do not set it by hand and do not add a builder method for it. Naming a method of the wrong style (e.g. `ToEma` on the Buffer listing) makes it report the wrong result shape.
+- `parameterName` matches the method's parameter name exactly; a mismatch makes a catalog-bound caller silently receive the default instead of the supplied value.
+- Declare parameters as an unbroken run in signature order. `ListingExecutor` binds them positionally and picks an overload by argument count.
+- Set `isRequired: false` exactly when the C# signature gives the parameter a default, and set `defaultValue` equal to that C# default.
+- When omitting the argument instead selects a shorter overload, use `isRequired: false` only if the listing declares no `defaultValue` (VWAP `startDate`). If the shorter overload behaves differently from the advertised default (`ToPrs(sourceEval, sourceBase)` computes no `PrsPercent`), use `isRequired: true`; callers reach the shorter form with `WithoutParam(name)` at execution time.
 
-## Parameter patterns
+## Results
 
-- `AddParameter<T>()` — primitive value types (typically `int` or `double`)
-- `AddEnumParameter<T>()` — enum types
-- `AddDateParameter()` — DateTime
-- `AddSeriesParameter()` — `IReadOnlyList<T> where T : IReusable`
-- `minimum` and `maximum` required for all numeric parameters
-- `parameterName` must match the bound method's parameter name exactly — a mismatch makes a catalog-bound caller silently receive the default instead of the value it supplied
-- Declare parameters as an unbroken run in signature order, skipping none in the middle; `ListingExecutor` binds them positionally and picks an overload by argument count
-- `isRequired: false` must mean omitting the argument yields `defaultValue` — so use it only when the parameter has a C# default equal to `defaultValue`, or when the listing declares no `defaultValue` at all and promises nothing (VWAP `startDate`). When the argument can only be dropped by selecting a shorter overload that behaves differently while a `defaultValue` is advertised — `ToPrs(sourceEval, sourceBase)` computes no `PrsPercent` — use `isRequired: true`, and reach the shorter form with `WithoutParam(name)` at execution time
+`AddResult(dataName, displayName, chartPane, dataType, isReusable)`:
 
-## Result patterns
+- `dataName` is `nameof(TResult.Property)`, never a string literal, so a renamed property fails the build. `displayName` is a literal human label.
+- `chartPane` is `IndicatorResult.PricePane` for a value at price level, a shared pane name (conventionally the indicator name, such as `"Macd"`) for results with common non-price units, and `null` for a non-numeric result such as a pattern match.
+- `isReusable: true` marks exactly one result on an `IReusable` model, the property that `Value` returns. An `ISeries` model marks none. `Build()` throws when more than one is marked.
+- `ResultType` sets the chart form: `Default`, `Centerline`, `Channel`, `Bar`, `BarStacked`, or `Point`.
 
-- `dataName` uses `nameof(TResult.Property)`, not a string literal, so a renamed result property fails the build instead of a test — e.g. `.AddResult(nameof(EmaResult.Ema), "EMA", ...)`
-- `displayName` stays a string literal; it is a human label, not a member name
-- `isReusable: true` only for the property mapping to `IReusable.Value`
-- `ISeries` models: all results must have `isReusable: false`
-- Exactly one `isReusable: true` per `IReusable` indicator
+## Registration and shape snapshot
 
-## Categories
-
-| Category | Examples |
-| -------- | -------- |
-| `CandlestickPattern` | Doji, Marubozu |
-| `MovingAverage` | EMA, SMA, HMA, TEMA, WMA, DEMA |
-| `Oscillator` | RSI, Stochastic, MACD, CCI, BOP, CMO, Chop, DPO |
-| `PriceChannel` | Bollinger Bands, Keltner, Donchian, VWAP |
-| `PriceCharacteristic` | ATR, Beta, Standard deviation, True Range |
-| `PricePattern` | Fractal, Pivot Points |
-| `PriceTransform` | Bar Part, ZigZag |
-| `PriceTrend` | ADX, Aroon, Alligator, AtrStop, SuperTrend, Vortex |
-| `StopAndReverse` | Chandelier, Parabolic SAR, Volatility Stop |
-| `VolumeBased` | OBV, Chaikin Money Flow, Chaikin Oscillator |
-
-## Registration
-
-Add entries inside the host repository's catalog populator method. The backing collection is a `private static readonly List<IndicatorListing>` declared at the top of the catalog file; the host repository determines its field name (shown below as `listings`).
-
-Indicators are grouped alphabetically by indicator ID (abbreviation) and separated by a blank line. Each block is preceded by a short comment header — `// {Abbreviation} ({Full Name})` when an abbreviation is conventional, otherwise just `// {Full Name}`. Within a block, the preferred order for the style listings is **Buffer → Series → Stream**:
+Register each listing inside `PopulateCatalog()` in `src/Common/Catalog/Catalog.Listings.cs`. Blocks sort alphabetically by indicator ID, are separated by a blank line, and open with a `// {ID} ({Full Name})` comment, or `// {Full Name}` when no abbreviation is conventional. Within a block the order is Buffer, Series, Stream:
 
 ```csharp
 // EMA (Exponential Moving Average)
-listings.Add(Ema.BufferListing);
-listings.Add(Ema.SeriesListing);
-listings.Add(Ema.StreamListing);
+_listings.Add(Ema.BufferListing);
+_listings.Add(Ema.SeriesListing);
+_listings.Add(Ema.StreamListing);
 
-// HMA (Hull Moving Average)
-listings.Add(Hma.BufferListing);
-listings.Add(Hma.SeriesListing);
-listings.Add(Hma.StreamListing);
-```
-
-Series-only indicators (no streamable variant) register a single `SeriesListing` line in the same alphabetical position; e.g.:
-
-```csharp
 // Beta
-listings.Add(Beta.SeriesListing);
+_listings.Add(Beta.SeriesListing);
 ```
 
-## Prohibited
+Adding or changing a parameter or result changes `tests/Library/TestData/catalog/shape.snapshot.txt`. Regenerate it, review the diff, then rerun the test without the variable to confirm it passes; the regeneration run reports Inconclusive:
 
-- `.WithMethodName()` in `CommonListing`
-- Wrong indicator method name
-- `isReusable: true` for `ISeries` models
-- Multiple `isReusable: true` results per indicator
-- A `dataName` as a string literal where `nameof` can reach the member
-- A `parameterName` that names a member the library does not have
-- `isRequired: false` with a `defaultValue` the C# signature does not apply when the argument is omitted
-
-## Testing
-
-`tests/Library/Indicators/{folder}/{Indicator}/{Indicator}CatalogTests.cs`:
-
-```csharp
-[TestClass]
-public class EmaCatalogTests : TestBase
-{
-    [TestMethod]
-    public void EmaSeriesListing()
-    {
-        var listing = Ema.SeriesListing;
-        listing.Name.Should().Be("Exponential Moving Average");
-        listing.Style.Should().Be(Style.Series);
-        listing.MethodName.Should().Be("ToEma");
-    }
-}
+```bash
+UPDATE_CATALOG_SHAPE=1 dotnet test tests/Library/Tests.Indicators.csproj --filter CatalogShapeMatchesSnapshot
 ```
 
-`tests/Library/Common/Catalog/Catalog.Binding.Tests.cs` additionally enforces, for every
-listing in the catalog, that `MethodName` resolves to a real method of the listing's own
-style, that each `dataName` resolves to a property on that method's result record, and
-that each `parameterName` forms a contiguous, in-order run in the signature. A listing
-naming a member the library does not have fails there. It does not check parameter
-*types* or value semantics, so keep writing the per-indicator test.
+## Tests
+
+`tests/Library/Indicators/{folder}/{Name}/{Name}CatalogTests.cs` declares `public class {Name}CatalogTests : TestBase` in namespace `Catalogging`, with one `{Name}{Style}_InCatalog_ReturnsAllVariants()` method per style asserting `Name`, `Uiid`, `Style`, `Category`, `MethodName`, and the parameter and result counts. `tests/Library/Indicators/t-z/Wma/WmaCatalogTests.cs` is a minimal example.
+
+The catalog-wide tests verify method binding per style, `dataName` and `parameterName` resolution, parameter order, `isRequired` and default agreement with the C# signature, chart panes, and the shape snapshot. They do not check names, categories, or value ranges, so keep the per-indicator test.
+
+## Do not do these
+
+- Do not call `.WithMethodName()` on `CommonListing`.
+- Do not write a `dataName` as a string literal where `nameof` can reach the member.
+- Do not mark `isReusable: true` on an `ISeries` model or on more than one result.
+- Do not set `isRequired: false` with a `defaultValue` the C# signature does not apply when the argument is omitted.
+- Do not hand-edit `shape.snapshot.txt`; regenerate it.

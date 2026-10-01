@@ -1,46 +1,47 @@
 ---
 name: testing-standards
-description: Testing conventions for Stock Indicators. Use for test naming (MethodName_StateUnderTest_ExpectedBehavior), FluentAssertions patterns, precision requirements, and test base class selection.
+description: Test conventions for the indicator library — base class and test interface per style, required test methods, `MethodName_StateUnderTest_ExpectedBehavior` naming, shared bar fixtures, FluentAssertions and `IsExactly` parity, and `Money*` precision constants. Use when creating or editing any file under `tests/Library/`, when a test class fails to compile for a missing abstract or interface method, or when choosing an assertion tolerance.
 ---
 
 # Testing standards
 
-## Base class selection
+Tests use MSTest with FluentAssertions. Base classes and test interfaces live in `tests/Library/TestBase/`; assertion helpers live in `tests/Library/TestTools/TestAssert.cs`.
 
-| Style | Base Class |
-| ----- | ---------- |
-| Series | `StaticSeriesTestBase` |
-| Buffer | `BufferListTestBase` |
-| Stream | `StreamHubTestBase` |
-| Other | `TestBase` |
+Load [required test methods and precision constants](references/patterns.md) before writing a new test class or picking a `Money*` tolerance.
 
-## Test naming
+## Base class per test file
 
-Pattern: `MethodName_StateUnderTest_ExpectedBehavior`
+| Test file | Namespace | Base class | Test interfaces |
+| --------- | --------- | ---------- | --------------- |
+| `{Name}SeriesTests.cs` | `StaticSeries` | `StaticSeriesTestBase` | none |
+| `{Name}BufferListTests.cs` | `BufferLists` | `BufferListTestBase` | `ITestChainBufferList` or `ITestBarBufferList`, plus `ITestCustomBufferListCache` for a custom cache |
+| `{Name}HubTests.cs` | `StreamHubs` | `StreamHubTestBase` | `ITestChainObserver` or `ITestBarObserver`, plus `ITestChainProvider` when the hub feeds other hubs |
+| `{Name}RegressionTests.cs` | `Regression` | `RegressionTestBase<TResult>` | none |
+| `{Name}CatalogTests.cs` | `Catalogging` | `TestBase` | none |
 
-## Required abstract methods
+`StaticSeriesTestBase` and `StreamHubTestBase` derive from `TestBaseWithPrecision`, which supplies the `Money*` constants. `BufferListTestBase` and `RegressionTestBase<TResult>` derive from `TestBase` and do not.
 
-Compile errors if missing. Additional tests are developer discretion.
+## Naming
 
-**Series** (`StaticSeriesTestBase`):
+Name every test method `MethodName_StateUnderTest_ExpectedBehavior`, for example `Exceptions_InvalidLookback_ThrowsArgumentOutOfRangeException`.
 
-- `DefaultParameters_ReturnsExpectedResults()`
-- `BadBars_DoesNotFail()`
-- `NoBars_ReturnsEmpty()`
+## Fixtures
 
-**Buffer** (`BufferListTestBase`):
+Use the static bar sets on `TestBase` instead of loading data: `Bars` (the 502-bar default set from `Data.GetDefault()`), `BadBars`, `Nobars`, `Onebar`, `OtherBars`, `BigBars`, `LongishBars`, `ZeroesBars`, and others. `StreamHubTestBase.RevisedBars` is `Bars` with index 495 removed, for late-arrival and removal tests.
 
-- `PruneList_OverMaxListSize_AutoAdjustsListAndBuffers()`
-- `Clear_WithState_ResetsState()`
-- Plus interface methods from `ITestBarBufferList` or `ITestChainBufferList` (see [patterns reference](references/patterns.md))
+## Assertions
 
-**Stream** (`StreamHubTestBase`):
+- Assert style parity with `actuals.IsExactly(expected)`, which compares every member in strict order. Never assert parity with `Should().Be()` or a bare `BeEquivalentTo()`.
+- Assert manually calculated spot values with `BeApproximately(expected, Money4)` or the tightest `Money*` constant the reference data supports.
+- Assert a bounded indicator's documented range with `sut.IsBetween(static x => x.WilliamsR, -100, 0)`, which skips null and NaN values.
+- Assert exceptions with `FluentActions.Invoking(() => ...).Should().ThrowExactly<ArgumentOutOfRangeException>()`.
 
-- `ToStringOverride_ReturnsExpectedName()`
-- Plus interface methods from `ITestBarObserver`, `ITestChainObserver`, and/or `ITestChainProvider` (see [patterns reference](references/patterns.md))
+## Running
 
-## Test data
+Unit runs use `tests/tests.unit.runsettings`, which excludes the `Regression` and `Integration` categories. Run regression tests with `--settings tests/tests.regression.runsettings`. The code-completion skill owns the full quality-gate commands and VS Code task names.
 
-`Data.GetDefault()` — 502 bars. Use consistently across all tests.
+## Do not do these
 
-See [references/patterns.md](references/patterns.md) for FluentAssertions patterns, precision constants, and full BufferList/StreamHub interface method lists.
+- Do not widen a `Money*` tolerance to absorb floating-point drift between styles; parity is `IsExactly`, and a mismatch is a bug.
+- Do not edit a `*.standard.json` regression baseline by hand; regenerate it with `dotnet run --project tools/baselining -- --indicator {UIID}` after an intended calculation change.
+- Do not skip a required abstract or interface method by omitting the interface; every new test class declares the interfaces for its style.

@@ -1,79 +1,75 @@
 ---
 name: indicator-series
-description: Implement Series-style batch indicators with mathematical precision. Use for new StaticSeries implementations or optimization. Series results are the canonical reference—all other styles must match exactly. Focus on cross-cutting requirements and performance optimization decisions.
+description: Implement Series-style batch indicators (`To{Name}()` in `{Name}.Series.cs`), the canonical numerical reference every BufferList and StreamHub must match exactly. Owns the full per-indicator file set and the completion checklist across all styles, tests, catalog, docs, regression baseline, and benchmark. Use when adding a new indicator, creating or editing a `src/Indicators/**/{Name}.Series.cs`, `{Name}Result.cs`, or `{Name}.Utilities.cs` file, choosing a result or input interface, optimizing a Series calculation, or checking whether an indicator is complete.
 ---
 
 # Series indicator development
 
-## File structure
+Series results are the source of truth. A BufferList or StreamHub that disagrees with Series is wrong unless the Series result is proven wrong against reference data.
 
-All files live in `src/Indicators/{category}/{Indicator}/`:
+Load [result interface selection](references/decision-tree.md) before writing a `{Name}Result.cs` record or choosing the `this` parameter type of `To{Name}()`.
 
-| File | Purpose |
-| ---- | ------- |
-| `{Indicator}.Series.cs` | Static partial class — `To{Indicator}()` series entry point |
-| `{Indicator}Hub.cs` | Hub class (internal ctor) + `To{Indicator}Hub()` extension |
-| `{Indicator}List.cs` | List class + `To{Indicator}List()` extension |
-| `{Indicator}.Catalog.cs` | `CommonListing`, `SeriesListing`, `StreamListing`, `BufferListing` |
-| `{Indicator}Result.cs` | Result record |
-| `{Indicator}.Utilities.cs` | `Validate()` (internal), `Increment()` (public), and a `RemoveWarmupPeriods()` overload only when values converge past the first calculated one or the result is not `IReusable` |
-| `I{Indicator}.cs` | Parameter interface (parameter properties only; NOT result properties) |
+## Per-indicator file set
 
-Test files mirror in `tests/Library/Indicators/{category}/{Indicator}/`:
+Source files live in `src/Indicators/{folder}/{Name}/`, where `{folder}` is the alphabetical bucket `a-b`, `c-d`, `e-j`, `k-q`, `r-s`, or `t-z`:
 
-- `{Indicator}SeriesTests.cs`
-- `{Indicator}BufferListTests.cs`
-- `{Indicator}HubTests.cs`
-- `{Indicator}CatalogTests.cs`
-- `{Indicator}RegressionTests.cs`
+| File | Contents |
+| ---- | -------- |
+| `{Name}.Series.cs` | `public static partial class {Name}` with the `To{Name}()` extension |
+| `{Name}List.cs` | `{Name}List` BufferList class plus the `To{Name}List()` extension |
+| `{Name}Hub.cs` | `{Name}Hub` class with an `internal` constructor plus the `To{Name}Hub()` extension |
+| `{Name}.Catalog.cs` | `CommonListing`, `SeriesListing`, `BufferListing`, `StreamListing` |
+| `{Name}Result.cs` | Positional result `record` |
+| `{Name}.Utilities.cs` | `internal static void Validate(...)`, any shared `Increment(...)` kernel, and any `RemoveWarmupPeriods()` overload |
+| `I{Name}.cs` | Public interface of configuration properties (`LookbackPeriods`, derived constants such as `K`); never result properties |
 
-Category folders: `a-b`, `c-d`, `e-j`, `k-q`, `r-s`, `t-z` (alphabetical)
+Add a `RemoveWarmupPeriods()` overload only when values keep converging after the first calculated one (see `Ema.Utilities.cs`) or the result is not `IReusable`; otherwise the generic `PruningExtensions.RemoveWarmupPeriods<T>()` covers it.
 
-## Performance optimization
+Tests live in `tests/Library/Indicators/{folder}/{Name}/`: `{Name}SeriesTests.cs`, `{Name}BufferListTests.cs`, `{Name}HubTests.cs`, `{Name}CatalogTests.cs`, `{Name}RegressionTests.cs`, and the `{Name}.Calc.xlsx` spreadsheet holding the manually calculated reference values.
 
-Array allocation pattern (use for predictable result counts; benchmark first):
+## Completion checklist
+
+An indicator is complete when every item holds. Series-only indicators skip the List, Hub, and their tests, listings, and benchmarks.
+
+- [ ] Every source file in the table above exists; the indicator-buffer and indicator-stream skills own the List and Hub specifics.
+- [ ] `{Name}SeriesTests` inherits `StaticSeriesTestBase` and asserts spot values from `{Name}.Calc.xlsx`; assert a documented value range with `IsBetween` where the indicator has one. The testing-standards skill owns base classes, required methods, and precision constants.
+- [ ] `{Name}BufferListTests` and `{Name}HubTests` assert `IsExactly` parity with the Series output.
+- [ ] Catalog listings are registered in `src/Common/Catalog/Catalog.Listings.cs`, the catalog shape snapshot is regenerated, and `{Name}CatalogTests` covers each listing; the indicator-catalog skill owns listing rules, registration order, and the catalog shape snapshot.
+- [ ] `tests/Library/TestData/results/{uiid-lowercase}.standard.json` exists, generated by `dotnet run --project tools/baselining -- --indicator {UIID}`.
+- [ ] `{Name}RegressionTests` inherits `RegressionTestBase<TResult>`, carries `[TestClass, TestCategory("Regression")]`, passes the baseline filename to the base constructor, and calls each style with the catalog default parameters, because the baseline is generated from those defaults.
+- [ ] Benchmarks exist in `tools/performance/Perf.Series.cs`, `Perf.Buffer.cs`, and `Perf.Stream.cs`; the performance-testing skill owns their shape.
+- [ ] `docs/indicators/{kebab-name}.md` exists or is updated; the documentation skill owns page structure.
+- [ ] `docs/migration/v3.md` is updated when the indicator existed in v2 and its API or results changed.
+
+## Implementation rules
+
+- Validate arguments first: `ArgumentNullException.ThrowIfNull(source)`, then `Validate(...)`, which throws `ArgumentOutOfRangeException` naming the parameter and offending value.
+- Calculate in `double`, use `double.NaN` for incalculable internal state, and convert with `.NaN2Null()` only when constructing the result.
+- Accept NaN inputs and let them propagate. Guard every variable denominator with `denom != 0 ? num / denom : double.NaN`, comparing to exactly zero.
+- Keep the calculation single-pass O(n) and allocate only the result array plus minimal working buffers.
+- When the List or Hub repeats the per-step math, put it in an `Increment(...)` kernel in `{Name}.Utilities.cs` and call it from every style instead of re-deriving the formula (see `Ema.Increment`).
+
+When the result count equals the input count, preallocate and wrap; `results.ToList()` costs an extra copy:
 
 ```csharp
 TResult[] results = new TResult[length];
-// ... assign results[i] = new TResult(...);
-return new List<TResult>(results);  // NOT results.ToList()
+// results[i] = new TResult(...);
+return new List<TResult>(results);
 ```
 
-Some indicators (e.g., ADL) are faster with `List.Add()` — benchmark both.
+Benchmark this against `List<T>.Add()` before committing to it; some indicators, such as ADL, are faster with `Add()`.
 
-## Required implementation
+## Reference examples
 
-Beyond the main `{Indicator}.Series.cs` file, ensure:
+- Single value, chainable: `src/Indicators/r-s/Sma/Sma.Series.cs`
+- Exponential smoothing with an SMA seed: `src/Indicators/e-j/Ema/Ema.Series.cs`
+- Multi-stage from bars: `src/Indicators/a-b/Adx/Adx.Series.cs`
+- Multi-value `ISeries` result: `src/Indicators/a-b/Alligator/Alligator.Series.cs`
 
-- [ ] **Catalog registration**: Create `src/**/{Indicator}.Catalog.cs` and register in `Catalog.Listings.cs`
-- [ ] **Interface file**: Create `src/**/{Indicator}/I{Indicator}.cs` with parameter properties (NOT result properties)
-- [ ] **Unit tests**: Create `tests/Library/Indicators/**/{Indicator}SeriesTests.cs`
-  - Inherit from `StaticSeriesTestBase`
-  - Verify against manually calculated reference values; assert documented value ranges with `IsBetween` if applicable
-- [ ] **Performance benchmark**: Add to `tools/performance/Perf.Series.cs`
-- [ ] **Public documentation**: Update `docs/indicators/{Indicator}.md`
-- [ ] **Regression baseline tests**: Add to `tests/Library/Indicators/**/{Indicator}RegressionTests.cs` inheriting from `RegressionTestBase<TResult>` with `[TestCategory("Regression")]` on the class — these compare the full result set to a frozen `*.standard.json` baseline so it can be filtered via `--filter TestCategory=Regression`
-- [ ] **Migration guide**: Update `docs/migration/v3.md` for notable and breaking changes from v2
+## Do not do these
 
-## Precision testing
-
-- Store reference data in `{Indicator}.Data.cs` at maximum precision
-- Regression: compare full dataset using Money10-Money12
-- Spot checks: use Money4
-- Document when precision must be lowered due to accumulated floating-point error
-
-## Examples
-
-- Simple: `src/Indicators/r-s/Sma/Sma.Series.cs`
-- Exponential smoothing: `src/Indicators/e-j/Ema/Ema.Series.cs`
-- Complex multi-stage: `src/Indicators/a-b/Adx/Adx.Series.cs`
-- Multi-value results: `src/Indicators/a-b/Alligator/Alligator.Series.cs`
-
-See [references/decision-tree.md](references/decision-tree.md) for result interface selection.
-
-## Constraints
-
-- Series is canonical truth — BufferList and StreamHub MUST match exactly
-- Verify algorithms against authoritative reference publications only
-- Never reject NaN inputs; guard against division by zero
-- Fix formulas, not symptoms — see src/AGENTS.md
+- Do not verify a formula against anything but an authoritative reference publication.
+- Do not change a test's expected value or loosen its precision constant to make a failing calculation pass; fix the formula.
+- Do not reject or filter NaN inputs; downstream chaining depends on propagation.
+- Do not use epsilon comparisons for zero checks.
+- Do not fix a BufferList or StreamHub mismatch by changing Series unless the Series value is shown wrong against `{Name}.Calc.xlsx` or the reference publication.
