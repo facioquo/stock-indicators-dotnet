@@ -22,13 +22,6 @@
         "dotnet-gitversion"
       ],
       "rollForward": false
-    },
-    "csharp-ls": {
-      "version": "0.28.0",
-      "commands": [
-        "csharp-ls"
-      ],
-      "rollForward": true
     }
   }
 }

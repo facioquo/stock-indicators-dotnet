@@ -127,9 +127,9 @@
     },
     {
       "label": "Install: .NET tools",
-      "detail": "Restore .NET tools from manifest",
+      "detail": "Restore .NET tools from manifest and install the C# language server",
       "type": "shell",
-      "command": "dotnet tool restore"
+      "command": "dotnet tool restore && (dotnet tool install --global csharp-ls || dotnet tool update --global csharp-ls)"
     },
     {
       "label": "Update: .NET tools",
@@ -269,7 +269,7 @@
       "label": "Clean: Docs (node)",
       "detail": "Run package-manager clean for docs (pnpm)",
       "type": "shell",
-      "command": "pnpm --prefix docs run clean",
+      "command": "pnpm --prefix docs run cleanup",
       "dependsOn": [
         "Stop: All hosted servers"
       ],

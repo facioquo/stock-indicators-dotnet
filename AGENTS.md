@@ -88,7 +88,7 @@ Read a folder's AGENTS.md before working in it:
 ## Tools
 
 - The `csharp-ls` language server (enabled through the `csharp-lsp` plugin) indexes every project in `Stock.Indicators.sln`. Use it for callers, implementations, and resolved types; use text search for literals, naming sweeps, and non-`.cs` files. It reports structure, not whether the code compiles.
-  - `dotnet-tools.json` pins it; `dotnet tool restore` installs it with the other local tools.
+  - Install it globally with `dotnet tool install --global csharp-ls` (the `Install: .NET tools` task does this). The plugin launches the bare `csharp-ls` command from PATH, so a local tool from `dotnet-tools.json` cannot serve it.
 - MCP servers in `.mcp.json`: microsoft-learn for .NET and C# guidance, context7 for third-party library docs, codacy for this repository's static analysis and coverage findings.
 - Use the `gh` CLI for workflow runs, pull requests, and issues.
 
