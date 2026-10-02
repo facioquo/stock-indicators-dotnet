@@ -24,7 +24,7 @@ Load the reference that matches the moment:
 | Single value | Multi-value, not chainable | `StreamHub<IReusable, TResult>` | `AlligatorHub` |
 | OHLCV bar | Bar (`IBar`) | `BarProvider<IBar, TResult>` | `HeikinAshiHub`, `RenkoHub` |
 
-`ChainHub` requires `TResult : IReusable`; `BarProvider` requires `TResult : IBar`. Only those two can feed downstream hubs.
+`ChainHub` requires `TResult : IReusable`; `BarProvider` requires `TResult : IBar`. Only those two can feed general downstream hubs; a compound hub typed to a specific result, such as `GatorHub : StreamHub<AlligatorResult, GatorResult>`, can also consume a `StreamHub` output.
 
 ## Hub shape
 

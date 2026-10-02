@@ -43,7 +43,7 @@ A hub that keeps position-based state (absolute indexes, item counters) override
 - Take an optional `fillGaps` flag, default `false` (empty buckets are omitted). When `true`, synthesize zero-volume bars whose open, high, low, and close all carry the prior bar's close.
 - In `OnAdd`, round the input timestamp down to its bucket, then update the forming bar in place (replace `Cache[^1]` and notify with `NotifyObserversOnRebuild`) or append a new bucket. Call `Rebuild` for input that lands in an earlier bucket.
 - Override `Rebuild(DateTime)` to round the timestamp down to the bucket boundary before calling `base.Rebuild`. Without it, a mid-bucket rebuild keeps the partial bar and the replay appends a duplicate.
-- In `RollbackState`, clear the forming bar and remove duplicate-detection tracker entries later than `ProviderCache[restoreIndex].Timestamp`.
+- In `RollbackState`, clear the forming bar. When `restoreIndex < 0`, clear every duplicate-detection tracker entry; otherwise remove entries later than `ProviderCache[restoreIndex].Timestamp`.
 
 ## Self-rooted source hubs
 

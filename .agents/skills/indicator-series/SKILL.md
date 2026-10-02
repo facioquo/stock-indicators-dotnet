@@ -31,7 +31,7 @@ Tests live in `tests/Library/Indicators/{folder}/{Name}/`: `{Name}SeriesTests.cs
 
 An indicator is complete when every item holds. Series-only indicators skip the List, Hub, and their tests, listings, and benchmarks.
 
-- [ ] Every source file in the table above exists; the indicator-buffer and indicator-stream skills own the List and Hub specifics.
+- [ ] Every applicable source file in the table above exists (Series-only indicators omit `{Name}List.cs` and `{Name}Hub.cs`); the indicator-buffer and indicator-stream skills own the List and Hub specifics.
 - [ ] `{Name}SeriesTests` inherits `StaticSeriesTestBase` and asserts spot values from `{Name}.Calc.xlsx`; assert a documented value range with `IsBetween` where the indicator has one. The testing-standards skill owns base classes, required methods, and precision constants.
 - [ ] `{Name}BufferListTests` and `{Name}HubTests` assert `IsExactly` parity with the Series output.
 - [ ] Catalog listings are registered in `src/Common/Catalog/Catalog.Listings.cs`, the catalog shape snapshot is regenerated, and `{Name}CatalogTests` covers each listing; the indicator-catalog skill owns listing rules, registration order, and the catalog shape snapshot.
@@ -49,7 +49,7 @@ An indicator is complete when every item holds. Series-only indicators skip the 
 - Keep the calculation single-pass O(n) and allocate only the result array plus minimal working buffers.
 - When the List or Hub repeats the per-step math, put it in an `Increment(...)` kernel in `{Name}.Utilities.cs` and call it from every style instead of re-deriving the formula (see `Ema.Increment`).
 
-When the result count equals the input count, preallocate and wrap; `results.ToList()` costs an extra copy:
+When the result count equals the input count, fill a preallocated array, then copy it into the returned list:
 
 ```csharp
 TResult[] results = new TResult[length];

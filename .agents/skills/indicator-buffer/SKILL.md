@@ -18,7 +18,7 @@ Pick the interface from the Series input type. Both are `internal` and live in `
 
 - Route every chain overload through `Add(DateTime, double)` so the calculation exists once.
 - Pass `value.Value` from the `IReusable` overloads, or `value.Hl2OrValue()` where the Series defaults bars to HL2 (Alligator and Awesome, for example).
-- An `IIncrementFromBar` list has no `IReusable` overloads; it cannot chain from another indicator.
+- An `IIncrementFromBar` list has no `IReusable` overloads. It accepts bars and any result that is an `IBar` (such as `HeikinAshiResult`, a `Bar` record), but never an arbitrary `IReusable` result.
 
 ## Class shape
 
