@@ -12,9 +12,9 @@
 #                                 default All) and compare to baselines. Fast dev-loop check.
 #
 # The BASELINE SET matches the no-argument `dotnet run -c Release` default in
-# Program.cs: SeriesIndicators, BufferIndicators, StreamIndicators, Utility,
-# UtilityNullMath, UtilityStdDev. StyleComparison, StreamExternal, and
-# ManualTestDirect are diagnostics and are NOT baselined.
+# Program.cs: SeriesIndicators, BufferIndicators, StreamIndicators,
+# StreamObserver, Utility, UtilityNullMath, UtilityStdDev. StyleComparison,
+# StreamExternal, and ManualTestDirect are diagnostics and are NOT baselined.
 #
 # reset/evaluate run the full suite (~1 hour). spot is quick.
 # evaluate/spot require jq (used by detect-regressions.sh).
@@ -49,7 +49,7 @@ Usage:
   ./perf.sh evaluate
   ./perf.sh spot <indicator> [Series|Buffer|Stream|All]
 
-Baseline set: SeriesIndicators, BufferIndicators, StreamIndicators, Utility, UtilityNullMath, UtilityStdDev
+Baseline set: SeriesIndicators, BufferIndicators, StreamIndicators, StreamObserver, Utility, UtilityNullMath, UtilityStdDev
 EOF
 }
 

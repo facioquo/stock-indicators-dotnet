@@ -18,7 +18,7 @@ dotnet run -- sse [dataType] [interval] [count] [barInterval] [endpoint]
 
 | Argument | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-| `dataType` | _`string`_ | `bar` | `bar` reads `/bars/random`; `trade` reads `/trades/random`, which the SSE server does not serve |
+| `dataType` | _`string`_ | `bar` | Must be `bar`, the only data type the SSE server streams; any other value exits with an error |
 | `interval` | _`int`_ | `100` | Delay between bars, in milliseconds |
 | `count` | _`int`_ | unlimited | Number of bars to process; pass `""` to keep the default and set later arguments |
 | `barInterval` | _`string`_ | `1m` | Timestamp spacing between bars, such as `1s`, `5m`, `1h`, or `1d` |
@@ -71,7 +71,7 @@ To hunt for race conditions, run `coinbase-ticker` or `hub-stress` with a high c
 ## VS Code tasks
 
 - `Run: Simulation (default SSE)` — SSE mode, 50 ms delivery, `1m` bars, unlimited count
-- `Run: SSE simulation (with inputs)` — SSE mode, prompting for each argument
+- `Run: SSE simulation (with inputs)` — SSE mode with `bar` data, prompting for delivery interval, count, and bar interval
 - `Run: Coinbase simulation (with inputs)` — a Coinbase mode, prompting for symbol and count
 - `Run: Hub stress test (with inputs)` — hub stress mode, prompting for symbol, count, and cache size
 

@@ -41,18 +41,17 @@ else
     int count = args.Length > 3 && int.TryParse(args[3], out int c) ? c : int.MaxValue;
     string barIntervalCode = args.Length > 4 ? args[4] : "1m";
 
-    // Build default endpoint URL from dataType (normalize to lowercase for URL)
-    string defaultEndpoint = dataType switch {
-        "BAR" => "http://localhost:5001/bars/random",
-        "TRADE" => "http://localhost:5001/trades/random",
-        _ => $"http://localhost:5001/{dataType.ToUpperInvariant()}s/random"
-            .ToLowerInvariant()
-    };
+    // The SSE server streams bars only
+    if (dataType != "BAR")
+    {
+        await Console.Error.WriteLineAsync($"Error: Unsupported SSE data type '{args[1]}'. Only 'bar' is supported.").ConfigureAwait(false);
+        Environment.Exit(1);
+    }
 
     // Custom endpoint can be passed as 6th argument for SSE mode
     string endpoint = args.Length > 5 && !string.IsNullOrWhiteSpace(args[5]) && args[5].StartsWith("http", StringComparison.Ordinal)
         ? args[5]
-        : defaultEndpoint;
+        : "http://localhost:5001/bars/random";
 
     // Start SSE server
     Process? serverProcess = ServerManager.StartServer(5001);

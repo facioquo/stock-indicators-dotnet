@@ -21,7 +21,7 @@ internal static class Program
         Console.WriteLine("========================================");
         Console.WriteLine();
 
-        // Change to test indicators directory so test data files can be found
+        // Change to the unit test project directory so test data files can be found
         // Find repo root by looking for .git directory
         string currentDir = Directory.GetCurrentDirectory();
         string? repoRoot = currentDir;
@@ -38,16 +38,16 @@ internal static class Program
             return 1;
         }
 
-        string testIndicatorsPath = Path.Combine(repoRoot, "tests", "Indicators");
+        string testProjectPath = Path.Combine(repoRoot, "tests", "Library");
 
-        if (!Directory.Exists(testIndicatorsPath))
+        if (!Directory.Exists(testProjectPath))
         {
-            Console.Error.WriteLine($"Error: Test indicators directory not found at {testIndicatorsPath}");
+            Console.Error.WriteLine($"Error: Test project directory not found at {testProjectPath}");
             Console.Error.WriteLine($"Repository root: {repoRoot}");
             return 1;
         }
 
-        Directory.SetCurrentDirectory(testIndicatorsPath);
+        Directory.SetCurrentDirectory(testProjectPath);
         Console.WriteLine($"Working directory: {Directory.GetCurrentDirectory()}");
         Console.WriteLine();
 
