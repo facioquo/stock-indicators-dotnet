@@ -89,7 +89,7 @@ Read a folder's AGENTS.md before working in it:
 
 - The `csharp-ls` language server (enabled through the `csharp-lsp` plugin) indexes every project in `Stock.Indicators.sln`. Use it for callers, implementations, and resolved types; use text search for literals, naming sweeps, and non-`.cs` files. It reports structure, not whether the code compiles.
   - Install it globally with `dotnet tool install --global csharp-ls` (the `Install: .NET tools` task does this). The plugin launches the bare `csharp-ls` command from PATH, so a local tool from `dotnet-tools.json` cannot serve it.
-- MCP servers in `.mcp.json`: microsoft-learn for .NET and C# guidance, context7 for third-party library docs, codacy for this repository's static analysis and coverage findings.
+- MCP servers in `.mcp.json`: microsoft-learn for .NET and C# guidance, context7 for third-party library docs, codacy for this repository's static analysis and coverage findings. Claude Code auto-approves only microsoft-learn and context7; codacy takes its token from a VS Code `${input:…}` prompt, which Claude Code does not expand.
 - Use the `gh` CLI for workflow runs, pull requests, and issues.
 
 ## Pull requests

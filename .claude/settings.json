@@ -3,5 +3,8 @@
   "enabledPlugins": {
     "csharp-lsp@claude-plugins-official": true
   },
-  "enableAllProjectMcpServers": true
+  "enabledMcpjsonServers": [
+    "context7",
+    "microsoft-learn"
+  ]
 }
