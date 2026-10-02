@@ -33,16 +33,6 @@
       "type": "pickString"
     },
     {
-      "id": "dataType",
-      "description": "Data type: bar (candles/klines) or trade (ticker/transactions)",
-      "options": [
-        "bar",
-        "trade"
-      ],
-      "default": "bar",
-      "type": "pickString"
-    },
-    {
       "id": "deliveryInterval",
       "description": "Delivery rate in milliseconds (how fast data is sent)",
       "default": "50",
@@ -744,9 +734,9 @@
     },
     {
       "label": "Run: SSE simulation (with inputs)",
-      "detail": "Run SSE simulation with configurable data type, intervals, and count",
+      "detail": "Run SSE simulation with configurable intervals and count",
       "type": "shell",
-      "command": "dotnet run --project tools/simulate/Test.Simulation.csproj -- sse ${input:dataType} ${input:deliveryInterval} \"${input:count}\" ${input:barIntervalCode}",
+      "command": "dotnet run --project tools/simulate/Test.Simulation.csproj -- sse bar ${input:deliveryInterval} \"${input:count}\" ${input:barIntervalCode}",
       "group": "none",
       "isBackground": true,
       "dependsOn": [

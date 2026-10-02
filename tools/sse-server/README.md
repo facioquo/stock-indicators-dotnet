@@ -16,6 +16,8 @@ The VS Code task `Run: SSE Server` runs the same command.
 | `/bars/longest` | The longest bundled bar dataset, deterministically |
 | `/openapi/v1.json` | The OpenAPI document (Development environment only) |
 
+The server streams bars only; it has no trade (`TradeTick`) endpoint.
+
 Both bar endpoints take these query parameters:
 
 | Parameter | Type | Default | Description |
