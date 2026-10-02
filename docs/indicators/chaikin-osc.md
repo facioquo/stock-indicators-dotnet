@@ -91,10 +91,8 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 ChaikinOscList chaikinOscList = new(fastPeriods, slowPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  chaikinOscList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => chaikinOscList.Add(bar);
 
 // based on `ICollection<ChaikinOscResult>`
 IReadOnlyList<ChaikinOscResult> results = chaikinOscList;
@@ -106,10 +104,8 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 ChaikinOscHub observer = barHub.ToChaikinOscHub(fastPeriods, slowPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
 IReadOnlyList<ChaikinOscResult> results = observer.Results;
 ```

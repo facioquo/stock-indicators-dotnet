@@ -87,10 +87,8 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 PvoList pvoList = new(fastPeriods, slowPeriods, signalPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  pvoList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => pvoList.Add(bar);
 
 // based on `ICollection<PvoResult>`
 IReadOnlyList<PvoResult> results = pvoList;
@@ -102,10 +100,8 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 PvoHub observer = barHub.ToPvoHub(fastPeriods, slowPeriods, signalPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
 IReadOnlyList<PvoResult> results = observer.Results;
 ```

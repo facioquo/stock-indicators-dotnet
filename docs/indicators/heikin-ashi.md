@@ -82,10 +82,8 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 HeikinAshiList heikinAshiList = new();
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  heikinAshiList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => heikinAshiList.Add(bar);
 
 // based on `ICollection<HeikinAshiResult>`
 IReadOnlyList<HeikinAshiResult> results = heikinAshiList;
@@ -97,10 +95,8 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 HeikinAshiHub observer = barHub.ToHeikinAshiHub();
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
 IReadOnlyList<HeikinAshiResult> results = observer.Results;
 ```

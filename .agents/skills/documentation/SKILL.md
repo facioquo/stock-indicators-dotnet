@@ -97,8 +97,8 @@ Add `[.RemoveWarmupPeriods()](/utilities/results#remove-warmup-periods)` before 
 
 `## Streaming` with two examples, ending with "See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides."
 
-- "Use the buffer-style `List<T>` when you need incremental calculations without a hub:" then `{Name}List {name}List = new(params);`, a `foreach` adding each bar, and `IReadOnlyList<{Name}Result> results = {name}List;`.
-- "Subscribe to a `BarHub` for advanced streaming scenarios:" then `BarHub barHub = new();`, `{Name}Hub observer = barHub.To{Name}Hub(params);`, a `foreach` calling `barHub.Add(bar)`, and `observer.Results`.
+- "Use the buffer-style `List<T>` when you need incremental calculations without a hub:" then `{Name}List {name}List = new(params);`, a handler that adds each bar (`// call from your WebSocket or SSE message handler` above `void OnBarReceived(IBar bar) => {name}List.Add(bar);`), and `IReadOnlyList<{Name}Result> results = {name}List;`.
+- "Subscribe to a `BarHub` for advanced streaming scenarios:" then `BarHub barHub = new();`, `{Name}Hub observer = barHub.To{Name}Hub(params);`, the same handler calling `barHub.Add(bar)`, and `observer.Results`.
 
 Follow `ema.md` for the exact layout. Show only the styles the indicator implements.
 

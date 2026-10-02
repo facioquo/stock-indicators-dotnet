@@ -71,10 +71,8 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 VortexList vortexList = new(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  vortexList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => vortexList.Add(bar);
 
 // based on `ICollection<VortexResult>`
 IReadOnlyList<VortexResult> results = vortexList;
@@ -86,10 +84,8 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 VortexHub observer = barHub.ToVortexHub(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
 IReadOnlyList<VortexResult> results = observer.Results;
 ```

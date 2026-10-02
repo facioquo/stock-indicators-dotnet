@@ -77,10 +77,8 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 AdlList adlList = new();
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  adlList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => adlList.Add(bar);
 
 // based on `ICollection<AdlResult>`
 IReadOnlyList<AdlResult> results = adlList;
@@ -92,10 +90,8 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 AdlHub observer = barHub.ToAdlHub();
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
 IReadOnlyList<AdlResult> results = observer.Results;
 ```

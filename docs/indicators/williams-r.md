@@ -79,10 +79,8 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 WilliamsRList williamsRList = new(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  williamsRList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => williamsRList.Add(bar);
 
 // based on `ICollection<WilliamsResult>`
 IReadOnlyList<WilliamsResult> results = williamsRList;
@@ -94,10 +92,8 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 WilliamsRHub observer = barHub.ToWilliamsRHub(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
 IReadOnlyList<WilliamsResult> results = observer.Results;
 ```

@@ -92,10 +92,8 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 MamaList mamaList = new(fastLimit, slowLimit);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  mamaList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => mamaList.Add(bar);
 
 // based on `ICollection<MamaResult>`
 IReadOnlyList<MamaResult> results = mamaList;
@@ -107,10 +105,8 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 MamaHub observer = barHub.ToMamaHub(fastLimit, slowLimit);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
 IReadOnlyList<MamaResult> results = observer.Results;
 ```

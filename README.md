@@ -29,8 +29,8 @@ BarHub barHub = new();
 EmaHub emaHub = barHub.ToEmaHub(20);
 RsiHub rsiHub = barHub.ToRsiHub(14);
 
-// Stream bars as they arrive
-foreach (Bar bar in liveBars)
+// Call from your WebSocket or SSE message handler as each bar arrives
+void OnBarReceived(Bar bar)
 {
     barHub.Add(bar);
 

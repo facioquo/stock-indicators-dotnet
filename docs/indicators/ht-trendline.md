@@ -68,10 +68,8 @@ Use the streaming hub for real-time incremental calculations:
 BarHub barHub = new();
 HtTrendlineHub observer = barHub.ToHtTrendlineHub();
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
 IReadOnlyList<HtlResult> results = observer.Results;
 ```
@@ -83,10 +81,8 @@ Use the buffer-style `List<T>` when you need incremental calculations:
 ```csharp
 HtTrendlineList htlList = new();
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  htlList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => htlList.Add(bar);
 
 // based on `ICollection<HtlResult>`
 IReadOnlyList<HtlResult> results = htlList;

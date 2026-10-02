@@ -108,10 +108,8 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 MaEnvelopesList maEnvList = new(lookbackPeriods, percentOffset, movingAverageType);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  maEnvList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => maEnvList.Add(bar);
 
 // based on `ICollection<MaEnvelopeResult>`
 IReadOnlyList<MaEnvelopeResult> results = maEnvList;
@@ -123,10 +121,8 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 MaEnvelopesHub observer = barHub.ToMaEnvelopesHub(lookbackPeriods, percentOffset, movingAverageType);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
 IReadOnlyList<MaEnvelopeResult> results = observer.Results;
 ```

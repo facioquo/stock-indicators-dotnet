@@ -81,10 +81,8 @@ Subscribe to a `BarHub` for streaming scenarios:
 BarHub barHub = new();
 BarPartHub observer = barHub.ToBarPartHub(CandlePart.HL2);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
 IReadOnlyList<TimeValue> results = observer.Results;
 ```
@@ -98,10 +96,8 @@ Use a `BarPartList` for incremental buffering scenarios:
 ```csharp
 BarPartList buffer = new(CandlePart.Close);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  buffer.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => buffer.Add(bar);
 
 IReadOnlyList<TimeValue> results = buffer;
 ```

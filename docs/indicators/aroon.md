@@ -85,10 +85,8 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 AroonList aroonList = new(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  aroonList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => aroonList.Add(bar);
 
 // based on `ICollection<AroonResult>`
 IReadOnlyList<AroonResult> results = aroonList;
@@ -100,10 +98,8 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 AroonHub observer = barHub.ToAroonHub(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
 IReadOnlyList<AroonResult> results = observer.Results;
 ```

@@ -89,10 +89,8 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 SmiList smiList = new(lookbackPeriods, firstSmoothPeriods,
                  secondSmoothPeriods, signalPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  smiList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => smiList.Add(bar);
 
 // based on `ICollection<SmiResult>`
 IReadOnlyList<SmiResult> results = smiList;
@@ -105,10 +103,8 @@ BarHub barHub = new();
 SmiHub observer = barHub.ToSmiHub(lookbackPeriods, firstSmoothPeriods,
                  secondSmoothPeriods, signalPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
 IReadOnlyList<SmiResult> results = observer.Results;
 ```

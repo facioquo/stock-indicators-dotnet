@@ -37,23 +37,19 @@ BarHub barHub = new();
 SmaHub smaHub = barHub.ToSmaHub(20);
 RsiHub rsiHub = barHub.ToRsiHub(14);
 
-// stream bars as they arrive
-foreach (Bar bar in liveBars)
+// call from your WebSocket or SSE message handler as each bar arrives
+void OnBarReceived(Bar bar)
 {
     // adding to barHub automatically updates all subscribers
     barHub.Add(bar);
 
-    // safely get latest results
-    if (smaHub.Results.Count > 0)
-    {
-        SmaResult sma = smaHub.Results[^1];
-        RsiResult rsi = rsiHub.Results[^1];
+    SmaResult sma = smaHub.Results[^1];
+    RsiResult rsi = rsiHub.Results[^1];
 
-        // use results for trading logic, alerts, etc.
-        if (sma.Sma is not null && rsi.Rsi > 70)
-        {
-            Console.WriteLine($"{bar.Timestamp:d}: Overbought at {bar.Close:C2}");
-        }
+    // use results for trading logic, alerts, etc.
+    if (sma.Sma is not null && rsi.Rsi > 70)
+    {
+        Console.WriteLine($"{bar.Timestamp:d}: Overbought at {bar.Close:C2}");
     }
 }
 ```
@@ -163,19 +159,16 @@ SmaHub smaHub = barHub.ToSmaHub(20);
 // Use lock for coordinated multi-threaded access
 object hubLock = new();
 
-// Thread 1: Adding bars
-Task producer = Task.Run(() =>
+// Feed thread: WebSocket or SSE callbacks adding bars
+void OnBarReceived(Bar bar)
 {
-    foreach (Bar bar in liveBars)
+    lock (hubLock)
     {
-        lock (hubLock)
-        {
-            barHub.Add(bar);
-        }
+        barHub.Add(bar);
     }
-});
+}
 
-// Thread 2: Reading results
+// Reader thread: consuming results
 Task consumer = Task.Run(() =>
 {
     while (running)
@@ -297,10 +290,7 @@ BarHub limitedHub = new(maxCacheSize: 500);
 SmaHub smaHub = limitedHub.ToSmaHub(20);
 
 // as new bars arrive, oldest results are removed automatically
-foreach (Bar bar in liveBars)
-{
-    limitedHub.Add(bar);  // oldest pruned if over limit
-}
+void OnBarReceived(Bar bar) => limitedHub.Add(bar);  // oldest pruned if over limit
 ```
 
 The default cache size is 100,000 items. For applications with different requirements, specify a custom `maxCacheSize` when creating the BarHub.

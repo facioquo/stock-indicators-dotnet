@@ -91,10 +91,8 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 TrixList trixList = new(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  trixList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => trixList.Add(bar);
 
 // based on `ICollection<TrixResult>`
 IReadOnlyList<TrixResult> results = trixList;
@@ -106,10 +104,8 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 TrixHub observer = barHub.ToTrixHub(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
 IReadOnlyList<TrixResult> results = observer.Results;
 ```

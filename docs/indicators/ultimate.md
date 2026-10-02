@@ -81,10 +81,8 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 UltimateList ultimateList = new(shortPeriods, middlePeriods, longPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  ultimateList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => ultimateList.Add(bar);
 
 // based on `ICollection<UltimateResult>`
 IReadOnlyList<UltimateResult> results = ultimateList;
@@ -96,10 +94,8 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 UltimateHub observer = barHub.ToUltimateHub(shortPeriods, middlePeriods, longPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
 IReadOnlyList<UltimateResult> results = observer.Results;
 ```

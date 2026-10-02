@@ -93,10 +93,8 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 SmaAnalysisList smaAnalysisList = new(lookbackPeriods);
 
-foreach (IReusable value in bars)  // simulating stream
-{
-  smaAnalysisList.Add(value);
-}
+// call from your WebSocket or SSE message handler
+void OnValueReceived(IReusable value) => smaAnalysisList.Add(value);
 
 // based on `ICollection<SmaAnalysisResult>`
 IReadOnlyList<SmaAnalysisResult> results = smaAnalysisList;
@@ -108,10 +106,8 @@ Subscribe to a chain-enabled hub for advanced streaming scenarios:
 BarHub barHub = new();
 SmaAnalysisHub observer = barHub.ToSmaAnalysisHub(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
 IReadOnlyList<SmaAnalysisResult> results = observer.Results;
 ```

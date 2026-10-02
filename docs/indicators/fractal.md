@@ -80,10 +80,8 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 FractalList fractalList = new(windowSpan);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  fractalList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => fractalList.Add(bar);
 
 // based on `ICollection<FractalResult>`
 IReadOnlyList<FractalResult> results = fractalList;
@@ -95,10 +93,8 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 FractalHub observer = barHub.ToFractalHub(windowSpan);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
 IReadOnlyList<FractalResult> results = observer.Results;
 ```

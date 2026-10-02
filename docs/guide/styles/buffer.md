@@ -33,21 +33,17 @@ using FacioQuo.Stock.Indicators;
 // create buffer list with lookback period
 SmaList smaList = new(lookbackPeriods: 20);
 
-// add bars incrementally (e.g., from a data feed)
-foreach (Bar bar in bars)
+// call from your WebSocket or SSE message handler for each closed bar
+void OnBarReceived(Bar bar)
 {
     smaList.Add(bar);
 
-    // safely get latest result
-    if (smaList.Count > 0)
-    {
-        SmaResult r = smaList[^1];
+    SmaResult r = smaList[^1];
 
-        // use result (SMA is null during warmup period)
-        if (r.Sma is not null)
-        {
-            Console.WriteLine($"{r.Timestamp:d}: SMA = {r.Sma:N2}");
-        }
+    // use result (SMA is null during warmup period)
+    if (r.Sma is not null)
+    {
+        Console.WriteLine($"{r.Timestamp:d}: SMA = {r.Sma:N2}");
     }
 }
 ```
@@ -109,26 +105,17 @@ Unlike series or stream-hub chaining, this is orchestrated by you rather than th
 :::
 
 ```csharp
-// create OBV buffer list
 ObvList obvList = new();
-
-// add bars to OBV
-foreach (var bar in bars)
-{
-    obvList.Add(bar);
-}
-
-// chain RSI from OBV results
 RsiList rsiList = new(14);
-foreach (var obvResult in obvList)
-{
-    rsiList.Add(obvResult);
-}
 
-// get latest RSI of OBV
-if (rsiList.Count > 0)
+// call from your WebSocket or SSE message handler
+void OnBarReceived(Bar bar)
 {
-    RsiResult latest = rsiList[^1];
+    // add the bar to OBV, then chain the new OBV result into RSI
+    obvList.Add(bar);
+    rsiList.Add(obvList[^1]);
+
+    RsiResult latest = rsiList[^1];  // RSI of OBV
 }
 ```
 
@@ -141,22 +128,29 @@ if (rsiList.Count > 0)
 
 ## Usage patterns
 
-### Simulating a data stream
+### Server-sent events feed
+
+A buffer list fits a feed that delivers one closed bar per event. This example reads an SSE stream with `HttpClient`; parsing each `data:` line into a `Bar` depends on your provider's payload.
 
 ```csharp
 SmaList smaList = new(20);
 
-foreach (var bar in streamingBars)
+using HttpClient http = new();
+using Stream sse = await http.GetStreamAsync("https://example.com/bars/stream");
+using StreamReader reader = new(sse);
+
+while (await reader.ReadLineAsync() is { } line)
 {
-    // add new bar
+    if (!line.StartsWith("data:", StringComparison.Ordinal))
+    {
+        continue;
+    }
+
+    Bar bar = ParseBar(line["data:".Length..]);  // your payload mapping
     smaList.Add(bar);
 
-    // list auto-adds incremental SMA value
-    if (smaList.Count > 0)
-    {
-        SmaResult latest = smaList[^1];
-        Console.WriteLine($"{latest.Timestamp:d}: SMA = {latest.Sma:N2}");
-    }
+    SmaResult latest = smaList[^1];
+    Console.WriteLine($"{latest.Timestamp:d}: SMA = {latest.Sma:N2}");
 }
 ```
 

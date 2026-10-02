@@ -92,10 +92,8 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 BollingerBandsList bbList = new(lookbackPeriods, standardDeviations);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  bbList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => bbList.Add(bar);
 
 // based on `ICollection<BollingerBandsResult>`
 IReadOnlyList<BollingerBandsResult> results = bbList;
@@ -107,10 +105,8 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 BollingerBandsHub observer = barHub.ToBollingerBandsHub(lookbackPeriods, standardDeviations);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
 IReadOnlyList<BollingerBandsResult> results = observer.Results;
 ```

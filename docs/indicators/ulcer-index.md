@@ -86,10 +86,8 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 UlcerIndexList ulcerIndexList = new(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  ulcerIndexList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => ulcerIndexList.Add(bar);
 
 // based on `ICollection<UlcerIndexResult>`
 IReadOnlyList<UlcerIndexResult> results = ulcerIndexList;
@@ -101,10 +99,8 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 UlcerIndexHub observer = barHub.ToUlcerIndexHub(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
 IReadOnlyList<UlcerIndexResult> results = observer.Results;
 ```

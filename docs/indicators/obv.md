@@ -76,10 +76,8 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 ObvList obvList = new();
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  obvList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => obvList.Add(bar);
 
 // based on `ICollection<ObvResult>`
 IReadOnlyList<ObvResult> results = obvList;
@@ -91,10 +89,8 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 ObvHub observer = barHub.ToObvHub();
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
 IReadOnlyList<ObvResult> results = observer.Results;
 ```
