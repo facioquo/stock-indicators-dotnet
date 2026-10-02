@@ -4,6 +4,10 @@ namespace FacioQuo.Stock.Indicators;
 /// Fixed-size circular buffer for <c>double</c> values with O(capacity) max/min scan.
 /// Zero heap allocation per tick; cache-line-resident for small windows (&lt;= ~32 elements).
 /// </summary>
+/// <remarks>
+/// <see cref="GetMax"/> and <see cref="GetMin"/> return <see cref="double.NaN"/> when the buffer
+/// is empty or when any value in the filled window is NaN, regardless of its position in the ring.
+/// </remarks>
 internal struct CircularDoubleBuffer
 {
     private readonly double[] _values;
@@ -48,12 +52,25 @@ internal struct CircularDoubleBuffer
             return double.NaN;
         }
 
+        // the valid entries always occupy slots 0.._fill-1 (all slots once wrapped),
+        // so slot order is irrelevant; any NaN in the window propagates
         double max = _values[0];
+        if (double.IsNaN(max))
+        {
+            return double.NaN;
+        }
+
         for (int i = 1; i < _fill; i++)
         {
-            if (_values[i] > max)
+            double value = _values[i];
+            if (double.IsNaN(value))
             {
-                max = _values[i];
+                return double.NaN;
+            }
+
+            if (value > max)
+            {
+                max = value;
             }
         }
 
@@ -67,12 +84,25 @@ internal struct CircularDoubleBuffer
             return double.NaN;
         }
 
+        // the valid entries always occupy slots 0.._fill-1 (all slots once wrapped),
+        // so slot order is irrelevant; any NaN in the window propagates
         double min = _values[0];
+        if (double.IsNaN(min))
+        {
+            return double.NaN;
+        }
+
         for (int i = 1; i < _fill; i++)
         {
-            if (_values[i] < min)
+            double value = _values[i];
+            if (double.IsNaN(value))
             {
-                min = _values[i];
+                return double.NaN;
+            }
+
+            if (value < min)
+            {
+                min = value;
             }
         }
 
