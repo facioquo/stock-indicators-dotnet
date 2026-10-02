@@ -495,3 +495,8 @@ html:not(.dark) body {
     }
   }
 }
+
+// Keep `lastUpdated` for the sitemap's <lastmod>, but not on the page.
+.VPDocFooter .last-updated {
+  display: none;
+}
