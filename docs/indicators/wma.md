@@ -86,12 +86,10 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 WmaList wmaList = new(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  wmaList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => wmaList.Add(bar);
 
-// based on `ICollection<WmaResult>`
+// based on `ICollection<WmaResult>`; fills as the handler runs
 IReadOnlyList<WmaResult> results = wmaList;
 ```
 
@@ -101,11 +99,10 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 WmaHub observer = barHub.ToWmaHub(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<WmaResult> results = observer.Results;
 ```
 

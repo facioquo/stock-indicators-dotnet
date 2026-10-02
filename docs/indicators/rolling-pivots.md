@@ -97,12 +97,10 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 RollingPivotsList rollingPivotsList = new(windowPeriods, offsetPeriods, pointType);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  rollingPivotsList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => rollingPivotsList.Add(bar);
 
-// based on `ICollection<RollingPivotsResult>`
+// based on `ICollection<RollingPivotsResult>`; fills as the handler runs
 IReadOnlyList<RollingPivotsResult> results = rollingPivotsList;
 ```
 
@@ -112,11 +110,10 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 RollingPivotsHub observer = barHub.ToRollingPivotsHub(windowPeriods, offsetPeriods, pointType);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<RollingPivotsResult> results = observer.Results;
 ```
 

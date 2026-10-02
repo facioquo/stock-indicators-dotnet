@@ -111,11 +111,10 @@ Use a `BufferList` for incremental processing:
 ```csharp
 RenkoList buffer = new(brickSize, endType);
 
-foreach (IBar bar in bars)  // simulating incremental data
-{
-  buffer.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => buffer.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<RenkoResult> results = buffer;
 ```
 
@@ -125,11 +124,10 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 RenkoHub observer = barHub.ToRenkoHub(brickSize);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<RenkoResult> results = observer.Results;
 ```
 

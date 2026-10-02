@@ -90,12 +90,10 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 AlligatorList alligatorList = new(jawPeriods, jawOffset, teethPeriods, teethOffset, lipsPeriods, lipsOffset);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  alligatorList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => alligatorList.Add(bar);
 
-// based on `ICollection<AlligatorResult>`
+// based on `ICollection<AlligatorResult>`; fills as the handler runs
 IReadOnlyList<AlligatorResult> results = alligatorList;
 ```
 
@@ -105,11 +103,10 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 AlligatorHub observer = barHub.ToAlligatorHub();
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<AlligatorResult> results = observer.Results;
 ```
 

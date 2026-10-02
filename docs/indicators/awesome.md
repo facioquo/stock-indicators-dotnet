@@ -88,12 +88,10 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 AwesomeList awesomeList = new(fastPeriods, slowPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  awesomeList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => awesomeList.Add(bar);
 
-// based on `ICollection<AwesomeResult>`
+// based on `ICollection<AwesomeResult>`; fills as the handler runs
 IReadOnlyList<AwesomeResult> results = awesomeList;
 ```
 
@@ -103,11 +101,10 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 AwesomeHub observer = barHub.ToAwesomeHub(fastPeriods, slowPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<AwesomeResult> results = observer.Results;
 ```
 

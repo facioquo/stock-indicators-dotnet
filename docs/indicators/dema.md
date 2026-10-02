@@ -90,12 +90,10 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 DemaList demaList = new(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  demaList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => demaList.Add(bar);
 
-// based on `ICollection<DemaResult>`
+// based on `ICollection<DemaResult>`; fills as the handler runs
 IReadOnlyList<DemaResult> results = demaList;
 ```
 
@@ -105,11 +103,10 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 DemaHub observer = barHub.ToDemaHub(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<DemaResult> results = observer.Results;
 ```
 

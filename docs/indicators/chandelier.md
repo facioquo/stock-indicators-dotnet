@@ -83,12 +83,10 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 ChandelierList chandelierList = new(lookbackPeriods, multiplier, type);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  chandelierList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => chandelierList.Add(bar);
 
-// based on `ICollection<ChandelierResult>`
+// based on `ICollection<ChandelierResult>`; fills as the handler runs
 IReadOnlyList<ChandelierResult> results = chandelierList;
 ```
 
@@ -98,11 +96,10 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 ChandelierHub observer = barHub.ToChandelierHub(lookbackPeriods, multiplier, type);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<ChandelierResult> results = observer.Results;
 ```
 

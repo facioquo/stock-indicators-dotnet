@@ -84,12 +84,10 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 VwapList vwapList = new(startDate);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  vwapList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => vwapList.Add(bar);
 
-// based on `ICollection<VwapResult>`
+// based on `ICollection<VwapResult>`; fills as the handler runs
 IReadOnlyList<VwapResult> results = vwapList;
 ```
 
@@ -99,11 +97,10 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 VwapHub observer = barHub.ToVwapHub(startDate);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<VwapResult> results = observer.Results;
 ```
 

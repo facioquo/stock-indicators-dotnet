@@ -104,10 +104,8 @@ EmaHub emaHub = barHub.ToEmaHub(20);
 
 using EmaUiObserver ui = new(emaHub, result => uiDispatcher.Post(result));
 
-foreach (Bar q in liveBars)
-{
-    barHub.Add(q);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(Bar bar) => barHub.Add(bar);
 ```
 
 Every bar published to `barHub` cascades through `emaHub.OnAdd(...)`; the EMA result then notifies `ui.OnAdd(...)`, which posts to the UI thread. Disposing `ui` unsubscribes cleanly.

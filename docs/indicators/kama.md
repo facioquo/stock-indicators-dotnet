@@ -95,12 +95,10 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 KamaList kamaList = new(erPeriods, fastPeriods, slowPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  kamaList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => kamaList.Add(bar);
 
-// based on `ICollection<KamaResult>`
+// based on `ICollection<KamaResult>`; fills as the handler runs
 IReadOnlyList<KamaResult> results = kamaList;
 ```
 
@@ -110,11 +108,10 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 KamaHub observer = barHub.ToKamaHub(erPeriods, fastPeriods, slowPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<KamaResult> results = observer.Results;
 ```
 

@@ -83,12 +83,10 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 AtrStopList atrStopList = new(lookbackPeriods, multiplier: 3.0, endType: EndType.Close);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  atrStopList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => atrStopList.Add(bar);
 
-// based on `ICollection<AtrStopResult>`
+// based on `ICollection<AtrStopResult>`; fills as the handler runs
 IReadOnlyList<AtrStopResult> results = atrStopList;
 ```
 
@@ -98,11 +96,10 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 AtrStopHub observer = barHub.ToAtrStopHub(lookbackPeriods, multiplier: 3.0, endType: EndType.Close);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<AtrStopResult> results = observer.Results;
 ```
 

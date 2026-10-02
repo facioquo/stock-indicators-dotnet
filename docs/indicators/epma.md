@@ -86,12 +86,10 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 EpmaList epmaList = new(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  epmaList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => epmaList.Add(bar);
 
-// based on `ICollection<EpmaResult>`
+// based on `ICollection<EpmaResult>`; fills as the handler runs
 IReadOnlyList<EpmaResult> results = epmaList;
 ```
 
@@ -101,11 +99,10 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 EpmaHub observer = barHub.ToEpmaHub(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<EpmaResult> results = observer.Results;
 ```
 

@@ -88,12 +88,10 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 AlmaList almaList = new(lookbackPeriods, offset, sigma);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  almaList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => almaList.Add(bar);
 
-// based on `ICollection<AlmaResult>`
+// based on `ICollection<AlmaResult>`; fills as the handler runs
 IReadOnlyList<AlmaResult> results = almaList;
 ```
 
@@ -103,11 +101,10 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 AlmaHub observer = barHub.ToAlmaHub(lookbackPeriods, offset, sigma);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<AlmaResult> results = observer.Results;
 ```
 

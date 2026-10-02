@@ -59,12 +59,10 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 RocWbList rocWbList = new(lookbackPeriods, emaPeriods, stdDevPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  rocWbList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => rocWbList.Add(bar);
 
-// based on `ICollection<RocWbResult>`
+// based on `ICollection<RocWbResult>`; fills as the handler runs
 IReadOnlyList<RocWbResult> results = rocWbList;
 ```
 
@@ -74,11 +72,10 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 RocWbHub observer = barHub.ToRocWbHub(lookbackPeriods, emaPeriods, stdDevPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<RocWbResult> results = observer.Results;
 ```
 

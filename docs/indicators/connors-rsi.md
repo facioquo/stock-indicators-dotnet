@@ -95,12 +95,10 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 ConnorsRsiList connorsRsiList = new(rsiPeriods, streakPeriods, rankPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  connorsRsiList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => connorsRsiList.Add(bar);
 
-// based on `ICollection<ConnorsRsiResult>`
+// based on `ICollection<ConnorsRsiResult>`; fills as the handler runs
 IReadOnlyList<ConnorsRsiResult> results = connorsRsiList;
 ```
 
@@ -110,11 +108,10 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 ConnorsRsiHub observer = barHub.ToConnorsRsiHub(rsiPeriods, streakPeriods, rankPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<ConnorsRsiResult> results = observer.Results;
 ```
 

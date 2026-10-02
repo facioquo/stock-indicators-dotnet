@@ -33,24 +33,22 @@ using FacioQuo.Stock.Indicators;
 // create buffer list with lookback period
 SmaList smaList = new(lookbackPeriods: 20);
 
-// add bars incrementally (e.g., from a data feed)
-foreach (Bar bar in bars)
+// call from your WebSocket or SSE message handler for each closed bar
+void OnBarReceived(Bar bar)
 {
     smaList.Add(bar);
 
-    // safely get latest result
-    if (smaList.Count > 0)
-    {
-        SmaResult r = smaList[^1];
+    SmaResult r = smaList[^1];
 
-        // use result (SMA is null during warmup period)
-        if (r.Sma is not null)
-        {
-            Console.WriteLine($"{r.Timestamp:d}: SMA = {r.Sma:N2}");
-        }
+    // use result (SMA is null during warmup period)
+    if (r.Sma is not null)
+    {
+        Console.WriteLine($"{r.Timestamp:d}: SMA = {r.Sma:N2}");
     }
 }
 ```
+
+Indexing `[^1]` right after `Add` is safe for indicators that emit one result per bar. `RenkoList` can add zero or several bricks per bar, so check `Count` before reading it.
 
 ::: warning 🚩 Add bars in chronological order
 A buffer list is a single-pass accumulator: every `Add` assumes the new value is the newest one. It does **not** reorder input, detect duplicates, or correct revised values — feeding an out-of-order, repeated, or late-arriving bar produces silently incorrect results. If your data can arrive out of order (e.g. a raw WebSocket feed, or merging two sources), sort by timestamp before adding, or use a [Stream hub](/guide/styles/stream) instead — stream hubs are built for late arrivals, same-timestamp corrections, and rollback.
@@ -109,26 +107,17 @@ Unlike series or stream-hub chaining, this is orchestrated by you rather than th
 :::
 
 ```csharp
-// create OBV buffer list
 ObvList obvList = new();
-
-// add bars to OBV
-foreach (var bar in bars)
-{
-    obvList.Add(bar);
-}
-
-// chain RSI from OBV results
 RsiList rsiList = new(14);
-foreach (var obvResult in obvList)
-{
-    rsiList.Add(obvResult);
-}
 
-// get latest RSI of OBV
-if (rsiList.Count > 0)
+// call from your WebSocket or SSE message handler
+void OnBarReceived(Bar bar)
 {
-    RsiResult latest = rsiList[^1];
+    // add the bar to OBV, then chain the new OBV result into RSI
+    obvList.Add(bar);
+    rsiList.Add(obvList[^1]);
+
+    RsiResult latest = rsiList[^1];  // RSI of OBV
 }
 ```
 
@@ -141,22 +130,25 @@ if (rsiList.Count > 0)
 
 ## Usage patterns
 
-### Simulating a data stream
+### Server-sent events feed
+
+A buffer list fits a feed that delivers one closed bar per event. This example reads an SSE stream with `SseParser` from `System.Net.ServerSentEvents`, which handles multi-line events and dispatch; it ships with .NET 10, and .NET 8 and 9 need the `System.Net.ServerSentEvents` NuGet package. Mapping each event's data to a `Bar` depends on your provider's payload.
 
 ```csharp
+using System.Net.ServerSentEvents;
+
 SmaList smaList = new(20);
 
-foreach (var bar in streamingBars)
+using HttpClient http = new();
+using Stream stream = await http.GetStreamAsync("https://example.com/bars/stream", cancellationToken);
+
+await foreach (SseItem<string> item in SseParser.Create(stream).EnumerateAsync(cancellationToken))
 {
-    // add new bar
+    Bar bar = ParseBar(item.Data);  // your payload mapping
     smaList.Add(bar);
 
-    // list auto-adds incremental SMA value
-    if (smaList.Count > 0)
-    {
-        SmaResult latest = smaList[^1];
-        Console.WriteLine($"{latest.Timestamp:d}: SMA = {latest.Sma:N2}");
-    }
+    SmaResult latest = smaList[^1];
+    Console.WriteLine($"{latest.Timestamp:d}: SMA = {latest.Sma:N2}");
 }
 ```
 
@@ -165,17 +157,14 @@ foreach (var bar in streamingBars)
 ```csharp
 SmaList smaList = new(20);
 
-// add initial batch
+// seed with history before the live feed starts
 smaList.Add(historicalBars);
 
-// then add new bars incrementally
-while (newBar = GetNextBar())
+// then add each live bar from your WebSocket or SSE message handler
+void OnBarReceived(Bar bar)
 {
-    smaList.Add(newBar);
-    if (smaList.Count > 0)
-    {
-        ProcessLatestResult(smaList[^1]);
-    }
+    smaList.Add(bar);
+    ProcessLatestResult(smaList[^1]);
 }
 ```
 

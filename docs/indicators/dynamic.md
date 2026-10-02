@@ -96,12 +96,10 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 DynamicList dynamicList = new(lookbackPeriods, kFactor);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  dynamicList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => dynamicList.Add(bar);
 
-// based on `ICollection<DynamicResult>`
+// based on `ICollection<DynamicResult>`; fills as the handler runs
 IReadOnlyList<DynamicResult> results = dynamicList;
 ```
 
@@ -111,11 +109,10 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 DynamicHub observer = barHub.ToDynamicHub(lookbackPeriods, kFactor);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<DynamicResult> results = observer.Results;
 ```
 

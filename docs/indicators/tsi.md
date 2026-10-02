@@ -72,12 +72,10 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 TsiList tsiList = new(lookbackPeriods, smoothPeriods, signalPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  tsiList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => tsiList.Add(bar);
 
-// based on `ICollection<TsiResult>`
+// based on `ICollection<TsiResult>`; fills as the handler runs
 IReadOnlyList<TsiResult> results = tsiList;
 ```
 
@@ -87,11 +85,10 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 TsiHub observer = barHub.ToTsiHub(lookbackPeriods, smoothPeriods, signalPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<TsiResult> results = observer.Results;
 ```
 

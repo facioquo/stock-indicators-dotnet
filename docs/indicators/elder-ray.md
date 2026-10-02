@@ -85,12 +85,10 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 ElderRayList elderRayList = new(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  elderRayList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => elderRayList.Add(bar);
 
-// based on `ICollection<ElderRayResult>`
+// based on `ICollection<ElderRayResult>`; fills as the handler runs
 IReadOnlyList<ElderRayResult> results = elderRayList;
 ```
 
@@ -100,11 +98,10 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 ElderRayHub observer = barHub.ToElderRayHub(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<ElderRayResult> results = observer.Results;
 ```
 

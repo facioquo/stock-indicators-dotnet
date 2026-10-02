@@ -87,12 +87,10 @@ Use the buffer-style `List<T>` when you need incremental calculations:
 ```csharp
 AdxList adxList = new(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  adxList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => adxList.Add(bar);
 
-// based on `ICollection<AdxResult>`
+// based on `ICollection<AdxResult>`; fills as the handler runs
 IReadOnlyList<AdxResult> results = adxList;
 ```
 
@@ -102,11 +100,10 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 AdxHub observer = barHub.ToAdxHub(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<AdxResult> results = observer.Results;
 ```
 

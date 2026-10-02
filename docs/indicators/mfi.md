@@ -64,12 +64,10 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 MfiList mfiList = new(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  mfiList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => mfiList.Add(bar);
 
-// based on `ICollection<MfiResult>`
+// based on `ICollection<MfiResult>`; fills as the handler runs
 IReadOnlyList<MfiResult> results = mfiList;
 ```
 
@@ -79,11 +77,10 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 MfiHub observer = barHub.ToMfiHub(lookbackPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<MfiResult> results = observer.Results;
 ```
 

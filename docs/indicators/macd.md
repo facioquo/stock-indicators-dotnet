@@ -96,12 +96,10 @@ Use the buffer-style `List<T>` when you need incremental calculations without a 
 ```csharp
 MacdList macdList = new(fastPeriods, slowPeriods, signalPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  macdList.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => macdList.Add(bar);
 
-// based on `ICollection<MacdResult>`
+// based on `ICollection<MacdResult>`; fills as the handler runs
 IReadOnlyList<MacdResult> results = macdList;
 ```
 
@@ -111,11 +109,10 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 BarHub barHub = new();
 MacdHub observer = barHub.ToMacdHub(fastPeriods, slowPeriods, signalPeriods);
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<MacdResult> results = observer.Results;
 ```
 
