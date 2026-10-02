@@ -89,7 +89,7 @@ DpoList dpoList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => dpoList.Add(bar);
 
-// based on `ICollection<DpoResult>`
+// based on `ICollection<DpoResult>`; fills as the handler runs
 IReadOnlyList<DpoResult> results = dpoList;
 ```
 
@@ -102,6 +102,7 @@ DpoHub observer = barHub.ToDpoHub(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<DpoResult> results = observer.Results;
 ```
 

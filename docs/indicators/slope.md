@@ -98,7 +98,7 @@ SlopeList slopeList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => slopeList.Add(bar);
 
-// based on `ICollection<SlopeResult>`
+// based on `ICollection<SlopeResult>`; fills as the handler runs
 IReadOnlyList<SlopeResult> results = slopeList;
 ```
 
@@ -111,6 +111,7 @@ SlopeHub observer = barHub.ToSlopeHub(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<SlopeResult> results = observer.Results;
 ```
 

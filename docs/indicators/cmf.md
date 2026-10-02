@@ -88,7 +88,7 @@ CmfList cmfList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => cmfList.Add(bar);
 
-// based on `ICollection<CmfResult>`
+// based on `ICollection<CmfResult>`; fills as the handler runs
 IReadOnlyList<CmfResult> results = cmfList;
 ```
 
@@ -101,6 +101,7 @@ CmfHub observer = barHub.ToCmfHub(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<CmfResult> results = observer.Results;
 ```
 

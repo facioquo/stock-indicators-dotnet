@@ -95,7 +95,7 @@ MamaList mamaList = new(fastLimit, slowLimit);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => mamaList.Add(bar);
 
-// based on `ICollection<MamaResult>`
+// based on `ICollection<MamaResult>`; fills as the handler runs
 IReadOnlyList<MamaResult> results = mamaList;
 ```
 
@@ -108,6 +108,7 @@ MamaHub observer = barHub.ToMamaHub(fastLimit, slowLimit);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<MamaResult> results = observer.Results;
 ```
 

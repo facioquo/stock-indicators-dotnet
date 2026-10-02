@@ -87,7 +87,7 @@ GatorList gatorList = new();
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => gatorList.Add(bar);
 
-// based on `ICollection<GatorResult>`
+// based on `ICollection<GatorResult>`; fills as the handler runs
 IReadOnlyList<GatorResult> results = gatorList;
 ```
 
@@ -100,6 +100,7 @@ GatorHub observer = barHub.ToGatorHub();
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<GatorResult> results = observer.Results;
 ```
 

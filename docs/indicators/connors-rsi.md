@@ -98,7 +98,7 @@ ConnorsRsiList connorsRsiList = new(rsiPeriods, streakPeriods, rankPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => connorsRsiList.Add(bar);
 
-// based on `ICollection<ConnorsRsiResult>`
+// based on `ICollection<ConnorsRsiResult>`; fills as the handler runs
 IReadOnlyList<ConnorsRsiResult> results = connorsRsiList;
 ```
 
@@ -111,6 +111,7 @@ ConnorsRsiHub observer = barHub.ToConnorsRsiHub(rsiPeriods, streakPeriods, rankP
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<ConnorsRsiResult> results = observer.Results;
 ```
 

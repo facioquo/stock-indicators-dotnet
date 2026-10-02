@@ -82,7 +82,7 @@ SuperTrendList superTrendList = new(lookbackPeriods, multiplier);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => superTrendList.Add(bar);
 
-// based on `ICollection<SuperTrendResult>`
+// based on `ICollection<SuperTrendResult>`; fills as the handler runs
 IReadOnlyList<SuperTrendResult> results = superTrendList;
 ```
 
@@ -95,6 +95,7 @@ SuperTrendHub observer = barHub.ToSuperTrendHub(lookbackPeriods, multiplier);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<SuperTrendResult> results = observer.Results;
 ```
 

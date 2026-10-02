@@ -80,7 +80,7 @@ FcbList fcbList = new(windowSpan);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => fcbList.Add(bar);
 
-// based on `ICollection<FcbResult>`
+// based on `ICollection<FcbResult>`; fills as the handler runs
 IReadOnlyList<FcbResult> results = fcbList;
 ```
 
@@ -93,6 +93,7 @@ FcbHub observer = barHub.ToFcbHub(windowSpan);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<FcbResult> results = observer.Results;
 ```
 

@@ -98,7 +98,7 @@ KamaList kamaList = new(erPeriods, fastPeriods, slowPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => kamaList.Add(bar);
 
-// based on `ICollection<KamaResult>`
+// based on `ICollection<KamaResult>`; fills as the handler runs
 IReadOnlyList<KamaResult> results = kamaList;
 ```
 
@@ -111,6 +111,7 @@ KamaHub observer = barHub.ToKamaHub(erPeriods, fastPeriods, slowPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<KamaResult> results = observer.Results;
 ```
 

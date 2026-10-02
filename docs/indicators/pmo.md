@@ -96,7 +96,7 @@ PmoList pmoList = new(timePeriods, smoothPeriods, signalPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => pmoList.Add(bar);
 
-// based on `ICollection<PmoResult>`
+// based on `ICollection<PmoResult>`; fills as the handler runs
 IReadOnlyList<PmoResult> results = pmoList;
 ```
 
@@ -109,6 +109,7 @@ PmoHub observer = barHub.ToPmoHub(timePeriods, smoothPeriods, signalPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<PmoResult> results = observer.Results;
 ```
 

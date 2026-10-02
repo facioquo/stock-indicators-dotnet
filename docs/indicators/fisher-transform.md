@@ -99,7 +99,7 @@ FisherTransformList fisherList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => fisherList.Add(bar);
 
-// based on `ICollection<FisherTransformResult>`
+// based on `ICollection<FisherTransformResult>`; fills as the handler runs
 IReadOnlyList<FisherTransformResult> results = fisherList;
 ```
 
@@ -112,6 +112,7 @@ FisherTransformHub observer = barHub.ToFisherTransformHub(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<FisherTransformResult> results = observer.Results;
 ```
 

@@ -89,7 +89,7 @@ KvoList kvoList = new(34, 55, 13);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => kvoList.Add(bar);
 
-// based on `ICollection<KvoResult>`
+// based on `ICollection<KvoResult>`; fills as the handler runs
 IReadOnlyList<KvoResult> results = kvoList;
 ```
 
@@ -102,6 +102,7 @@ KvoHub observer = barHub.ToKvoHub(34, 55, 13);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<KvoResult> results = observer.Results;
 ```
 

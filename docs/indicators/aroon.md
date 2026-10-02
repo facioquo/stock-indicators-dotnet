@@ -88,7 +88,7 @@ AroonList aroonList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => aroonList.Add(bar);
 
-// based on `ICollection<AroonResult>`
+// based on `ICollection<AroonResult>`; fills as the handler runs
 IReadOnlyList<AroonResult> results = aroonList;
 ```
 
@@ -101,6 +101,7 @@ AroonHub observer = barHub.ToAroonHub(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<AroonResult> results = observer.Results;
 ```
 

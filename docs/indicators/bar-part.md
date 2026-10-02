@@ -84,6 +84,7 @@ BarPartHub observer = barHub.ToBarPartHub(CandlePart.HL2);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<TimeValue> results = observer.Results;
 ```
 
@@ -99,5 +100,6 @@ BarPartList buffer = new(CandlePart.Close);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => buffer.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<TimeValue> results = buffer;
 ```

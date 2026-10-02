@@ -96,7 +96,7 @@ VolatilityStopList volatilityStopList = new(lookbackPeriods, multiplier);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => volatilityStopList.Add(bar);
 
-// based on `ICollection<VolatilityStopResult>`
+// based on `ICollection<VolatilityStopResult>`; fills as the handler runs
 IReadOnlyList<VolatilityStopResult> results = volatilityStopList;
 ```
 
@@ -109,6 +109,7 @@ VolatilityStopHub observer = barHub.ToVolatilityStopHub(lookbackPeriods, multipl
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<VolatilityStopResult> results = observer.Results;
 ```
 

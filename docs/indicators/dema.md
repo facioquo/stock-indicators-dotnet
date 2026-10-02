@@ -93,7 +93,7 @@ DemaList demaList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => demaList.Add(bar);
 
-// based on `ICollection<DemaResult>`
+// based on `ICollection<DemaResult>`; fills as the handler runs
 IReadOnlyList<DemaResult> results = demaList;
 ```
 
@@ -106,6 +106,7 @@ DemaHub observer = barHub.ToDemaHub(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<DemaResult> results = observer.Results;
 ```
 

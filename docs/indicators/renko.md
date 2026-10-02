@@ -114,6 +114,7 @@ RenkoList buffer = new(brickSize, endType);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => buffer.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<RenkoResult> results = buffer;
 ```
 
@@ -126,6 +127,7 @@ RenkoHub observer = barHub.ToRenkoHub(brickSize);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<RenkoResult> results = observer.Results;
 ```
 

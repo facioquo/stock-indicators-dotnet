@@ -81,7 +81,7 @@ StarcBandsList starcBandsList = new(smaPeriods, multiplier, atrPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => starcBandsList.Add(bar);
 
-// based on `ICollection<StarcBandsResult>`
+// based on `ICollection<StarcBandsResult>`; fills as the handler runs
 IReadOnlyList<StarcBandsResult> results = starcBandsList;
 ```
 
@@ -94,6 +94,7 @@ StarcBandsHub observer = barHub.ToStarcBandsHub(smaPeriods, multiplier, atrPerio
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<StarcBandsResult> results = observer.Results;
 ```
 

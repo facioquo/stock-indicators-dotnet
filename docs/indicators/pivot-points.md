@@ -111,7 +111,7 @@ PivotPointsList pivotPointsList = new(windowSize, pointType);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => pivotPointsList.Add(bar);
 
-// based on `ICollection<PivotPointsResult>`
+// based on `ICollection<PivotPointsResult>`; fills as the handler runs
 IReadOnlyList<PivotPointsResult> results = pivotPointsList;
 ```
 
@@ -124,6 +124,7 @@ PivotPointsHub observer = barHub.ToPivotPointsHub(windowSize, pointType);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<PivotPointsResult> results = observer.Results;
 ```
 

@@ -90,7 +90,7 @@ RocList rocList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => rocList.Add(bar);
 
-// based on `ICollection<RocResult>`
+// based on `ICollection<RocResult>`; fills as the handler runs
 IReadOnlyList<RocResult> results = rocList;
 ```
 
@@ -103,6 +103,7 @@ RocHub observer = barHub.ToRocHub(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<RocResult> results = observer.Results;
 ```
 

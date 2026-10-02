@@ -109,7 +109,7 @@ IchimokuList ichimokuList = new(tenkanPeriods, kijunPeriods, senkouBPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => ichimokuList.Add(bar);
 
-// based on `ICollection<IchimokuResult>`
+// based on `ICollection<IchimokuResult>`; fills as the handler runs
 IReadOnlyList<IchimokuResult> results = ichimokuList;
 ```
 
@@ -122,6 +122,7 @@ IchimokuHub observer = barHub.ToIchimokuHub(tenkanPeriods, kijunPeriods, senkouB
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<IchimokuResult> results = observer.Results;
 ```
 

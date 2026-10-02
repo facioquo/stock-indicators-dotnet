@@ -93,7 +93,7 @@ EmaList emaList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => emaList.Add(bar);
 
-// based on `ICollection<EmaResult>`
+// based on `ICollection<EmaResult>`; fills as the handler runs
 IReadOnlyList<EmaResult> results = emaList;
 ```
 
@@ -106,6 +106,7 @@ EmaHub observer = barHub.ToEmaHub(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<EmaResult> results = observer.Results;
 ```
 

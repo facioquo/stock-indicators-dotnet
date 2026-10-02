@@ -103,7 +103,7 @@ TemaList temaList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => temaList.Add(bar);
 
-// based on `ICollection<TemaResult>`
+// based on `ICollection<TemaResult>`; fills as the handler runs
 IReadOnlyList<TemaResult> results = temaList;
 ```
 
@@ -116,6 +116,7 @@ TemaHub observer = barHub.ToTemaHub(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<TemaResult> results = observer.Results;
 ```
 

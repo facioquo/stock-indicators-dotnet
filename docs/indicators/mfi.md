@@ -67,7 +67,7 @@ MfiList mfiList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => mfiList.Add(bar);
 
-// based on `ICollection<MfiResult>`
+// based on `ICollection<MfiResult>`; fills as the handler runs
 IReadOnlyList<MfiResult> results = mfiList;
 ```
 
@@ -80,6 +80,7 @@ MfiHub observer = barHub.ToMfiHub(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<MfiResult> results = observer.Results;
 ```
 

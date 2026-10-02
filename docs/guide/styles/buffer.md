@@ -48,6 +48,8 @@ void OnBarReceived(Bar bar)
 }
 ```
 
+Indexing `[^1]` right after `Add` is safe for indicators that emit one result per bar. `RenkoList` can add zero or several bricks per bar, so check `Count` before reading it.
+
 ::: warning 🚩 Add bars in chronological order
 A buffer list is a single-pass accumulator: every `Add` assumes the new value is the newest one. It does **not** reorder input, detect duplicates, or correct revised values — feeding an out-of-order, repeated, or late-arriving bar produces silently incorrect results. If your data can arrive out of order (e.g. a raw WebSocket feed, or merging two sources), sort by timestamp before adding, or use a [Stream hub](/guide/styles/stream) instead — stream hubs are built for late arrivals, same-timestamp corrections, and rollback.
 :::
@@ -130,23 +132,19 @@ void OnBarReceived(Bar bar)
 
 ### Server-sent events feed
 
-A buffer list fits a feed that delivers one closed bar per event. This example reads an SSE stream with `HttpClient`; parsing each `data:` line into a `Bar` depends on your provider's payload.
+A buffer list fits a feed that delivers one closed bar per event. This example reads an SSE stream with `SseParser` from `System.Net.ServerSentEvents`, which handles multi-line events and dispatch; it ships with .NET 10, and .NET 8 and 9 need the `System.Net.ServerSentEvents` NuGet package. Mapping each event's data to a `Bar` depends on your provider's payload.
 
 ```csharp
+using System.Net.ServerSentEvents;
+
 SmaList smaList = new(20);
 
 using HttpClient http = new();
-using Stream sse = await http.GetStreamAsync("https://example.com/bars/stream");
-using StreamReader reader = new(sse);
+using Stream stream = await http.GetStreamAsync("https://example.com/bars/stream", cancellationToken);
 
-while (await reader.ReadLineAsync() is { } line)
+await foreach (SseItem<string> item in SseParser.Create(stream).EnumerateAsync(cancellationToken))
 {
-    if (!line.StartsWith("data:", StringComparison.Ordinal))
-    {
-        continue;
-    }
-
-    Bar bar = ParseBar(line["data:".Length..]);  // your payload mapping
+    Bar bar = ParseBar(item.Data);  // your payload mapping
     smaList.Add(bar);
 
     SmaResult latest = smaList[^1];
@@ -159,17 +157,14 @@ while (await reader.ReadLineAsync() is { } line)
 ```csharp
 SmaList smaList = new(20);
 
-// add initial batch
+// seed with history before the live feed starts
 smaList.Add(historicalBars);
 
-// then add new bars incrementally
-while (newBar = GetNextBar())
+// then add each live bar from your WebSocket or SSE message handler
+void OnBarReceived(Bar bar)
 {
-    smaList.Add(newBar);
-    if (smaList.Count > 0)
-    {
-        ProcessLatestResult(smaList[^1]);
-    }
+    smaList.Add(bar);
+    ProcessLatestResult(smaList[^1]);
 }
 ```
 

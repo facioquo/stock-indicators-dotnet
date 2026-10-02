@@ -88,7 +88,7 @@ ElderRayList elderRayList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => elderRayList.Add(bar);
 
-// based on `ICollection<ElderRayResult>`
+// based on `ICollection<ElderRayResult>`; fills as the handler runs
 IReadOnlyList<ElderRayResult> results = elderRayList;
 ```
 
@@ -101,6 +101,7 @@ ElderRayHub observer = barHub.ToElderRayHub(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<ElderRayResult> results = observer.Results;
 ```
 

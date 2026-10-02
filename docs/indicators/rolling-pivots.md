@@ -100,7 +100,7 @@ RollingPivotsList rollingPivotsList = new(windowPeriods, offsetPeriods, pointTyp
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => rollingPivotsList.Add(bar);
 
-// based on `ICollection<RollingPivotsResult>`
+// based on `ICollection<RollingPivotsResult>`; fills as the handler runs
 IReadOnlyList<RollingPivotsResult> results = rollingPivotsList;
 ```
 
@@ -113,6 +113,7 @@ RollingPivotsHub observer = barHub.ToRollingPivotsHub(windowPeriods, offsetPerio
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<RollingPivotsResult> results = observer.Results;
 ```
 

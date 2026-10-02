@@ -99,7 +99,7 @@ MacdList macdList = new(fastPeriods, slowPeriods, signalPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => macdList.Add(bar);
 
-// based on `ICollection<MacdResult>`
+// based on `ICollection<MacdResult>`; fills as the handler runs
 IReadOnlyList<MacdResult> results = macdList;
 ```
 
@@ -112,6 +112,7 @@ MacdHub observer = barHub.ToMacdHub(fastPeriods, slowPeriods, signalPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<MacdResult> results = observer.Results;
 ```
 

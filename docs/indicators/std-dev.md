@@ -96,7 +96,7 @@ StdDevList stdDevList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => stdDevList.Add(bar);
 
-// based on `ICollection<StdDevResult>`
+// based on `ICollection<StdDevResult>`; fills as the handler runs
 IReadOnlyList<StdDevResult> results = stdDevList;
 ```
 
@@ -109,6 +109,7 @@ StdDevHub observer = barHub.ToStdDevHub(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<StdDevResult> results = observer.Results;
 ```
 

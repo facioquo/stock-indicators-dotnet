@@ -94,7 +94,7 @@ ChaikinOscList chaikinOscList = new(fastPeriods, slowPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => chaikinOscList.Add(bar);
 
-// based on `ICollection<ChaikinOscResult>`
+// based on `ICollection<ChaikinOscResult>`; fills as the handler runs
 IReadOnlyList<ChaikinOscResult> results = chaikinOscList;
 ```
 
@@ -107,6 +107,7 @@ ChaikinOscHub observer = barHub.ToChaikinOscHub(fastPeriods, slowPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<ChaikinOscResult> results = observer.Results;
 ```
 

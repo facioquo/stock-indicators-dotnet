@@ -83,7 +83,7 @@ FractalList fractalList = new(windowSpan);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => fractalList.Add(bar);
 
-// based on `ICollection<FractalResult>`
+// based on `ICollection<FractalResult>`; fills as the handler runs
 IReadOnlyList<FractalResult> results = fractalList;
 ```
 
@@ -96,6 +96,7 @@ FractalHub observer = barHub.ToFractalHub(windowSpan);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<FractalResult> results = observer.Results;
 ```
 

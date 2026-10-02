@@ -89,7 +89,7 @@ CmoList cmoList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => cmoList.Add(bar);
 
-// based on `ICollection<CmoResult>`
+// based on `ICollection<CmoResult>`; fills as the handler runs
 IReadOnlyList<CmoResult> results = cmoList;
 ```
 
@@ -102,6 +102,7 @@ CmoHub observer = barHub.ToCmoHub(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<CmoResult> results = observer.Results;
 ```
 

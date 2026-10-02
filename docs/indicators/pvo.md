@@ -90,7 +90,7 @@ PvoList pvoList = new(fastPeriods, slowPeriods, signalPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => pvoList.Add(bar);
 
-// based on `ICollection<PvoResult>`
+// based on `ICollection<PvoResult>`; fills as the handler runs
 IReadOnlyList<PvoResult> results = pvoList;
 ```
 
@@ -103,6 +103,7 @@ PvoHub observer = barHub.ToPvoHub(fastPeriods, slowPeriods, signalPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<PvoResult> results = observer.Results;
 ```
 

@@ -98,7 +98,7 @@ StochRsiList stochRsiList = new(rsiPeriods, stochPeriods, signalPeriods, smoothP
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => stochRsiList.Add(bar);
 
-// based on `ICollection<StochRsiResult>`
+// based on `ICollection<StochRsiResult>`; fills as the handler runs
 IReadOnlyList<StochRsiResult> results = stochRsiList;
 ```
 
@@ -111,6 +111,7 @@ StochRsiHub observer = barHub.ToStochRsiHub(rsiPeriods, stochPeriods, signalPeri
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<StochRsiResult> results = observer.Results;
 ```
 

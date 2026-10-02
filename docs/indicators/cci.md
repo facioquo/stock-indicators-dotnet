@@ -82,7 +82,7 @@ CciList cciList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => cciList.Add(bar);
 
-// based on `ICollection<CciResult>`
+// based on `ICollection<CciResult>`; fills as the handler runs
 IReadOnlyList<CciResult> results = cciList;
 ```
 
@@ -95,6 +95,7 @@ CciHub observer = barHub.ToCciHub(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<CciResult> results = observer.Results;
 ```
 

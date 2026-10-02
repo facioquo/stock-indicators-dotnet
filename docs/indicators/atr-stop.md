@@ -86,7 +86,7 @@ AtrStopList atrStopList = new(lookbackPeriods, multiplier: 3.0, endType: EndType
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => atrStopList.Add(bar);
 
-// based on `ICollection<AtrStopResult>`
+// based on `ICollection<AtrStopResult>`; fills as the handler runs
 IReadOnlyList<AtrStopResult> results = atrStopList;
 ```
 
@@ -99,6 +99,7 @@ AtrStopHub observer = barHub.ToAtrStopHub(lookbackPeriods, multiplier: 3.0, endT
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<AtrStopResult> results = observer.Results;
 ```
 

@@ -82,7 +82,7 @@ WilliamsRList williamsRList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => williamsRList.Add(bar);
 
-// based on `ICollection<WilliamsResult>`
+// based on `ICollection<WilliamsResult>`; fills as the handler runs
 IReadOnlyList<WilliamsResult> results = williamsRList;
 ```
 
@@ -95,6 +95,7 @@ WilliamsRHub observer = barHub.ToWilliamsRHub(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<WilliamsResult> results = observer.Results;
 ```
 

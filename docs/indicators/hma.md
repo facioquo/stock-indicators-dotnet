@@ -89,7 +89,7 @@ HmaList hmaList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => hmaList.Add(bar);
 
-// based on `ICollection<HmaResult>`
+// based on `ICollection<HmaResult>`; fills as the handler runs
 IReadOnlyList<HmaResult> results = hmaList;
 ```
 
@@ -102,6 +102,7 @@ HmaHub observer = barHub.ToHmaHub(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<HmaResult> results = observer.Results;
 ```
 

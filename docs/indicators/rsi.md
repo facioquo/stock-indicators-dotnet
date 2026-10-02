@@ -93,7 +93,7 @@ RsiList rsiList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => rsiList.Add(bar);
 
-// based on `ICollection<RsiResult>`
+// based on `ICollection<RsiResult>`; fills as the handler runs
 IReadOnlyList<RsiResult> results = rsiList;
 ```
 
@@ -106,6 +106,7 @@ RsiHub observer = barHub.ToRsiHub(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<RsiResult> results = observer.Results;
 ```
 

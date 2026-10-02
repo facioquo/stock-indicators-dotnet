@@ -89,7 +89,7 @@ EpmaList epmaList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => epmaList.Add(bar);
 
-// based on `ICollection<EpmaResult>`
+// based on `ICollection<EpmaResult>`; fills as the handler runs
 IReadOnlyList<EpmaResult> results = epmaList;
 ```
 
@@ -102,6 +102,7 @@ EpmaHub observer = barHub.ToEpmaHub(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<EpmaResult> results = observer.Results;
 ```
 

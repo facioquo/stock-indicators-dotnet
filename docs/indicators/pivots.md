@@ -127,7 +127,7 @@ PivotsList pivotsList = new(leftSpan, rightSpan, maxTrendPeriods, endType);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => pivotsList.Add(bar);
 
-// based on `ICollection<PivotsResult>`
+// based on `ICollection<PivotsResult>`; fills as the handler runs
 IReadOnlyList<PivotsResult> results = pivotsList;
 ```
 
@@ -140,6 +140,7 @@ PivotsHub observer = barHub.ToPivotsHub(leftSpan, rightSpan, maxTrendPeriods, en
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<PivotsResult> results = observer.Results;
 ```
 

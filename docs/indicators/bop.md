@@ -82,7 +82,7 @@ BopList bopList = new(smoothPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => bopList.Add(bar);
 
-// based on `ICollection<BopResult>`
+// based on `ICollection<BopResult>`; fills as the handler runs
 IReadOnlyList<BopResult> results = bopList;
 ```
 
@@ -95,6 +95,7 @@ BopHub observer = barHub.ToBopHub(smoothPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
 
+// results fill as the handler runs
 IReadOnlyList<BopResult> results = observer.Results;
 ```
 
