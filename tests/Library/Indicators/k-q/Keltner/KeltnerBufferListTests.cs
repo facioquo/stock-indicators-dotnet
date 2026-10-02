@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class KeltnerBufferListTests : BufferListTestBase
+public class KeltnerBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const int emaPeriods = 20;
     private const double multiplier = 2;
@@ -11,7 +11,7 @@ public class KeltnerBufferListTests : BufferListTestBase
        = Bars.ToKeltner(emaPeriods, multiplier, atrPeriods);
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         KeltnerList sut = new(emaPeriods, multiplier, atrPeriods);
 
@@ -25,7 +25,7 @@ public class KeltnerBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         KeltnerList sut = Bars.ToKeltnerList(emaPeriods, multiplier, atrPeriods);
 

@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class CciBufferListTests : BufferListTestBase
+public class CciBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const int lookbackPeriods = 20;
 
@@ -9,7 +9,7 @@ public class CciBufferListTests : BufferListTestBase
        = Bars.ToCci(lookbackPeriods);
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         CciList sut = new(lookbackPeriods);
 
@@ -23,7 +23,7 @@ public class CciBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         CciList sut = new(lookbackPeriods) { Bars };
 

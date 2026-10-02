@@ -147,5 +147,44 @@ public class EpmaBufferListTests : BufferListTestBase, ITestChainBufferList, ITe
         // Verify expected results matching equivalent series values
         sut.Count.Should().Be(maxListSize);
         sut.IsExactly(expected);
+
+        // Verify internal cache was pruned with the list
+        sut.CacheCount.Should().BeLessThanOrEqualTo(maxListSize);
+
+        // Verify calculations remain exact after cache pruning
+        List<Bar> moreBars = LongishBars
+            .Take(barsSize + 50)
+            .ToList();
+
+        IReadOnlyList<EpmaResult> expectedMore = moreBars
+            .ToEpma(lookbackPeriods)
+            .Skip(moreBars.Count - maxListSize)
+            .ToList();
+
+        sut.Add(moreBars.Skip(barsSize).ToList());
+
+        sut.Count.Should().Be(maxListSize);
+        sut.CacheCount.Should().BeLessThanOrEqualTo(maxListSize);
+        sut.IsExactly(expectedMore);
+    }
+
+    [TestMethod]
+    public void CustomBuffer_MaxListSizeBelowLookback_RetainsLookbackCache()
+    {
+        const int maxListSize = 5;
+
+        IReadOnlyList<EpmaResult> expected = series
+            .Skip(series.Count - maxListSize)
+            .ToList();
+
+        EpmaList sut = new(lookbackPeriods) {
+            MaxListSize = maxListSize
+        };
+
+        sut.Add(reusables);
+
+        sut.Should().HaveCount(maxListSize);
+        sut.CacheCount.Should().Be(lookbackPeriods);
+        sut.IsExactly(expected);
     }
 }

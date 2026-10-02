@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class MarubozuBufferListTests : BufferListTestBase
+public class MarubozuBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const double minBodyPercent = 95;
 
@@ -9,7 +9,7 @@ public class MarubozuBufferListTests : BufferListTestBase
        = Bars.ToMarubozu(minBodyPercent);
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         MarubozuList sut = new(minBodyPercent);
 
@@ -23,7 +23,7 @@ public class MarubozuBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         MarubozuList sut = new(minBodyPercent) { Bars };
 

@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class DonchianBufferListTests : BufferListTestBase
+public class DonchianBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const int lookbackPeriods = 20;
 
@@ -9,7 +9,7 @@ public class DonchianBufferListTests : BufferListTestBase
        = Bars.ToDonchian(lookbackPeriods);
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         DonchianList sut = new(lookbackPeriods);
 
@@ -23,7 +23,7 @@ public class DonchianBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         DonchianList sut = Bars.ToDonchianList(lookbackPeriods);
 

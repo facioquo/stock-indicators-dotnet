@@ -1,13 +1,13 @@
 namespace BufferLists;
 
 [TestClass]
-public class TrBufferListTests : BufferListTestBase
+public class TrBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private static readonly IReadOnlyList<TrResult> series
        = Bars.ToTr();
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         TrList sut = new();
 
@@ -21,7 +21,7 @@ public class TrBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         TrList sut = new() { Bars };
 

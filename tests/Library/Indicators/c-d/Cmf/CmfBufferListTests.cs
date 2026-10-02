@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class CmfBufferListTests : BufferListTestBase
+public class CmfBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const int lookbackPeriods = 20;
 
@@ -9,7 +9,7 @@ public class CmfBufferListTests : BufferListTestBase
        = Bars.ToCmf(lookbackPeriods);
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         CmfList sut = new(lookbackPeriods);
 
@@ -23,7 +23,7 @@ public class CmfBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         CmfList sut = new(lookbackPeriods) { Bars };
 

@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class VwmaBufferListTests : BufferListTestBase
+public class VwmaBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const int lookbackPeriods = 10;
 
@@ -9,7 +9,7 @@ public class VwmaBufferListTests : BufferListTestBase
        = Bars.ToVwma(lookbackPeriods);
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         VwmaList sut = new(lookbackPeriods);
 
@@ -23,7 +23,7 @@ public class VwmaBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         VwmaList sut = new(lookbackPeriods) { Bars };
 

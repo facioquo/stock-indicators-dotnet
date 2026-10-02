@@ -1,13 +1,13 @@
 namespace BufferLists;
 
 [TestClass]
-public class AdlBufferListTests : BufferListTestBase
+public class AdlBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private static readonly IReadOnlyList<AdlResult> series
        = Bars.ToAdl();
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         AdlList sut = [];
 
@@ -21,7 +21,7 @@ public class AdlBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         AdlList sut = new() { Bars };
 

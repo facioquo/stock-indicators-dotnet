@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class MfiBufferListTests : BufferListTestBase
+public class MfiBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const int lookbackPeriods = 14;
 
@@ -26,7 +26,7 @@ public class MfiBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         MfiList sut = new(lookbackPeriods);
 
@@ -40,7 +40,7 @@ public class MfiBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         MfiList sut = new(lookbackPeriods) { Bars };
 

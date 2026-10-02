@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class ChopBufferListTests : BufferListTestBase
+public class ChopBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const int lookbackPeriods = 14;
 
@@ -9,7 +9,7 @@ public class ChopBufferListTests : BufferListTestBase
        = Bars.ToChop(lookbackPeriods);
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         ChopList sut = new(lookbackPeriods);
 
@@ -23,7 +23,7 @@ public class ChopBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         ChopList sut = new(lookbackPeriods) { Bars };
 

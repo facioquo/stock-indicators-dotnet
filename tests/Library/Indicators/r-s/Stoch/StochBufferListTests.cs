@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class StochBufferListTests : BufferListTestBase
+public class StochBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const int lookbackPeriods = 14;
     private const int signalPeriods = 3;
@@ -26,7 +26,7 @@ public class StochBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         StochList sut = new(lookbackPeriods, signalPeriods, smoothPeriods);
 
@@ -40,7 +40,7 @@ public class StochBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         StochList sut = new(lookbackPeriods, signalPeriods, smoothPeriods) { Bars };
 

@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class ChandelierBufferListTests : BufferListTestBase
+public class ChandelierBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const int lookbackPeriods = 22;
     private const double multiplier = 3;
@@ -11,7 +11,7 @@ public class ChandelierBufferListTests : BufferListTestBase
        = Bars.ToChandelier(lookbackPeriods, multiplier, type);
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         ChandelierList sut = new(lookbackPeriods, multiplier, type);
 
@@ -25,7 +25,7 @@ public class ChandelierBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         ChandelierList sut = new(lookbackPeriods, multiplier, type) { Bars };
 

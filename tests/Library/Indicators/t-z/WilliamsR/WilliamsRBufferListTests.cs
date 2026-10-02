@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class WilliamsRBufferListTests : BufferListTestBase
+public class WilliamsRBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const int lookbackPeriods = 14;
 
@@ -19,7 +19,7 @@ public class WilliamsRBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         WilliamsRList sut = new(lookbackPeriods);
 
@@ -33,7 +33,7 @@ public class WilliamsRBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         WilliamsRList sut = new(lookbackPeriods) { Bars };
 
