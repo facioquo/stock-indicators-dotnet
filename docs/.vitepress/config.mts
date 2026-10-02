@@ -243,7 +243,6 @@ export default defineConfig({
         }
       ],
       '/migration/v3': [siteNav],
-      '/performance': [siteNav],
       '/contributing': [siteNav],
       '/about': [siteNav],
       '/indicators': [
@@ -495,6 +494,8 @@ export default defineConfig({
 
   cleanUrls: true,
 
+  // Git commit time per page; CI checks out full history for it
+  lastUpdated: true,
 
   // Source-file rewrites (build-time path remaps).
   // Legacy URL → page redirects live in .vitepress/public/_redirects.
@@ -554,33 +555,20 @@ export default defineConfig({
     }
   },
 
-  // Exclude legacy Jekyll directories and build artifacts
+  // Keep non-page sources and local artifacts out of the build
   srcExclude: [
     '.offline/**',
-    '.bundle/**',
-    '.temp/**',
     '.vs/**',
-    '_site/**',
-    '_layouts/**',
-    '_includes/**',
-    '_data/**',
-    'pages/**',
-    '_indicators/**',
     'decisions/**',
-    `assets/**`,
+    'assets/**',
     'examples/Backtest/**',
     'examples/ConsoleApp/**',
     'examples/CustomIndicatorsUsage/**',
     'examples/UseQuoteApi/**',
     'examples/**/*.{sln,csproj,cs,json,png,zip,editorconfig}',
-    'plans/**',
     'shared/**',
     'tests/**',
-    'test-results/**',
     'playwright-report/**',
-    'vendor/**',
-    'custom-chart.md',
-    'Gemfile*',
     'README.md',
     'AGENTS.md',
     'PRINCIPLES.md',

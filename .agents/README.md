@@ -1,9 +1,6 @@
-# Agent skills for internal development only
+# Agent skills for internal development
 
-The skills contained in this folder are intended for internal development of this repository.
-
-They should not be installed for library usage purposes.
+The skills in this folder support development of this repository only.
 
 > [!CAUTION]
-> Internal library development use only.
-> These are not appropriate for consumers of the [FacioQuo.Stock.Indicators](https://www.nuget.org/packages/FacioQuo.Stock.Indicators) NuGet library
+> Do not install these skills to use the [FacioQuo.Stock.Indicators](https://www.nuget.org/packages/FacioQuo.Stock.Indicators) NuGet library. They describe this repository's internals, not the library's public usage.

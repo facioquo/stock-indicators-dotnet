@@ -1,94 +1,75 @@
 # Markdown formatting standards
 
-Complete formatting requirements for Markdown files in this organization.
+Use this when writing or restructuring any Markdown file in this repository. It covers the rules markdownlint cannot check and the repository-specific choices behind the rules it can.
 
-## Editorial style
+## Line wrapping
 
-- **Voice:** Present tense, imperative mood ("Run the command" not "You should run")
-- **Headers:** Sentence case only (first word + proper nouns capitalized)
-- **Focus:** Current directives only; exclude historical context and migration details
-- **Tone:** Direct and actionable for autonomous agent execution
+- Write each paragraph, list item, and table cell as one source line, however long.
+- `MD013` (line length) is off in `.markdownlint-cli2.jsonc` for this reason; a manual wrap is never required.
+- The rule applies to prose owned by any skill or author.
 
 ## Headers
 
-- **Style:** ATX only (`#`, `##`, `###`); never Setext (`===`, `---`)
-- **Capitalization:** Sentence case only
-  - Capitalize: First word + proper nouns (GitHub, TypeScript, MADR)
-  - Lowercase: Articles (a, an, the), prepositions (of, to, for), conjunctions (and, but, or)
-- **Spacing:** Blank line before and after every header
-- **Hierarchy:** Sequential (no skipping levels: `#` → `##` → `###`)
+- ATX only (`#`, `##`, `###`); never Setext underlines.
+- Sentence case: capitalize the first word and proper nouns (GitHub, VitePress, StreamHub, .NET); lowercase articles, prepositions, and conjunctions.
+- Sequential hierarchy — never skip a level.
+- Bold labels that start a list item also take sentence case ("**Next steps:**").
 
 ## Lists
 
-- **Bullets:** Always use hyphens (`-`); never asterisks (`*`) or plus signs (`+`)
-- **Indentation:** Must align with body text start position (GitHub Flavored Markdown standard)
-- **Ordering:** Use ordered lists (1., 2., 3.) only when sequence matters
-- **Bold labels:** Use sentence case for bold labels that start list items
-- Never add arbitrary linebreaks due to line length
+- Hyphen bullets (`-`) only; two-space indent for nested items.
+- Ordered lists only when sequence matters, numbered `1.`, `2.`, `3.` (`MD029` style `ordered`).
 
 ## Code blocks
 
-- **Fencing:** Always use fenced blocks (` ``` `)
-- **Language identifier:** Required on all fences; use `plaintext` when language is unknown
-- **Spacing:** Blank line before and after fences
-- **Nesting:** Outer fences must have more backticks than inner fences
-- **Indenting:** Never indent code blocks, except where directly related to preceding list item
+- Fenced with backticks, never indented.
+- A language identifier on every fence; `plaintext` when none fits.
+- An outer fence longer than any fence it contains.
 
-## Reference syntax
+## Callouts
 
-### Skill references
+A **docs-site page** is a Markdown file under `docs/` that VitePress builds. Files that `srcExclude` in `docs/.vitepress/config.mts` excludes — such as `docs/AGENTS.md`, `docs/README.md`, `docs/PRINCIPLES.md`, and `docs/decisions/**` — are rendered by GitHub, not the site.
 
-- Use `#skill:skill-name` for intentional context loading
-- Use standard markdown links for optional references
-- Never use #file: for skill subordinate files
-
-### File references
-
-- Use #file: sparingly for intentional context loading
-- Use standard markdown links for optional references
-- Prefer markdown links over backtick-escaped paths
-- Never use #file: in entry point files (AGENTS.md, root instructions)
-
-### Tool references
-
-- Use `#tool:category/name` format
-- Do not wrap in backticks
-- MCP servers use `server/tool` format (e.g., `#tool:github/pull_request_read`)
-
-### Agent references
-
-- Use `@AgentName` syntax
-- Wrap in backticks in documentation (e.g., `` `@Planner` ``)
-- Use plain `@AgentName` in agent files for invocation
-
-## Mermaid diagrams
-
-- Use ` ```mermaid ` with language identifier
-- Always bar labels within square brackets
-- Use stroke styling, not fill colors (theme compatibility)
-- Test rendering in both dark and light themes
+- On a docs-site page, use VitePress containers: `::: tip`, `::: info`, `::: note`, `::: important`, `::: warning`, `::: caution`, `::: danger`, `::: details`. Text after the name replaces the title; `{no-title}` drops it.
+- Everywhere else (README files, AGENTS.md files, skills, `.github/`), use GitHub alerts: `> [!NOTE]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!WARNING]`, `> [!CAUTION]`.
 
 ## HTML elements
 
-Only these elements are allowed:
+- Outside `docs/`, `MD033` allows these HTML elements: `a`, `abbr`, `br`, `code`, `details`, `div`, `img`, `kbd`, `p`, `sub`, `summary`, `sup`. Prefer Markdown syntax where it exists.
+- `docs/.markdownlint-cli2.jsonc` turns `MD033` off so docs-site pages can use Vue components such as `<ClientOnly>` and `<StockIndicatorChart>`.
+- Give every image alt text.
 
-- `<details>`, `<summary>` (collapsible sections)
-- `<br>` (line breaks in tables)
-- `<sub>`, `<sup>`, `<kbd>`, `<abbr>` (semantic formatting)
-- `<a>`, `<img>` (links and images when Markdown syntax insufficient)
+## Reference syntax
 
-## Common patterns to fix
+- **Files** — standard Markdown links with relative paths. Within a skill, link only to files in that skill's own folder.
+- **Skills** — prose: "the testing-standards skill". Never a link into another skill's folder.
+- **Tools** — prose, not backtick-wrapped: "the Read tool".
+- **Agents** — plain @AgentName, never backtick-wrapped.
+- Never use the `#file:`, `#skill:`, or `#tool:` markers.
 
-| Error pattern | Fix |
-| ------------- | --- |
-| Title case in headers | Convert to sentence case |
-| Title case in bold labels | Convert to sentence case |
-| Arbitrary line breaks | Remove unnatural line breaks in prose and lists |
-| Asterisk bullets | Replace with hyphens |
-| Setext headers | Convert to ATX |
-| Missing blank lines | Add around headers and code blocks |
-| Backticks in #file: | Remove backticks |
-| #file: in entry points | Use markdown links |
-| Ordered lists (non-sequential) | Convert to unordered |
-| Trailing punctuation after #file: | Remove or add space |
-| Missing language in fences | Add language or `plaintext` |
+## Mermaid diagrams
+
+GitHub renders Mermaid; the docs site has no Mermaid plugin, so use Mermaid only in GitHub-rendered files.
+
+- Quote every label: `A["API<br/>gateway"]`.
+- Break label lines with `<br/>`, never `\n`.
+- Style with strokes, not fills, so the diagram reads in light and dark themes.
+
+## End of file
+
+End with the last content line and a single trailing newline. No footer, no trailing `---` separator, no `Last updated:` stamp.
+
+## Common fixes
+
+| Pattern | Fix |
+| ------- | --- |
+| Title case in a header or bold label | Sentence case |
+| Paragraph wrapped across lines | Join into one line |
+| `*` or `+` bullets | `-` |
+| Setext header | ATX |
+| Fence without a language | Add one, or `plaintext` |
+| GitHub alert on a docs-site page | VitePress container |
+| `:::` container outside the docs site | GitHub alert |
+| Backtick-wrapped tool name or @AgentName | Plain prose |
+| Backtick-escaped file path used as a reference | Markdown link |
+| Ordered list for unordered items | Hyphen list |

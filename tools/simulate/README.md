@@ -1,142 +1,84 @@
-# Simulation Tool
+# Simulation tool
 
-This tool simulates live trading strategies using two different approaches for streaming data:
+`Test.Simulation` feeds live-style market data into StreamHubs to reproduce thread-safety and pruning problems that only show up under asynchronous delivery. It has three modes:
 
-1. **SSE (Server-Sent Events)**: Uses a local SSE server for controlled testing
-2. **Coinbase WebSocket**: Uses live Coinbase WebSocket feed for real-world testing
+| Mode | Data source | Runs |
+| ---- | ----------- | ---- |
+| `sse` (default) | The local [SSE server](../sse-server/README.md), which the tool starts on port 5001 | Golden Cross strategy |
+| `coinbase`, `coinbase-klines`, `coinbase-ticker` | Live Coinbase WebSocket feed via `JKorf.Coinbase.Net` | Golden Cross strategy |
+| `hub-stress` | Live Coinbase trade feed | Hub stress test |
 
-## Purpose
+Run the commands below from `tools/simulate`, or add `--project tools/simulate` to run them from the repository root. The Coinbase modes need internet access.
 
-This tool is used to test and reproduce thread-safety issues in StreamHubs when used with async/real-world WebSocket/SSE live-stream financial market feeds.
-
-## Usage
-
-### SSE mode (Default)
-
-Uses a local Server-Sent Events server for controlled testing:
+## SSE mode
 
 ```bash
 dotnet run -- sse [dataType] [interval] [count] [barInterval] [endpoint]
 ```
 
-Arguments (in order):
-
-| param | type | default | description |
+| Argument | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-| `dataType` | _`string`_ | `bar` | Data type endpoint: `bar` or `trade` |
-| `interval` | _`int`_ | `100` | Delivery rate in milliseconds (how fast bars are sent) |
-| `count` | _`int`_ | none (unlimited) | Maximum number of data points to process; omit for indefinite stream |
-| `barInterval` | _`string`_ | `1m` | Time warp: timestamp spacing between bars (e.g., `1s`, `5m`, `1h`, `1d`) |
-| `endpoint` | _`string`_ | `http://localhost:5001/{dataType}/random` | SSE server endpoint URL (rarely needed) |
-
-Examples:
+| `dataType` | _`string`_ | `bar` | `bar` reads `/bars/random`; `trade` reads `/trades/random`, which the SSE server does not serve |
+| `interval` | _`int`_ | `100` | Delay between bars, in milliseconds |
+| `count` | _`int`_ | unlimited | Number of bars to process; pass `""` to keep the default and set later arguments |
+| `barInterval` | _`string`_ | `1m` | Timestamp spacing between bars, such as `1s`, `5m`, `1h`, or `1d` |
+| `endpoint` | _`string`_ | `http://localhost:5001/bars/random` | SSE endpoint URL; must start with `http` |
 
 ```bash
-dotnet run -- sse                     # Bar data, 100ms delivery, 1m timestamps, runs indefinitely
-dotnet run -- sse bar               # Bar data, 100ms delivery, 1m timestamps, runs indefinitely
-dotnet run -- sse bar 50            # Bar data, 50ms delivery, 1m timestamps, runs indefinitely
-dotnet run -- sse bar 50 500        # Bar data, 50ms delivery, 1m timestamps, stops after 500 bars
-dotnet run -- sse bar 100 1000 1h   # Hourly bars delivered every 100ms, stops after 1000 bars
-dotnet run -- sse bar 50 500 5m     # 5-minute bars delivered every 50ms, stops after 500 bars
-dotnet run -- sse bar 100 0 1d      # Daily bars delivered every 100ms, runs indefinitely
-dotnet run -- sse trade 100 1000      # Trade data, 100ms delivery, stops after 1000 ticks
+dotnet run -- sse                     # 1m bars every 100 ms, indefinitely
+dotnet run -- sse bar 50 500          # 1m bars every 50 ms, stops after 500
+dotnet run -- sse bar 100 1000 1h     # hourly bars every 100 ms, stops after 1000
+dotnet run -- sse bar 100 "" 1d       # daily bars every 100 ms, indefinitely
 ```
 
-**Time warp feature**: The `barInterval` parameter allows fast testing of longer-term strategies without waiting real time. For example, `barInterval=1h` with `interval=100` delivers hourly-spaced bars every 100ms, letting you test 24 hours of data in 2.4 seconds.
+`barInterval` sets timestamp spacing independently of `interval`, so `1h` bars at `100` ms cover 24 hours in 2.4 seconds.
 
-### Coinbase WebSocket mode
-
-Connects to live Coinbase WebSocket feed using the real `JKorf.Coinbase.Net` library.
-
-Supports three modes:
-
-- **coinbase** (or **coinbase-klines**): 5-minute kline (candle) feed, updates ~every 5 seconds
-- **coinbase-ticker**: Real-time ticker/trade feed, updates continuously
+## Coinbase modes
 
 ```bash
 dotnet run -- coinbase [symbol] [count]
-dotnet run -- coinbase-klines [symbol] [count]
-dotnet run -- coinbase-ticker [symbol] [count]
 ```
 
-Arguments (in order):
+| Mode | Feed |
+| ---- | ---- |
+| `coinbase`, `coinbase-klines` | 5-minute klines; an update arrives about every 5 minutes, when a candle closes |
+| `coinbase-ticker` | Individual trades, as they happen |
 
-| param | type | default | description |
+| Argument | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-| `symbol` | _`string`_ | `BTC-USD` | Coinbase trading pair (e.g., `BTC-USD`, `ETH-USD`) |
-| `count` | _`int`_ | none (unlimited) | Maximum number of bars to process; omit for indefinite stream |
-
-Examples:
+| `symbol` | _`string`_ | `BTC-USD` | Coinbase trading pair, such as `ETH-USD` |
+| `count` | _`int`_ | unlimited | Number of updates to process |
 
 ```bash
-dotnet run -- coinbase                      # BTC-USD klines, runs indefinitely
-dotnet run -- coinbase-klines BTC-USD       # BTC-USD klines, runs indefinitely
-dotnet run -- coinbase-ticker ETH-USD       # ETH-USD ticker feed, runs indefinitely
-dotnet run -- coinbase BTC-USD 500          # BTC-USD klines, stops after 500 bars
-dotnet run -- coinbase-ticker ETH-USD 1000  # ETH-USD ticker, stops after 1000 bars
+dotnet run -- coinbase                      # BTC-USD klines, indefinitely
+dotnet run -- coinbase-ticker ETH-USD 1000  # ETH-USD trades, stops after 1000
 ```
 
-## Strategy
+## Hub stress mode
 
-Both modes implement a Golden Cross trading strategy:
-
-- **Fast EMA**: 50 periods
-- **Slow EMA**: 200 periods
-- **Buy Signal**: When Fast EMA crosses above Slow EMA
-- **Sell Signal**: When Fast EMA crosses below Slow EMA
-- **Initial Balance**: $10,000
-
-## Testing thread-safety issues
-
-The Coinbase WebSocket mode is designed to reproduce the thread-safety issues:
-
-- Subscribes to 5-minute kline (candle) updates via WebSocket
-- Klines arrive approximately every 5 seconds (matching reported scenario)
-- Single symbol subscription feeds a single `BarHub`
-- Each kline is processed through `BarHub` and multiple indicator hubs
-- This can expose race conditions in hub implementations
-
-To test for thread-safety issues:
-
-1. Run the Coinbase mode with a high target count
-2. Monitor for exceptions (especially `ArgumentOutOfRangeException`)
-3. Try with different symbols and counts to vary the data rate
-4. Let it run for 30-60 seconds to match the failure window reported
-
-## Dependencies
-
-- **SSE Mode**: Requires the SSE server project (`tools/sse-server`)
-- **Coinbase Mode**: Uses JKorf.Coinbase.Net
-
-## Notes
-
-- The Coinbase mode requires internet connectivity
-- The Coinbase WebSocket API may require authentication for some features
-- The tool uses the same hub instances as would be used in production code
-- Both modes exercise BarHub, EmaHub, and StrategyGroup
-
-## Stopping & cleanup
-
-When running the simulation or SSE server locally, you may need to stop hosts manually if they do not exit cleanly.
-
-- In the console where you started the process, press `Ctrl+C` to stop the running host.
-- If the process does not stop, you can use the VS Code tasks added to the repository (see `.vscode/tasks.json`) to stop stray hosts:
-  - `Stop: Simulation hosts` — stops any `dotnet` processes running the simulation project (`tools/simulate`) or `Test.Simulation` executable.
-  - `Stop: SseServer hosts` — stops any `dotnet` or `Test.SseServer.exe` processes running the SSE server (`tools/sse-server`).
-  - `Stop: All hosted services` — combined task that stops simulation hosts, SSE server hosts, and the VitePress dev server used by the docs site.
-
-If you prefer to stop processes manually via PowerShell, run one of the following commands in a PowerShell terminal:
-
-Stop Simulation hosts:
-
-```powershell
-Get-CimInstance Win32_Process | Where-Object { ($_.Name -eq 'dotnet.exe' -or $_.Name -match 'Test.Simulation') -and ($_.CommandLine -match 'tools\\simulate' -or $_.CommandLine -match 'Test.Simulation') } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }
+```bash
+dotnet run -- hub-stress [symbol] [count] [maxCache]
 ```
 
-Stop SSE server hosts:
+Defaults: `BTC-USD`, `500` bars, and a `BarHub` cache of `200`. The small cache forces pruning while live trades drive STC, Slope, EPMA, ConnorsRSI, Fisher Transform, HT Trendline, MAMA, and common hubs (EMA, SMA, RSI, MACD, Bollinger Bands, ATR) from one `BarHub`.
 
-```powershell
-Get-CimInstance Win32_Process | Where-Object { ($_.Name -eq 'dotnet.exe' -or $_.Name -match 'Test.SseServer') -and ($_.CommandLine -match 'tools\\sse-server' -or $_.CommandLine -match 'Test.SseServer') } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }
-```
+## Golden Cross strategy
 
-These commands match the processes by executable name and command line to avoid killing unrelated `dotnet` instances.
+The `sse` and `coinbase` modes feed one `BarHub` into a 50-period and a 200-period `EmaHub`. The strategy buys with its full balance when the fast EMA crosses above the slow EMA, sells when it crosses below, and starts with a $10,000 balance.
+
+To hunt for race conditions, run `coinbase-ticker` or `hub-stress` with a high count and watch for exceptions such as `ArgumentOutOfRangeException`.
+
+## VS Code tasks
+
+- `Run: Simulation (default SSE)` — SSE mode, 50 ms delivery, `1m` bars, unlimited count
+- `Run: SSE simulation (with inputs)` — SSE mode, prompting for each argument
+- `Run: Coinbase simulation (with inputs)` — a Coinbase mode, prompting for symbol and count
+- `Run: Hub stress test (with inputs)` — hub stress mode, prompting for symbol, count, and cache size
+
+## Stopping
+
+Press `Ctrl+C` in the terminal running the tool. To stop hosts that do not exit, run one of these VS Code tasks or its script in [`tools/scripts`](../scripts/README.md):
+
+- `Stop: Simulation hosts` — `bash tools/scripts/stop-simulation.sh`
+- `Stop: SseServer hosts` — `bash tools/scripts/stop-sseserver.sh`
+- `Stop: All hosted servers` — both of the above, plus the VitePress dev and preview servers

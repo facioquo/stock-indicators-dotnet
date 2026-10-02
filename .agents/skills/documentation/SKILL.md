@@ -1,391 +1,125 @@
 ---
 name: documentation
-description: Write and update the VitePress documentation website for stock indicators. Use when adding a new indicator page, updating an existing indicator page, or making structural changes to the docs site.
+description: Author indicator reference pages on the VitePress documentation site — page section order, parameter and result tables, warmup and convergence wording, chaining and streaming examples, the StockIndicatorChart block, and the sidebar, category, and index entries a new page needs. Use when creating or editing a docs/indicators/*.md page, when an indicator's parameters, results, warmup, chainability, or streaming support changes, or when adding an indicator chart to the site.
 ---
 
-# Documentation skill
+# Indicator documentation pages
 
-This skill covers writing and updating the VitePress documentation site located in the `docs/` folder, with focus on indicator reference pages.
+Indicator pages live at `docs/indicators/{slug}.md`, where the slug is lowercase kebab-case (`sma.md`, `atr-stop.md`, `stoch-rsi.md`). Copy the structure of a close existing page — `ema.md` for a chainable indicator with parameters, `adl.md` for one without — and apply the rules below.
 
-## When to use this skill
+The markdown skill owns formatting and linting. The vitepress skill owns `docs/.vitepress/` configuration, theme, and components.
 
-- Adding a documentation page for a new indicator
-- Updating an existing indicator page after API or behavioral changes
-- Auditing indicator pages for structural consistency
-- Adding chart panels, warnings, or special sections
+## Adding a new indicator page
 
-## Documentation site overview
+- [ ] Create `docs/indicators/{slug}.md` with the [page structure](#page-structure).
+- [ ] Add a sidebar entry under the indicator's category in `docs/.vitepress/config.mts`. `llms.txt` derives its table of contents from the sidebar.
+- [ ] Add a `features` card to the category hub page (e.g., `docs/indicators/oscillators.md`) with `title`, `details`, `icon.src` of `/assets/thumbs/indicators/{slug}.png`, and `link`, and add that thumbnail to `docs/.vitepress/public/assets/thumbs/indicators/`.
+- [ ] Add the page to its category list under "Complete list" in `docs/indicators.md`.
+- [ ] Add the [chart block](#chart-block) when the chart API serves the indicator.
+- [ ] From `docs/`, run `pnpm run test:links`, which builds the site and checks every link (it needs `htmlproofer` or Docker). Without either, run `pnpm run docs:build` (VS Code task `Build: Website`).
 
-The site is built with [VitePress](https://vitepress.dev) and Vue 3.
+When code changes an existing indicator, update every section it touches: usage syntax, parameter table, bars requirement, null-period bullet, convergence warning, result table, chaining, and streaming.
 
-| Path | Purpose |
-| ---- | ------- |
-| `docs/indicators/` | One `.md` file per indicator (the primary audience) |
-| `docs/.vitepress/config.mts` | Site config — nav, sidebar, metadata |
-| `docs/.vitepress/components/` | Vue components used inside Markdown |
-| `docs/.vitepress/public/assets/` | Static images (webp, optimized) |
-| `docs/.vitepress/public/data/chart-api/` | Chart data API — one lowercase-keyed JSON file per indicator, powers `<StockIndicatorChart>` |
-| `docs/guide/getting-started.md` | Get started: install + first call |
-| `docs/guide/index.md` | Guide overview + style comparison |
-| `docs/guide/styles/batch.md` | Batch (Series) style guide |
-| `docs/guide/styles/buffer.md` | Buffer list style guide |
-| `docs/guide/styles/stream.md` | Stream hub style guide |
-| `docs/guide/chaining.md` | Indicator chaining guide |
-| `docs/guide/customization.md` | Custom indicators guide |
-| `docs/guide/custom-observers.md` | Custom observer integration guide |
-| `docs/indicators.md` | Indicators landing/index page |
-| `docs/utilities/` | Utility API reference pages |
+## Page structure
 
-**Excluded from build**: `AGENTS.md`, `PRINCIPLES.md`, and `README.md` are excluded via `srcExclude` in `config.mts` and must not be linked from indicator pages.
+Sections appear in this order. Prose separates sentences with two spaces, matching existing pages.
 
-### Local development
+### Frontmatter and heading
 
-```bash
-# from /docs folder
-pnpm install
-pnpm run docs:dev
-# site opens at http://localhost:5173/
-```
+- `title`: full name with the abbreviation in parentheses when one exists, e.g. `Exponential Moving Average (EMA)`. The H1 repeats it.
+- `description`: one or two plain-text sentences on what the indicator measures; it becomes the page's meta description.
+- First paragraph: "Created by {author}," when the author is known, a link to Wikipedia or the most authoritative source, and one sentence on what it measures.
+- The next line, with no blank line between: `[[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/{id} "Community discussion about this indicator")`.
 
-## Indicator page structure
+### Chart block
 
-Every indicator page at `docs/indicators/{indicator-slug}.md` (lowercase kebab-case, e.g. `sma.md`, `atr-stop.md`, `stoch-rsi.md`) follows this section order exactly. Never omit sections; use judgment about which optional elements apply.
-
-### 1. Frontmatter
-
-```yaml
----
-title: Full Indicator Name (ABBR)
-description: One-sentence description of what the indicator measures.
----
-```
-
-- `title`: Human-readable name with abbreviation in parentheses when one exists
-- `description`: Concise (≤160 characters), plain-text sentence — used for SEO and link previews
-
-### 2. H1 heading block
-
-```markdown
-# Full Indicator Name (ABBR)
-
-Created by Author Name, [Indicator Name](https://en.wikipedia.org/wiki/...) is a brief description of what it measures.
-[[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/{id} "Community discussion about this indicator")
-
+```html
 <ClientOnly>
-  <StockIndicatorChart indicator="{Indicator}" />
+  <StockIndicatorChart indicator="Ema" />
 </ClientOnly>
 ```
 
-Rules:
+- `indicator` is a key of the `indicators` map in `docs/.vitepress/theme/index.ts` — PascalCase (`Ema`, `BollingerBands`, `AtrStop`), not the slug. Every key a page uses must exist there.
+- A new key needs a `uiid` that the chart API at `charts-api.stockindicators.dev` serves, and a `title`. When the API does not serve the indicator, omit the chart block; never add a placeholder.
+- Add `withOverlay` when the indicator plots in its own pane (oscillators such as `Rsi`, `Adx`); omit it for price overlays (`Ema`, `BollingerBands`).
+- Stack related charts inside one `<ClientOnly>` with `withOverlay` on the first only (`std-dev.md`, `sma-analysis.md`). `with="DcPeriods"` adds a companion series to one chart (`ht-trendline.md`).
+- `<ClientOnly>` is required; the component renders only in the browser.
 
-- Attribution ("Created by...") is required when a known author exists
-- Include a Wikipedia link when one exists; otherwise link the most authoritative reference
-- Always include the `[[Discuss]]` link using the correct GitHub Discussions URL
-- Include the chart block when chart data exists at `docs/.vitepress/public/data/chart-api/{indicator-slug}.json` (lowercase); omit when no chart data exists (e.g., simple primitives or secondary analysis pages)
-- `indicator` prop is the indicator's PascalCase key (e.g., `Sma`, `Rsi`) — it does not have to match the lowercase JSON filename literally, but must resolve to it via the chart API
-- Always wrap the component in `<ClientOnly>` — the chart renders client-side only
+### Usage syntax
 
-### 3. Usage syntax
+A `csharp` block opening with `// C# usage syntax`, plus a qualifier when useful (`(with Close price)`), then `IReadOnlyList<{Name}Result> results =` with `bars.To{Name}(params);` on the next line. When an indicator has several meaningful overloads or variants, show each in the same block under its own comment (`ichimoku.md`, `renko.md`).
 
-````markdown
-```csharp
-// C# usage syntax
-IReadOnlyList<{Indicator}Result> results =
-  bars.To{Indicator}(param1, param2);
-```
-````
+### Parameters
 
-- Use `// C# usage syntax` as the comment; add `(with Close price)` or similar qualifier when relevant
-- Show each meaningful overload on separate `bars.To{Indicator}(...)` lines when multiple overloads exist
-- Wrap long signatures to the next line for readability
+`## Parameters` with a `| param | type | description |` table. Write the type as italic code (`` _`int`_ ``). Each description names the formula variable (`` `N` ``), the validation constraint ("Must be greater than 0."), and the default when one exists. Variants with distinct parameter sets get an H3 table each (`renko.md`).
 
-### 4. Parameters section
+Omit `## Parameters` when the method takes none.
 
-```markdown
-## Parameters
-
-| param | type | description |
-| ----- | ---- | ----------- |
-| `paramName` | int | Description with constraints. Default is N. |
-```
-
-Omit this section entirely when the indicator has no parameters (e.g., `ToAdl()`, `ToTr()`).
-
-Parameter description rules:
-
-- State the variable name used in formulas (e.g., "`N`" or "`S`")
-- State validation constraints ("Must be greater than 0")
-- State default value when one exists ("Default is 14")
-
-#### Historical price bars requirements subsection
-
-Always present, even for parameter-free indicators:
-
-```markdown
 ### Historical price bars requirements
 
-You must have at least `N` periods of `bars` to cover the warmup periods.
+An H3 under Parameters, or an H2 when Parameters is omitted (`adl.md`, `obv.md`, `tr.md`).
 
-`bars` is a collection of generic `TBar` historical price bars.  It should have a consistent frequency (day, hour, minute, etc).  See [the Guide](/guide/getting-started#historical-bars) for more information.
-```
+- State the minimum bar count in formula variables (`` `2×N` or `N+100` ``, whichever is more).
+- For smoothed or recursive algorithms, add a sentence recommending more data (e.g., `` `N+250` ``) for precision.
+- Close with the standard paragraph: "`bars` is a collection of generic `TBar` historical price bars.  It should have a consistent frequency (day, hour, minute, etc).  See [the Guide](/guide/getting-started#historical-bars) for more information."
 
-- Express the minimum in terms of formula variables (e.g., `N`, `2×(S+P)`, `S+P+100`)
-- When the indicator uses exponential smoothing or recursive formulas, include an additional sentence recommending more data (e.g., "we recommend you use at least `10×N` data points prior to the intended usage date for better precision")
+### Response
 
-### 5. Response section
-
-````markdown
-## Response
-
-```csharp
-IReadOnlyList<{Indicator}Result>
-```
-
-- This method returns a time series of all available indicator values for the `bars` provided.
-- It always returns the same number of elements as there are in the historical price bars.
-- It does not return a single incremental indicator value.
-- The first `N-1` periods will have `null` values since there's not enough data to calculate.
-````
-
-Adjust the null-period bullet to match the actual warmup (e.g., "The first `S-1` slow periods...").
-
-#### Convergence warning (conditional)
-
-Add immediately after the bullet list when the indicator uses a smoothing/recursive algorithm that introduces convergence error:
+- A `csharp` block with the return type.
+- The three standard bullets: returns a time series of all available values for the `bars` provided; always returns the same number of elements as the bars; does not return a single incremental value.
+- A fourth bullet naming the warmup nulls in formula variables ("The first `N-1` periods will have `null` values since there's not enough data to calculate."); omit it when no warmup period returns null.
+- For smoothing or recursive algorithms, a convergence warning right after the bullets, with the period count and deviation adjusted to the indicator:
 
 ```markdown
 ::: warning 🚩 ⚞ Convergence warning
-The first `10×N` periods will have decreasing magnitude, convergence-related precision errors that can be as high as ~5% deviation in indicator values for earlier periods.
+The first `N+100` periods will have decreasing magnitude, convergence-related precision errors that can be as high as ~5% deviation in indicator values for earlier periods.
 :::
 ```
 
-Adjust the period count and percentage to match the indicator's actual convergence behavior.
+### Result table
 
-#### Result type table
+`` ### `{Name}Result` `` with a `| property | type | description |` table. `Timestamp` is the first row, described as "Date from evaluated `TBar`". Each type is the property's declared C# type in italic code (`` _`double`_ ``, `` _`decimal`_ ``). Place a `::: warning 🚩` caveat immediately after the table it qualifies.
 
-```markdown
-### `{Indicator}Result`
-
-| property | type | description |
-| -------- | ---- | ----------- |
-| `Timestamp` | DateTime | Date from evaluated `TBar` |
-| `PropertyName` | double | What this value represents |
-```
-
-- `Timestamp` is always the first row
-- Use `double` for computed values, `decimal` for price-derived values (e.g., Ichimoku), `int` for counts
-- Describe each property in plain language, including the formula when it aids understanding
-
-#### Utilities subsection
-
-```markdown
 ### Utilities
 
-- [.Condense()](/utilities/results#condense)
-- [.Find(lookupDate)](/utilities/results#find-by-date)
-- [.RemoveWarmupPeriods()](/utilities/results#remove-warmup-periods)
-- [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
+`### Utilities` lists `[.Condense()](/utilities/results#condense)`, `[.Find(lookupDate)](/utilities/results#find-by-date)`, and `[.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)`, then "See [Utilities and helpers](/utilities/) for more information."
 
-See [Utilities and helpers](/utilities/) for more information.
-```
+Add `[.RemoveWarmupPeriods()](/utilities/results#remove-warmup-periods)` before the `removePeriods` form when the no-argument overload removes the warmup: the indicator has its own overload in `{Name}.Utilities.cs`, or its result is `IReusable` and its first non-null value ends the warmup.
 
-Utility links are anchors (`#section`) into the single `docs/utilities/results.md` page, not separate subpages. Omit `.RemoveWarmupPeriods(removePeriods)` overload when the indicator does not support a custom count.
+### Chaining
 
-### 6. Chaining section
+`## Chaining`, ending with "See [Chaining indicators](/guide/chaining) for more." Describe each direction the indicator supports:
 
-````markdown
-## Chaining
+- **Input** — "This indicator may be generated from any chain-enabled indicator or method." with a `.Use(CandlePart.HL2).To{Name}(..)` example; or, for bar-only indicators, "This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method."
+- **Output** — "Results can be further processed on `{Property}` with additional chain-enabled indicators." with a `.To{Name}(..).ToRsi(..)` example. When the result has several values, name the reusable one ("Note: `TenkanSen` is the primary reusable value for chaining purposes.").
 
-This indicator may be generated from any chain-enabled indicator or method.
+### Streaming
 
-```csharp
-// example
-var results = bars
-    .Use(CandlePart.HL2)
-    .To{Indicator}(..);
-```
+`## Streaming` with two examples, ending with "See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides."
 
-Results can be further processed on `{PrimaryValue}` with additional chain-enabled indicators.
+- "Use the buffer-style `List<T>` when you need incremental calculations without a hub:" then `{Name}List {name}List = new(params);`, a `foreach` adding each bar, and `IReadOnlyList<{Name}Result> results = {name}List;`.
+- "Subscribe to a `BarHub` for advanced streaming scenarios:" then `BarHub barHub = new();`, `{Name}Hub observer = barHub.To{Name}Hub(params);`, a `foreach` calling `barHub.Add(bar)`, and `observer.Results`.
 
-```csharp
-// example
-var results = bars
-    .To{Indicator}(..)
-    .ToRsi(..);
-```
-````
+Follow `ema.md` for the exact layout. Show only the styles the indicator implements.
 
-Variations:
+When no streaming style exists, write one paragraph under `## Streaming`: "Streaming is not supported for this indicator." plus one sentence of architectural reason, then "Use the Series (batch) implementation with periodic recalculation instead." Existing reasons:
 
-- When the indicator can only read from `bars` (not chains), replace the first block with: `This indicator must be generated from \`bars\` and **cannot** be generated from results of another chain-enabled indicator or method.`
-- When the indicator can only output to chains (not read from them), describe that instead
-- When chaining outputs to a specific property, note which property is the chainable value (e.g., "Note: \`TenkanSen\` is the primary reusable value for chaining purposes.")
+- Second synchronized series (`beta.md`, `correlation.md`, `prs.md`): "This indicator requires a second synchronized bar series, which cannot be expressed in the single-series streaming model."
+- Lookahead and repaint (`zig-zag.md`): "This indicator requires lookahead to confirm reversal points; output repaints as new data arrives, making incremental results undefined."
 
-End the section with a cross-reference to the usage guide:
+When only one variant streams (`renko.md`), show its examples and add a `::: warning 🚩` stating which method does not stream and why. Keep all streaming content under the one `## Streaming` heading.
 
-```markdown
-See [Chaining indicators](/guide/chaining) for more.
-```
+## Secondary analysis pages
 
-### 7. Streaming section
+A variant with its own result type (e.g., `sma-analysis.md`) gets its own page with the full section set. Its first paragraph ends with "See also [{primary name}](/indicators/{slug})." A chart block is allowed when the variant has its own chart keys (`SmaMad`, `SmaMape`, `SmaMse`).
 
-````markdown
-## Streaming
+## Images
 
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
+Put static images in `docs/.vitepress/public/assets/` and reference them from the site root (`/assets/...`) with Markdown image syntax. Optimize to `webp` at 832px width, e.g. `cwebp -resize 832 0 -q 100 example.png -o example-832.webp`.
 
-```csharp
-{Indicator}List {indicator}List = new(param1, param2);
+## Do not do these
 
-foreach (IBar bar in bars)  // simulating stream
-{
-  {indicator}List.Add(bar);
-}
-
-// based on `ICollection<{Indicator}Result>`
-IReadOnlyList<{Indicator}Result> results = {indicator}List;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
-
-```csharp
-BarHub barHub = new();
-{Indicator}Hub observer = barHub.To{Indicator}Hub(param1, param2);
-
-foreach (IBar bar in bars)  // simulating stream
-{
-  barHub.Add(bar);
-}
-
-IReadOnlyList<{Indicator}Result> results = observer.Results;
-```
-````
-
-When the hub subscribes to an upstream chain-enabled hub (not a `BarHub`), adjust the hub variable type and creation accordingly.
-
-End the section with a cross-reference to the usage guides:
-
-```markdown
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.
-```
-
-### 7a. Streaming not applicable
-
-When an indicator cannot support streaming due to an architectural constraint, include `## Streaming` with this standard wording instead of examples:
-
-```markdown
-## Streaming
-
-Streaming is not supported for this indicator.
-{One sentence stating the architectural reason.}
-Use the Series (batch) implementation with periodic recalculation instead.
-```
-
-Standard reasons by category:
-
-- **Dual-series indicators** (Beta, Correlation, Prs): "This indicator requires a second synchronized bar series, which cannot be expressed in the single-series streaming model."
-- **Lookahead/repaint indicators** (ZigZag): "This indicator requires lookahead to confirm reversal points; output repaints as new data arrives, making incremental results undefined."
-- **Full-dataset algorithms** (StdDevChannels): "This indicator recalculates the entire dataset on each new data point, making incremental streaming impractical."
-
-## Optional and conditional sections
-
-### Inline warnings
-
-Use VitePress admonition containers for notable caveats that don't warrant a full section:
-
-```markdown
-::: warning 🚩
-Brief warning text here.
-:::
-```
-
-Place these immediately after the content they qualify (e.g., after the result table).
-
-### Extended or secondary indicator pages
-
-When an indicator has a secondary analysis variant (e.g., `SmaAnalysis`), create a separate page. Secondary pages:
-
-- Omit the `<StockIndicatorChart>` block (chart lives on the primary page)
-- Begin the H1 body with a cross-link to the primary page: "See also [Simple Moving Average](/indicators/sma)."
-- Include the full Parameters, Response, Chaining, and Streaming sections for the variant
-
-### Multiple overloads shown together
-
-When an indicator has multiple overloads worth showing upfront (e.g., Ichimoku), show all meaningful signatures in a single code block before the Parameters table, with brief comments distinguishing each:
-
-```csharp
-// standard usage
-IReadOnlyList<...> results = bars.ToIndicator(a, b);
-
-// usage with custom option
-IReadOnlyList<...> results = bars.ToIndicator(a, b, c);
-```
-
-### Multi-variant indicators (substantially different parameter sets)
-
-When two variants share the same result type but have distinct parameter sets and different streaming support (e.g., Renko fixed-brick vs. ATR-derived), merge them into one page with a shared structure:
-
-1. Show both signatures in the usage syntax block with distinguishing comments
-2. Use `## Parameters` with H3 subsections per variant (`### Fixed brick size`, `### ATR-derived brick size`)
-3. Combine `## Response` into one section (shared result type)
-4. Combine `## Chaining` — note any variant-specific restrictions
-5. In `## Streaming`, show full examples for the supported variant, then add a `warning` admonition for the unsupported variant:
-
-````markdown
-## Streaming
-
-[Full buffer/hub examples for the supported variant]
-
-::: warning 🚩
-`ToVariantAtr()` does not support streaming.  {One sentence reason.}
-:::
-````
-
-Do not create a separate H2 section for the unsupported variant — keep all streaming content under one `## Streaming` heading.
-
-## Image assets
-
-Charts render client-side via the `<StockIndicatorChart>` component (from `@facioquo/indy-charts`, registered in `docs/.vitepress/theme/index.ts`), fed by JSON data files at `docs/.vitepress/public/data/chart-api/{indicator-slug}.json` (lowercase). When adding a new indicator:
-
-1. Confirm whether a chart-api JSON data file exists for the indicator
-2. If it exists, add `<ClientOnly><StockIndicatorChart indicator="{Indicator}" /></ClientOnly>` to the page
-3. If it does not exist, omit the chart block — do not add a placeholder
-
-A second chart block mid-page is valid when it illustrates a behaviorally distinct mode of the same indicator (e.g., StdDevChannels with `null` lookback renders differently than a fixed-period run; HtTrendline exposes both a trendline output and a dominant cycle period output). In that case, place the second block immediately after the prose that introduces the distinct behavior, under its own H2 or H3 heading. Do not add a second block merely to show the same output at different parameter values.
-
-For static (non-chart) images referenced in prose:
-
-- Store in `docs/.vitepress/public/assets/`
-- Optimize to `webp` format at 832px width: `cwebp -resize 832 0 -q 100 example.png -o example-832.webp`
-- Reference via absolute path from public root: `/assets/filename-832.webp`
-
-## Checklist: adding a new indicator page
-
-- [ ] Create `docs/indicators/{indicator-slug}.md` (lowercase kebab-case) following the page structure above
-- [ ] Frontmatter: `title` and `description` set
-- [ ] H1 block: attribution, reference link, Discuss link, optional chart block
-- [ ] Usage syntax: all meaningful overloads shown
-- [ ] Parameters table present (or section omitted if none)
-- [ ] Historical price bars requirements stated
-- [ ] Response section: return type, bullet list, result table, Utilities links
-- [ ] Chaining section: correct chainability direction described
-- [ ] Streaming section: full examples present, or "not applicable" note with architectural reason
-- [ ] Site builds without errors: `pnpm run docs:dev` from `docs/`
-
-## Checklist: updating an existing indicator page
-
-- [ ] Identify sections affected by the code change
-- [ ] Update parameter table if parameters added, removed, or renamed
-- [ ] Update result table if result properties added, removed, or renamed
-- [ ] Update usage syntax examples to match new signatures
-- [ ] Update bars requirements if warmup formula changed
-- [ ] Add or remove convergence warning as appropriate
-- [ ] Site builds without errors
-
-## Style conventions
-
-- Use two spaces (not one) between sentences in prose — the existing pages do this consistently
-- Backtick inline code for all: type names, property names, parameter names, method names, numeric expressions like `N-1`
-- Use `N`, `S`, `F`, `P` as single-letter formula variable shorthand — define them on first use
-- Tables use the three-column format with aligned pipes
-- Do not add commentary, caveats, or editorializing beyond what the code behavior requires — keep descriptions factual and concise
+- Do not link to `docs/AGENTS.md`, `docs/README.md`, or `docs/PRINCIPLES.md` from a page; `srcExclude` keeps them out of the build.
+- Do not use a GitHub alert (`> [!WARNING]`) on a page; use a `:::` container.
+- Do not add a second chart to show the same output at different parameter values.
+- Do not add commentary or caveats beyond what the code's behavior requires.

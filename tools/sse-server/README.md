@@ -1,45 +1,43 @@
-# SSE Server (Test.SseServer)
+# SSE server
 
-This small ASP.NET Core app exposes Server-Sent Events (SSE) endpoints used by the simulation tool in `tools/simulate`.
-
-Quick start:
+`Test.SseServer` is an ASP.NET Core app that streams bars as Server-Sent Events. The [simulation tool](../simulate/README.md) and the SSE thread-safety tests in `tests/Integration` start it for you; run it directly to stream by hand.
 
 ```bash
-# From repository root (recommended):
 dotnet run --project tools/sse-server -- --urls http://localhost:5001
-
-# Or from the server folder:
-cd tools/sse-server
-dotnet run -- --urls http://localhost:5001
 ```
 
-Endpoints:
+The VS Code task `Run: SSE Server` runs the same command.
 
-- `/bars/random?interval=100&batchSize=1000&barInterval=1h` — continuous random bar stream
-- `/bars/longest?interval=100&batchSize=1000&barInterval=5m` — deterministic stream using the longest bar dataset
+## Endpoints
 
-Query parameters:
+| Endpoint | Streams |
+| -------- | ------- |
+| `/bars/random` | Random bars, continuously until `batchSize` is reached or the client disconnects |
+| `/bars/longest` | The longest bundled bar dataset, deterministically |
+| `/openapi/v1.json` | The OpenAPI document (Development environment only) |
 
-| param | type | default | description |
+Both bar endpoints take these query parameters:
+
+| Parameter | Type | Default | Description |
 | --------- | ---- | ------- | ----------- |
-| `interval` | _`int`_ | `100` | Delivery rate in milliseconds (how fast bars are sent) |
-| `batchSize` | _`int`_ | none (unlimited) | Maximum number of bars to send before closing stream |
-| `barInterval` | _`string`_ | `1m` | Time warp: timestamp spacing between bars (e.g., `1s`, `5m`, `1h`, `1d`) |
+| `interval` | _`int`_ | `100` | Delay between bars, in milliseconds |
+| `batchSize` | _`int`_ | none | Number of bars to send before closing the stream; unlimited for `/bars/random`, the whole dataset for `/bars/longest` |
+| `barIntervalCode` | _`string`_ | `1m` | Timestamp spacing between bars, such as `1s`, `5m`, `1h`, or `1d` |
 
-**Time warp feature**: The `barInterval` parameter enables fast testing of strategies that use longer timeframes. For example, `barInterval=1h` with `interval=100` delivers hourly-spaced bars every 100ms, allowing you to test a full day (24 hours) of hourly data in just 2.4 seconds.
+`/bars/longest` also takes `scenario` (`stc-rollbacks` or `allhubs-rollbacks`), which the integration tests use to send rollback events after the bars.
 
-Stopping the server:
+Because `barIntervalCode` sets timestamp spacing independently of `interval`, the stream compresses time: `barIntervalCode=1h&interval=100` delivers 24 hours of hourly bars in 2.4 seconds.
 
-- Press `Ctrl+C` in the terminal where `dotnet run` is running to request a graceful shutdown.
-- If the process does not exit, you can use the VS Code tasks added to the repository (see `.vscode/tasks.json`) to stop stray hosts.
+Example:
 
-Manual PowerShell kill (if needed):
-
-```powershell
-Get-CimInstance Win32_Process | Where-Object { ($_.Name -eq 'dotnet.exe' -or $_.Name -match 'Test.SseServer') -and ($_.CommandLine -match 'tools\\sse-server' -or $_.CommandLine -match 'Test.SseServer') } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }
+```text
+http://localhost:5001/bars/random?interval=100&batchSize=1000&barIntervalCode=1h
 ```
 
-Notes:
+## Stopping
 
-- The server prints start/stop and delivery logs to the console; use the output to confirm it is running and which port is bound.
-- `ServerManager` in `tools/simulate` attempts to start the built executable (`bin/.../Test.SseServer.exe`) and falls back to `dotnet run` when the exe is not present.
+Press `Ctrl+C` in the terminal running the server. To stop a host that does not exit, run the `Stop: SseServer hosts` VS Code task or its script:
+
+```bash
+bash tools/scripts/stop-sseserver.sh
+```

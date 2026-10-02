@@ -3,4 +3,4 @@ applyTo: "**/*.md,.markdownlint*.{yaml,yml,json,jsonc}"
 description: Markdown formatting and configuration
 ---
 
-Use the #skill:markdown skill when authoring Markdown files.
+Load the markdown skill before authoring or editing Markdown files.

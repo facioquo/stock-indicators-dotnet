@@ -1,174 +1,53 @@
-# Markdown tooling setup guide
+# Markdown tooling in this repository
 
-Complete setup guide for markdown authoring tools in a new repository.
+Use this when changing markdownlint configuration, adding an allowed HTML element, or working out why a file is or is not linted. The tooling is already installed; nothing here needs to be set up per clone.
 
-## Quick installation
+## Prerequisites
 
-For automated tool installation, use the installation script:
+- Node.js with `npx` (CI and agents) or `pnpm` (the VS Code tasks). There is no root `package.json`; both fetch `markdownlint-cli2` on demand, and `echo y |` answers the install prompt.
 
-```bash
-bash .agents/skills/markdown/scripts/install.sh
-```
+## Configuration
 
-This installs markdownlint-cli2 globally via pnpm/npm. For manual setup or VS Code integration, follow the steps below.
+| File | Role |
+| ---- | ---- |
+| `.markdownlint-cli2.jsonc` | Root config: `globs`, `ignores`, `gitignore: true`, and the rule set |
+| `docs/.markdownlint-cli2.jsonc` | Overrides for the docs site, including `MD033: false` for Vue components |
 
-## Step 1: Install VS Code extensions
+Root rule choices that shape authoring:
 
-Add to `.vscode/extensions.json`:
+- `MD003` ATX headers, `MD004` dash bullets, `MD007` two-space indent, `MD029` ordered numbering, `MD046` fenced code, `MD048` backtick fences.
+- `MD013` off — no line-length limit, so never hard-wrap.
+- `MD024` `siblings_only` — duplicate header text is allowed under different parents.
+- `MD033` — an explicit allow-list of HTML elements; add an element there only when no Markdown syntax produces it.
 
-```jsonc
-{
-  "recommendations": [
-    "DavidAnson.vscode-markdownlint",   // REQUIRED: Markdown linting
-    "bierner.github-markdown-preview",  // Enhanced preview with GitHub styling
-    "EditorConfig.EditorConfig"         // Cross-editor consistency
-  ]
-}
-```
+Files outside the lint run:
 
-**Extension purposes:**
+- Anything `.gitignore` excludes.
+- The `ignores` list, including `.claude/skills/**` (a symlink to `.agents/skills`, which is linted directly), BenchmarkDotNet artifacts, and `tools/performance/baselines/**`.
 
-- `vscode-markdownlint`: Real-time linting, auto-fix on save, integrates with markdownlint-cli2
-- `github-markdown-preview`: Preview rendering matches GitHub's Markdown processor
-- `EditorConfig`: Ensures consistent indentation/line endings across editors
+Prefer a rule override in `config` to an inline `<!-- markdownlint-disable MD### -->` block; use the inline form only for a narrow case restructuring cannot fix, and close it with the matching `enable`.
 
-## Step 2: Configure VS Code settings
+## Commands and tasks
 
-Add to `.vscode/settings.json`:
+| Purpose | Command | VS Code task |
+| ------- | ------- | ------------ |
+| Lint the repository | `echo y \| npx markdownlint-cli2` | `Lint: Markdown` |
+| Fix the repository | `echo y \| npx markdownlint-cli2 --fix` | `Lint: Markdown (fix)` |
+| Lint named files only | `npx markdownlint-cli2 --no-globs a.md b.md` | none |
 
-```jsonc
-{
-  "[markdown]": {
-    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
-    "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {
-      "source.fixAll.markdownlint": "explicit"
-    }
-  },
-  "files.associations": {
-    "*.md": "markdown"
-  }
-}
-```
+CI runs the repository lint in the quick-check job of `.github/workflows/ci.yml`.
 
-**Settings effects:**
+## Editor integration
 
-- `defaultFormatter`: Uses markdownlint for formatting (aligns with CLI tool)
-- `formatOnSave`: Auto-formats on save (applies fixable rules automatically)
-- `files.associations`: Ensures `.md` files are recognized as markdown
+- `.vscode/extensions.json` recommends `DavidAnson.vscode-markdownlint` and `EditorConfig.EditorConfig`.
+- `.vscode/settings.json` sets the markdownlint extension as the Markdown formatter, with format on save and `source.fixAll.markdownlint` on explicit save.
+- `.editorconfig` keeps trailing whitespace in `*.md`.
 
-## Step 3: Create linting configuration
+## Scripts
 
-Create `.markdownlint-cli2.jsonc` with baseline settings.
-Use this example as a starting point if no configuration exists.
+- [check.sh](../scripts/check.sh) reports whether a global `markdownlint-cli2`, a config file, and the VS Code extension are present.
+- [install.sh](../scripts/install.sh) installs `markdownlint-cli2` globally. The `npx` commands above do not need it.
 
-```jsonc
-{
-  "globs": ["**/*.md"],
-  "gitignore": true,
-  "ignores": [
-    // Customize based on project structure
-    "node_modules/**",
-    "**/node_modules/**",
-    "**/dist/**",
-    "**/test-results/**"
-  ],
-  "config": {
-    "default": true,
-    "MD003": { "style": "atx" },
-    "MD004": { "style": "dash" },
-    "MD007": { "indent": 2 },
-    "MD013": false,
-    "MD024": { "siblings_only": true },
-    "MD028": false,
-    "MD033": {
-      "allowed_elements": ["details", "summary", "br", "sub", "sup", "kbd", "abbr", "a", "img"]
-    },
-    "MD046": { "style": "fenced" },
-    "MD048": { "style": "backtick" }
-  }
-}
-```
+## Verify
 
-**Configuration requirements:**
-
-1. **MUST have:** `"gitignore": true` (prevents linting ignored files)
-2. **Customize:** `ignores` array based on project build outputs and structure
-3. **Remove:** Competing configuration files (e.g., `markdownlint.json`, `.markdownlintrc`) if present
-4. **Document exceptions:** Prefer adding rule overrides to the `config` section. For narrow, targeted cases where restructuring isn't possible, use inline suppressions with `<!-- markdownlint-disable MD### -->...<!-- markdownlint-enable MD### -->`
-
-## Step 4: Add VS Code tasks
-
-Add markdown linting tasks to `.vscode/tasks.json` for integrated workflow. If tasks with these labels already exist, replace them with these definitions.
-
-```jsonc
-{
-  "$schema": "vscode://schemas/tasks",
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "Lint: Markdown (verify)",
-      "detail": "Verify formatting for all markdown files",
-      "type": "shell",
-      "command": "npx markdownlint-cli2",
-      "group": "test",
-      "problemMatcher": "$markdownlint"
-    },
-    {
-      "label": "Lint: Markdown (auto-fix)",
-      "detail": "Auto-fix formatting for all markdown files",
-      "type": "shell",
-      "command": "npx markdownlint-cli2 --fix",
-      "problemMatcher": "$markdownlint"
-    },
-    {
-      "label": "Lint: Markdown (filtered)",
-      "detail": "Auto-fix formatting for a markdown file. AGENTS: do not use this option.",
-      "type": "shell",
-      "command": "npx markdownlint-cli2 --no-globs ${input:markdownGlobPattern} --fix",
-      "problemMatcher": "$markdownlint"
-    }
-  ],
-  "inputs": [
-    {
-      "id": "markdownGlobPattern",
-      "type": "promptString",
-      "description": "Markdown file path (e.g., README.md or docs/guide.md)",
-      "default": "**/*.md"
-    }
-  ]
-}
-```
-
-## Step 5: Verify configuration alignment
-
-Confirm consistency across all configuration files:
-
-- `.markdownlint-cli2.jsonc` — Linting rules
-- `.vscode/settings.json` — Editor settings match linting rules
-- `.vscode/extensions.json` — Recommended extensions installed
-- `.vscode/tasks.json` — Task definitions for linting workflow
-- `.editorconfig` — Tab/space settings align (2 spaces for markdown)
-
-## Step 6: Test the setup
-
-```bash
-# Install npm/pnpm dependencies (if needed)
-npm install -g markdownlint-cli2
-
-# Test linting on a specific markdown file
-npx markdownlint-cli2 --no-globs "README.md"
-
-# Test auto-fix on a specific markdown file
-npx markdownlint-cli2 --no-globs "README.md" --fix
-
-# Test linting on multiple specific files
-npx markdownlint-cli2 --no-globs "README.md" "CONTRIBUTING.md"
-```
-
-**Expected results:**
-
-- Zero linting errors on existing markdown files (or known violations)
-- Auto-fix resolves formatting issues (bullets, headers, spacing)
-- VS Code shows inline warnings for markdown violations
-- Format-on-save applies fixes automatically
+After a configuration change, run `echo y | npx markdownlint-cli2` and confirm zero errors across the repository, then lint one file under `docs/` with `--no-globs` to confirm the docs overrides still apply.

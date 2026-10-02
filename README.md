@@ -13,7 +13,7 @@ Build your technical analysis, trading algorithms, machine learning, charting, o
 
 ## Streaming support
 
-v3 introduces comprehensive **streaming capabilities** for real-time and incremental data processing. Most indicators now support three calculation styles:
+Most indicators support three calculation styles, two of them built for real-time and incremental data processing:
 
 - **Series** - Traditional batch processing for complete historical datasets
 - **BufferList** - Incremental calculations with simple, efficient buffer management
@@ -26,14 +26,14 @@ Quick example using streaming:
 BarHub barHub = new();
 
 // Subscribe indicators to the hub
-EmaHub emaHub = barHub.ToEma(20);
-RsiHub rsiHub = barHub.ToRsi(14);
+EmaHub emaHub = barHub.ToEmaHub(20);
+RsiHub rsiHub = barHub.ToRsiHub(14);
 
 // Stream bars as they arrive
 foreach (Bar bar in liveBars)
 {
     barHub.Add(bar);
-    
+
     // Access real-time results
     EmaResult emaResult = emaHub.Results[^1];
     RsiResult rsiResult = rsiHub.Results[^1];

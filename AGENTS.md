@@ -1,10 +1,10 @@
 # Stock Indicators for .NET
 
-This repository hosts **Stock Indicators for .NET**, the production source for the <a href="https://www.nuget.org/packages/FacioQuo.Stock.Indicators">FacioQuo.Stock.Indicators</a> NuGet package. The library offers financial market technical analysis indicators with a focus on accuracy, performance, and ergonomics for financial analytics.
+This repository is the production source for the [FacioQuo.Stock.Indicators](https://www.nuget.org/packages/FacioQuo.Stock.Indicators) NuGet package: financial market technical analysis indicators built for accuracy, performance, and ergonomics.
 
-- Multi-targets `net10.0`, `net9.0`, and `net8.0` with analyzers enabled for strict code quality.
-- Active development expands streaming indicator support — see [src/Common/AGENTS.md](src/Common/AGENTS.md) for the framework guidance before modifying stateful pipelines (BufferList or StreamHub).
-- Documentation at <a href="https://dotnet.stockindicators.dev">dotnet.stockindicators.dev</a> is sourced from the `docs/` content in this repository.
+- Multi-targets `net10.0`, `net9.0`, and `net8.0`, with analyzers enforcing strict code quality.
+- Every indicator ships in up to three styles: Series (batch), BufferList (incremental), and StreamHub (real-time).
+- The `docs/` folder is the source for [dotnet.stockindicators.dev](https://dotnet.stockindicators.dev).
 
 ## Primary directive
 
@@ -16,32 +16,29 @@ Provide financial market developers with mathematically exact, high-performance 
 2. Protect downstream users from silent numerical errors through comprehensive validation, deterministic warmup, and ≥ 98% test coverage — ensuring every deployment succeeds (not as important as #1)
 3. Ensure all three indicator styles — Series, Buffer, Stream — produce identical results, so developers can switch between batch and real-time APIs without concern for numerical differences (not as important as #2)
 
-## AI-first development model
+## Operating model
 
-This repository is optimized for AI agent contributions. Agents are the primary contributors; humans set direction, review, and validate outcomes.
+Agents are the primary contributors; humans set direction, make architectural decisions, and review outcomes.
 
-- **Agents**: infer and proceed autonomously, generate complete implementations (code + tests + docs) in one pass, execute quality gates before yielding, document assumptions
-- **Humans**: set strategic direction, make architectural decisions, review agent output, validate outcomes — not micromanage implementation
-- **Voice**: imperative, present tense; no historical context; outcome-focused
+- Infer and proceed autonomously; state the assumptions you made.
+- Deliver code, tests, and docs together in one pass, and run the quality gates before yielding.
 
-## Guiding principles
-
-This library follows six core principles that balance usability, performance, precision, and security: **Mathematical Precision** (non-negotiable), **Performance First** (critical), **Comprehensive Validation**, **Test-Driven Quality**, **Documentation Excellence**, and **Scope & Stewardship**.
-
-See [PRINCIPLES.md](docs/PRINCIPLES.md) for constitutional philosophy and rationale. This file (AGENTS.md) provides operational implementation guidance.
+[PRINCIPLES.md](docs/PRINCIPLES.md) holds the six project principles and their rationale; this file holds the operating rules.
 
 ## Repository layout
 
 ```plaintext
-(root)
-├── src/                   # Library source code
-│    ├── Common/           # Shared utilities, base classes, and common types
-│    ├── Indicators/       # Indicator implementations (a-b … t-z groups)
-│    └── Indicators.csproj # Main project file
-├── tests/                 # Unit, integration, performance, and simulation suites
-├── tools/                 # Performance benchmarks, baselines, and analysis scripts
-├── docs/                  # Public documentation site (VitePress)
-└── Stock.Indicators.sln   # Primary solution for src + tests
+.
+├── src/                    # Library source
+│   ├── Common/             # Streaming framework, catalog, shared types
+│   ├── Indicators/         # Indicators in a-b, c-d, e-j, k-q, r-s, t-z folders
+│   ├── Obsolete/           # Migration shims for renamed or removed APIs
+│   └── Indicators.csproj
+├── tests/                  # Unit, regression, public-API, integration tests
+├── tools/                  # Benchmarks, baselines, simulators, scripts
+├── docs/                   # Documentation site (VitePress)
+├── .agents/skills/         # Agent skills (.claude/skills links here)
+└── Stock.Indicators.sln
 ```
 
 ## Commands
@@ -50,101 +47,73 @@ See [PRINCIPLES.md](docs/PRINCIPLES.md) for constitutional philosophy and ration
 # Build
 dotnet build "Stock.Indicators.sln" -v minimal --nologo
 
-# Test (unit; integration tests run in CI only)
-dotnet test "Stock.Indicators.sln" --no-restore --nologo
+# Unit tests (excludes regression and integration categories)
+dotnet test tests/Library/Tests.Indicators.csproj --no-restore --nologo --settings tests/tests.unit.runsettings
 
-# Lint: .NET format
+# Lint and fix (run markdownlint from the repo root so its config loads)
 dotnet format --severity info --no-restore
-
-# Lint: Markdown
 npx markdownlint-cli2 --fix
-
-# All quality gates (abbreviated)
-dotnet format --no-restore && dotnet build && dotnet test --no-restore && npx markdownlint-cli2
 ```
 
-See the code-completion skill for the complete quality gates checklist, Roslynator commands, and VS Code task equivalents.
+The code-completion skill holds the full quality-gate sequence, Roslynator commands, and VS Code task names.
 
-## Code navigation
+## Skills
 
-The `csharp-ls` language server indexes every project in `Stock.Indicators.sln`. Resolve symbols through it rather than inferring structure from text search.
+Skills live in `.agents/skills/`; `.claude/skills` is a tracked symlink to that folder. Load the matching skill before working in its area.
 
-It is installed globally rather than from `dotnet-tools.json`, because language server clients spawn the bare binary from PATH. Run `dotnet tool install --global csharp-ls` if your environment did not.
+| Skill | Load when |
+| ----- | --------- |
+| code-completion | Finishing any implementation, bug fix, or refactor |
+| documentation | Adding or editing a page on the documentation site |
+| indicator-buffer | Implementing or changing a BufferList (`{Name}List`) indicator |
+| indicator-catalog | Creating or registering catalog listings (`{Name}.Catalog.cs`) |
+| indicator-series | Implementing or changing a Series indicator, or adding any new indicator |
+| indicator-stream | Implementing or changing a StreamHub (`{Name}Hub`) indicator |
+| markdown | Creating or editing any Markdown file |
+| performance-testing | Adding benchmarks or investigating performance regressions |
+| testing-standards | Writing or debugging tests |
+| vitepress | Changing the docs site's VitePress config, theme, or components |
 
-| Use the language server for | Use text search for |
-| --------------------------- | ------------------- |
-| Every caller of a public API member, before renaming or removing it | Literal strings, numeric constants, and test data |
-| Implementations of `IStreamHub`, `IBufferList`, and the `StreamHub/Providers/` base classes | Naming-convention sweeps across many files |
-| The Series, Buffer, and Stream surface for one indicator | Anything outside `.cs` files |
-| Resolved types and XML documentation at a call site | |
+## Folder guidance
 
-The language server reports what the solution *is*, not whether it compiles.
+Read a folder's AGENTS.md before working in it:
 
-## Skills for development
+- [src/AGENTS.md](src/AGENTS.md) — implementation constraints, NaN policy, result and facade conventions
+- [src/Common/AGENTS.md](src/Common/AGENTS.md) — streaming, buffer, and catalog framework invariants
+- [tests/AGENTS.md](tests/AGENTS.md) — test projects and commands
+- [docs/AGENTS.md](docs/AGENTS.md) — documentation site
+- [.agents/skills/AGENTS.md](.agents/skills/AGENTS.md) — skill authoring
+- [.github/AGENTS.md](.github/AGENTS.md) — workflows and GitHub configuration
 
-This repository uses Agent Skills (.agents/skills/) for domain-specific guidance. Skills are automatically loaded when relevant:
+## Tools
 
-| Skill | Description | When to use |
-| ----- | ----------- | ----------- |
-| indicator-series | Series indicator development - mathematical precision, validation patterns, test coverage | Implementing new Series indicators, validating calculations, structuring tests |
-| indicator-buffer | BufferList indicator development - incremental processing, interface selection, buffer management | Implementing BufferList indicators, choosing interfaces, managing state efficiently |
-| indicator-stream | StreamHub indicator development - implementation patterns, provider selection, state management | Implementing StreamHub indicators, choosing provider base classes, optimizing real-time processing |
-| indicator-catalog | Catalog entry creation and registration | Creating indicator catalog entries for automation |
-| performance-testing | Benchmarking with BenchmarkDotNet, regression detection | Adding performance tests, optimizing indicator performance |
-| code-completion | Quality gates checklist for completing code work | Before finishing any implementation, bug fix, or refactoring |
-| testing-standards | Test naming, FluentAssertions, Series parity | Writing comprehensive tests, debugging test failures |
-| documentation | Writing and updating VitePress indicator documentation pages | Adding a new indicator doc page, updating an existing one, structural consistency audits |
-| vitepress | VitePress documentation site development - configuration, routing, theme, components | Working on the docs/ site, VitePress config, or custom theme |
-| markdown | Markdown authoring, linting workflow, formatting rules, validation checklist | Creating or modifying any Markdown file |
+- The `csharp-ls` language server (enabled through the `csharp-lsp` plugin) indexes every project in `Stock.Indicators.sln`. Use it for callers, implementations, and resolved types; use text search for literals, naming sweeps, and non-`.cs` files. It reports structure, not whether the code compiles.
+  - Install it globally with `dotnet tool install --global csharp-ls` (the `Install: .NET tools` task does this). The plugin launches the bare `csharp-ls` command from PATH, so a local tool from `dotnet-tools.json` cannot serve it.
+- MCP servers in `.mcp.json`: microsoft-learn for .NET and C# guidance, context7 for third-party library docs, codacy for this repository's static analysis and coverage findings. Claude Code auto-approves only microsoft-learn and context7; codacy takes its token from a VS Code `${input:…}` prompt, which Claude Code does not expand.
+- Use the `gh` CLI for workflow runs, pull requests, and issues.
 
-Skills are defined in .agents/skills/ following the Agent Skills specification. `.claude/skills` is a tracked symlink to that folder. Edit skills in `.agents/skills/` only; never add files under `.claude/skills/`.
+## Pull requests
 
-## Folder-specific guidance
-
-Subfolder AGENTS.md files provide domain-specific context:
-
-- Documentation site: docs/AGENTS.md for VitePress development
-- Source code: src/AGENTS.md for implementation constraints
-- Test suite: tests/AGENTS.md for test organization
-
-## MCP tools guidance
-
-MCP servers configured in .mcp.json provide research and documentation lookup:
-
-- microsoft-learn/* - C# coding conventions, .NET best practices, performance optimization
-- context7/* - NuGet package dependencies and external libraries
-- codacy/* - static analysis findings and coverage for this repository
-
-Use the `gh` CLI for CI workflow runs, pull requests, and issues.
-
-Use MCP tools for external research, the language server for local symbol navigation, and direct file operations for local edits.
-
-## Pull request guidelines
-
-PR titles follow Conventional Commits format: `type: Subject` (≤65 characters, subject starts uppercase).
+PR titles follow Conventional Commits: `type: Subject`, ≤ 65 characters, subject starting uppercase — for example `feat: Add RSI indicator`.
 
 Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert, plan.
 
-Examples: `feat: Add RSI indicator`, `fix: Resolve MACD calculation error`, `docs: Update API documentation`
-
-Do not add "Co-authored-by" trailers to commit messages.
+Do not add `Co-authored-by` trailers to commit messages.
 
 ## Boundaries
 
-✅ Always run quality gates (format + build + test + markdownlint) before marking work complete
+✅ Always run the quality gates (format, build, test, markdownlint) before marking work complete
 
-✅ Always load the relevant skill before working in a domain area
+✅ Always keep Series results as canonical truth — fix Stream or Buffer to match, never the reverse
 
-✅ Always keep Series results as canonical truth — fix Stream/Buffer to match, not the reverse
+⚠️ Ask before renaming or removing any public API member — removal is a MAJOR-version change, and a rename keeps an `[Obsolete]` shim
 
-⚠️ Ask before renaming or removing any public API member — requires a MAJOR version bump
+⚠️ Ask before suppressing any compiler or linter warning — treat every warning as an error
 
-⚠️ Ask before suppressing any compiler or linting warning — treat all warnings as errors
+🚫 Never implement beyond what was asked — no tests of tests, no docs describing state that does not exist
 
-🚫 Never over-extrapolate an implementation — for example, never write tests of tests or write about non-existant state
+🚫 Never copy an indicator calculation from another implementation — cite the authoritative reference and implement from it
 
-🚫 Never duplicate indicator calculations from authoritative sources — cite and implement from reference
+🚫 Never merge without every quality gate passing, including for "minor" changes
 
-🚫 Never merge without all quality gates passing — no exceptions for "minor" changes
-
-🚫 Never embed transient or ephemeral plan-item IDs (e.g. `TC001`, `T203`, `G005`, `RG002`) in source files, tests, comments, commit messages, or PR titles. Track that kind of work in GitHub Issues instead — reference the issue number, not an internal ID.
+🚫 Never put ephemeral plan-item IDs (e.g. `TC001`, `T203`) in source, tests, comments, commit messages, or PR titles — reference the GitHub Issue instead

@@ -1,152 +1,53 @@
 # Benchmark patterns
 
-## File organization
+Use this when adding or editing a `[Benchmark]` method or a benchmark class in `tools/performance/`.
 
-| File | Purpose |
-| ---- | ------- |
-| `Perf.Series.cs` | Series-style benchmarks |
-| `Perf.Stream.cs` | Stream-style benchmarks |
-| `Perf.Buffer.cs` | Buffer-style benchmarks |
-| `Perf.StyleComparison.cs` | Cross-style comparisons |
-| `Perf.Utility.cs` | Utility function benchmarks |
+## Per-style suites
 
-## Benchmark class structure
+A new indicator adds one line to each style suite it supports, in alphabetical order, matching its neighbors:
 
-```csharp
-[MemoryDiagnoser]
-[ShortRunJob, WarmupCount(5), IterationCount(5)]
-public class SeriesIndicators
-{
-    private static readonly IReadOnlyList<Bar> q = Data.GetDefault();
+| File | Class | Method pattern |
+| ---- | ----- | -------------- |
+| `Perf.Series.cs` | `SeriesIndicators` | `[Benchmark] public void ToEmaBatch() => q.ToEma(20);` |
+| `Perf.Buffer.cs` | `BufferIndicators` | `[Benchmark] public EmaList EmaList() => q.ToEmaList(20);` |
+| `Perf.Stream.cs` | `StreamIndicators` | `[Benchmark] public object EmaHub() => barHub.ToEmaHub(20).Results;` |
+| `Perf.StyleComparison.cs` | `StyleComparison` | `EmaSeries()`, `EmaBuffer()`, `EmaStream()` triplet, below |
 
-    [Benchmark]
-    public void ToEmaBatch() => q.ToEma(14);
+- Series arguments equal the catalog default parameter values; Buffer and Stream arguments equal the Series ones.
+- Use the class fields: `q` (`Data.GetDefault()`, 502 bars), `n` (14), and, where declared, `o` (`Data.GetCompare()`, for two-series indicators such as Beta and Correlation).
+- `StreamIndicators` measures observer cost only: `GlobalSetup` prepopulates `barHub` and `barHubOther`, so each Stream benchmark builds a hub over an already-filled provider.
+- `detect-regressions.sh` matches results to baselines by class and method name and silently skips a method with no baseline entry, so a new or renamed benchmark goes unchecked until the next `perf.sh reset`.
 
-    [Benchmark]
-    public void ToSmaBatch() => q.ToSma(20);
-
-    [Benchmark]
-    public void ToRsiBatch() => q.ToRsi(14);
-}
-```
-
-## Stream benchmark with hub setup
+## Style comparison triplet
 
 ```csharp
-[MemoryDiagnoser]
-[ShortRunJob, WarmupCount(5), IterationCount(5)]
-public class StreamIndicators
-{
-    private static readonly IReadOnlyList<Bar> bars = Data.GetDefault();
-    private static readonly BarHub barHub = new();
+[BenchmarkCategory("Ema")]
+[Benchmark(Baseline = true)]
+public IReadOnlyList<EmaResult> EmaSeries() => bars.ToEma(20);
 
-    [GlobalSetup]
-    public void Setup()
-    {
-        foreach (Bar bar in bars)
-            barHub.Add(bar);
-    }
+[BenchmarkCategory("Ema")]
+[Benchmark]
+public IReadOnlyList<EmaResult> EmaBuffer() => bars.ToEmaList(20);
 
-    [Benchmark]
-    public object EmaHub() => barHub.ToEmaHub(14).Results;
-
-    [Benchmark]
-    public object SmaHub() => barHub.ToSmaHub(20).Results;
-}
+[BenchmarkCategory("Ema")]
+[Benchmark]
+public IReadOnlyList<EmaResult> EmaStream() => barHub.ToEmaHub(20).Results;
 ```
 
-## Buffer benchmark with collection initializer
+The class groups by category, so the report shows each Buffer and Stream ratio against its own Series baseline; compare those ratios with the [performance targets](../SKILL.md#targets).
 
-```csharp
-[MemoryDiagnoser]
-[ShortRunJob, WarmupCount(5), IterationCount(5)]
-public class BufferIndicators
-{
-    private static readonly IReadOnlyList<Bar> bars = Data.GetDefault();
+## Configuration
 
-    [Benchmark]
-    public EmaList EmaList() => new(14) { bars };
+`Configurations/DefaultConfig.cs` applies to every run: GitHub Markdown and full JSON exporters, the memory diagnoser with GC columns, and method-name ordering. Do not add `[MemoryDiagnoser]` or exporters to a class.
 
-    [Benchmark]
-    public SmaList SmaList() => new(20) { bars };
-}
-```
+Job attributes sit on each class and define comparability with the committed baselines: `[ShortRunJob, WarmupCount(5), IterationCount(5)]` on the per-style suites, `[ShortRunJob]` alone on `Utility`, `StreamObserver`, and the diagnostics, and `[Config(typeof(MicrotestConfig))]` on the `UtilityNullMath` and `UtilityStdDev` microbenchmarks. Changing a baselined suite's job attributes invalidates its baselines and requires `perf.sh reset`.
 
-## Style comparison benchmark
+## Filters
 
-```csharp
-[MemoryDiagnoser]
-[ShortRunJob, WarmupCount(5), IterationCount(5)]
-public class EmaStyleComparison
-{
-    private const int LookbackPeriods = 14;
-    private static readonly IReadOnlyList<Bar> bars = Data.GetDefault();
-    private static readonly BarHub barHub = new();
-
-    [GlobalSetup]
-    public void Setup()
-    {
-        foreach (Bar bar in bars)
-            barHub.Add(bar);
-    }
-
-    [Benchmark(Baseline = true)]
-    public IReadOnlyList<EmaResult> Series() => bars.ToEma(LookbackPeriods);
-
-    [Benchmark]
-    public IReadOnlyList<EmaResult> Buffer() => new EmaList(LookbackPeriods) { bars };
-
-    [Benchmark]
-    public IReadOnlyList<EmaResult> Stream() => barHub.ToEmaHub(LookbackPeriods).Results;
-}
-```
-
-## Running specific benchmarks
+Run from `tools/performance`. BenchmarkDotNet matches `--filter` globs against `Namespace.Class.Method`:
 
 ```bash
-# Single indicator (Series benchmarks carry a `Batch` suffix; Stream use `Hub`)
-dotnet run -c Release -- --filter "*.ToEmaBatch"
-
-# All EMA benchmarks
-dotnet run -c Release -- --filter "*Ema*"
-
-# Style category
-dotnet run -c Release -- --filter "*Stream*"
-
-# Multiple indicators
-dotnet run -c Release -- --filter "*.ToEmaBatch" --filter "*.ToSmaBatch"
+dotnet run -c Release -- --filter "*.ToEmaBatch"                       # one Series method
+dotnet run -c Release -- --filter "Performance.BufferIndicators.*Ema*"  # one indicator, one style
+dotnet run -c Release -- --filter "*.ToEmaBatch" "*.ToSmaBatch"         # several patterns
 ```
-
-## Interpreting results
-
-```text
-|     Method |     Mean |   Error |  StdDev |   Median | Allocated |
-|----------- |---------:|--------:|--------:|---------:|----------:|
-|     Series |  25.3 μs | 0.50 μs | 0.47 μs |  25.1 μs |   12.8 KB |
-|     Buffer |  28.7 μs | 0.57 μs | 0.64 μs |  28.5 μs |   14.2 KB |
-|     Stream |  32.1 μs | 0.63 μs | 0.70 μs |  31.9 μs |   16.1 KB |
-```
-
-**Ratio analysis**:
-
-- Buffer/Series: 28.7/25.3 = 1.13x (within 1.2x target ✅)
-- Stream/Series: 32.1/25.3 = 1.27x (within 1.5x target ✅)
-
-## Memory profiling
-
-Add `[MemoryDiagnoser]` to see allocations:
-
-- **Allocated**: Total bytes allocated per operation
-- Target: Minimize allocations in hot paths
-- Watch for: Large object heap allocations (> 85KB)
-
-## Regression detection workflow
-
-Use `perf.sh` (see [benchmarking.md](../../../../tools/performance/benchmarking.md)):
-
-1. Establish baselines after stable, verified perf work: `perf.sh reset`
-   (runs the baseline suite and writes both `-report-full.json` and
-   `-report-github.md` per suite into `baselines/`).
-2. After changes, check with `perf.sh evaluate` (full) or
-   `perf.sh spot <name>` (targeted).
-3. Investigate any regression above the threshold (default 10%).

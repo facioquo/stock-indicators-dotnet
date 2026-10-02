@@ -1,178 +1,56 @@
 # Performance patterns
 
-## Performance target
+Use this when writing or optimizing a hub's `ToIndicator`, or when a Stream benchmark shows a hub far slower than its Series counterpart. The performance-testing skill owns the overhead targets and how to write and run benchmarks.
 
-**Goal**: StreamHub ≤ 1.5x slower than Series (batch) implementation.
+Spend optimization effort on per-tick work that grows with history length. Observer notification, locking, and cache management are a fixed per-tick cost of the framework, not the indicator's to remove.
 
-## Anti-pattern: O(n²) recalculation
+## Anti-pattern: recomputing history
 
-**Impact**: 1000x slowdown for large datasets
+Re-running the Series calculation on a growing subset makes each tick O(n), so the stream is O(n²):
 
 ```csharp
-// WRONG - O(n²) complexity
-protected override (RsiResult result, int index) ToIndicator(IReusable item, int? indexHint)
+// WRONG
+List<IReusable> subset = [];
+for (int k = 0; k <= i; k++)
 {
-    int i = indexHint ?? ProviderCache.IndexOf(item, true);
-
-    // Building subset and recalculating ENTIRE history every tick
-    List<IReusable> subset = [];
-    for (int k = 0; k <= i; k++)
-    {
-        subset.Add(ProviderCache[k]);
-    }
-
-    // O(n) calculation on O(n) history = O(n²)
-    IReadOnlyList<RsiResult> seriesResults = subset.ToRsi(LookbackPeriods);
-    rsi = seriesResults[seriesResults.Count - 1]?.Rsi;
-
-    return (new RsiResult(item.Timestamp, rsi), i);
+    subset.Add(ProviderCache[k]);
 }
+IReadOnlyList<RsiResult> seriesResults = subset.ToRsi(LookbackPeriods);
 ```
 
-**CORRECT**: Maintain incremental state or reference cache:
+Use the previous result from `Cache` instead (`EmaHub`):
 
 ```csharp
-// CORRECT - O(1) per tick using cache reference
-protected override (EmaResult result, int index) ToIndicator(IReusable item, int? indexHint)
-{
-    int i = indexHint ?? ProviderCache.IndexOf(item, true);
-
-    double ema = i >= LookbackPeriods - 1
-        ? Cache[i - 1].Ema is not null
-            // normal: reference previous result from cache
-            ? Ema.Increment(K, Cache[i - 1].Value, item.Value)
-            // re/initialize as SMA
-            : Sma.Increment(ProviderCache, LookbackPeriods, i)
-        : double.NaN;
-
-    return (new EmaResult(item.Timestamp, ema.NaN2Null()), i);
-}
+double ema = i >= LookbackPeriods - 1
+    ? Cache[i - 1].Ema is not null
+        ? Ema.Increment(K, Cache[i - 1].Value, item.Value)  // O(1)
+        : Sma.Increment(ProviderCache, LookbackPeriods, i)   // O(lookback) re/initialize
+    : double.NaN;
 ```
 
-**Note**: Prefer referencing `Cache[i - 1]` instead of storing duplicate state when the previous result is available.
+## Pattern: incremental state in fields
 
-## Anti-pattern: O(n) window scans
-
-**Impact**: 20x slowdown for window-based indicators
+When the previous result does not carry enough to continue, keep the running quantity in a field, update it once per tick, and restore it in `RollbackState`. `RsiHub` keeps Wilder averages inline:
 
 ```csharp
-// WRONG - O(n) linear scan every tick
-decimal highHigh = decimal.MinValue;
-for (int p = i - LookbackPeriods; p < i; p++)
-{
-    if (ProviderCache[p].High > highHigh)
-        highHigh = ProviderCache[p].High;
-}
+_avgGain = ((_avgGain * (LookbackPeriods - 1)) + gain) / LookbackPeriods;
+_avgLoss = ((_avgLoss * (LookbackPeriods - 1)) + loss) / LookbackPeriods;
 ```
 
-**CORRECT**: Use RollingWindow utilities:
+Compute constants such as smoothing factors once in the constructor (`K` in `EmaHub`).
 
-```csharp
-// CORRECT - O(1) amortized operations
-private readonly RollingWindowMax<decimal> _highWindow;
-private readonly RollingWindowMin<decimal> _lowWindow;
+## Pattern: bounded windows
 
-internal DonchianHub(IBarProvider<IBar> provider, int lookbackPeriods)
-    : base(provider)
-{
-    _highWindow = new RollingWindowMax<decimal>(lookbackPeriods);
-    _lowWindow = new RollingWindowMin<decimal>(lookbackPeriods);
-    Reinitialize();
-}
+For highest/lowest over a lookback window, keep the window in a `CircularDoubleBuffer` (`src/Common/StreamHub/CircularDoubleBuffer.cs`) instead of indexing back through `ProviderCache`. `Add` is O(1) with no allocation; `GetMax`/`GetMin` scan the filled entries, O(window), which is fast for small windows. `DonchianHub`, `WilliamsRHub`, `StochRsiHub`, and `IchimokuHub` use it.
 
-protected override (DonchianResult result, int index) ToIndicator(IBar item, int? indexHint)
-{
-    // O(1) amortized add operation
-    _highWindow.Add(item.High);
-    _lowWindow.Add(item.Low);
+- Declare the field without `readonly`: the buffer is a mutable struct.
+- `GetMax`/`GetMin` return `NaN` while empty.
 
-    // O(1) max/min retrieval
-    decimal highHigh = _highWindow.Max;
-    decimal lowLow = _lowWindow.Min;
+For a rolling sum or average, keep a `Queue<double>` updated with the internal `Update`/`UpdateWithDequeue` extensions (`src/Common/BufferLists/BufferListUtilities.cs`); `SmaHub` is the reference.
 
-    return (new DonchianResult(item.Timestamp, highHigh, lowLow), indexHint ?? 0);
-}
-```
+## Checklist
 
-## Wilder's smoothing helper
-
-**Use case**: RSI, CMO, ATR, ADX, SMMA, Alligator smoothing
-
-```csharp
-// Formula: smoothedValue = ((prevSmoothed × (period - 1)) + currentValue) / period
-
-public static double WilderSmoothing(double prevSmoothed, double currentValue, int period)
-    => ((prevSmoothed * (period - 1)) + currentValue) / period;
-
-// Usage:
-_avgGain = Smoothing.WilderSmoothing(_avgGain, gain, LookbackPeriods);
-```
-
-## EMA incremental pattern
-
-**Use case**: Any exponential moving average calculation
-
-```csharp
-// Calculate multiplier once in constructor
-private readonly double _multiplier;
-
-internal EmaHub(IChainProvider<IReusable> provider, int lookbackPeriods)
-    : base(provider)
-{
-    _multiplier = 2.0 / (lookbackPeriods + 1);
-    Reinitialize();
-}
-
-// O(1) EMA update
-double ema = (_multiplier * (currentValue - _prevEma)) + _prevEma;
-```
-
-## Running sum pattern
-
-**Use case**: SMA, standard deviation components
-
-```csharp
-private double _runningSum;
-private readonly Queue<double> _buffer;
-
-protected override (SmaResult result, int index) ToIndicator(IReusable item, int? indexHint)
-{
-    double value = item.Value;
-
-    if (_buffer.Count == LookbackPeriods)
-    {
-        _runningSum -= _buffer.Dequeue();
-    }
-
-    _buffer.Enqueue(value);
-    _runningSum += value;
-
-    double sma = _runningSum / _buffer.Count;
-    return (new SmaResult(item.Timestamp, sma), indexHint ?? 0);
-}
-```
-
-## Performance checklist
-
-- [ ] No Series method calls inside ToIndicator
-- [ ] No loops scanning provider cache on every tick
-- [ ] State variables maintained incrementally
-- [ ] RollingWindow utilities for max/min operations
-- [ ] Multipliers and constants calculated once in constructor
-- [ ] Memory allocations minimized in hot path
-
-## Benchmark validation
-
-Add benchmark to `tools/performance/Perf.Stream.cs`:
-
-```csharp
-[Benchmark]
-public object MyIndicatorHub() => barHub.ToMyIndicatorHub(14).Results;
-```
-
-Run benchmarks:
-
-```bash
-cd tools/performance
-dotnet run -c Release -- --filter "*.MyIndicatorHub"
-```
+- No Series method call and no loop from index 0 inside `ToIndicator`.
+- Any loop in `ToIndicator` is bounded by a lookback length, and runs only at initialization or re-initialization where possible.
+- Constants are computed in the constructor.
+- No per-tick allocation of lists, arrays, or LINQ pipelines.

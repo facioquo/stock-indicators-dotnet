@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "Stock Indicators for .NET documentation",
   "type": "module",
-  "packageManager": "pnpm@12.6.0",
+  "packageManager": "pnpm@12.8.1",
   "engines": {
     "node": ">=24"
   },
   "scripts": {
-    "clean": "rm -rf node_modules dist .vitepress/dist .vitepress/cache _site && rm -f pnpm-lock.yaml package-lock.json yarn.lock",
+    "cleanup": "pnpm clean && rm -rf dist .vitepress/dist .vitepress/cache _site && rm -f pnpm-lock.yaml package-lock.json yarn.lock",
     "docs:dev": "vitepress dev",
     "docs:build": "vitepress build",
     "docs:preview": "vitepress preview",
@@ -24,11 +24,11 @@
     "@octokit/rest": "^22.0.1",
     "@playwright/test": "^1.63.0",
     "@types/node": "^26",
-    "sass-embedded": "^1.105.0",
+    "sass-embedded": "^1.105.1",
     "vitepress": "2.0.0-alpha.20",
     "vitepress-plugin-llms": "1.14.0",
     "vue": "^3.5.43",
-    "wrangler": "^4.137.0"
+    "wrangler": "^4.146.0"
   },
   "dependencies": {
     "@facioquo/indy-charts": "^0.10.0",

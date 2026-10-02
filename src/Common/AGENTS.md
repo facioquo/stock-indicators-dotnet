@@ -1,109 +1,65 @@
-# Common framework code
+# Common framework
 
-## Purpose of this file
-
-This file (AGENTS.md) carries the **operational guidance for AI agents and contributors** editing files in `src/Common/`: framework-level invariants, repo-specific file locations, registration conventions, and boundaries. Its companion [README.md](README.md) carries the **folder-level overview and shared policies** (NaN handling, performance pointers) for anyone browsing the source on GitHub. The two files are deliberately non-overlapping — keep behavioral rules here and the descriptive overview there.
-
-This folder holds the streaming framework (`StreamHub/`, `BufferLists/`), the catalog system (`Catalog/`), core types (`Bars/`, `TradeTicks/`, `Reusable/`), and shared utilities.
-
-Stateful changes here (cache, rollback, pruning, notification) must preserve the framework invariants documented below. Load the relevant skill first for the portable patterns.
-
-## Skills to load
+This folder holds the streaming framework (`StreamHub/`, `BufferLists/`), the catalog (`Catalog/`), core types (`Bars/`, `TradeTicks/`, `Reusable/`), and shared utilities. [README.md](README.md) is the folder overview; this file holds the framework invariants that a change here must preserve.
 
 | Working on | Load |
 | ---------- | ---- |
-| `StreamHub/`, `Bars/Bar.StreamHub.cs`, `Bars/*.AggregatorHub.cs`, any `**/*.StreamHub.cs` | `#skill:indicator-stream` |
-| `BufferLists/`, any `**/*.BufferList.cs` | `#skill:indicator-buffer` |
-| `Catalog/`, any `**/*.Catalog.cs` | `#skill:indicator-catalog` |
-| `Bars/`, new aggregator hubs | `#skill:indicator-stream` + sections below |
+| `StreamHub/`, `Bars/`, `TradeTicks/`, any `{Name}Hub.cs` | indicator-stream skill |
+| `BufferLists/`, any `{Name}List.cs` | indicator-buffer skill |
+| `Catalog/`, any `{Name}.Catalog.cs` | indicator-catalog skill |
 
-Skills carry the portable patterns. The sections below carry the repository-specific specifics the skills intentionally do not duplicate.
+## Self-rooted source hubs
 
-## Streaming framework specifics
+`BarHub` and `TradeTickHub` originate a stream, so they bootstrap their base class with the internal `BaseProvider<T>` sentinel (`StreamHub/Providers/BaseProvider.cs`).
 
-### Self-rooted source hubs
+- The sentinel has an empty `Results`, throws on `Subscribe` and `EndTransmission`, and no-ops on `Unsubscribe`.
+- Its `Properties` set bit 0 (not an observer) with mask `0b11111110`, so hubs downstream of it still observe.
+- It is a stopgap until a dedicated `StreamSource<T>` root exists; do not derive anything else from it.
 
-Hubs that originate a stream (no upstream provider) bootstrap their base class with an inert `BaseProvider<T>` sentinel. The sentinel:
+## Aggregator hubs
 
-- Lives at `src/Common/StreamHub/Providers/BaseProvider.cs`
-- Carries no cache (`Results` is `Array.Empty<T>().AsReadOnly()`)
-- Throws on `Subscribe(...)` and is a no-op on `Unsubscribe`/`EndTransmission`
-- Masks `Properties` bit 0 (`0b11111110`) so downstream hubs become proper observers even though the sentinel itself is not
+`BarAggregatorHub` and `TradeTickAggregatorHub` quantize bars or ticks into larger periods.
 
-Canonical examples:
+- Both derive from `BarProvider<TIn, IBar>` and take a `BarInterval` or `TimeSpan` plus an optional `fillGaps` flag.
+- They reject `BarInterval.Month`; a custom period uses the `TimeSpan` overload.
+- They rely on the standard `RollbackState(int)` semantics so out-of-order input rebuilds correctly.
 
-- `src/Common/Bars/BarHub.cs` — `BarHub` (default IBar source)
-- `src/Common/TradeTicks/TradeTickHub.cs` — `TradeTickHub` (default ITradeTick source)
+Extend this pattern for a new quantizer instead of writing bespoke bucketing.
 
-`BaseProvider<T>` is acknowledged in its source comments as a workaround pending a cleaner `StreamSource<T>` root class. Do not extend `BaseProvider<T>` beyond the existing self-rooted sources.
+## Thread safety
 
-### Aggregator hubs
+`StreamHub<TIn, TOut>` (`StreamHub/StreamHub.cs`) holds the private `CacheLock` monitor for every cache mutation.
 
-`Bar.AggregatorHub.cs` and `TradeTick.AggregatorHub.cs` quantize incoming bars/ticks into larger time periods. They:
+- Rebuild, `RemoveAt`, and provider-prune handling notify observers inside `CacheLock`, so nothing is added between a cache change and its notification. Never release the lock before notifying.
+- While `Rebuild` replays provider items, `_isRebuilding` forces `Act.Add` in `AppendCache` instead of a recursive rebuild; observer cascading still happens. Never bypass the flag.
+- `Results` is a live read-only view of the cache, not a snapshot: enumerating it during a concurrent add throws `InvalidOperationException`. Consumers that iterate while upstream may emit call `Snapshot()`, which copies the cache under the lock.
+- `ToIndicator` runs under the lock (via `OnAdd`), so reading `Cache[i - 1]` there is safe.
 
-- Derive from `BarProvider<TIn, IBar>`
-- Accept a `BarInterval` (or raw `TimeSpan`) plus an optional `fillGaps` flag
-- Emit closed bars at period boundaries; reject `BarInterval.Month` (use `TimeSpan` overload for custom periods)
-- Inherit the standard `RollbackState(int)` semantics so out-of-order ticks reconstruct correctly
+## `RollbackState(int restoreIndex)` contract
 
-When implementing a new quantizer, prefer extending the aggregator pattern over writing bespoke bucketing.
+The base computes `restoreIndex` as the last `ProviderCache` index to keep (`IndexGte(timestamp) - 1`, or -1 to reset all state), then calls `RollbackState`.
 
-### Thread safety contract
+- It runs **before** the base removes result-cache entries past `restoreIndex` and before the replay re-emits items from `restoreIndex + 1`.
+- An override may read `ProviderCache[0..restoreIndex]` to rebuild state; it never re-emits or mutates the result cache.
+- Every hub with state beyond the cache overrides it.
 
-`StreamHub<TIn, TOut>` (`src/Common/StreamHub/StreamHub.cs`) is thread-safe by holding `CacheLock` (a private `object` monitor) for the duration of every cache-mutating operation. Two invariants matter when subclassing:
+## BufferList
 
-1. **Observer notification happens inside `CacheLock`.** `Rebuild` and `RemoveAt` call `NotifyObserversOnRebuild` / `NotifyObserversOnPrune` inside the lock specifically to prevent new items from being added between cache mutation and downstream notification. Subclasses must not release the lock before notifying.
-2. **The `_isRebuilding` flag suppresses self-rebuild during `Rebuild`.** While `Rebuild` is replaying provider items through `OnAdd`/`AppendCache`, the flag forces `Act.Add` instead of recursing into another `Rebuild`. Observer cascading is still allowed and desired. Do not bypass this flag from subclass code.
+`BufferList<TResult>` (`BufferLists/BufferList.cs`) is a standalone `IReadOnlyList` for synchronous incremental compute; `MaxListSize` prunes it for long-running use. `IIncrementFromChain` adds `Add(DateTime, double)` and `Add(IReusable)` overloads for chainable single-value indicators; `IIncrementFromBar` adds `Add(IBar)` for indicators that need OHLCV.
 
-`Results` returns `Cache.AsReadOnly()` — a **live read-only view**, not an immutable snapshot. The view forbids mutation (closing #1585's deviant-mutation hole) but enumeration during a concurrent `Add` will throw `InvalidOperationException`. Consumers iterating while upstream may emit should call `Snapshot()` first. Subclass code accessing `Cache[i-1]` directly is safe because it executes inside `ToIndicator`, which holds the lock transitively via `OnAdd`.
+## Catalog
 
-`Snapshot()` (on `StreamHub<TIn, TOut>`, surfaced via `IStreamObservable<T>.Snapshot()`) returns an immutable copy taken under `CacheLock`.
+`PopulateCatalog()` in `Catalog/Catalog.Listings.cs` registers every listing into the private `_listings` field. Two tests in `tests/Library/Common/Catalog/` pin the result:
 
-### `RollbackState(int restoreIndex)` index contract
-
-Implemented by the stateful hubs. The base contract is:
-
-- The base class computes `restoreIndex` via `IndexBefore` **before** calling `RollbackState`
-- `restoreIndex` is the last `ProviderCache` index to **preserve**, or `-1` to reset all state
-- Existing cache entries at `[restoreIndex + 1, Count)` have already been removed before this method is invoked
-- The item at the rollback timestamp will be recalculated via normal `ToIndicator` processing — do not re-emit it from `RollbackState`
-
-When adding new hubs, follow the canonical `RollbackState` pattern in `src/Common/StreamHub/StreamHub.cs` and the examples in `references/rollback-patterns.md` of the indicator-stream skill.
-
-## BufferList framework specifics
-
-`BufferList<TResult>` (`src/Common/BufferLists/BufferList.cs`) is a standalone `IReadOnlyList` for synchronous incremental compute. `MaxListSize` enables pruning when long-running. Two interfaces drive incremental adds:
-
-- `IIncrementFromChain` — `Add(DateTime, double)`, `Add(IReusable)`, `Add(IReadOnlyList<IReusable>)` — for chainable single-value indicators
-- `IIncrementFromBar` — `Add(IBar)`, `Add(IReadOnlyList<IBar>)` — for indicators requiring full OHLCV
-
-## Catalog framework specifics
-
-`PopulateCatalog()` in `src/Common/Catalog/Catalog.Listings.cs` registers all indicator listings. Convention enforced by the existing file:
-
-- Indicators grouped alphabetically by full name
-- Each indicator block has a comment header `// {ABBR} ({Full Name})`
-- Within each block: **Buffer → Series → Stream** registration order
-- Blank line between indicator blocks
-
-Backing field in this repository is `_listings` (private static `List<IndicatorListing>`). The catalog test `tests/Library/Common/Catalog/Catalog.Metrics.Tests.cs` asserts the exact per-style listing counts — update it when adding or removing a listing.
-
-## NaN handling policy
-
-See the parent [src/AGENTS.md](../AGENTS.md#nan-handling-policy) for the canonical policy. In this folder specifically: rolling-window utilities (`CircularDoubleBuffer`, `RollingWindowMax/Min`) accept NaN values and return NaN for Min/Max when NaN is present in the window.
+- `Catalog.Metrics.Tests.cs` asserts the exact per-style listing counts; update it whenever a listing is added or removed.
+- `Catalog.Shape.Tests.cs` compares the catalog against `tests/Library/TestData/catalog/shape.snapshot.txt`; regenerate it with `UPDATE_CATALOG_SHAPE=1` set when listings change deliberately.
 
 ## Boundaries
 
-✅ Always preserve the `CacheLock` / `_isRebuilding` invariants when subclassing `StreamHub`
+✅ Always override `RollbackState(int)` when a hub keeps state outside its cache
 
-✅ Always provide a `RollbackState(int)` override when adding stateful fields to a hub
+⚠️ Ask before adding a `#pragma warning disable` here. The only one in the streaming framework, `CA1031, RCS1075` around observer notification in `StreamHub/StreamHub.Observable.cs`, is the observer-isolation catch-all; keep `BufferLists/` pragma-free
 
-✅ Always register new indicators in `Catalog.Listings.cs` in Buffer → Series → Stream order
+🚫 Never mutate `Cache` from a subclass except through `AppendCache`, `RemoveRange`, or `RemoveAt` — and only a root hub accepts direct `Add`, `RemoveAt`, `RemoveRange`, or `Reinitialize`; subscribed hubs throw
 
-⚠️ Ask before adding new derivations of `BaseProvider<T>` — the class is a documented workaround; current usage is limited to `BarHub` and `TradeTickHub`
-
-⚠️ Ask before adding `#pragma warning disable` directives in this folder — existing suppressions are deliberate and tightly scoped (the load-bearing one is `CA1031, RCS1075` around the observer-isolation notification region in `StreamHub/StreamHub.Observable.cs`, where catching the general `Exception` and the deliberate empty catch are required for the observer-isolation boundary). New pragmas require explicit justification; prefer fixing the underlying issue, and keep `BufferLists/` pragma-free
-
-🚫 Never expose `Cache` mutation from a subclass — go through `AppendCache`, `RemoveRange`, or `RemoveAt`
-
-🚫 Never release `CacheLock` before notifying observers in `Rebuild` or `RemoveAt`
+🚫 Never derive from `BaseProvider<T>` beyond `BarHub` and `TradeTickHub`
