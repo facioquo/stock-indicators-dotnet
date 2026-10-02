@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class ElderRayBufferListTests : BufferListTestBase
+public class ElderRayBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const int lookbackPeriods = 13;
 
@@ -9,7 +9,7 @@ public class ElderRayBufferListTests : BufferListTestBase
        = Bars.ToElderRay(lookbackPeriods);
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         ElderRayList sut = new(lookbackPeriods);
 
@@ -20,7 +20,7 @@ public class ElderRayBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         ElderRayList sut = new(lookbackPeriods) { Bars };
 

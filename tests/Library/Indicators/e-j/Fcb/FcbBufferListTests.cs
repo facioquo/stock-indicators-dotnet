@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class FcbBufferListTests : BufferListTestBase
+public class FcbBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const int windowSpan = 2;
 
@@ -9,7 +9,7 @@ public class FcbBufferListTests : BufferListTestBase
        = Bars.ToFcb(windowSpan);
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         FcbList sut = new(windowSpan);
 
@@ -20,7 +20,7 @@ public class FcbBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         FcbList sut = new(windowSpan) { Bars };
 

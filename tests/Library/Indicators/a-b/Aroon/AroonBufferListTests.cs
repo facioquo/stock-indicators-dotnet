@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class AroonBufferListTests : BufferListTestBase
+public class AroonBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const int lookbackPeriods = 25;
 
@@ -30,7 +30,7 @@ public class AroonBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         AroonList sut = new(lookbackPeriods);
 
@@ -44,7 +44,7 @@ public class AroonBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         AroonList sut = new(lookbackPeriods) { Bars };
 

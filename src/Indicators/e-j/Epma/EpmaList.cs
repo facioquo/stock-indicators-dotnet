@@ -8,7 +8,8 @@ namespace FacioQuo.Stock.Indicators;
 /// <b>Memory Management:</b> This implementation maintains a cache of all added values
 /// to support the EPMA calculation which requires global position indices. The cache
 /// is automatically pruned when it exceeds <see cref="MaxCacheSize"/> items, keeping
-/// only the minimum required for the lookback period plus a buffer.
+/// only the minimum required for the lookback period plus a buffer, and is trimmed
+/// with the list when <see cref="BufferList{TResult}.MaxListSize"/> pruning occurs.
 /// </para>
 /// </remarks>
 public class EpmaList : BufferList<EpmaResult>, IIncrementFromChain, IEpma
@@ -53,6 +54,11 @@ public class EpmaList : BufferList<EpmaResult>, IIncrementFromChain, IEpma
 
     /// <inheritdoc />
     public int LookbackPeriods { get; init; }
+
+    /// <summary>
+    /// Gets the quantity of values held in the internal cache.
+    /// </summary>
+    internal int CacheCount => _cache.Count;
 
     /// <inheritdoc />
     public void Add(DateTime timestamp, double value)
@@ -100,6 +106,19 @@ public class EpmaList : BufferList<EpmaResult>, IIncrementFromChain, IEpma
         _cacheOffset = 0;
         base.Clear();
     }
+
+    /// <summary>
+    /// Synchronizes pruning of the internal cache with the parent list.
+    /// </summary>
+    protected override void PruneList()
+    {
+        base.PruneList();
+
+        // Keep no more cache history than the list retains,
+        // but at least LookbackPeriods elements for calculations
+        TrimCache(Math.Max(LookbackPeriods, Count));
+    }
+
     /// <summary>
     /// Prunes the internal cache to prevent unbounded memory growth.
     /// Removes older data while preserving the minimum required periods for calculations.
@@ -111,9 +130,17 @@ public class EpmaList : BufferList<EpmaResult>, IIncrementFromChain, IEpma
             return;
         }
 
-        // Calculate how many items to remove
         // Keep at least LookbackPeriods elements for calculations
-        int removeCount = _cache.Count - LookbackPeriods;
+        TrimCache(LookbackPeriods);
+    }
+
+    /// <summary>
+    /// Removes the oldest cache elements, retaining the most recent <paramref name="keepCount"/>.
+    /// </summary>
+    /// <param name="keepCount">Quantity of most recent cache elements to retain.</param>
+    private void TrimCache(int keepCount)
+    {
+        int removeCount = _cache.Count - keepCount;
 
         if (removeCount > 0)
         {

@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class AdxBufferListTests : BufferListTestBase
+public class AdxBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const int lookbackPeriods = 14;
 
@@ -20,7 +20,7 @@ public class AdxBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         AdxList sut = new(lookbackPeriods);
 
@@ -34,7 +34,7 @@ public class AdxBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         AdxList sut = new(lookbackPeriods) { Bars };
 

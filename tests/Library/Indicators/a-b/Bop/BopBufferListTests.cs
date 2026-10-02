@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class BopBufferListTests : BufferListTestBase
+public class BopBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const int smoothPeriods = 14;
 
@@ -9,7 +9,7 @@ public class BopBufferListTests : BufferListTestBase
        = Bars.ToBop(smoothPeriods);
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         BopList sut = new(smoothPeriods);
 
@@ -23,7 +23,7 @@ public class BopBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         BopList sut = new(smoothPeriods) { Bars };
 

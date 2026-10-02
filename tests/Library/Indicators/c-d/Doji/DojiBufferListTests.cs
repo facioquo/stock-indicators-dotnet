@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class DojiBufferListTests : BufferListTestBase
+public class DojiBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const double maxPriceChangePercent = 0.1;
 
@@ -9,7 +9,7 @@ public class DojiBufferListTests : BufferListTestBase
        = Bars.ToDoji(maxPriceChangePercent);
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         DojiList sut = new(maxPriceChangePercent);
 
@@ -23,7 +23,7 @@ public class DojiBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         DojiList sut = Bars.ToDojiList(maxPriceChangePercent);
 

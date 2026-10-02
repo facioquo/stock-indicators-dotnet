@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class AtrStopBufferListTests : BufferListTestBase
+public class AtrStopBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const int lookbackPeriods = 21;
     private const double multiplier = 3;
@@ -11,7 +11,7 @@ public class AtrStopBufferListTests : BufferListTestBase
         = Bars.ToAtrStop(lookbackPeriods, multiplier, endType);
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         AtrStopList sut = new(lookbackPeriods, multiplier, endType);
 
@@ -25,7 +25,7 @@ public class AtrStopBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         AtrStopList sut = new(lookbackPeriods, multiplier, endType) { Bars };
 

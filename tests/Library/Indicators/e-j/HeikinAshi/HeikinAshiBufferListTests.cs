@@ -1,13 +1,13 @@
 namespace BufferLists;
 
 [TestClass]
-public class HeikinAshiBufferListTests : BufferListTestBase
+public class HeikinAshiBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private static readonly IReadOnlyList<HeikinAshiResult> series
        = Bars.ToHeikinAshi();
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         HeikinAshiList sut = [];
 
@@ -21,7 +21,7 @@ public class HeikinAshiBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         HeikinAshiList sut = Bars.ToHeikinAshiList();
 

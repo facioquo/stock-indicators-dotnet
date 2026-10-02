@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class KvoBufferListTests : BufferListTestBase
+public class KvoBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const int fastPeriods = 34;
     private const int slowPeriods = 55;
@@ -11,7 +11,7 @@ public class KvoBufferListTests : BufferListTestBase
        = Bars.ToKvo(fastPeriods, slowPeriods, signalPeriods);
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         KvoList sut = new(fastPeriods, slowPeriods, signalPeriods);
 
@@ -25,7 +25,7 @@ public class KvoBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         KvoList sut = Bars.ToKvoList(fastPeriods, slowPeriods, signalPeriods);
 

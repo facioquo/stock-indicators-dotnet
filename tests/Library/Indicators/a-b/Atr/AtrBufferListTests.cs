@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class AtrBufferListTests : BufferListTestBase
+public class AtrBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const int lookbackPeriods = 14;
 
@@ -9,7 +9,7 @@ public class AtrBufferListTests : BufferListTestBase
        = Bars.ToAtr(lookbackPeriods);
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         AtrList sut = new(lookbackPeriods);
 
@@ -23,7 +23,7 @@ public class AtrBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         AtrList sut = new(lookbackPeriods) { Bars };
 

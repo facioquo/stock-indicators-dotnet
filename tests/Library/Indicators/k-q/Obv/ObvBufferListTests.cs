@@ -1,12 +1,12 @@
 namespace BufferLists;
 
 [TestClass]
-public class ObvBufferListTests : BufferListTestBase
+public class ObvBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private static readonly IReadOnlyList<ObvResult> series = Bars.ToObv();
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         ObvList sut = [];
 
@@ -20,7 +20,7 @@ public class ObvBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         ObvList sut = Bars.ToObvList();
 

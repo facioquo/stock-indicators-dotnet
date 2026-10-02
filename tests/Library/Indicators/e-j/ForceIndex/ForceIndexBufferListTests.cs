@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class ForceIndexBufferListTests : BufferListTestBase
+public class ForceIndexBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const int lookbackPeriods = 2;
 
@@ -9,7 +9,7 @@ public class ForceIndexBufferListTests : BufferListTestBase
        = Bars.ToForceIndex(lookbackPeriods);
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         ForceIndexList sut = new(lookbackPeriods);
 
@@ -20,7 +20,7 @@ public class ForceIndexBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         ForceIndexList sut = new(lookbackPeriods) { Bars };
 

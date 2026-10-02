@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class ChaikinOscBufferListTests : BufferListTestBase
+public class ChaikinOscBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const int fastPeriods = 3;
     private const int slowPeriods = 10;
@@ -10,7 +10,7 @@ public class ChaikinOscBufferListTests : BufferListTestBase
        = Bars.ToChaikinOsc(fastPeriods, slowPeriods);
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         ChaikinOscList sut = new(fastPeriods, slowPeriods);
 
@@ -24,7 +24,7 @@ public class ChaikinOscBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         ChaikinOscList sut = new(fastPeriods, slowPeriods) { Bars };
 

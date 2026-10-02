@@ -1,7 +1,7 @@
 namespace BufferLists;
 
 [TestClass]
-public class UltimateBufferListTests : BufferListTestBase
+public class UltimateBufferListTests : BufferListTestBase, ITestBarBufferList
 {
     private const int shortPeriods = 7;
     private const int middlePeriods = 14;
@@ -28,7 +28,7 @@ public class UltimateBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBars_WithValidBars_IncrementsResults()
+    public void AddBar_IncrementsResults()
     {
         UltimateList sut = new(shortPeriods, middlePeriods, longPeriods);
 
@@ -42,7 +42,7 @@ public class UltimateBufferListTests : BufferListTestBase
     }
 
     [TestMethod]
-    public void AddBarsBatch_WithValidBars_IncrementsResults()
+    public void AddBarsBatch_IncrementsResults()
     {
         UltimateList sut = new(shortPeriods, middlePeriods, longPeriods) { Bars };
 
