@@ -494,7 +494,8 @@ export default defineConfig({
 
   cleanUrls: true,
 
-  // Git commit time per page; CI checks out full history for it
+  // Git commit time per page, for the sitemap's <lastmod>; custom.scss hides
+  // it on the page. CI checks out full history for it.
   lastUpdated: true,
 
   // Source-file rewrites (build-time path remaps).
