@@ -11,8 +11,6 @@ on:
       - .github/workflows/test-indicators-matrix.yml
   pull_request:
     paths:
-      - src/**
-      - tests/Library/**
       - .github/workflows/test-indicators-matrix.yml
     types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
