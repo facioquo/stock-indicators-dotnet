@@ -19,9 +19,9 @@
       },
       "Roslynator.Analyzers": {
         "type": "Direct",
-        "requested": "[5.0.0, )",
-        "resolved": "5.0.0",
-        "contentHash": "+J5kR/naCd62IwY2BG9P0QoHnJM8liBUFFAk6jga1t9s61JC3M+ofb3AY3wc73/pdROyKFCURqctQh8WRCIT/w=="
+        "requested": "[5.0.1, )",
+        "resolved": "5.0.1",
+        "contentHash": "sCZ0Di4B937wKa9pwKbdsE6Njr8A/FdCLw28+yDKyMaDZ/f8JWxcFn6NOCukzKhCG/eA6M2DbXlKkrPi0g0lIA=="
       },
       "Microsoft.OpenApi": {
         "type": "Transitive",
