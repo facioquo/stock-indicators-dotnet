@@ -11,8 +11,8 @@ hero:
       text: ← all categories
       link: /indicators/
     - theme: alt
-      text: price characteristics →
-      link: /indicators/price-characteristics
+      text: price trends →
+      link: /indicators/price-trends
 
 features:
 

@@ -78,6 +78,7 @@ CLAUDE.local.md
 .config/
 .angular/
 .codacy/
+.impeccable/
 .ruby-lsp/
 .tmp/
 .vitepress/cache/

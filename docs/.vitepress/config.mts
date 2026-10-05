@@ -53,6 +53,7 @@ gtag('config', 'G-7602GXEZ0R', { cookie_flags: 'SameSite=Lax; Secure' });`],
 // Shared top-level navigation — referenced once and reused in every sidebar context
 const siteNav = {
   text: 'Documentation',
+  collapsed: true,
   items: [
     { text: 'Getting started', link: '/guide/getting-started' },
     { text: 'Guide', link: '/guide/' },
@@ -115,7 +116,6 @@ export default defineConfig({
     },
 
     nav: [
-      { text: 'Home', link: '/' },
       {
         text: 'Guide',
         items: [
@@ -134,13 +134,8 @@ export default defineConfig({
           { text: 'Custom observers', link: '/guide/custom-observers' }
         ]
       },
-      {
-        text: 'Reference',
-        items: [
-          { text: 'Indicators', link: '/indicators' },
-          { text: 'Utilities', link: '/utilities/' },
-        ]
-      },
+      { text: 'Indicators', link: '/indicators', activeMatch: '^/indicators' },
+      { text: 'Utilities', link: '/utilities/', activeMatch: '^/utilities' },
       {
         text: 'AI tools',
         items: [
@@ -451,6 +446,11 @@ export default defineConfig({
           ]
         }
       ],
+    },
+
+    // Shown only on pages without a sidebar (home and hub pages)
+    footer: {
+      message: 'Released under the <a href="https://opensource.org/licenses/Apache-2.0">Apache 2.0 License</a>.'
     },
 
     socialLinks: [
