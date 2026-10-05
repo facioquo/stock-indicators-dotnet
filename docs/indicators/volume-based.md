@@ -10,6 +10,9 @@ hero:
     - theme: alt
       text: ← all categories
       link: /indicators/
+    - theme: alt
+      text: moving averages →
+      link: /indicators/moving-averages
 
 features:
 

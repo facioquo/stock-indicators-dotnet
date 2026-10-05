@@ -2,8 +2,8 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import { defineConfig, type DefaultTheme, type HeadConfig } from 'vitepress'
 import llmstxt, { copyOrDownloadAsMarkdownButtons } from 'vitepress-plugin-llms'
-import { identityBlock, readBuildInfo, SITE_URL, writeAgentArtifacts } from './agent-artifacts'
-import { pageRoute } from './routes'
+import { identityBlock, readBuildInfo, SITE_URL, writeAgentArtifacts } from './agent-artifacts.ts'
+import { pageRoute } from './routes.ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -506,6 +506,8 @@ export default defineConfig({
   },
 
   markdown: {
+    // ```prompt fences are copy-paste agent prompts; render as plain text
+    languageAlias: { prompt: 'txt' },
     config(md) {
       md.use(copyOrDownloadAsMarkdownButtons)
     }
@@ -538,6 +540,12 @@ export default defineConfig({
           rewrite: (path) => path.replace(/^\/chart-api-proxy/, '')
         }
       }
+    },
+    optimizeDeps: {
+      // The theme imports these, but Vite's startup scan only covers pages, so
+      // it would otherwise discover them on the first request and re-optimize
+      // mid-load, failing that page's dynamic import (it renders as a 404).
+      include: ['@facioquo/indy-charts', '@facioquo/indy-charts/vue']
     },
     ssr: {
       // `@facioquo/indy-charts` and its bundled deps must execute in the server

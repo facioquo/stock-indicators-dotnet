@@ -2,7 +2,7 @@ import { execSync } from 'child_process'
 import { createHash } from 'crypto'
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'fs'
 import path from 'path'
-import { markdownPath, pageRoute } from './routes'
+import { markdownPath, pageRoute } from './routes.ts'
 
 // Post-processes the agent-facing output of vitepress-plugin-llms so the
 // Markdown it emits is portable (no VitePress-only syntax), self-describing

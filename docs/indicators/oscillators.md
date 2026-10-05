@@ -10,6 +10,9 @@ hero:
     - theme: alt
       text: ← all categories
       link: /indicators/
+    - theme: alt
+      text: stop and reverse →
+      link: /indicators/stop-and-reverse
 
 features:
 

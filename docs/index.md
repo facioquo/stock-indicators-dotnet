@@ -38,11 +38,9 @@ Still on v2? See our [migration guide →](/migration/v3)
 Get started quickly with this coding agent prompt:
 
 ```prompt
-Read Stock Indicators for .NET documentation index from 
-[llms.txt](https://dotnet.stockindicators.dev/llms.txt)
-and its getting started guide.
-Help me install and use this FacioQuo.Stock.Indicators
-NuGet library to calculate my first indicator.
+Read https://dotnet.stockindicators.dev/llms.txt and its getting started guide,
+then help me install the FacioQuo.Stock.Indicators NuGet package
+and calculate my first indicator from my own price data.
 ```
 
 See [Agent setup](/guide/agent-setup) for more prompts and tips on working with coding agents.

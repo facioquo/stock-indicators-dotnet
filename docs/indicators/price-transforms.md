@@ -10,6 +10,9 @@ hero:
     - theme: alt
       text: ← all categories
       link: /indicators/
+    - theme: alt
+      text: price characteristics →
+      link: /indicators/price-characteristics
 
 features:
 

@@ -2,13 +2,16 @@
   "compilerOptions": {
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
     "target": "ESNext",
     "jsx": "preserve",
     "strict": true,
     "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "lib": ["ESNext", "DOM"],
+    "skipLibCheck": true,
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "types": ["vitepress/client", "node"],
     "paths": {
       "@/*": ["./.vitepress/*"]

@@ -5,7 +5,7 @@ import {
   OverlayChart,
   loadStaticQuotes,
   setupIndyCharts,
-  type Quote
+  type Bar
 } from '@facioquo/indy-charts'
 
 import type { ChartDataset, ScatterDataPoint } from 'chart.js'
@@ -42,7 +42,7 @@ function computeEma(closes: number[], period: number): number[] {
 }
 
 function buildEmaDataset(
-  quotes: Quote[],
+  quotes: Bar[],
   period: number
 ): ChartDataset<'line', ScatterDataPoint[]> {
   const ema = computeEma(quotes.map(q => q.close), period)
