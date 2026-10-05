@@ -7,8 +7,12 @@ on:
       - "v[0-9]*"
     paths:
       - src/**
+      - tests/Library/**
+      - .github/workflows/test-indicators-matrix.yml
   pull_request:
     paths:
+      - src/**
+      - tests/Library/**
       - .github/workflows/test-indicators-matrix.yml
     types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
@@ -57,17 +61,26 @@ jobs:
           cache: true
           cache-dependency-path: "**/packages.lock.json"
 
-      - name: Build library
+      - name: Restore test target
         run: >
-          dotnet build
+          dotnet restore tests/Library/Tests.Indicators.csproj
+          --property:TargetFramework=${{ env.TARGET_FRAMEWORK }}
+          --property:ContinuousIntegrationBuild=false
+          --property:RestoreLockedMode=false
+
+      - name: Build test target
+        run: >
+          dotnet build tests/Library/Tests.Indicators.csproj
+          --framework ${{ env.TARGET_FRAMEWORK }}
           --configuration Release
           --property:ContinuousIntegrationBuild=true
+          --no-restore
           -warnAsError
 
       - name: Test indicators
         run: >
-          dotnet test
+          dotnet test tests/Library/Tests.Indicators.csproj
           --configuration Release
           --settings tests/tests.unit.runsettings
-          --property:TestFramework="${{ env.TARGET_FRAMEWORK }}"
+          --framework ${{ env.TARGET_FRAMEWORK }}
           --no-build
