@@ -5,27 +5,34 @@ description: Get a coding agent up to speed on Stock Indicators for .NET, with a
 
 # Agent setup
 
-Paste this prompt into your coding agent (Claude, ChatGPT, Copilot, etc.) to have it read the documentation and help you get set up:
+Paste this prompt into your coding agent (Claude, ChatGPT, Copilot, etc.). It reads the documentation, installs the library, and helps you calculate your first indicator:
 
 ```prompt
-Read Stock Indicators for .NET documentation index from 
-[llms.txt](https://dotnet.stockindicators.dev/llms.txt)
-and its getting started guide.
-Help me install and use this FacioQuo.Stock.Indicators
-NuGet library to calculate my first indicator.
+Read https://dotnet.stockindicators.dev/llms.txt and its getting started guide,
+then help me install the FacioQuo.Stock.Indicators NuGet package
+and calculate my first indicator from my own price data.
 ```
 
 ## Work with a coding agent
 
-Open the documentation page relevant to your task and use **Copy page** beside its title. Paste the result into your coding agent with a specific request, such as:
+For later tasks, ask for something specific. Agents get better results when you also paste the relevant page, using **Copy page** beside its title. For example:
 
-> Install Stock Indicators for .NET and show me how to calculate a 20-period SMA from my existing price-bar type.
+```prompt
+Add IBar to my existing price-bar class so I can use it
+with Stock Indicators for .NET, then calculate a 20-period SMA.
+```
 
-> Compare Batch, Buffer, and Stream indicator styles for an application that processes live market data.
+```prompt
+Compare Batch, Buffer, and Stream indicator styles for an
+application that processes live market data.
+```
 
-> Find the indicator that measures trend strength, then provide a minimal C# example and explain its warmup requirements.
+```prompt
+Find the indicator that measures trend strength, then provide
+a minimal C# example and explain its warmup requirements.
+```
 
-Start with the [`/llms.txt`](/llms.txt) index and retrieve only the pages relevant to the task. Use [`/llms-full.txt`](/llms-full.txt), the complete documentation in one large file, only for broad analysis that needs most of the documentation; loading it for a routine question displaces your own code from the agent's context.
+Point agents at the [`/llms.txt`](/llms.txt) index so they fetch only the pages they need. Save [`/llms-full.txt`](/llms-full.txt), all the documentation in one large file, for broad analysis; for routine questions it crowds your own code out of the agent's context.
 
 ## Machine-readable documentation
 
