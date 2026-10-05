@@ -1,10 +1,19 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "enabledPlugins": {
-    "csharp-lsp@claude-plugins-official": true
-  },
   "enabledMcpjsonServers": [
     "context7",
     "microsoft-learn"
-  ]
+  ],
+  "enabledPlugins": {
+    "dotnet@dotnet-agent-skills": true
+  },
+  "extraKnownMarketplaces": {
+    "dotnet-agent-skills": {
+      "source": {
+        "source": "github",
+        "repo": "dotnet/skills"
+      },
+      "autoUpdate": true
+    }
+  }
 }
