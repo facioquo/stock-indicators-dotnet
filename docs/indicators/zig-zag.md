@@ -49,11 +49,11 @@ IReadOnlyList<ZigZagResult>
 - The first line segment starts after the first confirmed point; ZigZag values before the first confirmed point will be `null`.
 - The last line segment is an approximation as the direction is indeterminate.
 
-::: warning 🚩
-depending on the specified `endType`, the indicator cannot be initialized if the first `Bar` in `bars` has a `High`,`Low`, or `Close` value of 0 (zero).
+::: warning 🚩 Zero prices
+Depending on the specified `endType`, the indicator cannot be initialized if the first `Bar` in `bars` has a `High`,`Low`, or `Close` value of 0 (zero).
 :::
 
-::: warning ️🖌️ Repaint warning
+::: warning 🖌️ Repaint warning
 The last line segment will always be redrawn back to the last known pivot.  Do not attempt to calculate incremental values since previous values may change based on newer bars.
 :::
 

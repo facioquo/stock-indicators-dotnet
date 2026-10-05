@@ -50,8 +50,8 @@ IReadOnlyList<CmfResult>
 | `MoneyFlowVolume` | _`double`_ | Money Flow Volume |
 | `Cmf` | _`double`_ | Chaikin Money Flow = SMA of MFV |
 
-::: warning 🚩
-absolute values in MFV and CMF are somewhat meaningless.  Use with caution.
+::: warning 🚩 Relative values only
+Absolute values in MFV and CMF are somewhat meaningless.  Use with caution.
 :::
 
 ### Utilities

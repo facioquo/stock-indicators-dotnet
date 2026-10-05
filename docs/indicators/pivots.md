@@ -29,7 +29,7 @@ IReadOnlyList<PivotsResult> results =
 
 The total evaluation window size is `L+R+1`.
 
-::: note
+::: info
 The `maxTrendPeriods` parameter controls the lookback window for trend line calculations, not the number of results returned.
 :::
 

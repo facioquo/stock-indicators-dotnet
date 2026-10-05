@@ -64,11 +64,11 @@ IReadOnlyList<PivotPointsResult>
 - It does not return a single incremental indicator value.
 - The first window will have `null` values since there's not enough data to calculate.
 
-::: warning 🚩
+::: warning 🚩 Incomplete first window
 The second window may be inaccurate if the first window contains incomplete data.  For example, this can occur if you specify a `Month` window size and only provide 45 calendar days (1.5 months) of `bars`.
 :::
 
-::: warning ️🖌️ Repaint warning
+::: warning 🖌️ Repaint warning
 The last window is repainted when it does not contain a full window of data.
 :::
 

@@ -28,7 +28,7 @@ features:
       src: /assets/thumbs/indicators/fisher-transform.png
     link: /indicators/fisher-transform
 
-  - title: Heikin Ashi
+  - title: Heikin-Ashi
     details: Modified candlestick transform of price based on prior period price for smoothing
     icon:
       src: /assets/thumbs/indicators/heikin-ashi.png

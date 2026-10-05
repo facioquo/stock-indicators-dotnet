@@ -91,7 +91,7 @@ var results = barsEval
     .ToBeta(barsMarket.Use(CandlePart.HL2), ..);
 ```
 
-::: warning 🚩
+::: warning 🚩 Matching inputs required
 Both eval and market arguments must contain the same number of elements and be the results of a chainable indicator or `.Use()` method.
 :::
 

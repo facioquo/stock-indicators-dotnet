@@ -346,3 +346,14 @@ html:not(.dark) body {
 .VPDocFooter .last-updated {
   display: none;
 }
+
+// /indicators "Complete list": flow each category's links into columns so
+// the long single-column lists use the page width.
+.indicator-index ul {
+  columns: 3 14rem;
+  column-gap: 2rem;
+
+  li {
+    break-inside: avoid;
+  }
+}

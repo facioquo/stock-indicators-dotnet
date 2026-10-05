@@ -56,8 +56,8 @@ The first `S+100` periods will have decreasing magnitude, convergence-related pr
 | `Adl` | _`double`_ | Accumulation Distribution Line (ADL) |
 | `Oscillator` | _`double`_ | Chaikin Oscillator |
 
-::: warning 🚩
-absolute values in MFV, ADL, and Oscillator are somewhat meaningless.  Use with caution.
+::: warning 🚩 Relative values only
+Absolute values in MFV, ADL, and Oscillator are somewhat meaningless.  Use with caution.
 :::
 
 ### Utilities

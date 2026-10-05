@@ -69,7 +69,7 @@ var results = bars
     .ToCorrelation(barsMarket.Use(CandlePart.HL2),20);
 ```
 
-::: warning 🚩
+::: warning 🚩 Matching inputs required
 Both `barsA` and `barsB` arguments must contain the same number of elements and be the results of a chainable indicator or `.Use()` method.
 :::
 

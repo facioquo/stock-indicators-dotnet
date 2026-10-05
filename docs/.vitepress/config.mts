@@ -248,15 +248,15 @@ export default defineConfig({
           collapsed: true,
           items: [
             { text: 'Average Directional Index (ADX)', link: '/indicators/adx' },
-            { text: 'Aroon Indicator', link: '/indicators/aroon' },
+            { text: 'Aroon', link: '/indicators/aroon' },
             { text: 'ATR Trailing Stop', link: '/indicators/atr-stop' },
             { text: 'Directional Movement Index (DMI)', link: '/indicators/adx' },
             { text: 'Elder-ray Index', link: '/indicators/elder-ray' },
             { text: 'Ichimoku Cloud', link: '/indicators/ichimoku' },
-            { text: 'Moving Average Convergence Divergence', link: '/indicators/macd' },
+            { text: 'Moving Average Convergence / Divergence', link: '/indicators/macd' },
             { text: 'Pivot Points', link: '/indicators/pivot-points' },
             { text: 'Rate of Change with Bands', link: '/indicators/roc-wb' },
-            { text: 'Rolling Pivots', link: '/indicators/rolling-pivots' },
+            { text: 'Rolling Pivot Points', link: '/indicators/rolling-pivots' },
             { text: 'SuperTrend', link: '/indicators/super-trend' },
             { text: 'Vortex Indicator', link: '/indicators/vortex' },
             { text: 'Williams Alligator', link: '/indicators/alligator' },
@@ -300,7 +300,7 @@ export default defineConfig({
             { text: 'Triple EMA Oscillator (TRIX)', link: '/indicators/trix' },
             { text: 'True Strength Index', link: '/indicators/tsi' },
             { text: 'Ultimate Oscillator', link: '/indicators/ultimate' },
-            { text: 'Williams Percent Range (%R)', link: '/indicators/williams-r' },
+            { text: 'Williams %R', link: '/indicators/williams-r' },
           ]
         },
         {
@@ -359,7 +359,7 @@ export default defineConfig({
             { text: 'Klinger Volume Oscillator', link: '/indicators/kvo' },
             { text: 'Money Flow Index', link: '/indicators/mfi' },
             { text: 'On-Balance Volume', link: '/indicators/obv' },
-            { text: 'Price Volume Oscillator', link: '/indicators/pvo' },
+            { text: 'Percentage Volume Oscillator', link: '/indicators/pvo' },
             { text: 'Volume Weighted Average Price', link: '/indicators/vwap' },
             { text: 'Volume Weighted Moving Average', link: '/indicators/vwma' },
 

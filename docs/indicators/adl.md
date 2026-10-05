@@ -43,8 +43,8 @@ IReadOnlyList<AdlResult>
 | `MoneyFlowVolume` | _`double`_ | Money Flow Volume |
 | `Adl` | _`double`_ | Accumulation Distribution Line (ADL) |
 
-::: warning 🚩
-absolute values in ADL and MFV are somewhat meaningless.  Use with caution.
+::: warning 🚩 Relative values only
+Absolute values in ADL and MFV are somewhat meaningless.  Use with caution.
 :::
 
 ### Utilities

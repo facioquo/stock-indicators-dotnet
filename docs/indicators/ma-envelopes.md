@@ -48,7 +48,7 @@ These are the supported moving average types:
 | `MaType.TEMA` | [Triple Exponential Moving Average](/indicators/tema) |
 | `MaType.WMA`  | [Weighted Moving Average](/indicators/wma)            |
 
-::: warning 🚩
+::: warning 🚩 ALMA parameters
 For ALMA, default values are used for `offset` and `sigma`.
 :::
 
@@ -128,7 +128,7 @@ void OnBarReceived(IBar bar) => barHub.Add(bar);
 IReadOnlyList<MaEnvelopeResult> results = observer.Results;
 ```
 
-::: note
+::: warning 🚩 Streaming support
 In streaming mode, only certain moving average types are supported. ALMA, EPMA, and HMA are not yet supported in streaming mode and will throw a `NotImplementedException`.
 :::
 

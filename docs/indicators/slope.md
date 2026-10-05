@@ -42,7 +42,7 @@ IReadOnlyList<SlopeResult>
 - The first `N-1` periods will have `null` values for `Slope` since there's not enough data to calculate.
 - `Line` values are only provided for the last `N` periods of your bar history
 
-::: warning ️🖌️ Repaint warning
+::: warning 🖌️ Repaint warning
 The `Line` is continuously repainted since it is based on the last bar and lookback period.
 :::
 
@@ -115,7 +115,7 @@ void OnBarReceived(IBar bar) => barHub.Add(bar);
 IReadOnlyList<SlopeResult> results = observer.Results;
 ```
 
-::: warning ️🖌️ Repaint warning
+::: warning 🖌️ Repaint warning
 The streaming implementation exhibits the same repaint behavior as the series version. `Line` values are recalculated for the last `N` periods as new data arrives, matching the series implementation's behavior.
 :::
 

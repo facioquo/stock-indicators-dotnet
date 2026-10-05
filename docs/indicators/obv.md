@@ -42,8 +42,8 @@ IReadOnlyList<ObvResult>
 | `Timestamp` | _`DateTime`_ | Date from evaluated `TBar` |
 | `Obv` | _`double`_ | On-balance Volume |
 
-::: warning 🚩
-absolute values in OBV are somewhat meaningless. Use with caution.
+::: warning 🚩 Relative values only
+Absolute values in OBV are somewhat meaningless. Use with caution.
 :::
 
 ### Utilities

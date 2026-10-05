@@ -19,13 +19,17 @@ See [Agent setup](/guide/agent-setup) for more prompts.
 
 Install the [FacioQuo.Stock.Indicators](https://www.nuget.org/packages/FacioQuo.Stock.Indicators) NuGet package into your project.
 
-```bash
-# dotnet CLI example
-dotnet add package FacioQuo.Stock.Indicators
+::: code-group
 
-# package manager example
+```bash [.NET CLI]
+dotnet add package FacioQuo.Stock.Indicators
+```
+
+```powershell [Package Manager]
 Install-Package FacioQuo.Stock.Indicators
 ```
+
+:::
 
 ## Calculate your first indicator
 
@@ -33,39 +37,9 @@ Indicators take a list of historical price bars, either the library's [`Bar` cla
 
 This page uses the **[Batch (Series)](/guide/styles/batch)** style, the simplest starting point, which converts a full collection at once. For bars that arrive one at a time, see **[Buffer lists](/guide/styles/buffer)** and **[Stream hubs](/guide/styles/stream)**, or [compare all three styles](/guide/styles/).
 
-### Example usage
+### Try it now
 
-```csharp
-using FacioQuo.Stock.Indicators;
-
-[..]
-
-// fetch historical price bars from your feed (your method)
-IReadOnlyList<Bar> bars = GetBarsFromFeed("MSFT");
-
-// calculate 20-period SMA
-IReadOnlyList<SmaResult> results = bars
-  .ToSma(20);
-
-// use results as needed for your use case (example only)
-foreach (SmaResult r in results)
-{
-    Console.WriteLine($"SMA on {r.Timestamp:d} was ${r.Sma:N4}");
-}
-```
-
-```console
-SMA on 4/19/2018 was $255.0590
-SMA on 4/20/2018 was $255.2015
-SMA on 4/23/2018 was $255.6135
-SMA on 4/24/2018 was $255.5105
-SMA on 4/25/2018 was $255.6570
-SMA on 4/26/2018 was $255.9705
-..
-```
-
-::: details No data source yet? Try a complete runnable example
-This console app builds sample bars in memory instead of calling `GetBarsFromFeed()`, so you can verify your setup before connecting a market data provider.
+This complete console app builds sample bars in memory, so you can see results before connecting a market data provider.
 
 ```bash
 dotnet new console -n FirstIndicator
@@ -106,7 +80,38 @@ SMA on 2025-01-30 was 102.3750
 SMA on 2025-01-31 was 102.6250
 ```
 
-:::
+### Use your own price data
+
+Replace the sample bars with historical bars from your data provider. `GetBarsFromFeed()` stands in for [your own data acquisition](#where-can-i-get-historical-bar-data).
+
+```csharp
+using FacioQuo.Stock.Indicators;
+
+[..]
+
+// fetch historical price bars from your feed (your method)
+IReadOnlyList<Bar> bars = GetBarsFromFeed("MSFT");
+
+// calculate 20-period SMA
+IReadOnlyList<SmaResult> results = bars
+  .ToSma(20);
+
+// use results as needed for your use case (example only)
+foreach (SmaResult r in results)
+{
+    Console.WriteLine($"SMA on {r.Timestamp:d} was ${r.Sma:N4}");
+}
+```
+
+```console
+SMA on 4/19/2018 was $255.0590
+SMA on 4/20/2018 was $255.2015
+SMA on 4/23/2018 was $255.6135
+SMA on 4/24/2018 was $255.5105
+SMA on 4/25/2018 was $255.6570
+SMA on 4/26/2018 was $255.9705
+..
+```
 
 ### Next steps
 
@@ -139,7 +144,7 @@ Check with your brokerage or a commercial data provider. For free developer APIs
 
 Each indicator page lists its minimum, but **most use cases need more than the minimum**. As a rule of thumb, 750 bars (about 3 years of daily data) is safe.
 
-::: warning 🚩 IMPORTANT
+::: warning 🚩 Use more than the minimum history
 Supplying only the _minimum_ bar history is NOT a good optimization. Some indicators use smoothing that converges to better precision over time, and two-decimal precision often needs 250 or more preceding bars.
 
 For example, if you are using daily data and want one year of precise EMA(250) data, you need to provide 3 years of historical price bars (1 extra year for the lookback period and 1 extra year for convergence); thereafter, you would discard or not use the first two years of results. Occasionally, even more is required for optimal precision.
