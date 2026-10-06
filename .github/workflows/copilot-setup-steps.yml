@@ -61,12 +61,6 @@ jobs:
         continue-on-error: true
         timeout-minutes: 5
 
-      # Global, not from the manifest: LSP clients spawn the bare binary from PATH.
-      - name: Install C# language server
-        run: dotnet tool install --global csharp-ls || dotnet tool update --global csharp-ls
-        continue-on-error: true
-        timeout-minutes: 5
-
       - name: Environment summary
         env:
           REPOSITORY: ${{ github.repository }}
@@ -78,7 +72,6 @@ jobs:
             echo "- Repository: ${REPOSITORY}"
             echo "- .NET SDKs: $(dotnet --list-sdks | wc -l) versions available"
             echo "- .NET Tools: $(dotnet tool list | tail -n +3 | wc -l) installed"
-            echo "- C# language server: $(csharp-ls --version 2>/dev/null || echo 'Not available')"
             echo "- Node.js: $(node --version 2>/dev/null || echo 'Not available')"
             echo ""
           } >> "$GITHUB_STEP_SUMMARY"

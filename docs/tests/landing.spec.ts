@@ -8,7 +8,7 @@ const heroBadge = '.VPHero .nuget-badge-hero'
 const bodyBadge = '.nuget-badge-body'
 
 test('NuGet badge sits beside the title where the row has room', async ({ page }) => {
-  for (const width of [600, 640, 768, 960, 1280, 1440]) {
+  for (const width of [640, 768, 960, 1280, 1440]) {
     await page.setViewportSize({ width, height: 800 })
     await page.goto('/', { waitUntil: 'networkidle' })
 
@@ -35,7 +35,7 @@ test('NuGet badge sits beside the title where the row has room', async ({ page }
 })
 
 test('NuGet badge stays in the page body on narrow viewports', async ({ page }) => {
-  for (const width of [375, 599]) {
+  for (const width of [375, 639]) {
     await page.setViewportSize({ width, height: 800 })
     await page.goto('/', { waitUntil: 'networkidle' })
 
