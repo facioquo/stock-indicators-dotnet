@@ -6,6 +6,7 @@ Bash scripts for maintenance tasks. The clean and stop scripts run from any dire
 | ------ | ---- | ------------ |
 | `audit-streamhub.sh` | Audits StreamHub test coverage (see below) | — |
 | `dotnet-clean.sh` | Runs `dotnet clean`, then deletes `bin`, `obj`, `TestResults`, `BenchmarkDotNet.Artifacts`, and `packages.lock.json` files | `Clean: .NET (full)` |
+| `examples-zip.sh` | Rebuilds `docs/.vitepress/public/FacioQuo.Stock.Indicators-Examples.zip` from the `docs/examples` source files, leaving out ignored build output and docs-site-only files (`*.vue`, `*.ts`, `custom-chart.md`) | `Build: Examples ZIP` |
 | `docs-clean.sh` | Deletes the docs site's `node_modules`, build output, VitePress cache, and lock files | `Clean: Docs (vitepress)` |
 | `stop-simulation.sh` | Stops processes running `tools/simulate` | `Stop: Simulation hosts` |
 | `stop-sseserver.sh` | Stops processes running `tools/sse-server`, including whatever holds port 5001 | `Stop: SseServer hosts` |

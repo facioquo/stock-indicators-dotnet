@@ -94,6 +94,7 @@ jobs:
       - name: Test indicators
         run: >
           dotnet test tests/Library/Tests.Indicators.csproj
+          --framework net10.0
           --configuration Release
           --settings tests/tests.unit.runsettings
           --results-directory ./test-results/unit
@@ -192,6 +193,7 @@ jobs:
       - name: Test regression baselines
         run: >
           dotnet test tests/Library/Tests.Indicators.csproj
+          --framework net10.0
           --configuration Release
           --settings tests/tests.regression.runsettings
           --results-directory ./test-results/regression

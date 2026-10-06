@@ -317,6 +317,13 @@
         "cwd": "${workspaceFolder}/docs"
       }
     },
+    {
+      "label": "Build: Examples ZIP",
+      "detail": "Regenerate docs/.vitepress/public/FacioQuo.Stock.Indicators-Examples.zip from docs/examples (source files only)",
+      "type": "shell",
+      "command": "bash tools/scripts/examples-zip.sh",
+      "problemMatcher": []
+    },
     // ===================================
     // Test, lint, and format
     // ===================================

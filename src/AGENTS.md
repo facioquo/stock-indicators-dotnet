@@ -4,7 +4,7 @@ This folder holds the library source. Load the matching skill from the root AGEN
 
 ## Technical constraints
 
-- **Targets** — net10.0, net9.0, and net8.0 must all build and pass tests.
+- **Targets** — net10.0, net9.0, and net8.0 must all build. Indicator unit tests run on net10.0 by default; others are supported in the CI matrix testing.
 - **Complexity** — single-pass O(n) unless mathematically impossible.
 - **Warmup** — the count of null warmup results is deterministic; when it is not obvious from the parameters, expose it as a static `WarmupPeriod(...)` helper in `{Name}.Utilities.cs`, as `Hma` and `StochRsi` do.
 - **Precision** — use `double` for speed; escalate to `decimal` only when rounding affects financial correctness.
