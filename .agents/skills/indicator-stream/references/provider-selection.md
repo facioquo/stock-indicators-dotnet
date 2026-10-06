@@ -40,10 +40,10 @@ A hub that keeps position-based state (absolute indexes, item counters) override
 `BarAggregatorHub` (`src/Common/Bars/`) and `TradeTickAggregatorHub` (`src/Common/TradeTicks/`) bucket bars or ticks into larger periods and derive from `BarProvider<TIn, IBar>`. Extend this pattern for a new quantizer rather than writing bespoke bucketing:
 
 - Offer a `BarInterval` constructor and a `TimeSpan` constructor. The `BarInterval` constructor throws for `BarInterval.Month`, which has no fixed `TimeSpan`.
-- Take an optional `fillGaps` flag, default `false` (empty buckets are omitted). When `true`, synthesize zero-volume bars whose open, high, low, and close all carry the prior bar's close.
+- Take an optional `fillGaps` flag or a `GapFillMode` (`None` omits empty buckets, the default). `ForwardFill` synthesizes zero-volume bars whose open, high, low, and close all carry the prior bar's close; `Interpolate` spreads the move from the prior close to the next input's open (or tick price) across the silent buckets.
 - In `OnAdd`, round the input timestamp down to its bucket, then update the forming bar in place (replace `Cache[^1]` and notify with `NotifyObserversOnRebuild`) or append a new bucket. Call `Rebuild` for input that lands in an earlier bucket.
-- Override `Rebuild(DateTime)` to round the timestamp down to the bucket boundary before calling `base.Rebuild`. Without it, a mid-bucket rebuild keeps the partial bar and the replay appends a duplicate.
-- In `RollbackState`, clear the forming bar. When `restoreIndex < 0`, clear every duplicate-detection tracker entry; otherwise remove entries later than `ProviderCache[restoreIndex].Timestamp`.
+- Override `Rebuild(DateTime)` to round the timestamp down to the bucket boundary before calling `base.Rebuild`. Without it, a mid-bucket rebuild keeps the partial bar and the replay appends a duplicate. Under a gap mode, rewind to the last real bar before a gap when the rebuild removes the input the gap ends on, so no trailing gap bars remain; under `Interpolate`, also when the change is inside the gap or moves that input's open or price, because the gap bars depend on it.
+- In `RollbackState`, clear the forming bar; under a gap mode, seed it from the last kept cache bar so the replay fills the silent buckets before the first replayed input. When `restoreIndex < 0`, clear every duplicate-detection tracker entry; otherwise remove entries later than `ProviderCache[restoreIndex].Timestamp`.
 
 ## Self-rooted source hubs
 

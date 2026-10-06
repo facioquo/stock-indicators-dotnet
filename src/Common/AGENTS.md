@@ -20,9 +20,10 @@ This folder holds the streaming framework (`StreamHub/`, `BufferLists/`), the ca
 
 `BarAggregatorHub` and `TradeTickAggregatorHub` quantize bars or ticks into larger periods.
 
-- Both derive from `BarProvider<TIn, IBar>` and take a `BarInterval` or `TimeSpan` plus an optional `fillGaps` flag.
+- Both derive from `BarProvider<TIn, IBar>` and take a `BarInterval` or `TimeSpan` plus an optional `fillGaps` flag or a `GapFillMode` (`None`, `ForwardFill`, `Interpolate`).
 - They reject `BarInterval.Month`; a custom period uses the `TimeSpan` overload.
-- They rely on the standard `RollbackState(int)` semantics so out-of-order input rebuilds correctly.
+- They override `Rebuild(DateTime)` and `RollbackState(int)`: a gap-fill rebuild seeds the replay from the last kept bar, so the replay fills the silent buckets between it and the first replayed input.
+- Under a gap mode the hub tracks synthesized runs in a `PruningList`. A rebuild that removes the input a run ends on rewinds to the last real bar before the run, so no trailing gap bars remain. `Interpolate` synthesizes gap bars from the input after them, so a rebuild inside a gap, or one that changes the anchor the gap ends on, rewinds as well.
 
 Extend this pattern for a new quantizer instead of writing bespoke bucketing.
 

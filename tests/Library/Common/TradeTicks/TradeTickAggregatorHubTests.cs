@@ -551,6 +551,7 @@ public class TradeTickAggregatorHubTests : StreamHubTestBase, ITestBarObserver, 
             fillGaps: true);
 
         aggregator.FillGaps.Should().BeTrue();
+        aggregator.GapFillMode.Should().Be(GapFillMode.ForwardFill);
         aggregator.AggregationPeriod.Should().Be(TimeSpan.FromMinutes(15));
 
         aggregator.Unsubscribe();
@@ -790,5 +791,508 @@ public class TradeTickAggregatorHubTests : StreamHubTestBase, ITestBarObserver, 
         freshHub.Unsubscribe();
         lateSource.EndTransmission();
         freshSource.EndTransmission();
+    }
+
+    [TestMethod]
+    public void GapFillMode_None_ViaEnumOverload_OmitsSilentBuckets()
+    {
+        List<TradeTick> ticks =
+        [
+            new(DateTime.Parse("2023-11-09 10:00:00", invariantCulture), 100.00m, 10m),
+            // Gap: 10:01, 10:02 missing
+            new(DateTime.Parse("2023-11-09 10:03:00", invariantCulture), 103.00m, 30m),
+        ];
+
+        TradeTickHub provider = new();
+        TradeTickAggregatorHub aggregator = provider.ToTradeTickAggregatorHub(
+            BarInterval.OneMinute,
+            GapFillMode.None);
+
+        foreach (TradeTick tick in ticks)
+        {
+            provider.Add(tick);
+        }
+
+        aggregator.GapFillMode.Should().Be(GapFillMode.None);
+        aggregator.FillGaps.Should().BeFalse();
+
+        IReadOnlyList<IBar> results = aggregator.Results;
+        results.Should().HaveCount(2);
+        results[0].Timestamp.Should().Be(DateTime.Parse("2023-11-09 10:00", invariantCulture));
+        results[1].Timestamp.Should().Be(DateTime.Parse("2023-11-09 10:03", invariantCulture));
+
+        aggregator.Unsubscribe();
+        provider.EndTransmission();
+    }
+
+    [TestMethod]
+    public void GapFillMode_ForwardFill_ViaEnumOverload_MatchesLegacyBehavior()
+    {
+        List<TradeTick> ticks =
+        [
+            new(DateTime.Parse("2023-11-09 10:00:00", invariantCulture), 100.00m, 10m),
+            // Gap: 10:01 missing - will be filled
+            new(DateTime.Parse("2023-11-09 10:02:00", invariantCulture), 102.00m, 20m),
+        ];
+
+        TradeTickHub provider = new();
+        TradeTickAggregatorHub aggregator = provider.ToTradeTickAggregatorHub(
+            BarInterval.OneMinute,
+            GapFillMode.ForwardFill);
+
+        foreach (TradeTick tick in ticks)
+        {
+            provider.Add(tick);
+        }
+
+        aggregator.GapFillMode.Should().Be(GapFillMode.ForwardFill);
+        aggregator.FillGaps.Should().BeTrue();
+
+        IReadOnlyList<IBar> results = aggregator.Results;
+        results.Should().HaveCount(3);
+
+        IBar gapBar = results[1];
+        gapBar.Timestamp.Should().Be(DateTime.Parse("2023-11-09 10:01", invariantCulture));
+        gapBar.Open.Should().Be(100.00m);
+        gapBar.High.Should().Be(100.00m);
+        gapBar.Low.Should().Be(100.00m);
+        gapBar.Close.Should().Be(100.00m);
+        gapBar.Volume.Should().Be(0m);
+
+        aggregator.Unsubscribe();
+        provider.EndTransmission();
+    }
+
+    [TestMethod]
+    public void GapFillMode_Interpolate_LinearlyInterpolatesPrices()
+    {
+        List<TradeTick> ticks =
+        [
+            new(DateTime.Parse("2023-11-09 10:00:00", invariantCulture), 100.00m, 10m),
+            // Gaps: 10:01, 10:02, 10:03 missing
+            new(DateTime.Parse("2023-11-09 10:04:00", invariantCulture), 108.00m, 40m),
+        ];
+
+        TradeTickHub provider = new();
+        TradeTickAggregatorHub aggregator = provider.ToTradeTickAggregatorHub(
+            BarInterval.OneMinute,
+            GapFillMode.Interpolate);
+
+        foreach (TradeTick tick in ticks)
+        {
+            provider.Add(tick);
+        }
+
+        aggregator.GapFillMode.Should().Be(GapFillMode.Interpolate);
+        aggregator.FillGaps.Should().BeTrue();
+
+        IReadOnlyList<IBar> results = aggregator.Results;
+
+        // Should have 5 bars: 10:00, 10:01-10:03 (interpolated), 10:04
+        results.Should().HaveCount(5);
+
+        // Linearly interpolated between 10:00's close (100) and 10:04's
+        // price (108) across the 3 missing buckets: 102, 104, 106
+        decimal[] expected = [102.00m, 104.00m, 106.00m];
+        for (int i = 1; i <= 3; i++)
+        {
+            IBar gapBar = results[i];
+            gapBar.Open.Should().Be(expected[i - 1]);
+            gapBar.High.Should().Be(expected[i - 1]);
+            gapBar.Low.Should().Be(expected[i - 1]);
+            gapBar.Close.Should().Be(expected[i - 1]);
+            gapBar.Volume.Should().Be(0m);
+        }
+
+        aggregator.Unsubscribe();
+        provider.EndTransmission();
+    }
+
+    [TestMethod]
+    public void LateArrival_IntoGapFilledBucket_ReplacesGapBar()
+    {
+        // A gap-filled bucket (10:01) is later populated by a real,
+        // late-arriving tick. The rebuild triggered by the past-bar path
+        // must replace the synthetic gap bar with the real one — not
+        // leave the gap bar in place or duplicate an entry — and any
+        // still-open gap after it must recompute from the new real data.
+
+        TradeTickHub provider = new();
+        TradeTickAggregatorHub aggregator = provider.ToTradeTickAggregatorHub(
+            BarInterval.OneMinute,
+            GapFillMode.ForwardFill);
+
+        // 10:00 real tick
+        provider.Add(new TradeTick(
+            DateTime.Parse("2023-11-09 10:00:00", invariantCulture), 100m, 10m, null));
+
+        // 10:03 real tick closes the 10:00 bucket, gap-filling 10:01 and
+        // 10:02 (both carry 10:00's price of 100)
+        provider.Add(new TradeTick(
+            DateTime.Parse("2023-11-09 10:03:00", invariantCulture), 103m, 30m, null));
+
+        IReadOnlyList<IBar> resultsBeforeLateArrival = aggregator.Results;
+        resultsBeforeLateArrival.Should().HaveCount(4);
+        resultsBeforeLateArrival[1].Close.Should().Be(100m); // gap bar, pre-replacement
+
+        // Late arrival lands squarely in the gap-filled 10:01 bucket
+        provider.Add(new TradeTick(
+            DateTime.Parse("2023-11-09 10:01:30", invariantCulture), 150m, 50m, null));
+
+        IReadOnlyList<IBar> results = aggregator.Results;
+
+        // Still 4 bars: the gap bar at 10:01 was replaced, not duplicated
+        results.Should().HaveCount(4);
+
+        results[0].Timestamp.Should().Be(DateTime.Parse("2023-11-09 10:00", invariantCulture));
+        results[0].Close.Should().Be(100m);
+
+        // 10:01 now holds the real late tick's own OHLCV, not the gap fill
+        IBar realBar = results[1];
+        realBar.Timestamp.Should().Be(DateTime.Parse("2023-11-09 10:01", invariantCulture));
+        realBar.Open.Should().Be(150m);
+        realBar.High.Should().Be(150m);
+        realBar.Low.Should().Be(150m);
+        realBar.Close.Should().Be(150m);
+        realBar.Volume.Should().Be(50m);
+
+        // 10:02 is still gap-filled, but now carries forward the real
+        // 10:01 price (150) instead of the stale value (100)
+        IBar recomputedGap = results[2];
+        recomputedGap.Timestamp.Should().Be(DateTime.Parse("2023-11-09 10:02", invariantCulture));
+        recomputedGap.Open.Should().Be(150m);
+        recomputedGap.High.Should().Be(150m);
+        recomputedGap.Low.Should().Be(150m);
+        recomputedGap.Close.Should().Be(150m);
+        recomputedGap.Volume.Should().Be(0m);
+
+        // 10:03 is unaffected
+        IBar finalBar = results[3];
+        finalBar.Timestamp.Should().Be(DateTime.Parse("2023-11-09 10:03", invariantCulture));
+        finalBar.Open.Should().Be(103m);
+        finalBar.Close.Should().Be(103m);
+        finalBar.Volume.Should().Be(30m);
+
+        aggregator.Unsubscribe();
+        provider.EndTransmission();
+    }
+
+    [TestMethod]
+    public void LateArrival_IntoGapFilledBucket_ReplacesGapBar_Interpolate()
+    {
+        // Same shape as the ForwardFill version above, but under Interpolate
+        // a late arrival moves both interpolation anchors: it becomes the
+        // start anchor for the gap bar(s) still ahead of it, so a downstream
+        // gap must recompute from the new real value, not the stale one.
+
+        TradeTickHub provider = new();
+        TradeTickAggregatorHub aggregator = provider.ToTradeTickAggregatorHub(
+            BarInterval.OneMinute,
+            GapFillMode.Interpolate);
+
+        // 10:00 real tick
+        provider.Add(new TradeTick(
+            DateTime.Parse("2023-11-09 10:00:00", invariantCulture), 100m, 10m, null));
+
+        // 10:03 real tick closes the 10:00 bucket, interpolating 10:01 and
+        // 10:02 between 10:00's price (100) and 10:03's price (103)
+        provider.Add(new TradeTick(
+            DateTime.Parse("2023-11-09 10:03:00", invariantCulture), 103m, 30m, null));
+
+        aggregator.Results[1].Close.Should().Be(101m); // gap bar, pre-replacement
+        aggregator.Results[2].Close.Should().Be(102m); // gap bar, pre-replacement
+
+        // Late arrival lands squarely in the interpolated 10:01 bucket
+        provider.Add(new TradeTick(
+            DateTime.Parse("2023-11-09 10:01:30", invariantCulture), 150m, 50m, null));
+
+        IReadOnlyList<IBar> results = aggregator.Results;
+        results.Should().HaveCount(4);
+
+        // 10:01 now holds the real late tick's own OHLCV, not the gap fill
+        IBar realBar = results[1];
+        realBar.Timestamp.Should().Be(DateTime.Parse("2023-11-09 10:01", invariantCulture));
+        realBar.Close.Should().Be(150m);
+
+        // 10:02 recomputes between the new 10:01 price (150) and 10:03's
+        // price (103): 150 + (103-150)*1/2 = 126.5, not the stale 102
+        IBar recomputedGap = results[2];
+        recomputedGap.Timestamp.Should().Be(DateTime.Parse("2023-11-09 10:02", invariantCulture));
+        recomputedGap.Open.Should().Be(126.5m);
+        recomputedGap.High.Should().Be(126.5m);
+        recomputedGap.Low.Should().Be(126.5m);
+        recomputedGap.Close.Should().Be(126.5m);
+        recomputedGap.Volume.Should().Be(0m);
+
+        aggregator.Unsubscribe();
+        provider.EndTransmission();
+    }
+
+    [TestMethod]
+    public void Interpolate_EarlierTickInBucketAfterGap_MatchesFreshStream()
+    {
+        // The end anchor is the first tick, by time, in the bucket after the
+        // gap; a late tick earlier in that bucket replaces it.
+        TradeTick[] ordered =
+        [
+            new(DateTime.Parse("2023-11-09 10:00:00", invariantCulture), 100m, 10m, null),
+            new(DateTime.Parse("2023-11-09 10:03:10", invariantCulture), 120m, 10m, null),
+            new(DateTime.Parse("2023-11-09 10:03:30", invariantCulture), 108m, 10m, null),
+        ];
+
+        TradeTickHub provider = new();
+        TradeTickAggregatorHub aggregator = provider.ToTradeTickAggregatorHub(BarInterval.OneMinute, GapFillMode.Interpolate);
+        provider.Add(ordered[0]);
+        provider.Add(ordered[2]);
+        provider.Add(ordered[1]); // late
+
+        TradeTickHub freshProvider = new();
+        TradeTickAggregatorHub fresh = freshProvider.ToTradeTickAggregatorHub(BarInterval.OneMinute, GapFillMode.Interpolate);
+        freshProvider.Add(ordered);
+
+        aggregator.Results.Select(r => (r.Timestamp, r.Open, r.High, r.Low, r.Close, r.Volume))
+            .Should().Equal(fresh.Results.Select(r => (r.Timestamp, r.Open, r.High, r.Low, r.Close, r.Volume)));
+        aggregator.Results[1].Close.Should().BeApproximately(106.6666666667m, 0.0000001m);
+
+        aggregator.Unsubscribe();
+        provider.EndTransmission();
+        fresh.Unsubscribe();
+        freshProvider.EndTransmission();
+    }
+
+    [TestMethod]
+    public void GapFillMode_TimeSpanOverload_Interpolates()
+    {
+        TradeTickHub provider = new();
+        TradeTickAggregatorHub aggregator = provider.ToTradeTickAggregatorHub(TimeSpan.FromMinutes(1), GapFillMode.Interpolate);
+
+        provider.Add(new TradeTick(DateTime.Parse("2023-11-09 10:00:00", invariantCulture), 102m, 10m, null));
+        provider.Add(new TradeTick(DateTime.Parse("2023-11-09 10:03:00", invariantCulture), 105m, 10m, null));
+
+        aggregator.GapFillMode.Should().Be(GapFillMode.Interpolate);
+        aggregator.Results.Select(r => r.Close).Should().Equal(102m, 103m, 104m, 105m);
+
+        aggregator.Unsubscribe();
+        provider.EndTransmission();
+    }
+
+    [TestMethod]
+    public void GapFillMode_UndefinedValue_Throws()
+    {
+        TradeTickHub provider = new();
+        const GapFillMode invalid = (GapFillMode)99;
+
+        FluentActions.Invoking(() => new TradeTickAggregatorHub(provider, BarInterval.OneMinute, invalid))
+            .Should().Throw<ArgumentOutOfRangeException>().WithParameterName("gapFillMode");
+
+        FluentActions.Invoking(() => new TradeTickAggregatorHub(provider, TimeSpan.FromMinutes(1), invalid))
+            .Should().Throw<ArgumentOutOfRangeException>().WithParameterName("gapFillMode");
+
+        FluentActions.Invoking(() => provider.ToTradeTickAggregatorHub(TimeSpan.FromMinutes(1), invalid))
+            .Should().Throw<ArgumentOutOfRangeException>().WithParameterName("gapFillMode");
+    }
+
+    private static void AssertMatchesFresh(TradeTickAggregatorHub actual, TradeTickAggregatorHub fresh)
+        => actual.Results.Select(r => (r.Timestamp, r.Open, r.High, r.Low, r.Close, r.Volume))
+            .Should().Equal(fresh.Results.Select(r => (r.Timestamp, r.Open, r.High, r.Low, r.Close, r.Volume)));
+
+    [TestMethod]
+    public void Interpolate_LateTickInLaterGapBucket_MatchesFreshStream()
+    {
+        // 10:00@100 and 10:04@104 leave gap bars 101, 102, 103; a late tick in
+        // the middle bucket must regenerate the bar before it, not only after.
+        TradeTick[] ordered =
+        [
+            new(DateTime.Parse("2023-11-09 10:00:00", invariantCulture), 100m, 10m, null),
+            new(DateTime.Parse("2023-11-09 10:02:30", invariantCulture), 150m, 10m, null),
+            new(DateTime.Parse("2023-11-09 10:04:00", invariantCulture), 104m, 10m, null),
+        ];
+
+        TradeTickHub provider = new();
+        TradeTickAggregatorHub aggregator = provider.ToTradeTickAggregatorHub(BarInterval.OneMinute, GapFillMode.Interpolate);
+        provider.Add(ordered[0]);
+        provider.Add(ordered[2]);
+        provider.Add(ordered[1]);
+
+        TradeTickHub freshProvider = new();
+        TradeTickAggregatorHub fresh = freshProvider.ToTradeTickAggregatorHub(BarInterval.OneMinute, GapFillMode.Interpolate);
+        freshProvider.Add(ordered);
+
+        AssertMatchesFresh(aggregator, fresh);
+        aggregator.Results[1].Close.Should().Be(125m);
+
+        aggregator.Unsubscribe();
+        provider.EndTransmission();
+        fresh.Unsubscribe();
+        freshProvider.EndTransmission();
+    }
+
+    [TestMethod]
+    [DataRow(GapFillMode.ForwardFill)]
+    [DataRow(GapFillMode.Interpolate)]
+    public void GapFill_RemoveTickBeforeGap_MatchesFreshStream(GapFillMode mode)
+    {
+        TradeTick[] ticks =
+        [
+            new(DateTime.Parse("2023-11-09 10:00:00", invariantCulture), 100m, 10m, null),
+            new(DateTime.Parse("2023-11-09 10:01:00", invariantCulture), 101m, 10m, null),
+            new(DateTime.Parse("2023-11-09 10:02:00", invariantCulture), 102m, 10m, null),
+            new(DateTime.Parse("2023-11-09 10:03:00", invariantCulture), 103m, 10m, null),
+            new(DateTime.Parse("2023-11-09 10:05:00", invariantCulture), 110m, 10m, null),
+        ];
+
+        TradeTickHub provider = new();
+        TradeTickAggregatorHub aggregator = provider.ToTradeTickAggregatorHub(BarInterval.OneMinute, mode);
+        provider.Add(ticks);
+        provider.Remove(ticks[3]);
+
+        TradeTickHub freshProvider = new();
+        TradeTickAggregatorHub fresh = freshProvider.ToTradeTickAggregatorHub(BarInterval.OneMinute, mode);
+        freshProvider.Add([ticks[0], ticks[1], ticks[2], ticks[4]]);
+
+        AssertMatchesFresh(aggregator, fresh);
+        aggregator.Results.Should().HaveCount(6);
+
+        aggregator.Unsubscribe();
+        provider.EndTransmission();
+        fresh.Unsubscribe();
+        freshProvider.EndTransmission();
+    }
+
+    [TestMethod]
+    public void Interpolate_SparseStreamPastCacheLimit_KeepsGapRunsWithinCache()
+    {
+        TradeTickHub provider = new();
+        TradeTickAggregatorHub aggregator = provider.ToTradeTickAggregatorHub(BarInterval.OneMinute, GapFillMode.Interpolate);
+
+        DateTime start = DateTime.Parse("2023-11-09 00:00:00", invariantCulture);
+
+        for (int i = 0; i < 120_000; i++)
+        {
+            provider.Add(new TradeTick(start.AddMinutes(i * 4), 100m, 1m, null));
+        }
+
+        aggregator.GapRunCount.Should().BeGreaterThan(0);
+        aggregator.GapRunCount.Should().BeLessThanOrEqualTo(aggregator.Results.Count);
+
+        aggregator.Unsubscribe();
+        provider.EndTransmission();
+    }
+
+    [TestMethod]
+    public void Interpolate_LateTickKeepingAnchor_LeavesGapBarsUntouched()
+    {
+        // A late tick after the bucket's first tick leaves the end anchor
+        // alone, so the gap bars must not be regenerated.
+        TradeTickHub provider = new();
+        TradeTickAggregatorHub aggregator = provider.ToTradeTickAggregatorHub(BarInterval.OneMinute, GapFillMode.Interpolate);
+
+        provider.Add(new TradeTick(DateTime.Parse("2023-11-09 10:00:00", invariantCulture), 100m, 10m, null));
+        provider.Add(new TradeTick(DateTime.Parse("2023-11-09 10:03:10", invariantCulture), 108m, 10m, null));
+        provider.Add(new TradeTick(DateTime.Parse("2023-11-09 10:03:50", invariantCulture), 110m, 10m, null));
+
+        IBar gapBefore = aggregator.Results[1];
+
+        provider.Add(new TradeTick(DateTime.Parse("2023-11-09 10:03:30", invariantCulture), 109m, 10m, null));
+
+        aggregator.Results[1].Should().BeSameAs(gapBefore);
+        aggregator.Results.Should().HaveCount(4);
+
+        aggregator.Unsubscribe();
+        provider.EndTransmission();
+    }
+
+    [TestMethod]
+    public void Interpolate_RemoveOnlyTickAfterGap_MatchesFreshStream()
+    {
+        // Removing the only tick in the bucket after a gap leaves the next
+        // tick as the anchor, so the gap must rewind and refill.
+        TradeTick[] ticks =
+        [
+            new(DateTime.Parse("2023-11-09 10:00:00", invariantCulture), 100m, 10m, null),
+            new(DateTime.Parse("2023-11-09 10:03:00", invariantCulture), 106m, 10m, null),
+            new(DateTime.Parse("2023-11-09 10:04:00", invariantCulture), 120m, 10m, null),
+        ];
+
+        TradeTickHub provider = new();
+        TradeTickAggregatorHub aggregator = provider.ToTradeTickAggregatorHub(BarInterval.OneMinute, GapFillMode.Interpolate);
+        provider.Add(ticks);
+        provider.Remove(ticks[1]);
+
+        TradeTickHub freshProvider = new();
+        TradeTickAggregatorHub fresh = freshProvider.ToTradeTickAggregatorHub(BarInterval.OneMinute, GapFillMode.Interpolate);
+        freshProvider.Add([ticks[0], ticks[2]]);
+
+        AssertMatchesFresh(aggregator, fresh);
+
+        aggregator.Unsubscribe();
+        provider.EndTransmission();
+        fresh.Unsubscribe();
+        freshProvider.EndTransmission();
+    }
+
+    [TestMethod]
+    [DataRow(GapFillMode.ForwardFill)]
+    [DataRow(GapFillMode.Interpolate)]
+    public void GapFill_RemoveLastRealTick_DropsTrailingGapAndAcceptsNextTicks(GapFillMode mode)
+    {
+        TradeTick first = new(DateTime.Parse("2023-11-09 10:00:00", invariantCulture), 100m, 10m, null);
+        TradeTick last = new(DateTime.Parse("2023-11-09 10:03:00", invariantCulture), 103m, 10m, null);
+        TradeTick[] next =
+        [
+            new(DateTime.Parse("2023-11-09 10:02:00", invariantCulture), 150m, 10m, null),
+            new(DateTime.Parse("2023-11-09 10:02:30", invariantCulture), 140m, 10m, null),
+        ];
+
+        TradeTickHub provider = new();
+        TradeTickAggregatorHub aggregator = provider.ToTradeTickAggregatorHub(BarInterval.OneMinute, mode);
+        provider.Add([first, last]);
+        provider.Remove(last);
+
+        TradeTickHub freshProvider = new();
+        TradeTickAggregatorHub fresh = freshProvider.ToTradeTickAggregatorHub(BarInterval.OneMinute, mode);
+        freshProvider.Add(first);
+
+        AssertMatchesFresh(aggregator, fresh);
+
+        provider.Add(next);
+        freshProvider.Add(next);
+
+        AssertMatchesFresh(aggregator, fresh);
+        aggregator.Results[^1].Open.Should().Be(150m);
+        aggregator.Results[^1].Low.Should().Be(140m);
+
+        aggregator.Unsubscribe();
+        provider.EndTransmission();
+        fresh.Unsubscribe();
+        freshProvider.EndTransmission();
+    }
+
+    [TestMethod]
+    [DataRow(GapFillMode.ForwardFill)]
+    [DataRow(GapFillMode.Interpolate)]
+    public void GapFill_RemoveLateTickAndItsSuccessor_DropsTrailingGap(GapFillMode mode)
+    {
+        TradeTick first = new(DateTime.Parse("2023-11-09 10:00:00", invariantCulture), 100m, 10m, null);
+        TradeTick last = new(DateTime.Parse("2023-11-09 10:05:00", invariantCulture), 105m, 10m, null);
+        TradeTick late = new(DateTime.Parse("2023-11-09 10:03:00", invariantCulture), 120m, 10m, null);
+
+        TradeTickHub provider = new();
+        TradeTickAggregatorHub aggregator = provider.ToTradeTickAggregatorHub(BarInterval.OneMinute, mode);
+        provider.Add([first, last]);
+        provider.Add(late);
+        provider.Remove(last);
+        provider.Remove(late);
+
+        TradeTickHub freshProvider = new();
+        TradeTickAggregatorHub fresh = freshProvider.ToTradeTickAggregatorHub(BarInterval.OneMinute, mode);
+        freshProvider.Add(first);
+
+        AssertMatchesFresh(aggregator, fresh);
+
+        aggregator.Unsubscribe();
+        provider.EndTransmission();
+        fresh.Unsubscribe();
+        freshProvider.EndTransmission();
     }
 }

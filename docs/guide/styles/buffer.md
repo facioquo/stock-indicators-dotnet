@@ -168,6 +168,46 @@ void OnBarReceived(Bar bar)
 }
 ```
 
+### WebSocket feed
+
+The `OnBarReceived` handlers above assume your client invokes the handler one message at a time, in arrival order. A callback-based WebSocket client can invoke its handler concurrently, and a lock around `Add` only prevents corruption — it does not restore arrival order once two callbacks race for it, and a buffer list mis-computes silently on an out-of-order `Add`. When your client does that, drive `Add` from a single sequential receive loop instead, so only one bar is ever in flight. Only use a buffer list when the feed guarantees chronological order — see the [order warning](#basic-usage) above; an out-of-order feed needs a [Stream hub](/guide/styles/stream).
+
+```csharp
+SmaList smaList = new(20);
+using ClientWebSocket socket = new();
+await socket.ConnectAsync(feedUri, CancellationToken.None);
+
+byte[] buffer = new byte[4096];
+using MemoryStream message = new();
+
+while (socket.State == WebSocketState.Open)
+{
+    WebSocketReceiveResult result = await socket.ReceiveAsync(buffer, CancellationToken.None);
+    if (result.MessageType == WebSocketMessageType.Close)
+    {
+        break;
+    }
+
+    // a message can arrive as several frames; parse only once it is complete
+    message.Write(buffer, 0, result.Count);
+    if (!result.EndOfMessage)
+    {
+        continue;
+    }
+
+    WebSocketBar wsBar = ParseBar(message.GetBuffer().AsSpan(0, (int)message.Length));
+    message.SetLength(0);
+
+    Bar bar = new(wsBar.Timestamp, wsBar.Open, wsBar.High, wsBar.Low, wsBar.Close, wsBar.Volume);
+    smaList.Add(bar);
+
+    SmaResult latest = smaList[^1];
+    Console.WriteLine($"{latest.Timestamp:d}: SMA = {latest.Sma:N2}");
+}
+```
+
+`ReceiveAsync` returns one frame at a time and the loop accumulates frames until `EndOfMessage`, so `Add` and every read of `smaList` happen on this one loop — no lock needed. If your client library only exposes a callback rather than a receive loop you control, have the callback enqueue onto a single-consumer `Channel<Bar>`, and do the `Add` and every read from the one loop that drains it, instead of locking around `Add` in the callback.
+
 ## See also
 
 - [Batch style](/guide/styles/batch) for one-time calculations
