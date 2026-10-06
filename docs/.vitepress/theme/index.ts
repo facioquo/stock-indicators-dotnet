@@ -164,7 +164,7 @@ export default {
         Stoch:           { uiid: 'STO',             title: 'Stochastic Oscillator', chartType: 'oscillator' },
         StochRsi:        { uiid: 'StochRsi',        title: 'Stochastic RSI', chartType: 'oscillator' },
         SuperTrend:      { uiid: 'SuperTrend',      title: 'SuperTrend' },
-        T3:              { uiid: 'T3',              title: 'T3 Moving Average' },
+        T3:              { uiid: 'T3',              title: 'Tillson T3 Moving Average' },
         Tema:            { uiid: 'Tema',            title: 'Triple Exponential Moving Average' },
         Tr:              { uiid: 'TR',              title: 'True Range', chartType: 'oscillator' },
         Trix:            { uiid: 'Trix',            title: 'Triple EMA Oscillator (TRIX)', chartType: 'oscillator' },

@@ -117,9 +117,9 @@
     },
     {
       "label": "Install: .NET tools",
-      "detail": "Restore .NET tools from manifest and install the C# language server",
+      "detail": "Restore .NET tools from the manifest",
       "type": "shell",
-      "command": "dotnet tool restore && (dotnet tool install --global csharp-ls || dotnet tool update --global csharp-ls)"
+      "command": "dotnet tool restore"
     },
     {
       "label": "Update: .NET tools",

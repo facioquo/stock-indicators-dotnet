@@ -75,8 +75,8 @@ for (const path of PAGES) {
     await page.goto(path, { waitUntil: 'domcontentloaded' })
 
     // Web-first waits rather than `networkidle`, which Playwright discourages
-    // for tests. The content root proves the page rendered; charts mount behind
-    // ClientOnly after hydration, so any chart on the page must also reach a
+    // for tests. The content root proves the page rendered; charts load their
+    // data after hydration, so any chart on the page must also reach a
     // terminal state before axe looks at it.
     await expect(page.locator('.VPContent')).toBeVisible()
 
