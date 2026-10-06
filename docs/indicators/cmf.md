@@ -8,9 +8,7 @@ description: Created by Marc Chaikin, Chaikin Money Flow is the simple moving av
 Created by Marc Chaikin, [Chaikin Money Flow](https://en.wikipedia.org/wiki/Chaikin_Analytics#Chaikin_Money_Flow) is the simple moving average of the directional Money Flow Volume.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/261 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Cmf" withOverlay />
-</ClientOnly>
+<StockIndicatorChart indicator="Cmf" withOverlay />
 
 ```csharp
 // C# usage syntax
@@ -50,8 +48,8 @@ IReadOnlyList<CmfResult>
 | `MoneyFlowVolume` | _`double`_ | Money Flow Volume |
 | `Cmf` | _`double`_ | Chaikin Money Flow = SMA of MFV |
 
-::: warning 🚩
-absolute values in MFV and CMF are somewhat meaningless.  Use with caution.
+::: warning 🚩 Relative values only
+Absolute values in MFV and CMF are somewhat meaningless.  Use with caution.
 :::
 
 ### Utilities

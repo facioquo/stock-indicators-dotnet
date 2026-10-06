@@ -8,9 +8,7 @@ description: Detrended Price Oscillator depicts the difference between price and
 [Detrended Price Oscillator](https://en.wikipedia.org/wiki/Detrended_price_oscillator) depicts the difference between price and an offset simple moving average.  It is used to identify trend cycles and duration.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/551 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Dpo" withOverlay />
-</ClientOnly>
+<StockIndicatorChart indicator="Dpo" withOverlay />
 
 ```csharp
 // C# usage syntax

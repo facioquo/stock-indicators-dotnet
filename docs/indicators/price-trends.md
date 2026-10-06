@@ -10,14 +10,11 @@ hero:
     - theme: alt
       text: ← all categories
       link: /indicators/
+    - theme: alt
+      text: price channels →
+      link: /indicators/price-channels
 
 features:
-
-  - title: Alligator (Williams)
-    details: Three-line trend system depicting moving averages (Jaws, Teeth, and Lips)
-    icon:
-      src: /assets/thumbs/indicators/alligator.png
-    link: /indicators/alligator
 
   - title: Aroon
     details: Time-based high/low trend direction<br/>(up/down, oscillator)
@@ -61,7 +58,7 @@ features:
       src: /assets/thumbs/indicators/ichimoku.png
     link: /indicators/ichimoku
 
-  - title: Moving average convergence / divergence (MACD)
+  - title: Moving Average Convergence / Divergence (MACD)
     details: Rate of change between two converging / diverging EMA of price
     icon:
       src: /assets/thumbs/indicators/macd.png
@@ -79,4 +76,9 @@ features:
       src: /assets/thumbs/indicators/vortex.png
     link: /indicators/vortex
     
+  - title: Williams Alligator
+    details: Three-line trend system depicting moving averages (Jaws, Teeth, and Lips)
+    icon:
+      src: /assets/thumbs/indicators/alligator.png
+    link: /indicators/alligator    
 ---

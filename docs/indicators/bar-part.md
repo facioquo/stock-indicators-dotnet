@@ -7,9 +7,7 @@ description: Basic price bar transforms (e.g. HL2, OHL3, etc.) and isolation of 
 
 Returns a reusable (chainable) basic bar transform (e.g. HL2, OHL3, etc.) by isolating a single component part value or calculated value from the full OHLCV bar candle parts.
 
-<ClientOnly>
-  <StockIndicatorChart indicator="HL2" />
-</ClientOnly>
+<StockIndicatorChart indicator="HL2" />
 
 ```csharp
 // C# usage syntax

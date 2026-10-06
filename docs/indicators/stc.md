@@ -8,9 +8,7 @@ description: Created by Doug Schaff, the Schaff Trend Cycle is a stochastic osci
 Created by Doug Schaff, the [Schaff Trend Cycle](https://www.investopedia.com/articles/forex/10/schaff-trend-cycle-indicator.asp) is a stochastic oscillator view of two converging/diverging exponential moving averages.  In other words, it's a Stochastic Oscillator of Moving Average Convergence / Divergence (MACD).
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/570 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Stc" withOverlay />
-</ClientOnly>
+<StockIndicatorChart indicator="Stc" withOverlay />
 
 ```csharp
 // C# usage syntax

@@ -2,8 +2,8 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import { defineConfig, type DefaultTheme, type HeadConfig } from 'vitepress'
 import llmstxt, { copyOrDownloadAsMarkdownButtons } from 'vitepress-plugin-llms'
-import { identityBlock, readBuildInfo, SITE_URL, writeAgentArtifacts } from './agent-artifacts'
-import { pageRoute } from './routes'
+import { identityBlock, readBuildInfo, SITE_URL, writeAgentArtifacts } from './agent-artifacts.ts'
+import { pageRoute } from './routes.ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -58,6 +58,7 @@ const APPEARANCE_KEY = 'vitepress-theme-appearance'
 // Shared top-level navigation — referenced once and reused in every sidebar context
 const siteNav = {
   text: 'Documentation',
+  collapsed: true,
   items: [
     { text: 'Getting started', link: '/guide/getting-started' },
     { text: 'Guide', link: '/guide/' },
@@ -134,7 +135,6 @@ export default defineConfig({
     },
 
     nav: [
-      { text: 'Home', link: '/' },
       {
         text: 'Guide',
         items: [
@@ -153,13 +153,8 @@ export default defineConfig({
           { text: 'Custom observers', link: '/guide/custom-observers' }
         ]
       },
-      {
-        text: 'Reference',
-        items: [
-          { text: 'Indicators', link: '/indicators' },
-          { text: 'Utilities', link: '/utilities/' },
-        ]
-      },
+      { text: 'Indicators', link: '/indicators', activeMatch: '^/indicators' },
+      { text: 'Utilities', link: '/utilities/', activeMatch: '^/utilities' },
       {
         text: 'AI tools',
         items: [
@@ -272,15 +267,15 @@ export default defineConfig({
           collapsed: true,
           items: [
             { text: 'Average Directional Index (ADX)', link: '/indicators/adx' },
-            { text: 'Aroon Indicator', link: '/indicators/aroon' },
+            { text: 'Aroon', link: '/indicators/aroon' },
             { text: 'ATR Trailing Stop', link: '/indicators/atr-stop' },
             { text: 'Directional Movement Index (DMI)', link: '/indicators/adx' },
             { text: 'Elder-ray Index', link: '/indicators/elder-ray' },
             { text: 'Ichimoku Cloud', link: '/indicators/ichimoku' },
-            { text: 'Moving Average Convergence Divergence', link: '/indicators/macd' },
+            { text: 'Moving Average Convergence / Divergence', link: '/indicators/macd' },
             { text: 'Pivot Points', link: '/indicators/pivot-points' },
             { text: 'Rate of Change with Bands', link: '/indicators/roc-wb' },
-            { text: 'Rolling Pivots', link: '/indicators/rolling-pivots' },
+            { text: 'Rolling Pivot Points', link: '/indicators/rolling-pivots' },
             { text: 'SuperTrend', link: '/indicators/super-trend' },
             { text: 'Vortex Indicator', link: '/indicators/vortex' },
             { text: 'Williams Alligator', link: '/indicators/alligator' },
@@ -324,7 +319,7 @@ export default defineConfig({
             { text: 'Triple EMA Oscillator (TRIX)', link: '/indicators/trix' },
             { text: 'True Strength Index', link: '/indicators/tsi' },
             { text: 'Ultimate Oscillator', link: '/indicators/ultimate' },
-            { text: 'Williams Percent Range (%R)', link: '/indicators/williams-r' },
+            { text: 'Williams %R', link: '/indicators/williams-r' },
           ]
         },
         {
@@ -383,7 +378,7 @@ export default defineConfig({
             { text: 'Klinger Volume Oscillator', link: '/indicators/kvo' },
             { text: 'Money Flow Index', link: '/indicators/mfi' },
             { text: 'On-Balance Volume', link: '/indicators/obv' },
-            { text: 'Price Volume Oscillator', link: '/indicators/pvo' },
+            { text: 'Percentage Volume Oscillator', link: '/indicators/pvo' },
             { text: 'Volume Weighted Average Price', link: '/indicators/vwap' },
             { text: 'Volume Weighted Moving Average', link: '/indicators/vwma' },
 
@@ -408,7 +403,7 @@ export default defineConfig({
             { text: 'Running Moving Average (RMA)', link: '/indicators/smma' },
             { text: 'Simple Moving Average', link: '/indicators/sma' },
             { text: 'Smoothed Moving Average', link: '/indicators/smma' },
-            { text: 'T3 Moving Average', link: '/indicators/t3' },
+            { text: 'Tillson T3 Moving Average', link: '/indicators/t3' },
             { text: 'Triple Exponential Moving Average', link: '/indicators/tema' },
             { text: 'Volume Weighted Average Price', link: '/indicators/vwap' },
             { text: 'Volume Weighted Moving Average', link: '/indicators/vwma' },
@@ -444,7 +439,7 @@ export default defineConfig({
             { text: 'Price Momentum Oscillator (PMO)', link: '/indicators/pmo' },
             { text: 'Price Relative Strength (PRS)', link: '/indicators/prs' },
             { text: 'Rate of Change (ROC)', link: '/indicators/roc' },
-            { text: 'ROC with Bands', link: '/indicators/roc-wb' },
+            { text: 'Rate of Change with Bands', link: '/indicators/roc-wb' },
             { text: 'Rescaled Range Analysis', link: '/indicators/hurst' },
             { text: 'True Range (TR)', link: '/indicators/tr' },
             { text: 'True Strength Index (TSI)', link: '/indicators/tsi' },
@@ -470,6 +465,11 @@ export default defineConfig({
           ]
         }
       ],
+    },
+
+    // Shown only on pages without a sidebar (home and hub pages)
+    footer: {
+      message: 'Released under the <a href="https://opensource.org/licenses/Apache-2.0">Apache 2.0 License</a>.'
     },
 
     socialLinks: [
@@ -525,6 +525,8 @@ export default defineConfig({
   },
 
   markdown: {
+    // ```prompt fences are copy-paste agent prompts; render as plain text
+    languageAlias: { prompt: 'txt' },
     config(md) {
       md.use(copyOrDownloadAsMarkdownButtons)
     }
@@ -557,6 +559,12 @@ export default defineConfig({
           rewrite: (path) => path.replace(/^\/chart-api-proxy/, '')
         }
       }
+    },
+    optimizeDeps: {
+      // The theme imports these, but Vite's startup scan only covers pages, so
+      // it would otherwise discover them on the first request and re-optimize
+      // mid-load, failing that page's dynamic import (it renders as a 404).
+      include: ['@facioquo/indy-charts', '@facioquo/indy-charts/vue']
     },
     ssr: {
       // `@facioquo/indy-charts` and its bundled deps must execute in the server

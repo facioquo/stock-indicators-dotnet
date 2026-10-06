@@ -56,11 +56,11 @@ IReadOnlyList<RenkoResult>
 - `RenkoResult` is based on `IBar`, so it can be used as a direct replacement for `bars`.
 - Each result record represents one Renko brick.
 
-::: warning 🚩
+::: warning 🚩 Fewer results than bars
 Unlike most indicators in this library, this indicator DOES NOT return the same number of elements as there are in the historical price bars.  Renko bricks are added to the results once the `brickSize` change is achieved.  For example, if it takes 3 days for a $2.50 price change to occur an entry is made on the third day while the first two are skipped.  If a period change occurs at multiples of `brickSize`, multiple bricks are drawn with the same `Timestamp`.  See [online documentation](https://www.investopedia.com/terms/r/renkochart.asp) for more information.
 :::
 
-::: warning ️🖌️ Repaint warning _(ATR variant)_
+::: warning 🖌️ Repaint warning _(ATR variant)_
 When using the `ToRenkoAtr()` variant, the last [Average True Range (ATR)](/indicators/atr) value is used to set `brickSize`.  Since the ATR changes over time, historical bricks will be repainted as new periods are added or updated in `bars`.
 :::
 
@@ -76,7 +76,7 @@ When using the `ToRenkoAtr()` variant, the last [Average True Range (ATR)](/indi
 | `Volume` | _`decimal`_ | Sum of Volume over elapsed `bars` periods |
 | `IsUp` |  _`bool`_ | Direction of brick (true=up,false=down) |
 
-::: warning 🚩
+::: warning 🚩 Multiple bricks per period
 When multiple bricks are drawn from a single `bar` period, the extra information about `High` and `Low` wicks and `Volume` is potentially confusing to interpret.  `High` and `Low` wicks will be the same across the multiple bricks; and `Volume` is portioning evenly across the number of bricks.  For example, if within one `bar` period 3 bricks are drawn, the `Volume` for each brick will be `(sum of bars Volume since last brick) / 3`.
 :::
 
@@ -131,7 +131,7 @@ void OnBarReceived(IBar bar) => barHub.Add(bar);
 IReadOnlyList<RenkoResult> results = observer.Results;
 ```
 
-::: warning 🚩
+::: warning 🚩 No streaming support
 `ToRenkoAtr()` does not support streaming. The ATR brick size is derived from the full dataset and changes as new bars are added, making incremental output undefined. Use the Series implementation with periodic recalculation instead.
 :::
 

@@ -8,9 +8,7 @@ description: Hurst Exponent (H) with Rescaled Range Analysis is a random-walk pa
 The [Hurst Exponent](https://en.wikipedia.org/wiki/Hurst_exponent) (`H`) is part of a Rescaled Range Analysis, a [random-walk](https://en.wikipedia.org/wiki/Random_walk) path analysis that measures trending and mean-reverting tendencies of incremental return values.  When `H` is greater than 0.5 it depicts trending.  When `H` is less than 0.5 it is is more likely to revert to the mean.  When `H` is around 0.5 it represents a random walk.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/477 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Hurst" withOverlay />
-</ClientOnly>
+<StockIndicatorChart indicator="Hurst" withOverlay />
 
 ```csharp
 // C# usage syntax

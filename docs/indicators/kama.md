@@ -8,9 +8,7 @@ description: Created by Perry Kaufman, KAMA is an volatility adaptive (adjusted)
 Created by Perry Kaufman, [KAMA](https://www.google.com/search?q=Kaufman+Adaptive+Moving+Average+(KAMA)) is an volatility adaptive moving average of price over configurable lookback periods.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/210 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Kama" />
-</ClientOnly>
+<StockIndicatorChart indicator="Kama" />
 
 ```csharp
 // C# usage syntax

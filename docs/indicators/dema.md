@@ -8,9 +8,7 @@ description: Created by Patrick G. Mulloy, the Double Exponential Moving Average
 Created by Patrick G. Mulloy, the [Double exponential moving average](https://en.wikipedia.org/wiki/Double_exponential_moving_average) is a faster smoothed EMA of the price over a lookback window.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/807 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Dema" />
-</ClientOnly>
+<StockIndicatorChart indicator="Dema" />
 
 ```csharp
 // C# usage syntax

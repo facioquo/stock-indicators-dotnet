@@ -8,9 +8,7 @@ description: Created by Carl Swenlin, the DecisionPoint Price Momentum Oscillato
 Created by Carl Swenlin, the DecisionPoint [Price Momentum Oscillator](https://www.google.com/search?q=DecisionPoint+Price+Momentum+Oscillator+(PMO)) is double-smoothed momentum indicator based on Rate of Change (ROC).
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/244 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Pmo" withOverlay />
-</ClientOnly>
+<StockIndicatorChart indicator="Pmo" withOverlay />
 
 ```csharp
 // C# usage syntax

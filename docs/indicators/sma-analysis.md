@@ -10,11 +10,9 @@ description: Mean absolute deviation (MAD), mean square error (MSE), and mean ab
 
 Each error metric charts on its own scale — MAD is in price units, MSE in price units squared, and MAPE is a fraction — so they are depicted separately.
 
-<ClientOnly>
-  <StockIndicatorChart indicator="SmaMad" withOverlay />
-  <StockIndicatorChart indicator="SmaMape" />
-  <StockIndicatorChart indicator="SmaMse" />
-</ClientOnly>
+<StockIndicatorChart indicator="SmaMad" withOverlay />
+<StockIndicatorChart indicator="SmaMape" />
+<StockIndicatorChart indicator="SmaMse" />
 
 ```csharp
 // C# usage syntax

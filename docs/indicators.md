@@ -62,9 +62,10 @@ features:
 
 ## Complete list
 
+<div class="indicator-index">
+
 ### [Price trends](/indicators/price-trends)
 
-- [Alligator (Williams)](/indicators/alligator)
 - [Aroon](/indicators/aroon)
 - [ATR Trailing Stop](/indicators/atr-stop)
 - [Average Directional Index (ADX)](/indicators/adx)
@@ -76,6 +77,7 @@ features:
 - [Moving Average Convergence / Divergence (MACD)](/indicators/macd)
 - [SuperTrend](/indicators/super-trend)
 - [Vortex Indicator (VI)](/indicators/vortex)
+- [Williams Alligator](/indicators/alligator)
 
 ### [Price channels](/indicators/price-channels)
 
@@ -137,9 +139,9 @@ features:
 - [Klinger Volume Oscillator (KVO)](/indicators/kvo)
 - [Money Flow Index (MFI)](/indicators/mfi)
 - [On-Balance Volume (OBV)](/indicators/obv)
-- [Price Volume Oscillator (PVO)](/indicators/pvo)
-- [Volume-weighted Average Price (VWAP)](/indicators/vwap)
-- [Volume-weighted Moving Average (VWMA)](/indicators/vwma)
+- [Percentage Volume Oscillator (PVO)](/indicators/pvo)
+- [Volume Weighted Average Price (VWAP)](/indicators/vwap)
+- [Volume Weighted Moving Average (VWMA)](/indicators/vwma)
 
 ### [Moving Averages](/indicators/moving-averages)
 
@@ -157,10 +159,10 @@ features:
 - [Running Moving Average (RMA)](/indicators/smma)
 - [Simple Moving Average (SMA)](/indicators/sma)
 - [Smoothed Moving Average (SMMA)](/indicators/smma)
-- [T3 Moving Average](/indicators/t3)
+- [Tillson T3 Moving Average](/indicators/t3)
 - [Triple Exponential Moving Average (TEMA)](/indicators/tema)
-- [Volume-weighted Average Price (VWAP)](/indicators/vwap)
-- [Volume-weighted Moving Average (VWMA)](/indicators/vwma)
+- [Volume Weighted Average Price (VWAP)](/indicators/vwap)
+- [Volume Weighted Moving Average (VWMA)](/indicators/vwma)
 - [Weighted Moving Average (WMA)](/indicators/wma)
 
 See also: [Moving Average Envelopes](/indicators/ma-envelopes)
@@ -180,7 +182,7 @@ See also: [Moving Average Envelopes](/indicators/ma-envelopes)
 - [Bull and Bear Power](/indicators/elder-ray)
 - [Choppiness Index (CHOP)](/indicators/chop)
 - [Comparative Relative Strength](/indicators/pmo)
-- [Dominant Cycle Period](/indicators/ht-trendline)
+- [Dominant Cycle Periods](/indicators/ht-trendline)
 - [Historical Volatility (HV)](/indicators/std-dev)
 - [Hurst Exponent](/indicators/hurst)
 - [Momentum Oscillator (MO)](/indicators/roc)
@@ -204,6 +206,8 @@ See also: [Moving Average Envelopes](/indicators/ma-envelopes)
 - [Mean absolute percentage error (MAPE)](/indicators/sma-analysis)
 - [Mean square error (MSE)](/indicators/sma-analysis)
 - [R-squared (R²)](/indicators/correlation)
-- [Slope (gradient)](/indicators/correlation)
+- [Slope (gradient)](/indicators/slope)
 - [Standard deviation (σ)](/indicators/std-dev)
 - [Z-score (standard score)](/indicators/std-dev)
+
+</div>

@@ -8,9 +8,7 @@ description: Created by Chester W. Keltner, the Keltner Channels price range ove
 Created by Chester W. Keltner, [Keltner Channels](https://en.wikipedia.org/wiki/Keltner_channel) are based on an EMA centerline and ATR band widths.  See also [STARC Bands](/indicators/starc-bands) for an SMA centerline equivalent.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/249 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Keltner" />
-</ClientOnly>
+<StockIndicatorChart indicator="Keltner" />
 
 ```csharp
 // C# usage syntax

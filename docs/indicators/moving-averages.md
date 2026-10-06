@@ -10,6 +10,9 @@ hero:
     - theme: alt
       text: ← all categories
       link: /indicators/
+    - theme: alt
+      text: price transforms →
+      link: /indicators/price-transforms
 
 features:
 
@@ -79,7 +82,7 @@ features:
       src: /assets/thumbs/indicators/smma.png
     link: /indicators/smma
 
-  - title: T3 Moving Average (Tillson)
+  - title: Tillson T3 Moving Average
     details: 6-level Exponential Moving Averages (EMA) adjusted to reduce lag and overshooting
     icon:
       src: /assets/thumbs/indicators/t3.png
@@ -91,13 +94,13 @@ features:
       src: /assets/thumbs/indicators/tema.png
     link: /indicators/tema
 
-  - title: Volume-weighted average price (VWAP)
+  - title: Volume Weighted Average Price (VWAP)
     details: Volume weighted average of price, typically used on intraday data
     icon:
       src: /assets/thumbs/indicators/vwap2.png
     link: /indicators/vwap
 
-  - title: Volume-weighted moving average (VWMA)
+  - title: Volume Weighted Moving Average (VWMA)
     details: Volume adjusted average price over a rolling window period
     icon:
       src: /assets/thumbs/indicators/vwma2.png

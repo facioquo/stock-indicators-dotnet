@@ -8,9 +8,7 @@ description: Created by Patrick G. Mulloy, the Triple Exponential Moving Average
 Created by Patrick G. Mulloy, the [Triple exponential moving average](https://en.wikipedia.org/wiki/Triple_exponential_moving_average) is a faster multi-smoothed EMA of the price over a lookback window.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/808 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Tema" />
-</ClientOnly>
+<StockIndicatorChart indicator="Tema" />
 
 ```csharp
 // C# usage syntax

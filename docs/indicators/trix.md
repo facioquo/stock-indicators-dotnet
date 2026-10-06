@@ -8,9 +8,7 @@ description: Created by Jack Hutson, TRIX is a rolling rate of change for a 3 EM
 Created by Jack Hutson, [TRIX](https://en.wikipedia.org/wiki/Trix_(technical_analysis)) is the rate of change for a 3 EMA smoothing of the price over a lookback window.  TRIX is often confused with [TEMA](/indicators/tema).
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/234 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Trix" withOverlay />
-</ClientOnly>
+<StockIndicatorChart indicator="Trix" withOverlay />
 
 ```csharp
 // C# usage syntax for Trix

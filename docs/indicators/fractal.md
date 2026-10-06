@@ -8,9 +8,7 @@ description: Created by Bill Williams, Fractal is a retrospective price pattern 
 Created by Bill Williams in _Trading Chaos_ (1995), [Fractal](https://www.investopedia.com/terms/f/fractal.asp) is a retrospective price pattern that identifies a central high or low point chevron.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/255 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Fractal" />
-</ClientOnly>
+<StockIndicatorChart indicator="Fractal" />
 
 ```csharp
 // C# usage syntax
@@ -47,7 +45,7 @@ IReadOnlyList<FractalResult>
 - The first and last `S` periods in `bars` are unable to be calculated since there's not enough prior/following data.
 - Per Williams' definition the middle bar must be strictly beyond both wings, so when two or more bars tie for the extreme value, no fractal is identified.
 
-::: warning ️🖌️ Repaint warning
+::: warning 🖌️ Repaint warning
 This price pattern uses future bars and will never identify a `fractal` in the last `S` periods of `bars`.  Fractals are retroactively identified.
 :::
 

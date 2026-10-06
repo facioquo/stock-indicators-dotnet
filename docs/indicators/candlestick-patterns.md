@@ -10,6 +10,9 @@ hero:
     - theme: alt
       text: ← all categories
       link: /indicators/
+    - theme: alt
+      text: volume-based →
+      link: /indicators/volume-based
 
 features:
 
@@ -31,7 +34,7 @@ features:
       src: /assets/thumbs/indicators/pivots.png
     link: /indicators/pivots
 
-  - title: Fractal (Williams)
+  - title: Williams Fractal
     details: Peak and trough chevron patterns with ±2 fixed period wings for short term pivots
     icon:
       src: /assets/thumbs/indicators/fractal.png

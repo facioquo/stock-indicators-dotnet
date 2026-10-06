@@ -8,9 +8,7 @@ description: Rolling Pivot Points is a modern update to traditional fixed calend
 Created by Dave Skender, Rolling Pivot Points is a modern update to traditional fixed calendar window <a href="/indicators/pivot-points/">Pivot Points</a>.  It depicts support and resistance levels, based on a defined _rolling_ window and offset.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/274 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="RollingPivots" />
-</ClientOnly>
+<StockIndicatorChart indicator="RollingPivots" />
 
 ```csharp
 // C# usage syntax
@@ -57,7 +55,7 @@ IReadOnlyList<RollingPivotsResult>
 - It does not return a single incremental indicator value.
 - The first `W+F-1` periods will have `null` values since there's not enough data to calculate.
 
-::: warning ️🖌️ Repaint warning
+::: warning 🖌️ Repaint warning
 Historical results are a function of the rolling window position and will shift as new bars are added.  Each new period causes the window to move forward, recalculating pivot points based on the new window data.
 :::
 

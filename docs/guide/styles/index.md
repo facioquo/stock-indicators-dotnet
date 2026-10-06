@@ -6,13 +6,6 @@ layout: home
 hero:
   name: Indicator styles
   tagline: Choose the right one for your use case
-  actions:
-    - theme: alt
-      text: Indicators reference
-      link: /indicators
-    - theme: alt
-      text: v2→v3 migration
-      link: /migration/v3
 
 features:
   - title: Batch (Series)
@@ -21,7 +14,7 @@ features:
     linkText: Learn more
 
   - title: Buffer lists
-    details: Standalone incrementing `IReadOnlyList` results you append to, best for simple self-managed incremental data.
+    details: Standalone incrementing <code>IReadOnlyList</code> results you append to, best for simple self-managed incremental data.
     link: /guide/styles/buffer
     linkText: Learn more
 
@@ -48,7 +41,7 @@ The library provides three distinct indicator styles to support different use ca
 | Pruning | with utility | auto-preset | auto-preset |
 | Healing | no | no | yes |
 
-Healing: Built-in handling of out-of-order and de-deplication of incoming data.
+Healing: Built-in handling of out-of-order and de-duplication of incoming data.
 
 ## Which style to use?
 

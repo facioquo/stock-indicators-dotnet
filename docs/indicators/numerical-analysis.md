@@ -11,8 +11,8 @@ hero:
       text: ← all categories
       link: /indicators/
     - theme: alt
-      text: price characteristics →
-      link: /indicators/price-characteristics
+      text: price trends →
+      link: /indicators/price-trends
 
 features:
 
@@ -46,7 +46,7 @@ features:
       src: /assets/thumbs/indicators/slope.png
     link: /indicators/slope
 
-  - title: Standard deviation (𝜎, volatility)
+  - title: Standard deviation (σ, volatility)
     details: Standard deviation of returns, including Z-score (standard score); aka Historical Volatility (HV)
     icon:
       src: /assets/thumbs/indicators/std-dev.png

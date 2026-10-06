@@ -10,6 +10,9 @@ hero:
     - theme: alt
       text: ← all categories
       link: /indicators/
+    - theme: alt
+      text: moving averages →
+      link: /indicators/moving-averages
 
 features:
 
@@ -55,19 +58,19 @@ features:
       src: /assets/thumbs/indicators/obv.png
     link: /indicators/obv
 
-  - title: Price Volume Oscillator (PVO)
+  - title: Percentage Volume Oscillator (PVO)
     details: Rate of change between two converging / diverging EMA of volume (MACD of volume)
     icon:
       src: /assets/thumbs/indicators/pvo.png
     link: /indicators/pvo
 
-  - title: Volume-weighted average price (VWAP)
+  - title: Volume Weighted Average Price (VWAP)
     details: Volume weighted average of price, typically used on intraday data
     icon:
       src: /assets/thumbs/indicators/vwap2.png
     link: /indicators/vwap
 
-  - title: Volume-weighted moving average (VWMA)
+  - title: Volume Weighted Moving Average (VWMA)
     details: Volume adjusted average price over a rolling window period
     icon:
       src: /assets/thumbs/indicators/vwma2.png

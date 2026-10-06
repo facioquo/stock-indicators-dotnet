@@ -8,9 +8,7 @@ description: Slope of the best fit line is determined by an ordinary least-squar
 [Slope of the best fit line](https://www.google.com/search?q=Slope+linear+regression+indicator) is determined by an [ordinary least-squares simple linear regression](https://en.wikipedia.org/wiki/Simple_linear_regression) on price.  It can be used to help identify trend strength and direction.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/241 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Slope" with="Linear" />
-</ClientOnly>
+<StockIndicatorChart indicator="Slope" with="Linear" />
 
 ```csharp
 // C# usage syntax
@@ -42,7 +40,7 @@ IReadOnlyList<SlopeResult>
 - The first `N-1` periods will have `null` values for `Slope` since there's not enough data to calculate.
 - `Line` values are only provided for the last `N` periods of your bar history
 
-::: warning ️🖌️ Repaint warning
+::: warning 🖌️ Repaint warning
 The `Line` is continuously repainted since it is based on the last bar and lookback period.
 :::
 
@@ -115,7 +113,7 @@ void OnBarReceived(IBar bar) => barHub.Add(bar);
 IReadOnlyList<SlopeResult> results = observer.Results;
 ```
 
-::: warning ️🖌️ Repaint warning
+::: warning 🖌️ Repaint warning
 The streaming implementation exhibits the same repaint behavior as the series version. `Line` values are recalculated for the last `N` periods as new data arrives, matching the series implementation's behavior.
 :::
 

@@ -7,9 +7,7 @@ description: Created by Bill Williams, the Gator Oscillator is an expanded oscil
 
 Created by Bill Williams, the Gator Oscillator is an expanded oscillator view of [Williams Alligator](/indicators/alligator)'s three moving averages. [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/385 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Gator" withOverlay />
-</ClientOnly>
+<StockIndicatorChart indicator="Gator" withOverlay />
 
 ```csharp
 // C# usage syntax

@@ -8,9 +8,7 @@ description: Created by J. Welles Wilder, True Range and Average True Range is a
 Created by J. Welles Wilder, True Range and [Average True Range](https://en.wikipedia.org/wiki/Average_true_range) are measures of volatility that capture gaps and limits between periods. See [True Range (TR)](/indicators/tr) for dedicated TR documentation, including streaming support.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/269 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Atr" withOverlay />
-</ClientOnly>
+<StockIndicatorChart indicator="Atr" withOverlay />
 
 ```csharp
 // C# usage syntax

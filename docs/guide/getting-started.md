@@ -5,92 +5,41 @@ description: Install the Stock Indicators for .NET library and calculate your fi
 
 # Getting started
 
-Get started quickly with this coding agent prompt:
+Install the library, give it your price history, and calculate your first indicator. Using a coding agent? Paste this prompt and it will walk you through these steps:
 
 ```prompt
-Read Stock Indicators for .NET documentation index from 
-[llms.txt](https://dotnet.stockindicators.dev/llms.txt)
-and its getting started guide.
-Help me install and use this FacioQuo.Stock.Indicators
-NuGet library to calculate my first indicator.
+Read https://dotnet.stockindicators.dev/llms.txt and its getting started guide,
+then help me install the FacioQuo.Stock.Indicators NuGet package
+and calculate my first indicator from my own price data.
 ```
 
-See [Agent setup](/guide/agent-setup) for more prompts and tips on working with coding agents.
+See [Agent setup](/guide/agent-setup) for more prompts.
 
 ## Installation and setup
 
-Find and install the [FacioQuo.Stock.Indicators](https://www.nuget.org/packages/FacioQuo.Stock.Indicators) NuGet package into your Project.
+Install the [FacioQuo.Stock.Indicators](https://www.nuget.org/packages/FacioQuo.Stock.Indicators) NuGet package into your project.
 
-```bash
-# dotnet CLI example
+::: code-group
+
+```bash [.NET CLI]
 dotnet add package FacioQuo.Stock.Indicators
+```
 
-# package manager example
+```powershell [Package Manager]
 Install-Package FacioQuo.Stock.Indicators
 ```
 
-> See more [help for installing packages](https://www.google.com/search?q=install+nuget+package).
+:::
 
-## Prerequisite data
+## Calculate your first indicator
 
-Most indicators require that you provide historical aggregate OHLCV price bar data and additional configuration parameters.
+Indicators take a list of historical price bars, either the library's [`Bar` class](#historical-bars) or [your own bar class](#using-custom-bar-classes). Parameters have standard defaults where an industry convention exists, and you can override any of them.
 
-Historical price data can be provided as a `List`, `IReadOnlyList`, or `ICollection` of the `Bar` class ([see _**Historical bars**_ section below](#historical-bars)); however, it can also be supplied as a generic [custom `TBar` type](#using-custom-bar-classes) if you prefer to use your own `IBar` derived model.
+This page uses the **[Batch (Series)](/guide/styles/batch)** style, the simplest starting point, which converts a full collection at once. For bars that arrive one at a time, see **[Buffer lists](/guide/styles/buffer)** and **[Stream hubs](/guide/styles/stream)**, or [compare all three styles](/guide/styles/).
 
-For configurable indicator parameters, default values are provided when there is an industry standard.  You can, of course, override these and provide your own values.
+### Try it now
 
-## Implementation pattern
-
-The library supports three indicator styles, each use the same pattern:
-
-```csharp
-using FacioQuo.Stock.Indicators;
-
-[..]
-
-// step 1: get price bar(s) from your source
-// step 2: calculate indicator value(s)
-```
-
-The examples on this page depict the **Batch (Series)** style because it is the simplest starting point and covers most use cases. Buffer lists and stream hubs are first-class alternatives for incremental and streaming scenarios — see [Indicator styles](/guide/styles/) for a side-by-side comparison and guidance on choosing.
-
-- **[Batch (Series)](/guide/styles/batch)** — convert a full price data collection at once. This is the standard style.
-- **[Buffer lists](/guide/styles/buffer)** — self-managed incrementing lists, for adding price bars one at a time.
-- **[Stream hubs](/guide/styles/stream)** — subscription-based hub-observer pattern, for live/streaming data and chained, real-time architectures.
-
-### Example usage
-
-```csharp
-using FacioQuo.Stock.Indicators;
-
-[..]
-
-// fetch historical price bars from your feed (your method)
-IReadOnlyList<Bar> bars = GetBarsFromFeed("MSFT");
-
-// calculate 20-period SMA
-IReadOnlyList<SmaResult> results = bars
-  .ToSma(20);
-
-// use results as needed for your use case (example only)
-foreach (SmaResult r in results)
-{
-    Console.WriteLine($"SMA on {r.Timestamp:d} was ${r.Sma:N4}");
-}
-```
-
-```console
-SMA on 4/19/2018 was $255.0590
-SMA on 4/20/2018 was $255.2015
-SMA on 4/23/2018 was $255.6135
-SMA on 4/24/2018 was $255.5105
-SMA on 4/25/2018 was $255.6570
-SMA on 4/26/2018 was $255.9705
-..
-```
-
-::: details Complete runnable example
-Verify your setup before connecting a market data provider. This console app builds sample bars in memory instead of calling `GetBarsFromFeed()`.
+This complete console app builds sample bars in memory, so you can see results before connecting a market data provider.
 
 ```bash
 dotnet new console -n FirstIndicator
@@ -131,22 +80,48 @@ SMA on 2025-01-30 was 102.3750
 SMA on 2025-01-31 was 102.6250
 ```
 
-:::
+### Use your own price data
 
-See [individual indicator pages](/indicators) for specific usage guidance.
+Replace the sample bars with historical bars from your data provider. `GetBarsFromFeed()` stands in for [your own data acquisition](#where-can-i-get-historical-bar-data).
 
-More examples available:
+```csharp
+using FacioQuo.Stock.Indicators;
 
-- [Example usage code](/examples/) on GitHub
-- [Demo site](https://charts.stockindicators.dev) (a stock chart)
+[..]
 
-::: tip For a deeper guide
-See the [Guide](/guide/) for batch, buffer, and stream styles; chaining; custom indicators.
-:::
+// fetch historical price bars from your feed (your method)
+IReadOnlyList<Bar> bars = GetBarsFromFeed("MSFT");
+
+// calculate 20-period SMA
+IReadOnlyList<SmaResult> results = bars
+  .ToSma(20);
+
+// use results as needed for your use case (example only)
+foreach (SmaResult r in results)
+{
+    Console.WriteLine($"SMA on {r.Timestamp:d} was ${r.Sma:N4}");
+}
+```
+
+```console
+SMA on 4/19/2018 was $255.0590
+SMA on 4/20/2018 was $255.2015
+SMA on 4/23/2018 was $255.6135
+SMA on 4/24/2018 was $255.5105
+SMA on 4/25/2018 was $255.6570
+SMA on 4/26/2018 was $255.9705
+..
+```
+
+### Next steps
+
+- Browse the [indicators](/indicators) for each one's parameters, warmup, and results.
+- Explore [example code](/examples/) and the [demo charts](https://charts.stockindicators.dev).
+- Read the [Guide](/guide/) for indicator styles, chaining, and custom indicators.
 
 ## Historical bars
 
-You must provide historical price bars to the library in the standard OHLCV `IReadOnlyList<Bar>` or a compatible `List` or `ICollection` format.  It should have a consistent period frequency (day, hour, minute, etc).  See [using custom bar classes](#using-custom-bar-classes) if you prefer to use your own `IBar` derived class.
+Provide historical price bars as an OHLCV `IReadOnlyList<Bar>`, `List`, or `ICollection`, with a consistent frequency (day, hour, minute, etc.). To use your own class instead, see [using custom bar classes](#using-custom-bar-classes).
 
 | property | type | description |
 | :------- | :--- | :---------- |
@@ -163,14 +138,14 @@ You must provide historical price bars to the library in the standard OHLCV `IRe
 You must get price bar data from your own provider. _The `GetBarsFromFeed()` method shown in our examples represents your own acquisition of price data and **is not part of this library**._
 :::
 
-There are many places to get financial market data.  Check with your brokerage or other commercial sites.  If you're looking for a free developer API, see our ongoing [discussion on market data](https://github.com/facioquo/stock-indicators-dotnet/discussions/579) for ideas.
+Check with your brokerage or a commercial data provider. For free developer APIs, see our ongoing [discussion on market data](https://github.com/facioquo/stock-indicators-dotnet/discussions/579) for ideas.
 
 ### How much historical bar data do I need?
 
-Each indicator will need different amounts of price `bars` to calculate.  You can find guidance on the individual indicator documentation pages for minimum requirements; however, **most use cases will require that you provide more than the minimum**.  As a general rule of thumb, you will be safe if you provide 750 points of historical bar data (e.g. 3 years of daily data).
+Each indicator page lists its minimum, but **most use cases need more than the minimum**. As a rule of thumb, 750 bars (about 3 years of daily data) is safe.
 
-::: warning 🚩 IMPORTANT
-Applying the _minimum_ amount of bar history as possible is NOT a good way to optimize your system. Some indicators use a smoothing technique that converges to better precision over time. While you can calculate these with the minimum amount of bar data, the precision to two decimal points often requires 250 or more preceding historical records.
+::: warning 🚩 Use more than the minimum history
+Supplying only the _minimum_ bar history is NOT a good optimization. Some indicators use smoothing that converges to better precision over time, and two-decimal precision often needs 250 or more preceding bars.
 
 For example, if you are using daily data and want one year of precise EMA(250) data, you need to provide 3 years of historical price bars (1 extra year for the lookback period and 1 extra year for convergence); thereafter, you would discard or not use the first two years of results. Occasionally, even more is required for optimal precision.
 
@@ -179,7 +154,7 @@ See [discussion on warmup and convergence](https://github.com/facioquo/stock-ind
 
 ### Using custom bar classes
 
-If you would like to use your own custom `MyCustomBar` class, to avoid needing to transpose into the library `Bar` class, you only need to add the `IBar` interface.
+To use your own bar class without converting to the library `Bar` class, add the `IBar` interface.
 
 ```csharp
 using FacioQuo.Stock.Indicators;
@@ -214,12 +189,12 @@ IReadOnlyList<SmaResult> results = myBars.ToSma(20);
 ```
 
 ::: warning 🚩 Custom bars must have value based equality
-When implementing your custom bar type, it must be either `record` class or implement `IEquatable<T>` to be compatible with the streaming hub internal de-duplication logic.
+Make your custom bar type a `record` class or implement `IEquatable<T>`, so stream hubs can detect duplicate bars.
 :::
 
 ## Chaining indicators
 
-If you want to compute an indicator of indicators, such as an SMA of an ADX or an [RSI of an OBV](https://medium.com/@robswc/this-is-what-happens-when-you-combine-the-obv-and-rsi-indicators-6616d991773d), use _**chaining**_ to calculate an indicator from prior results. Example:
+To calculate an indicator of an indicator, such as an SMA of ADX or an [RSI of OBV](https://medium.com/@robswc/this-is-what-happens-when-you-combine-the-obv-and-rsi-indicators-6616d991773d), _**chain**_ them:
 
 ```csharp
 // fetch historical price bars from your feed (your method)

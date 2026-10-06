@@ -58,7 +58,7 @@ html:not(.dark) body {
     color: var(--vp-c-text-2);
     max-width: 100% !important;
     font-size: 1.2em !important;
-    line-height: 1.1 !important;
+    line-height: 1.3 !important;
   }
 }
 
@@ -90,28 +90,6 @@ html:not(.dark) body {
     object-position: top;
     border-radius: 5px;
   }
-
-  // Prefer Moving Averages breakpoint behavior: require a wider viewport
-  // before switching to a 3-column layout. Use higher specificity and
-  // !important to override VitePress-generated grid classes reliably.
-  @media (min-width: 1200px) {
-
-    .VPFeatures.VPHomeFeatures .container .items .item,
-    .VPFeatures.VPHomeFeatures .container .items .item[class*='grid-'],
-    .VPFeatures .container .items .item,
-    .VPFeatures .container .items .item[class*='grid-'] {
-      box-sizing: border-box !important;
-      width: 33.333333% !important;
-      max-width: 33.333333% !important;
-      flex: 0 0 33.333333% !important;
-    }
-
-    .VPFeatures.VPHomeFeatures .container .items a.VPFeature,
-    .VPFeatures .container .items a.VPFeature {
-      width: 100% !important;
-      box-sizing: border-box !important;
-    }
-  }
 }
 
 /* Navbar site title - grid layout with icon left, text stacked right */
@@ -140,15 +118,9 @@ html:not(.dark) body {
   color: var(--vp-c-text-2);
   grid-row: 2;
   grid-column: 2;
-  font-size: 60%;
+  font-size: 70%;
   line-height: 0.85;
   align-self: start;
-}
-
-/* Ensure brand buttons keep high-contrast text */
-.VPButton.brand,
-.VPButton.medium.brand {
-  color: #ffffff !important;
 }
 
 /* Home page charts layout - vertical stack */
@@ -267,132 +239,6 @@ html:not(.dark) body {
 }
 
 
-// EXPERIMENTAL
-
-.usa-link {
-  color: #005ea2;
-  text-decoration: underline;
-}
-
-.usa-link:visited {
-  color: #54278f;
-}
-
-.usa-link:hover {
-  color: #1a4480;
-}
-
-.usa-link:active {
-  color: #162e51;
-}
-
-.usa-link:focus {
-  outline: 0.25rem solid #2491ff;
-  outline-offset: 0rem;
-}
-
-
-.usa-link--external {
-  display: inline;
-}
-
-.usa-link--external::before {
-  position: absolute;
-  left: -999em;
-  right: auto;
-  content: "External.";
-}
-
-.usa-link--external[target=_blank]::before {
-  position: absolute;
-  left: -999em;
-  right: auto;
-  content: "External, opens in a new tab.";
-}
-
-.usa-link--external::after {
-  background-image: url("/assets/icons/external-link.svg");
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: 1.75ex 1.75ex;
-  display: inline-block;
-  height: 1.75ex;
-  width: 1.75ex;
-  content: "";
-  display: inline;
-  margin-top: 0.7ex;
-  margin-left: 2px;
-  padding-left: 1.75ex;
-  vertical-align: middle;
-
-  font-size: 1.13rem;
-  line-height: 1.5;
-}
-
-@supports ((-webkit-mask: url("")) or (mask: url(""))) {
-  .usa-link--external::after {
-    background: none;
-    background-color: currentColor;
-    -webkit-mask-image: url("/assets/icons/external-link.svg"), linear-gradient(transparent, transparent);
-    mask-image: url("/assets/icons/external-link.svg"), linear-gradient(transparent, transparent);
-    -webkit-mask-position: center center;
-    mask-position: center center;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-size: 1.75ex 1.75ex;
-    mask-size: 1.75ex 1.75ex;
-  }
-}
-
-.usa-link--external.usa-link--alt {
-  display: inline;
-}
-
-.usa-link--external.usa-link--alt::before {
-  position: absolute;
-  left: -999em;
-  right: auto;
-  content: "External.";
-}
-
-.usa-link--external.usa-link--alt[target=_blank]::before {
-  position: absolute;
-  left: -999em;
-  right: auto;
-  content: "External, opens in a new tab.";
-}
-
-.usa-link--external.usa-link--alt::after {
-  background-image: url("/assets/icons/external-link.svg");
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: 1.75ex 1.75ex;
-  display: inline-block;
-  height: 1.75ex;
-  width: 1.75ex;
-  content: "";
-  display: inline;
-  margin-top: 0.7ex;
-  margin-left: 2px;
-  padding-left: 1.75ex;
-  vertical-align: middle;
-}
-
-@supports ((-webkit-mask: url("")) or (mask: url(""))) {
-  .usa-link--external.usa-link--alt::after {
-    background: none;
-    background-color: currentColor;
-    -webkit-mask-image: url("/assets/icons/external-link.svg"), linear-gradient(transparent, transparent);
-    mask-image: url("/assets/icons/external-link.svg"), linear-gradient(transparent, transparent);
-    -webkit-mask-position: center center;
-    mask-position: center center;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-size: 1.75ex 1.75ex;
-    mask-size: 1.75ex 1.75ex;
-  }
-}
-
 // Removed-line contrast in diff code blocks (WCAG 2.1 AA, 4.5:1).
 // VitePress dims `.diff.remove` with `opacity: .7`, which composites the
 // syntax colours toward the red line background — axe measures the C# keyword
@@ -499,4 +345,15 @@ html:not(.dark) body {
 // Keep `lastUpdated` for the sitemap's <lastmod>, but not on the page.
 .VPDocFooter .last-updated {
   display: none;
+}
+
+// /indicators "Complete list": flow each category's links into columns so
+// the long single-column lists use the page width.
+.indicator-index ul {
+  columns: 3 14rem;
+  column-gap: 2rem;
+
+  li {
+    break-inside: avoid;
+  }
 }
