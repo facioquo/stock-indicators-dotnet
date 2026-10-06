@@ -8,9 +8,7 @@ description: Created by Richard Donchian, Donchian Channels, also called Price C
 Created by Richard Donchian, [Donchian Channels](https://en.wikipedia.org/wiki/Donchian_channel), also called Price Channels, are price ranges derived from highest High and lowest Low values.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/257 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Donchian" />
-</ClientOnly>
+<StockIndicatorChart indicator="Donchian" />
 
 ```csharp
 // C# usage syntax

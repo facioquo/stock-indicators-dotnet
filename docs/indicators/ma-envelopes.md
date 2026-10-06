@@ -8,9 +8,7 @@ description:  Moving Average Envelopes is a price band channel overlay that is o
 [Moving Average Envelopes](https://en.wikipedia.org/wiki/Moving_average_envelope) is a price band channel overlay that is offset from the moving average of price.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/288 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="MaEnvelopes" />
-</ClientOnly>
+<StockIndicatorChart indicator="MaEnvelopes" />
 
 ```csharp
 // C# usage syntax

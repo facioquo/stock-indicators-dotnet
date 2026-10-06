@@ -8,9 +8,7 @@ description: Created by Manning Stoller, the Stoller Average Range Channel (STAR
 Created by Manning Stoller, the [Stoller Average Range Channel (STARC) Bands](https://www.investopedia.com/terms/s/starc.asp), are price ranges based on an SMA centerline and ATR band widths.  See also [Keltner Channels](/indicators/keltner) for an EMA centerline equivalent.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/292 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="StarcBands" />
-</ClientOnly>
+<StockIndicatorChart indicator="StarcBands" />
 
 ```csharp
 // C# usage syntax

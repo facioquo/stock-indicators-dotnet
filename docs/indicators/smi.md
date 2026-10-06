@@ -8,9 +8,7 @@ description: Created by William Blau, the Stochastic Momentum Index (SMI) oscill
 Created by William Blau, the Stochastic Momentum Index (SMI) oscillator is a double-smoothed variant of the [Stochastic Oscillator](/indicators/stoch), depicted on a scale from -100 to 100.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/625 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Smi" withOverlay />
-</ClientOnly>
+<StockIndicatorChart indicator="Smi" withOverlay />
 
 ```csharp
 // C# usage syntax (standard)

@@ -8,9 +8,7 @@ description: Created by Quong and Soudack, the Money Flow Index is a price-volum
 Created by Quong and Soudack, the [Money Flow Index](https://en.wikipedia.org/wiki/Money_flow_index) is a price-volume oscillator that shows buying and selling momentum. Values outside of the 80 / 20 thresholds are considered overbought / oversold.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/247 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Mfi" withOverlay />
-</ClientOnly>
+<StockIndicatorChart indicator="Mfi" withOverlay />
 
 ```csharp
 // C# usage syntax

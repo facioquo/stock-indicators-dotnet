@@ -8,9 +8,7 @@ description: Created by Igor Levshin, the Balance of Power (aka Balance of Marke
 Created by Igor Levshin, the [Balance of Power](https://www.google.com/search?q=Balance+of+Power+(BOP)+indicator) (aka Balance of Market Power) is a momentum oscillator that depicts the strength of buying and selling pressure.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/302 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Bop" withOverlay />
-</ClientOnly>
+<StockIndicatorChart indicator="Bop" withOverlay />
 
 ```csharp
 // C# usage syntax

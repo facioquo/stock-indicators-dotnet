@@ -8,13 +8,9 @@ description: Created by Tushar Chande, Aroon is a oscillator view of how long ag
 Created by Tushar Chande, [Aroon (Up/Down)](https://www.google.com/search?q=Aroon+Up/Down+Indicator) is a oscillator view that tracks how recently each lookback window saw a new high (Up) and low (Down). [Aroon Oscillator](https://www.google.com/search?q=Aroon+Up/Down+Indicator) is the difference `Up − Down`, presented as a single oscillator that crosses zero when the dominant trend flips.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/266 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Aroon" withOverlay />
-</ClientOnly>
+<StockIndicatorChart indicator="Aroon" withOverlay />
 
-<ClientOnly>
-  <StockIndicatorChart indicator="AroonOsc" />
-</ClientOnly>
+<StockIndicatorChart indicator="AroonOsc" />
 
 ```csharp
 // C# usage syntax

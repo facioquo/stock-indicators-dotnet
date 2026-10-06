@@ -34,16 +34,14 @@ Sections appear in this order. Prose separates sentences with two spaces, matchi
 ### Chart block
 
 ```html
-<ClientOnly>
-  <StockIndicatorChart indicator="Ema" />
-</ClientOnly>
+<StockIndicatorChart indicator="Ema" />
 ```
 
 - `indicator` is a key of the `indicators` map in `docs/.vitepress/theme/index.ts` — PascalCase (`Ema`, `BollingerBands`, `AtrStop`), not the slug. Every key a page uses must exist there.
-- A new key needs a `uiid` that the chart API at `charts-api.stockindicators.dev` serves, and a `title`. When the API does not serve the indicator, omit the chart block; never add a placeholder.
+- A new key needs a `uiid` that the chart API at `charts-api.stockindicators.dev` serves, a `title`, and `chartType: 'oscillator'` when the API lists it as an oscillator (the hint sizes the reserved chart frame before data loads). When the API does not serve the indicator, omit the chart block; never add a placeholder.
 - Add `withOverlay` when the indicator plots in its own pane (oscillators such as `Rsi`, `Adx`); omit it for price overlays (`Ema`, `BollingerBands`).
-- Stack related charts inside one `<ClientOnly>` with `withOverlay` on the first only (`std-dev.md`, `sma-analysis.md`). `with="DcPeriods"` adds a companion series to one chart (`ht-trendline.md`).
-- `<ClientOnly>` is required; the component renders only in the browser.
+- Stack related charts on consecutive lines with `withOverlay` on the first only (`std-dev.md`, `sma-analysis.md`). `with="DcPeriods"` adds a companion series to one chart (`ht-trendline.md`).
+- Don't wrap the chart in `<ClientOnly>`. The component renders its sized frames during the static build, so the page doesn't shift when the chart loads.
 
 ### Usage syntax
 

@@ -7,9 +7,7 @@ description: Beta coefficient with Beta+/Beta- shows how strongly one asset's pr
 
 [Beta](https://en.wikipedia.org/wiki/Beta_(finance)) shows how strongly one asset's price responds to systemic volatility of the entire market. Beta measures an asset's non-diversifiable systematic risk — its market exposure — not its idiosyncratic, asset-specific risk. [Upside Beta](https://en.wikipedia.org/wiki/Upside_beta) (Beta+) and [Downside Beta](https://en.wikipedia.org/wiki/Downside_beta) (Beta-), [popularized by Harry M. Markowitz](https://www.jstor.org/stable/j.ctt1bh4c8h), are also included.  Beta+ and Beta- capture asymmetric sensitivity during rising and falling markets. [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/268 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Beta" withOverlay />
-</ClientOnly>
+<StockIndicatorChart indicator="Beta" withOverlay />
 
 ```csharp
 // C# usage syntax

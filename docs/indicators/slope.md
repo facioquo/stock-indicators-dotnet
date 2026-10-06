@@ -8,9 +8,7 @@ description: Slope of the best fit line is determined by an ordinary least-squar
 [Slope of the best fit line](https://www.google.com/search?q=Slope+linear+regression+indicator) is determined by an [ordinary least-squares simple linear regression](https://en.wikipedia.org/wiki/Simple_linear_regression) on price.  It can be used to help identify trend strength and direction.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/241 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Slope" with="Linear" />
-</ClientOnly>
+<StockIndicatorChart indicator="Slope" with="Linear" />
 
 ```csharp
 // C# usage syntax

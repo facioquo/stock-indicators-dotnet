@@ -8,9 +8,7 @@ description: Smoothed Moving Average (SMMA), Modified Moving Average (MMA), Runn
 [Smoothed Moving Average](https://en.wikipedia.org/wiki/Moving_average) is the average of price over a lookback window using a smoothing method.  SMMA is also known as modified moving average (MMA) and running moving average (RMA).
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/375 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Smma" />
-</ClientOnly>
+<StockIndicatorChart indicator="Smma" />
 
 ```csharp
 // C# usage syntax

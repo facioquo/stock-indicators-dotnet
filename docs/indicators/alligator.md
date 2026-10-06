@@ -8,9 +8,7 @@ description: Created by Bill Williams, Alligator is a depiction of three smoothe
 Created by Bill Williams, Alligator is a depiction of three smoothed moving averages of median price, showing chart patterns that compared to an alligator's feeding habits when describing market movement. The moving averages are known as the Jaw, Teeth, and Lips, which are calculated using lookback and offset periods.  See also the [Gator Oscillator](/indicators/gator).
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/385 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="Alligator" />
-</ClientOnly>
+<StockIndicatorChart indicator="Alligator" />
 
 ```csharp
 // C# usage syntax

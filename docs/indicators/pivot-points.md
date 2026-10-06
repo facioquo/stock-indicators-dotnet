@@ -8,9 +8,7 @@ description: Pivot Points depict classic support and resistance levels, based on
 [Pivot Points](https://en.wikipedia.org/wiki/Pivot_point_(technical_analysis)) depict support and resistance levels, based on prior calendar windows.  You can specify window size (e.g. month, week, day, etc) and any of the traditional Floor Trading, Camarilla, Demark, Fibonacci, and Woodie variants. See [Rolling Pivot Points](/indicators/rolling-pivots) for lookback window variant.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/274 "Community discussion about this indicator")
 
-<ClientOnly>
-  <StockIndicatorChart indicator="PivotPoints" />
-</ClientOnly>
+<StockIndicatorChart indicator="PivotPoints" />
 
 ```csharp
 // C# usage syntax
