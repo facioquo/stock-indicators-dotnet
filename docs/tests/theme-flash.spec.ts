@@ -79,4 +79,25 @@ test.describe('theme flash on load (#2169)', () => {
     expect(state.bodyBg).toBe(LIGHT_CANVAS)
     expect(state.colorScheme).toBe('light')
   })
+
+  test('early dark-mode script opts out of Cloudflare Rocket Loader', async ({ page }) => {
+    // Production (behind Cloudflare Rocket Loader) still flashed light after
+    // the fix above shipped: Rocket Loader rewrites every <script> tag's type
+    // so the browser skips it at parse time, then re-inserts it after the
+    // page renders — including VitePress's own dark-mode script, so `.dark`
+    // arrived after everything gated on it had already painted light. This
+    // guards the `data-cfasync="false"` opt-out that keeps our copy exempt.
+    await page.goto('/', { waitUntil: 'commit' })
+
+    const script = page.locator('script#check-dark-mode-early')
+    await expect(script).toHaveAttribute('data-cfasync', 'false')
+
+    // Our copy must stay byte-for-byte identical to VitePress's own script:
+    // a VitePress upgrade that changes the preference key or fallback logic
+    // (id="check-dark-mode") would otherwise drift from our exempt copy
+    // silently, with nothing to notice the two disagree.
+    const own = await script.evaluate(el => el.textContent)
+    const vitepress = await page.locator('script#check-dark-mode').evaluate(el => el.textContent)
+    expect(own).toBe(vitepress)
+  })
 })
