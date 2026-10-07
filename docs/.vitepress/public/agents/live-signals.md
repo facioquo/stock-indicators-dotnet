@@ -15,13 +15,14 @@ Then tell them how to change the symbol and the recipe, and offer the next steps
 
 ## Start from the reference app
 
-[`docs/examples/LiveSignals`](https://github.com/facioquo/stock-indicators-dotnet/tree/main/docs/examples/LiveSignals) is a complete, CI-built ASP.NET Core app that already meets the finish line for crypto pairs. Its three files are short:
+[`docs/examples/LiveSignals`](https://github.com/facioquo/stock-indicators-dotnet/tree/main/docs/examples/LiveSignals) is a complete, CI-built ASP.NET Core app that already meets the finish line, for crypto pairs (Kraken, no key) and US stocks (Alpaca). Fetch its files from `https://raw.githubusercontent.com/facioquo/stock-indicators-dotnet/main/docs/examples/LiveSignals/`:
 
-- `https://raw.githubusercontent.com/facioquo/stock-indicators-dotnet/main/docs/examples/LiveSignals/LiveSignals.csproj`
-- `https://raw.githubusercontent.com/facioquo/stock-indicators-dotnet/main/docs/examples/LiveSignals/Program.cs`
-- `https://raw.githubusercontent.com/facioquo/stock-indicators-dotnet/main/docs/examples/LiveSignals/wwwroot/index.html`
+- `LiveSignals.csproj` and `Program.cs`: the host, and the symbol-based choice of feed
+- `Desk.cs`: the hubs, the signal recipe, and the snapshots sent to the page
+- `KrakenFeed.cs` and `AlpacaFeed.cs`: history seeding and the live WebSocket loop for each provider
+- `wwwroot/index.html`: the chart and signal panel
 
-Copy them into a new project, run `dotnet run -- --symbol ETH/USD`, and open the URL it prints. Then adapt the feed, recipe, or chart to what the developer asked for. Building from this baseline is faster and more reliable than writing the plumbing from scratch.
+Copy them into a new project, then run `dotnet run -- --symbol ETH/USD` or `dotnet run -- --symbol MSFT` and open the URL it prints. The stock feed reads `ALPACA_API_KEY` and `ALPACA_SECRET_KEY` from the environment. Adapt the feed, recipe, or chart to what the developer asked for; building from this baseline is faster and more reliable than writing the plumbing from scratch.
 
 ## Ask for
 

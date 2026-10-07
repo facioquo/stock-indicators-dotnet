@@ -33,7 +33,7 @@ if (string.IsNullOrEmpty(ALPACA_SECRET_KEY))
 {
     throw new ArgumentNullException(
         ALPACA_SECRET_KEY,
-        $"API SECRET missing, use `setx AlpacaApiSecret \"MY-ALPACA-SECRET\"` to set.");
+        $"API SECRET missing, use `setx ALPACA_SECRET_KEY \"MY-ALPACA-SECRET\"` to set.");
 }
 
 // connect to Alpaca REST API

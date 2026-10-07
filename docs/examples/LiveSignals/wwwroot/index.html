@@ -10,6 +10,7 @@
     aside { border-left: 1px solid #262a33; padding: 16px; overflow: auto; }
     h1 { font-size: 16px; margin: 0 0 4px; }
     .meta { color: #8a90a0; margin-bottom: 16px; }
+    .status { color: #c8ccd6; margin-bottom: 8px; }
     .sig { padding: 8px 0; border-top: 1px solid #262a33; }
     .BUY b { color: #26a69a; } .SELL b { color: #ef5350; } .weak { opacity: .6; }
   </style>
@@ -18,6 +19,7 @@
   <div id="chart"></div>
   <aside>
     <h1 id="title">Connecting…</h1>
+    <div class="status" id="status"></div>
     <div class="meta" id="meta">EMA 21/55 crossover · ADX ≥ 20 filter · 1.5×ATR stop · evaluated on closed 1-minute candles</div>
     <div id="signals"></div>
   </aside>
@@ -34,10 +36,22 @@
     const slow = chart.addLineSeries({ color: '#7aa2f7', lineWidth: 2, title: 'EMA55' });
 
     let lastTime = 0;
+    let zone;
+    const fmt = (sec, opts) => new Intl.DateTimeFormat(undefined, { timeZone: zone, ...opts }).format(sec * 1000);
+    const fmtFull = (sec) => fmt(sec, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    chart.applyOptions({
+      localization: { timeFormatter: fmtFull },
+      timeScale: {
+        // tick types below 3 mark years, months, and days; 3 and up mark times
+        tickMarkFormatter: (t, type) => fmt(t, type < 3 ? { month: 'short', day: 'numeric' } : { hour: '2-digit', minute: '2-digit' })
+      }
+    });
+    const toSec = (iso) => Math.floor(new Date(iso.endsWith('Z') ? iso : iso + 'Z') / 1000);
     const line = (rows, key) => rows.filter(r => r[key] != null).map(r => ({ time: r.t, value: r[key] }));
 
     new EventSource('/stream').onmessage = (e) => {
       const p = JSON.parse(e.data);
+      zone = p.tz || undefined;
       const bars = p.rows.map(r => ({ time: r.t, open: r.o, high: r.h, low: r.l, close: r.c }));
       if (p.full) {
         candles.setData(bars); fast.setData(line(p.rows, 'fast')); slow.setData(line(p.rows, 'slow'));
@@ -52,15 +66,16 @@
       }
       const last = p.rows[p.rows.length - 1];
       document.getElementById('title').textContent = `${p.symbol}  ${last ? last.c : ''}`;
+      document.getElementById('status').textContent = p.status;
       candles.setMarkers(p.signals.map(s => ({
-        time: Math.floor(new Date(s.time.endsWith('Z') ? s.time : s.time + 'Z') / 1000),
+        time: toSec(s.time),
         position: s.side === 'BUY' ? 'belowBar' : 'aboveBar',
         color: s.side === 'BUY' ? '#26a69a' : '#ef5350',
         shape: s.side === 'BUY' ? 'arrowUp' : 'arrowDown',
         text: s.side
       })));
       document.getElementById('signals').innerHTML = p.signals.slice().reverse().map(s =>
-        `<div class="sig ${s.side} ${s.strong ? '' : 'weak'}"><b>${s.side}</b> ${s.price.toFixed(2)} · ${new Date(s.time.endsWith('Z') ? s.time : s.time + 'Z').toLocaleTimeString()}<br>${s.reason}</div>`
+        `<div class="sig ${s.side} ${s.strong ? '' : 'weak'}"><b>${s.side}</b> ${s.price.toFixed(2)} · ${fmtFull(toSec(s.time))}<br>${s.reason}</div>`
       ).join('') || 'No crossovers yet in this window.';
     };
   </script>
