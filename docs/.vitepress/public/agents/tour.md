@@ -4,7 +4,7 @@ Read [start.md](https://dotnet.stockindicators.dev/agents/start.md) first; its g
 
 ## Finish line
 
-A small console project where every demo prints a result from real market data, plus a short "what you could build" list tailored to what the developer told you about themselves. Pick three demos that fit their interest. Every demo below is verified against `FacioQuo.Stock.Indicators` 3.0.1 on `msft.csv`.
+A small console project where every demo prints a result from real market data, plus a short "what you could build" list tailored to what the developer told you about themselves. Pick three demos that fit their interest. These demos show mechanics, so they use the test datasets from start.md; every one is verified against `FacioQuo.Stock.Indicators` 3.0.1 on `msft.csv`. Anything the developer will act on uses a live feed.
 
 Keep the narration to one line per demo: what it proves and why that matters. The output is the persuasion.
 

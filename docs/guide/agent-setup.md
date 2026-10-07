@@ -16,12 +16,12 @@ The [agent setup guide](https://dotnet.stockindicators.dev/agents/start.md) tell
 | You choose | You end up with |
 | ---------- | --------------- |
 | [Live signals](https://dotnet.stockindicators.dev/agents/live-signals.md) | A local web app streaming real candles for your symbol, with indicator overlays and explained buy and sell signals |
-| [Backtest](https://dotnet.stockindicators.dev/agents/backtest.md) | Your trading rules run over decades of real daily history, with a trade list and results against buy-and-hold |
+| [Backtest](https://dotnet.stockindicators.dev/agents/backtest.md) | Your trading rules run over years of real daily history up to the latest close, with a trade list and results against buy-and-hold |
 | [Integrate](https://dotnet.stockindicators.dev/agents/integrate.md) | Indicators calculated inside your own app, from your own bar type, with a test that pins the results |
 | [Tour](https://dotnet.stockindicators.dev/agents/tour.md) | Short, runnable demos of what sets the library apart, and ideas for what you could build |
 | [Migrate](https://dotnet.stockindicators.dev/agents/migrate.md) | A v2 codebase moved to v3, with output checked against the old results |
 
-Live signals for crypto pairs need no account. For US stocks, have a free [Alpaca](https://alpaca.markets/) API key ready, or the agent replays real history while the market is closed.
+Live signals for crypto pairs need no account. For US stocks, have a free [Alpaca](https://alpaca.markets/) API key ready in `ALPACA_KEY` and `ALPACA_SECRET`.
 
 ## Work with a coding agent
 

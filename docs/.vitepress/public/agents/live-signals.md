@@ -33,8 +33,8 @@ Copy them into a new project, run `dotnet run -- --symbol ETH/USD`, and open the
 | Situation | Feed | Notes |
 | --------- | ---- | ----- |
 | Crypto, any time | Kraken public API, no key | What the reference app uses. Symbols look like `BTC/USD`, `ETH/USD`, `SOL/USD`. Available in the US. |
-| US equity, market open | Alpaca market data, free plan (IEX feed) | Needs a free key pair; store it with `dotnet user-secrets`. Seed with historical bars over REST, then subscribe to the bars WebSocket. Check Alpaca's current docs for endpoints. |
-| US equity, market closed | Replay | Regular hours are 9:30–16:00 America/New_York, weekdays. Outside them, replay `intraday.csv` or `btcusd15x69k.csv` from start.md through the same hub at accelerated speed, label the screen **REPLAY**, and switch to live at the open if they want. |
+| US equity, market open | Alpaca market data, free plan (IEX feed) | Needs a free key pair in `ALPACA_KEY` and `ALPACA_SECRET`. Seed with historical bars over REST, then subscribe to the bars WebSocket. Check Alpaca's current docs for endpoints. |
+| US equity, market closed | Alpaca, same as above | Regular hours are 9:30–16:00 America/New_York, weekdays. Load the most recent real sessions, show **Market closed · opens {next open}**, and keep the feed subscribed so the first live bar lands at the open. To watch signals fire right now, offer a crypto pair, which trades around the clock. |
 
 Facts about the Kraken feed you cannot infer from the code alone:
 

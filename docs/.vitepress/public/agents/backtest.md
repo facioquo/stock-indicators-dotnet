@@ -4,7 +4,7 @@ Read [start.md](https://dotnet.stockindicators.dev/agents/start.md) first; its g
 
 ## Finish line
 
-A console project that runs the developer's rules over decades of real daily bars and prints:
+A console project that runs the developer's rules over years of real daily bars, up to the latest close, and prints:
 
 - the trade list, each entry with its date, side, price, and the indicator values that triggered it
 - trade count, win rate, total return, maximum drawdown, and buy-and-hold over the same span for comparison
@@ -13,7 +13,7 @@ Offer an equity-curve chart only if they want one.
 
 ## Data
 
-Use `msft.csv` or `spx.csv` (daily, 1990–2022) from start.md, or the developer's own provider. Ask which rules to test; if they have none, offer the recipes from [live-signals](https://dotnet.stockindicators.dev/agents/live-signals.md) so the same rules can later run live.
+Fetch real history from a provider, ending today: Alpaca daily bars for US equities (free key in `ALPACA_KEY` and `ALPACA_SECRET`), or Kraken's public OHLC endpoint for crypto (`interval=1440` returns about two years of daily bars, no key). Ask which rules to test; if they have none, offer the recipes from [live-signals](https://dotnet.stockindicators.dev/agents/live-signals.md) so the same rules can later run live.
 
 ## Get these right
 
