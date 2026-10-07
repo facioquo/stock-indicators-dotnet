@@ -42,16 +42,19 @@ sealed class KrakenFeed(Desk desk, ILogger<KrakenFeed> log) : BackgroundService
         JsonElement rows = result.EnumerateObject().First(p => p.Name != "last").Value;
 
         // row: [time, open, high, low, close, vwap, volume, count], prices as strings
-        foreach (JsonElement r in rows.EnumerateArray())
+        desk.Replay(() =>
         {
-            Push(new Bar(
-                Timestamp: DateTimeOffset.FromUnixTimeSeconds(r[0].GetInt64()).UtcDateTime,
-                Open: decimal.Parse(r[1].GetString()!, CultureInfo.InvariantCulture),
-                High: decimal.Parse(r[2].GetString()!, CultureInfo.InvariantCulture),
-                Low: decimal.Parse(r[3].GetString()!, CultureInfo.InvariantCulture),
-                Close: decimal.Parse(r[4].GetString()!, CultureInfo.InvariantCulture),
-                Volume: decimal.Parse(r[6].GetString()!, CultureInfo.InvariantCulture)));
-        }
+            foreach (JsonElement r in rows.EnumerateArray())
+            {
+                Push(new Bar(
+                    Timestamp: DateTimeOffset.FromUnixTimeSeconds(r[0].GetInt64()).UtcDateTime,
+                    Open: decimal.Parse(r[1].GetString()!, CultureInfo.InvariantCulture),
+                    High: decimal.Parse(r[2].GetString()!, CultureInfo.InvariantCulture),
+                    Low: decimal.Parse(r[3].GetString()!, CultureInfo.InvariantCulture),
+                    Close: decimal.Parse(r[4].GetString()!, CultureInfo.InvariantCulture),
+                    Volume: decimal.Parse(r[6].GetString()!, CultureInfo.InvariantCulture)));
+            }
+        });
         Console.WriteLine($"Seeded {rows.GetArrayLength()} one-minute bars for {desk.Symbol}; streaming live.");
     }
 
@@ -98,7 +101,15 @@ sealed class KrakenFeed(Desk desk, ILogger<KrakenFeed> log) : BackgroundService
                     Volume: d.GetProperty("volume").GetDecimal()))
                 .OrderBy(b => b.Timestamp);
 
-            foreach (Bar bar in bars) { Push(bar); }
+            // a snapshot replays history, so it is sent as one payload like the seed
+            if (root.TryGetProperty("type", out JsonElement type) && type.GetString() == "snapshot")
+            {
+                desk.Replay(() => { foreach (Bar bar in bars) { Push(bar); } });
+            }
+            else
+            {
+                foreach (Bar bar in bars) { Push(bar); }
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ sealed class Desk
     private readonly List<Channel<string>> clients = [];
     private readonly List<Signal> signals = [];
     private string status = "Connecting…";
+    private bool replaying;
 
     public Desk(string symbol)
     {
@@ -32,14 +33,26 @@ sealed class Desk
     public AdxHub Adx { get; }
     public AtrHub Atr { get; }
 
+    // Feeds replay history on every connect: broadcast one full payload when it ends, not one per replayed bar.
+    public void Replay(Action feed)
+    {
+        lock (gate)
+        {
+            replaying = true;
+            try { feed(); }
+            finally { replaying = false; }
+            Broadcast(Payload(full: true));
+        }
+    }
+
     // A bar with an existing timestamp replaces the cached one, and every chained hub recalculates.
     public void Add(Bar bar)
     {
         lock (gate)
         {
-            bool behind = IsBehindNewest(bar.Timestamp);
+            bool behind = !replaying && IsBehindNewest(bar.Timestamp);
             Bars.Add(bar);
-            Broadcast(Payload(full: behind));
+            if (!replaying) { Broadcast(Payload(full: behind)); }
         }
     }
 
@@ -49,7 +62,7 @@ sealed class Desk
         lock (gate)
         {
             Evaluate(timestamp);
-            Broadcast(Payload(full: IsBehindNewest(timestamp)));
+            if (!replaying) { Broadcast(Payload(full: IsBehindNewest(timestamp))); }
         }
     }
 

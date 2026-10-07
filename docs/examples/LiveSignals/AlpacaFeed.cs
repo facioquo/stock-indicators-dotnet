@@ -46,8 +46,9 @@ sealed class AlpacaFeed(Desk desk, IConfiguration config, ILogger<AlpacaFeed> lo
     private async Task<string> MarketStatusOrDefault(HttpClient http, CancellationToken ct)
     {
         try { return await MarketStatus(http, ct); }
-        catch (HttpRequestException ex)
+        catch (Exception ex) when (!ct.IsCancellationRequested)
         {
+            // a cosmetic call must never drop a healthy stream
             log.LogInformation("Market clock unavailable ({Message}); streaming without it", ex.Message);
             return "Live · Alpaca IEX feed";
         }
@@ -78,7 +79,10 @@ sealed class AlpacaFeed(Desk desk, IConfiguration config, ILogger<AlpacaFeed> lo
         }
 
         // newest first, so the 1,000 bars are the most recent; replay them oldest first
-        foreach (JsonElement r in rows.EnumerateArray().Reverse()) { OnClosedBar(ToBar(r)); }
+        desk.Replay(() =>
+        {
+            foreach (JsonElement r in rows.EnumerateArray().Reverse()) { OnClosedBar(ToBar(r)); }
+        });
         Console.WriteLine($"Seeded {rows.GetArrayLength()} one-minute bars for {desk.Symbol}; streaming live.");
     }
 
@@ -100,9 +104,31 @@ sealed class AlpacaFeed(Desk desk, IConfiguration config, ILogger<AlpacaFeed> lo
         }, ct);
         desk.SetStatus(await MarketStatusOrDefault(http, ct));
 
+        // the banner follows the open and the close even when the feed is quiet
+        using CancellationTokenSource stop = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        Task refresh = RefreshStatus(http, stop.Token);
+        try { await Receive(ws, ct); }
+        finally
+        {
+            await stop.CancelAsync();
+            await refresh;
+        }
+    }
+
+    private async Task RefreshStatus(HttpClient http, CancellationToken ct)
+    {
+        using PeriodicTimer timer = new(TimeSpan.FromMinutes(1));
+        try
+        {
+            while (await timer.WaitForNextTickAsync(ct)) { desk.SetStatus(await MarketStatusOrDefault(http, ct)); }
+        }
+        catch (OperationCanceledException) { }
+    }
+
+    private async Task Receive(ClientWebSocket ws, CancellationToken ct)
+    {
         byte[] buffer = new byte[1 << 16];
         using MemoryStream message = new();
-        DateTime statusDue = DateTime.UtcNow.AddMinutes(1);
         while (ws.State == WebSocketState.Open)
         {
             // single sequential receive loop: bars reach the hub in arrival order
@@ -126,13 +152,6 @@ sealed class AlpacaFeed(Desk desk, IConfiguration config, ILogger<AlpacaFeed> lo
                         OnTrade(m);
                         break;
                 }
-            }
-
-            // a long-lived connection spans the open and the close, so the banner is refreshed as messages arrive
-            if (DateTime.UtcNow >= statusDue)
-            {
-                statusDue = DateTime.UtcNow.AddMinutes(1);
-                desk.SetStatus(await MarketStatusOrDefault(http, ct));
             }
         }
     }
