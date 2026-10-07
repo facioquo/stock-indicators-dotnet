@@ -357,3 +357,66 @@ html:not(.dark) body {
     break-inside: avoid;
   }
 }
+
+// Copy-paste agent prompts (```prompt fences): a tinted card whose text wraps
+// instead of scrolling, with an always-visible "Copy prompt" button, since
+// touch screens never trigger the hover that reveals the default copy icon.
+.vp-doc div.language-prompt {
+  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 40%, transparent);
+  background-color: color-mix(in srgb, var(--vp-c-brand-1) 7%, var(--vp-code-block-bg));
+
+  pre {
+    overflow-x: visible;
+    padding-top: 3.75rem;
+  }
+
+  code {
+    width: auto;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  > span.lang {
+    display: none;
+  }
+
+  > button.copy {
+    display: flex;
+    align-items: center;
+    width: auto;
+    padding: 0 0.75rem 0 2.25rem;
+    border-color: color-mix(in srgb, var(--vp-c-brand-1) 50%, transparent);
+    background-position: 0.625rem 50%;
+    background-size: 1.125rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--vp-c-brand-1);
+    opacity: 1;
+
+    &::after {
+      content: 'Copy prompt';
+    }
+
+    &.copied {
+      border-radius: 0.25rem;
+
+      &::before {
+        display: none;
+      }
+
+      &::after {
+        content: 'Copied';
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--vp-c-brand-1);
+      outline-offset: 2px;
+    }
+  }
+
+  @media (max-width: 639px) {
+    border-right: 0;
+    border-left: 0;
+  }
+}
