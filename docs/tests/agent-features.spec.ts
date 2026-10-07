@@ -104,6 +104,8 @@ test('Prompt fences name their copy control for what it copies', async ({ contex
   await expect(page.locator('div.language-prompt button[title="Copy code"]')).toHaveCount(0)
   const button = page.locator('div.language-prompt').first().getByRole('button', { name: 'Copy prompt' })
   await expect(button).toBeVisible()
+  // the accessible name alone also matches the CSS label, so pin the markdown rename
+  await expect(button).toHaveAttribute('aria-label', 'Copy prompt')
 
   // The pointer is still over the button right after a click, so the copied
   // state must hold under :hover, where VitePress's own rules compete.
