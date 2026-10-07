@@ -397,7 +397,9 @@ html:not(.dark) body {
       content: 'Copy prompt';
     }
 
-    &.copied {
+    // :hover.copied matches VitePress's own selector; a bare .copied loses to it while the pointer is over the button
+    &.copied,
+    &:hover.copied {
       border-radius: 0.25rem;
 
       &::before {
