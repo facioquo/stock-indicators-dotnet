@@ -1,18 +1,14 @@
 import { test, expect, type Page } from '@playwright/test'
-import { readdirSync, readFileSync } from 'fs'
-import { fileURLToPath } from 'url'
-import { dirname, join } from 'path'
 
 import { getTestIdPrefix } from '@facioquo/indy-charts/vue'
 
+import { indicatorPages } from './chart-pages'
 import {
   mockStockChartsApi,
   CHART_MARKERS,
   CHART_TERMINAL_SELECTOR,
   type ChartPhase,
 } from './chart-api-mock'
-
-const __dirname = dirname(fileURLToPath(import.meta.url))
 
 /**
  * Wait for a chart to reach a terminal state (ready, empty, or error).
@@ -115,25 +111,6 @@ test('Home page charts reach a terminal state', async ({ page }) => {
 // ---------------------------------------------------------------------------
 // Bulk smoke test — every indicator page must reach a non-author terminal state
 // ---------------------------------------------------------------------------
-
-function indicatorPages(): Array<{ page: string; indicator: string }> {
-  const indicatorsDir = join(__dirname, '../indicators')
-  const files = readdirSync(indicatorsDir)
-
-  return files
-    .filter((file) => file.endsWith('.md'))
-    .flatMap((file) => {
-      const body = readFileSync(join(indicatorsDir, file), 'utf8')
-      // Matches only self-closing <StockIndicatorChart indicator="..." ... />
-      // forms; all current pages use this form. Broaden the regex if the
-      // long form <StockIndicatorChart ...></StockIndicatorChart> ever appears.
-      const matches = [...body.matchAll(/<StockIndicatorChart indicator="([^"]+)"[^/]*\/>/g)]
-      if (matches.length === 0) return []
-
-      const page = file.replace(/\.md$/, '')
-      return matches.map((m) => ({ page, indicator: m[1] }))
-    })
-}
 
 const INDICATOR_PAGES = indicatorPages()
 

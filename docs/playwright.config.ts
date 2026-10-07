@@ -5,6 +5,7 @@ import { defineConfig, devices } from '@playwright/test'
  *
  * All projects share one browser stack and one preview server:
  *   charts         - visual chart rendering, mocked against static fixture data
+ *   offline        - every chart renders from the bundled snapshot with the API blocked
  *   a11y           - axe-core WCAG 2.1 A/AA scan of every page in the sitemap
  *   agent-features - llms.txt, Markdown page actions, and WebMCP tools
  *   analytics      - controls that keep test runs out of production analytics
@@ -44,6 +45,12 @@ export default defineConfig({
       name: 'charts',
       testMatch: /charts\.spec\.ts/,
       fullyParallel: false,
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'offline',
+      testMatch: /offline-snapshot\.spec\.ts/,
+      fullyParallel: true,
       use: { ...devices['Desktop Chrome'] },
     },
     {

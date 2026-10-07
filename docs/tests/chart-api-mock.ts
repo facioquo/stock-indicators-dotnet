@@ -6,11 +6,12 @@ import { dirname, join } from 'path'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const FIXTURES = join(__dirname, '../.vitepress/public/data/chart-api')
 
-// Static fixture data loaded once
+// Static fixture data loaded once, from the same committed snapshot that
+// production falls back to (see `pnpm run snapshot:charts`).
 const quotesJson = readFileSync(join(FIXTURES, 'quotes.json'), 'utf8')
 const indicatorsJson = readFileSync(join(FIXTURES, 'indicators.json'), 'utf8')
-const smaJson = readFileSync(join(FIXTURES, 'sma.json'), 'utf8')
-const rsiJson = readFileSync(join(FIXTURES, 'rsi.json'), 'utf8')
+const smaJson = readFileSync(join(FIXTURES, 'SMA/lookbackPeriods=10.json'), 'utf8')
+const rsiJson = readFileSync(join(FIXTURES, 'RSI/lookbackPeriods=14.json'), 'utf8')
 
 /**
  * Intercept all stock-charts API requests and respond with static fixture data,

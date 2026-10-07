@@ -1,0 +1,71 @@
+name: Refresh chart snapshot
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  packages: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # Cancelling between regeneration and the pull request discards the whole run.
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: 24
+
+jobs:
+  refresh:
+    name: Regenerate offline chart snapshot
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: docs
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false # create-pull-request pushes with its own token
+
+      - name: Setup pnpm and Node.js
+        uses: pnpm/setup@v2.1.0
+        with:
+          cache: true
+          runtime: node@${{ env.NODE_VERSION }}
+          working-directory: docs
+          install: false
+
+      - name: Configure pnpm registry auth
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm config set //npm.pkg.github.com/:_authToken "$GITHUB_TOKEN"
+
+      - name: Install pnpm packages
+        run: pnpm install --frozen-lockfile
+
+      # Fails without touching the committed files when the API is unreachable,
+      # so an outage leaves the last good snapshot in place.
+      - name: Regenerate snapshot
+        run: pnpm run snapshot:charts
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          add-paths: docs/.vitepress/public/data/chart-api
+          commit-message: "chore: Refresh chart snapshot"
+          title: "chore: Refresh chart snapshot"
+          body: |
+            Regenerates the offline chart snapshot from the live chart API with `pnpm run snapshot:charts`.
+
+            The snapshot is the data the docs charts fall back to when the API is unreachable. Review the diff for unexpected indicator changes.
+
+            Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          branch: refresh-chart-snapshot
+          delete-branch: true
