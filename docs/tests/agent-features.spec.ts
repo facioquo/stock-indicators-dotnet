@@ -97,7 +97,7 @@ test('Copy page control appears once, in the hero, on hub pages', async ({ page 
   }
 })
 
-test('WebMCP registers through navigator.modelContext when document lacks it', async ({ page }) => {
+test('WebMCP ignores navigator.modelContext, which the spec does not define', async ({ page }) => {
   await page.addInitScript(() => {
     const names: string[] = []
     Object.defineProperty(navigator, 'modelContext', {
@@ -107,11 +107,11 @@ test('WebMCP registers through navigator.modelContext when document lacks it', a
     Object.defineProperty(window, '__navigatorToolNames', { value: names })
   })
 
-  await page.goto('/indicators/sma', { waitUntil: 'domcontentloaded' })
+  await page.goto('/indicators/sma', { waitUntil: 'load' })
 
-  await expect.poll(() => page.evaluate(() =>
+  expect(await page.evaluate(() =>
     (window as unknown as { __navigatorToolNames: string[] }).__navigatorToolNames
-  )).toEqual(['search_documentation', 'get_documentation_page', 'get_current_page_markdown'])
+  )).toEqual([])
 })
 
 test('WebMCP exposes read-only documentation tools', async ({ page }) => {
@@ -161,13 +161,13 @@ test('WebMCP exposes read-only documentation tools', async ({ page }) => {
       currentPage: await currentPage.execute({}, options) as unknown as TestPageResult,
       pages: await Promise.all(['/indicators/rsi', '/indicators/rsi.md', '/indicators/rsi/', 'http://localhost:4173/guide/getting-started']
         .map(async (path) => await getPage.execute({ path }, options) as unknown as TestPageResult)),
-      invalidPaths: await Promise.allSettled(
+      invalidPaths: await Promise.all(
         ['', '/', '/indicators/candlestick-patterns', '/llms-full.txt', '/indicators/../../etc/passwd', '//example.com/indicators/rsi', 'https://example.com/indicators/rsi', 'http://', 'x'.repeat(201)]
-          .map((path) => getPage.execute({ path }, options))
-      ).then((settled) => settled.map((outcome) =>
-        outcome.status === 'rejected' ? String(outcome.reason) : 'fulfilled')),
+          .map(async (path) => (await getPage.execute({ path }, options)).error)
+      ),
+      noUntrustedHint: tools.every((tool) => !('untrustedContentHint' in tool.annotations)),
       cancellationPropagated,
-      invalidQueries: await Promise.allSettled([
+      invalidQueries: await Promise.all([
         search.execute({ query: '   ' }, options),
         search.execute({ query: 'x'.repeat(201) }, options)
       ])
@@ -176,6 +176,8 @@ test('WebMCP exposes read-only documentation tools', async ({ page }) => {
 
   expect(result.names).toEqual(['search_documentation', 'get_documentation_page', 'get_current_page_markdown'])
   expect(result.readOnly).toBe(true)
+  // The tools return this site's own content, which the hint's "untrusted" does not cover.
+  expect(result.noUntrustedHint).toBe(true)
   expect(result.search.results[0]).toMatchObject({
     title: 'Simple Moving Average (SMA)',
     url: 'http://localhost:4173/indicators/sma.md'
@@ -205,7 +207,11 @@ test('WebMCP exposes read-only documentation tools', async ({ page }) => {
   })
   expect(result.currentPage.markdown).toContain('# Simple Moving Average (SMA)')
   expect(result.cancellationPropagated).toBe(true)
-  expect(result.invalidQueries.map(({ status }) => status)).toEqual(['rejected', 'rejected'])
+  // The spec rejects a failed `execute` with a message-less UnknownError, so input
+  // errors come back as a result the agent can read.
+  result.invalidQueries.forEach((outcome) => {
+    expect(outcome.error).toMatch(/query must contain between 1 and 200 characters/)
+  })
 
   await page.goto('/', { waitUntil: 'domcontentloaded' })
   const homePage = await page.evaluate(async () => {
