@@ -4,7 +4,7 @@ Read [start.md](https://dotnet.stockindicators.dev/agents/start.md) first; its g
 
 ## Finish line
 
-A small console project where every demo prints a result from real market data, plus a short "what you could build" list tailored to what the developer told you about themselves. Pick three demos that fit their interest. These demos show mechanics, so they use the test datasets from start.md; every one is verified against `FacioQuo.Stock.Indicators` 3.0.1 on `msft.csv`. Anything the developer will act on uses a live feed.
+A small console project whose data demos print a result from real market data (the trade-aggregation and catalog demos show API shape only), plus a short "what you could build" list tailored to what the developer told you about themselves. Pick three demos that fit their interest. These demos show mechanics, so they use the test datasets from start.md; the data demos are verified against `FacioQuo.Stock.Indicators` 3.0.1 on `msft.csv`. Anything the developer will act on uses a live feed.
 
 Keep the narration to one line per demo: what it proves and why that matters. The output is the persuasion.
 
@@ -85,7 +85,7 @@ IReadOnlyList<RsiResult> rsiOfObv = msft.ToObv().ToRsi(14);
 
 ### Raw trades to candles
 
-Exchanges stream individual trades. An aggregator hub builds OHLCV bars from them in real time, and indicator hubs chain off its output.
+Exchanges stream individual trades. An aggregator hub builds OHLCV bars from them in real time, and indicator hubs chain off its output. This demo is a sketch of the shape: skip it unless the developer has a trade feed, and never invent ticks to run it.
 
 ```csharp
 TradeTickHub ticks = new();
@@ -100,7 +100,7 @@ EmaHub emaOfTicks = oneMinute.ToEmaHub(20);
 The catalog describes every indicator, its parameters, and its results, and executes one by ID. That turns the library into a UI indicator picker, a strategy saved as JSON, or a set of tools an AI model can call.
 
 ```csharp
-IReadOnlyList<IndicatorListing> all = Catalog.Get(Style.Series); // 85 listings in 3.0.1
+int listings = Catalog.Get(Style.Series).Count; // 85 in 3.0.1
 
 IReadOnlyList<RsiResult> rsi = Catalog.Get("RSI", Style.Series)!
     .WithParamValue("lookbackPeriods", 14)

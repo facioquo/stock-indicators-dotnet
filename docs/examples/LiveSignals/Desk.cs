@@ -37,8 +37,9 @@ sealed class Desk
     {
         lock (gate)
         {
+            bool behind = IsBehindNewest(bar.Timestamp);
             Bars.Add(bar);
-            Broadcast(Payload(full: false));
+            Broadcast(Payload(full: behind));
         }
     }
 
@@ -48,7 +49,7 @@ sealed class Desk
         lock (gate)
         {
             Evaluate(timestamp);
-            Broadcast(Payload(full: false));
+            Broadcast(Payload(full: IsBehindNewest(timestamp)));
         }
     }
 
@@ -108,7 +109,11 @@ sealed class Desk
         foreach (Channel<string> c in clients) { c.Writer.TryWrite(json); }
     }
 
-    // full: every bar for the initial paint; otherwise the last few, covering a just-closed or revised candle
+    // The chart accepts updates only to its newest point or later, so a candle older than the newest needs the full series.
+    private bool IsBehindNewest(DateTime timestamp) =>
+        Bars.Results.Count > 0 && timestamp < Bars.Results[^1].Timestamp;
+
+    // full: every bar for the initial paint or a revised older candle; otherwise the last few
     private string Payload(bool full)
     {
         int from = full ? 0 : Math.Max(0, Bars.Results.Count - 3);

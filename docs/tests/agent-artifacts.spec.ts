@@ -21,6 +21,7 @@ import { markdownPath, onRequest, prefersMarkdown } from '../functions/_middlewa
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const DIST = join(__dirname, '../.vitepress/dist')
+const REPO_ROOT = join(__dirname, '../..')
 const SITE_URL = 'https://dotnet.stockindicators.dev'
 
 const read = (file: string): string => readFileSync(join(DIST, file), 'utf8')
@@ -318,6 +319,19 @@ test.describe('Build output', () => {
         .filter((link) => !link.includes('{')) // URL templates such as /indicators/{name}.md
       for (const link of links) {
         expect(existsSync(join(DIST, link)), `${file} → /${link}`).toBe(true)
+      }
+
+      // links into the repository, and the test datasets the guides name, must exist at HEAD
+      const body = read(file)
+      const repoLinks = [...body.matchAll(
+        /(?:raw\.githubusercontent\.com\/facioquo\/stock-indicators-dotnet\/main|github\.com\/facioquo\/stock-indicators-dotnet\/(?:tree|blob)\/main)\/([^)\s#`>"']+)/g
+      )].map((match) => match[1])
+      for (const path of repoLinks) {
+        expect(existsSync(join(REPO_ROOT, path)), `${file} → repo ${path}`).toBe(true)
+      }
+      const datasets = [...new Set([...body.matchAll(/\b([a-z][a-z0-9-]*)\.csv\b/g)].map((match) => match[0]))]
+      for (const dataset of datasets) {
+        expect(existsSync(join(REPO_ROOT, 'tests/Library/TestData/quotes', dataset)), `${file} → dataset ${dataset}`).toBe(true)
       }
     }
   })

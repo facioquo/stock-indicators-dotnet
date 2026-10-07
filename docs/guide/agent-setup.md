@@ -34,7 +34,7 @@ its signal line while ADX is above 25.
 ```
 
 ```prompt
-Backtest an RSI(2) mean-reversion rule on SPX daily bars,
+Backtest an RSI(2) mean-reversion rule on SPY daily bars,
 trading only above the 200-day SMA, and compare the
 result with buy-and-hold.
 ```

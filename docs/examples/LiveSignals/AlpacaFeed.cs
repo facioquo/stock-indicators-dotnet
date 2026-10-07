@@ -102,6 +102,7 @@ sealed class AlpacaFeed(Desk desk, IConfiguration config, ILogger<AlpacaFeed> lo
 
         byte[] buffer = new byte[1 << 16];
         using MemoryStream message = new();
+        DateTime statusDue = DateTime.UtcNow.AddMinutes(1);
         while (ws.State == WebSocketState.Open)
         {
             // single sequential receive loop: bars reach the hub in arrival order
@@ -125,6 +126,13 @@ sealed class AlpacaFeed(Desk desk, IConfiguration config, ILogger<AlpacaFeed> lo
                         OnTrade(m);
                         break;
                 }
+            }
+
+            // a long-lived connection spans the open and the close, so the banner is refreshed as messages arrive
+            if (DateTime.UtcNow >= statusDue)
+            {
+                statusDue = DateTime.UtcNow.AddMinutes(1);
+                desk.SetStatus(await MarketStatusOrDefault(http, ct));
             }
         }
     }

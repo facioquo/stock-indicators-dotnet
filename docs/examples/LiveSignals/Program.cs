@@ -1,5 +1,3 @@
-using System.Threading.Channels;
-
 // Live signal desk: real market feed -> BarHub -> chained indicator hubs -> SSE -> browser chart.
 //   dotnet run                      BTC/USD from Kraken's public feed, no key
 //   dotnet run -- --symbol ETH/USD  any Kraken pair
@@ -24,15 +22,7 @@ WebApplication app = builder.Build();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-app.MapGet("/stream", async (HttpContext ctx, Desk desk, CancellationToken ct) =>
-{
-    ctx.Response.Headers.ContentType = "text/event-stream";
-    ChannelReader<string> updates = desk.Subscribe(ct);
-    await foreach (string json in updates.ReadAllAsync(ct))
-    {
-        await ctx.Response.WriteAsync($"data: {json}\n\n", ct);
-        await ctx.Response.Body.FlushAsync(ct);
-    }
-});
+app.MapGet("/stream", (Desk desk, CancellationToken ct) =>
+    TypedResults.ServerSentEvents(desk.Subscribe(ct).ReadAllAsync(ct)));
 
 app.Run();

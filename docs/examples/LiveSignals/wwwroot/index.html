@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Live signal desk</title>
   <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js" integrity="sha384-OK7vELvjHdhUFi31JYioPIcRHTROLdcDa6ZsNWgvgLaKj+9JqhU0Ad8g4wz3CXjA" crossorigin="anonymous"></script>
   <style>
@@ -12,16 +13,17 @@
     .meta { color: #8a90a0; margin-bottom: 16px; }
     .status { color: #c8ccd6; margin-bottom: 8px; }
     .sig { padding: 8px 0; border-top: 1px solid #262a33; }
-    .BUY b { color: #26a69a; } .SELL b { color: #ef5350; } .weak { opacity: .6; }
+    .BUY b { color: #26a69a; } .SELL b { color: #ef5350; } .weak { color: #a3a9b8; }
+    @media (max-width: 720px) { body { grid-template-columns: 1fr; grid-template-rows: 60vh auto; height: auto; } aside { border-left: 0; border-top: 1px solid #262a33; } }
   </style>
 </head>
 <body>
   <div id="chart"></div>
   <aside>
     <h1 id="title">Connecting…</h1>
-    <div class="status" id="status"></div>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
     <div class="meta" id="meta">EMA 21/55 crossover · ADX ≥ 20 filter · 1.5×ATR stop · evaluated on closed 1-minute candles</div>
-    <div id="signals"></div>
+    <div id="signals" aria-live="polite"></div>
   </aside>
   <script>
     const el = document.getElementById('chart');
@@ -49,7 +51,10 @@
     const toSec = (iso) => Math.floor(new Date(iso.endsWith('Z') ? iso : iso + 'Z') / 1000);
     const line = (rows, key) => rows.filter(r => r[key] != null).map(r => ({ time: r.t, value: r[key] }));
 
-    new EventSource('/stream').onmessage = (e) => {
+    const source = new EventSource('/stream');
+    // EventSource reconnects by itself; say so rather than leave stale data looking live
+    source.onerror = () => { document.getElementById('status').textContent = 'Connection lost · retrying…'; };
+    source.onmessage = (e) => {
       const p = JSON.parse(e.data);
       zone = p.tz || undefined;
       const bars = p.rows.map(r => ({ time: r.t, open: r.o, high: r.h, low: r.l, close: r.c }));
