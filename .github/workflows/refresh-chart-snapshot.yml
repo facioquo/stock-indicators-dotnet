@@ -34,7 +34,7 @@ jobs:
           persist-credentials: false # create-pull-request pushes with its own token
 
       - name: Setup pnpm and Node.js
-        uses: pnpm/setup@v3.0.0
+        uses: pnpm/setup@v3
         with:
           cache: true
           runtime: node@${{ env.NODE_VERSION }}
