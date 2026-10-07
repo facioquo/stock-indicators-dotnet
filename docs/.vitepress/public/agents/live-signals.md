@@ -33,13 +33,22 @@ Copy them into a new project, run `dotnet run -- --symbol ETH/USD`, and open the
 | Situation | Feed | Notes |
 | --------- | ---- | ----- |
 | Crypto, any time | Kraken public API, no key | What the reference app uses. Symbols look like `BTC/USD`, `ETH/USD`, `SOL/USD`. Available in the US. |
-| US equity, market open | Alpaca market data, free plan (IEX feed) | Needs a free key pair in `ALPACA_KEY` and `ALPACA_SECRET`. Seed with historical bars over REST, then subscribe to the bars WebSocket. Check Alpaca's current docs for endpoints. |
+| US equity, market open | Alpaca market data, free plan (IEX feed) | Needs a free key pair in `ALPACA_KEY` and `ALPACA_SECRET`. Facts below. |
 | US equity, market closed | Alpaca, same as above | Regular hours are 9:30–16:00 America/New_York, weekdays. Load the most recent real sessions, show **Market closed · opens {next open}**, and keep the feed subscribed so the first live bar lands at the open. To watch signals fire right now, offer a crypto pair, which trades around the clock. |
 
 Facts about the Kraken feed you cannot infer from the code alone:
 
 - The WebSocket `ohlc` snapshot carries only about ten candles, too few to warm up EMA55 or ADX. Seed from REST first: `https://api.kraken.com/0/public/OHLC?pair=BTC/USD&interval=1` returns about 720 one-minute rows of `[time, open, high, low, close, vwap, volume, count]`, prices as strings.
 - WebSocket updates repeat the forming candle with the same `interval_begin`. Pass each one to `BarHub.Add`; a same-timestamp bar replaces the cached one and every chained hub recalculates.
+
+Facts about the Alpaca stock feed:
+
+- History: `GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=1Min&feed=iex&limit=1000` with headers `APCA-API-KEY-ID` and `APCA-API-SECRET-KEY`. The response is `{"bars":{"MSFT":[{"t","o","h","l","c","v","n","vw"}]},"next_page_token"}`; follow `next_page_token` for more.
+- Live: connect to `wss://stream.data.alpaca.markets/v2/iex`, send `{"action":"auth","key":"…","secret":"…"}`, then `{"action":"subscribe","bars":["MSFT"],"updatedBars":["MSFT"]}`. Messages arrive as JSON arrays.
+- `bars` (`"T":"b"`) delivers each minute just after it closes, so there is no forming candle. `updatedBars` (`"T":"u"`) re-sends an earlier minute when a late trade changes it; pass it to `BarHub.Add` and the same-timestamp bar replaces the original. For movement within the minute, also subscribe to `trades` and build the forming candle with `TradeTickHub` and `ToTradeTickAggregatorHub(BarInterval.OneMinute)`.
+- Market state: `GET https://paper-api.alpaca.markets/v2/clock` returns `is_open` and `next_open`.
+- The free IEX feed carries few extended-hours trades; expect long gaps outside regular hours.
+- An Alpaca MCP server, if your session has one, lets you inspect the same data while you work. The app still needs its own keys at runtime.
 
 ## Indicator recipes
 
