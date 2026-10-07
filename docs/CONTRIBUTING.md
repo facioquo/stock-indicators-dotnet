@@ -140,7 +140,7 @@ Broken-link checking is a separate task, `Test: Website links (htmlproofer)`, or
 
 ### Chart snapshot
 
-Charts fall back to a snapshot of the chart API committed under `docs/.vitepress/public/data/chart-api/`, so they still render when the API is unreachable. The `Refresh chart snapshot` workflow regenerates it weekly and opens a pull request; `docs:build` never fetches it.
+Charts fall back to a snapshot of the chart API committed under `docs/.vitepress/public/data/chart-api/`, so they still render when the API is unreachable. The `Refresh chart snapshot` workflow regenerates it monthly and opens a pull request; `docs:build` never fetches it.
 
 - Regenerate it by hand with `pnpm run snapshot:charts` after adding a chart to `.vitepress/theme/chart-indicators.ts` or changing the landing overlays.
 - `pnpm run test:offline` blocks the API and checks that every chart renders from the snapshot.

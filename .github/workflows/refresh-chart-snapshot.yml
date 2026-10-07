@@ -2,7 +2,7 @@ name: Refresh chart snapshot
 
 on:
   schedule:
-    - cron: "0 6 * * 1"
+    - cron: "0 6 1 * *"
   workflow_dispatch:
 
 permissions:
@@ -34,7 +34,7 @@ jobs:
           persist-credentials: false # create-pull-request pushes with its own token
 
       - name: Setup pnpm and Node.js
-        uses: pnpm/setup@v2.1.0
+        uses: pnpm/setup@v3.0.0
         with:
           cache: true
           runtime: node@${{ env.NODE_VERSION }}
