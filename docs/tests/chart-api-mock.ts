@@ -15,7 +15,8 @@ const rsiJson = readIndicatorFixture('RSI')
 
 // Any parameter set will do; the snapshot's defaults change with the catalog.
 function readIndicatorFixture(uiid: string): string {
-  const [file] = readdirSync(join(FIXTURES, uiid)).sort()
+  const [file] = readdirSync(join(FIXTURES, uiid)).filter((name) => name.endsWith('.json')).sort()
+  if (!file) throw new Error(`No snapshot fixture under ${join(FIXTURES, uiid)}; run pnpm run snapshot:charts`)
   return readFileSync(join(FIXTURES, uiid, file), 'utf8')
 }
 

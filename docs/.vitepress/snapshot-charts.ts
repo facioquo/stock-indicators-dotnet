@@ -51,14 +51,19 @@ if (empty.length > 0) {
 
 await rm(staging, { recursive: true, force: true })
 const written = new Set<string>()
-for (const { path, data } of files) {
-  if (written.has(path)) continue
-  written.add(path)
-  const file = join(staging, path)
-  await mkdir(dirname(file), { recursive: true })
-  await writeFile(file, `${JSON.stringify(data)}\n`)
-}
+try {
+  for (const { path, data } of files) {
+    if (written.has(path)) continue
+    written.add(path)
+    const file = join(staging, path)
+    await mkdir(dirname(file), { recursive: true })
+    await writeFile(file, `${JSON.stringify(data)}\n`)
+  }
 
-await rm(target, { recursive: true, force: true })
-await rename(staging, target)
+  await rm(target, { recursive: true, force: true })
+  await rename(staging, target)
+} finally {
+  // Staging sits beside the target, so a leftover would be served and published.
+  await rm(staging, { recursive: true, force: true })
+}
 console.log(`Wrote ${written.size} snapshot files to ${target}`)

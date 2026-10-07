@@ -17,7 +17,7 @@ const API_HOST = 'charts-api.stockindicators.dev'
 const SNAPSHOT_PREFIX = '/data/chart-api/'
 
 // Every aborted request is retried with backoff before the snapshot is read, and
-// the landing page makes seven in sequence.
+// the landing page waits on two such windows in turn (quotes and listings, then the overlays).
 test.describe.configure({ timeout: 60_000 })
 
 interface Traffic {
@@ -44,21 +44,32 @@ async function blockApi(page: Page): Promise<Traffic> {
 
 // A chart with an oscillator pane but no overlay draws no overlay canvas, so
 // `CHART_MARKERS.ready` alone would miss it.
+const CHART_LOADING = '[data-testid$="-loading"]'
 const ANY_CANVAS = 'canvas[data-testid*="-canvas"]'
 
 /** A chart that is rendered with data: a canvas is up and no status block shows. */
 async function expectChartWithData(page: Page, prefix: string): Promise<void> {
   const root = page.locator(`[data-testid="${prefix}-root"]`)
   await expect(root).toBeVisible({ timeout: 15_000 })
+  // The loading block is the only non-terminal state; checking the others
+  // before it clears would pass while a request is still retrying.
+  await expect(root.locator(CHART_LOADING)).toHaveCount(0, { timeout: 30_000 })
   await expect(root.locator(ANY_CANVAS).first()).toBeVisible({ timeout: 30_000 })
   await expect(root.locator(CHART_MARKERS.empty)).toHaveCount(0)
   await expect(root.locator(CHART_MARKERS.error)).toHaveCount(0)
 }
 
-function expectServedFromSnapshot(traffic: Traffic): void {
+const SHARED_FILES = [`${SNAPSHOT_PREFIX}quotes.json`, `${SNAPSHOT_PREFIX}indicators.json`]
+
+async function expectServedFromSnapshot(traffic: Traffic): Promise<void> {
   expect(traffic.apiRequests, 'the page never tried the live API').toBeGreaterThan(0)
-  expect(traffic.snapshotResponses).toContain(`${SNAPSHOT_PREFIX}quotes.json`)
-  expect(traffic.snapshotResponses).toContain(`${SNAPSHOT_PREFIX}indicators.json`)
+  for (const shared of SHARED_FILES) {
+    expect(traffic.snapshotResponses).toContain(shared)
+  }
+  // Every page requests the shared files; only an indicator file proves its series came from the snapshot.
+  await expect
+    .poll(() => traffic.snapshotResponses.some((path) => !SHARED_FILES.includes(path)))
+    .toBe(true)
 }
 
 test('home page charts render from the snapshot with the API gone', async ({ page }) => {
@@ -72,7 +83,7 @@ test('home page charts render from the snapshot with the API gone', async ({ pag
   for (const id of ['landing-macd', 'landing-stc']) {
     await expectChartWithData(page, getTestIdPrefix(id))
   }
-  expectServedFromSnapshot(traffic)
+  await expectServedFromSnapshot(traffic)
 })
 
 for (const { page: pageName, indicator } of indicatorPages()) {
@@ -81,6 +92,6 @@ for (const { page: pageName, indicator } of indicatorPages()) {
     await page.goto(`/indicators/${pageName}`)
 
     await expectChartWithData(page, getTestIdPrefix(indicator))
-    expectServedFromSnapshot(traffic)
+    await expectServedFromSnapshot(traffic)
   })
 }
