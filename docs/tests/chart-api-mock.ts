@@ -1,65 +1,23 @@
 import type { Page, Route } from '@playwright/test'
-import { readdirSync, readFileSync } from 'fs'
-import { fileURLToPath } from 'url'
-import { dirname, join } from 'path'
-
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const FIXTURES = join(__dirname, '../.vitepress/public/data/chart-api')
-
-// Static fixture data loaded once, from the same committed snapshot that
-// production falls back to (see `pnpm run snapshot:charts`).
-const quotesJson = readFileSync(join(FIXTURES, 'quotes.json'), 'utf8')
-const indicatorsJson = readFileSync(join(FIXTURES, 'indicators.json'), 'utf8')
-const smaJson = readIndicatorFixture('SMA')
-const rsiJson = readIndicatorFixture('RSI')
-
-// Any parameter set will do; the snapshot's defaults change with the catalog.
-function readIndicatorFixture(uiid: string): string {
-  const [file] = readdirSync(join(FIXTURES, uiid)).filter((name) => name.endsWith('.json')).sort()
-  if (!file) throw new Error(`No snapshot fixture under ${join(FIXTURES, uiid)}; run pnpm run snapshot:charts`)
-  return readFileSync(join(FIXTURES, uiid, file), 'utf8')
-}
 
 /**
- * Intercept all stock-charts API requests and respond with static fixture data,
- * so suites are hermetic and never depend on the live API.
+ * Make the live chart API unavailable so every chart is served by the library's
+ * own offline fallback from the committed snapshot (`pnpm run snapshot:charts`),
+ * the same files and code path production uses when the API is gone. Suites are
+ * hermetic and never depend on the live API, and no fixture set is kept apart
+ * from the snapshot.
  *
- * The API serves indicator data from per-indicator endpoints keyed by UIID
- * (e.g. `/SMA/`, `/RSI/`, `/MACD/`) — NOT `/indicators/<name>`. The listings
- * fixture (`indicators.json`) carries those absolute endpoints, so the client
- * requests `/<UIID>/` and the routes below must match that shape.
+ * Requests fail with a 404 rather than a connection error: the client does not
+ * retry it, so the fallback answers at once instead of after a backoff window.
  *
- * Every pattern is anchored to the API host. Bare path patterns would also
- * match same-named routes on the docs site itself — `/indicators` is a real
- * page — and would answer that document request with JSON.
+ * The pattern is anchored to the API host. A bare path pattern would also match
+ * same-named routes on the docs site itself — `/indicators` is a real page.
  */
 const API = 'charts-api\\.stockindicators\\.dev'
 
 export async function mockStockChartsApi(page: Page): Promise<void> {
-  // Routes are matched LIFO (last-registered = highest priority). This catch-all
-  // is registered first, so every specific route below shadows it. Any indicator
-  // endpoint we don't explicitly fixture returns an empty array → the chart
-  // reaches the (tolerated) empty state instead of touching the network.
-  await page.route(new RegExp(`${API}/.+`), (route: Route) =>
-    route.fulfill({ contentType: 'application/json', body: '[]' })
-  )
-
-  await page.route(new RegExp(`${API}/quotes(?:\\?|$)`), (route: Route) =>
-    route.fulfill({ contentType: 'application/json', body: quotesJson })
-  )
-
-  await page.route(new RegExp(`${API}/indicators(?:\\?|$)`), (route: Route) =>
-    route.fulfill({ contentType: 'application/json', body: indicatorsJson })
-  )
-
-  // SMA indicator data — endpoint is `/SMA/?lookbackPeriods=...`
-  await page.route(new RegExp(`${API}/SMA/`, 'i'), (route: Route) =>
-    route.fulfill({ contentType: 'application/json', body: smaJson })
-  )
-
-  // RSI indicator data — endpoint is `/RSI/?lookbackPeriods=...`
-  await page.route(new RegExp(`${API}/RSI/`, 'i'), (route: Route) =>
-    route.fulfill({ contentType: 'application/json', body: rsiJson })
+  await page.route(new RegExp(`${API}/`), (route: Route) =>
+    route.fulfill({ status: 404, contentType: 'application/json', body: '{}' })
   )
 }
 
@@ -71,7 +29,8 @@ export async function mockStockChartsApi(page: Page): Promise<void> {
  * here reaches both automatically.
  */
 export const CHART_MARKERS = {
-  ready: '[data-testid$="-overlay-canvas"]',
+  // Any pane: an oscillator-only chart draws no overlay canvas.
+  ready: 'canvas[data-testid*="-canvas"]',
   empty: '[data-testid$="-empty"]',
   error: '[data-testid$="-error"]',
 } as const

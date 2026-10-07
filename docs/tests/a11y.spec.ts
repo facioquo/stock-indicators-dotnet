@@ -67,7 +67,7 @@ for (const path of PAGES) {
   test(`a11y - ${path}`, async ({ page }) => {
     const analyticsAttempts = await blockAnalytics(page)
 
-    // Serve charts from the same fixtures the chart suite uses. Without this
+    // Serve charts from the committed snapshot, as the chart suite does. Without this
     // the scan waits on the live API — slow, and it would only ever scan the
     // failure UI rather than a rendered chart.
     await mockStockChartsApi(page)
