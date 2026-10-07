@@ -57,7 +57,8 @@ sealed class KrakenFeed(Desk desk, ILogger<KrakenFeed> log) : BackgroundService
 
     private async Task Run(CancellationToken ct)
     {
-        if (desk.Bars.Results.Count == 0) { await Seed(ct); }
+        // every connect re-seeds, so a reconnect backfills the gap; the hub replaces bars by timestamp
+        await Seed(ct);
 
         using ClientWebSocket ws = new();
         await ws.ConnectAsync(new Uri("wss://ws.kraken.com/v2"), ct);

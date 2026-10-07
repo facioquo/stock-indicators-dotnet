@@ -48,7 +48,7 @@ Facts about the Alpaca stock feed:
 - Live: connect to `wss://stream.data.alpaca.markets/v2/iex`, send `{"action":"auth","key":"…","secret":"…"}`, then `{"action":"subscribe","bars":["MSFT"],"updatedBars":["MSFT"]}`. Messages arrive as JSON arrays.
 - `bars` (`"T":"b"`) delivers each minute just after it closes, so there is no forming candle. `updatedBars` (`"T":"u"`) re-sends an earlier minute when a late trade changes it; pass it to `BarHub.Add` and the same-timestamp bar replaces the original. For movement within the minute, also subscribe to `trades` and build the forming candle with `TradeTickHub` and `ToTradeTickAggregatorHub(BarInterval.OneMinute)`.
 - Market state: `GET https://paper-api.alpaca.markets/v2/clock` returns `is_open` and `next_open`.
-- The free IEX feed carries few extended-hours trades; expect long gaps outside regular hours.
+- The free IEX feed carries few extended-hours trades; expect long gaps outside regular hours. The SIP feed (paid plans) uses `/v2/sip` for the stream and `feed=sip` for history.
 - An Alpaca MCP server, if your session has one, lets you inspect the same data while you work. The app still needs its own keys at runtime.
 
 ## Indicator recipes

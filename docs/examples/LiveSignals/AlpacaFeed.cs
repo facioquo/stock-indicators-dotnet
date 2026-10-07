@@ -9,10 +9,13 @@ using FacioQuo.Stock.Indicators;
 // trades in between build the forming candle, which the closed bar then replaces by timestamp.
 sealed class AlpacaFeed(Desk desk, IConfiguration config, ILogger<AlpacaFeed> log) : BackgroundService
 {
-    private readonly string key = config["ALPACA_KEY"]
-        ?? throw new InvalidOperationException("Set ALPACA_KEY and ALPACA_SECRET to stream US stocks.");
-    private readonly string secret = config["ALPACA_SECRET"]
-        ?? throw new InvalidOperationException("Set ALPACA_SECRET to stream US stocks.");
+    private readonly string key = Required(config, "ALPACA_KEY");
+    private readonly string secret = Required(config, "ALPACA_SECRET");
+
+    private static string Required(IConfiguration config, string name) =>
+        config[name] is { } value && !string.IsNullOrWhiteSpace(value)
+            ? value
+            : throw new InvalidOperationException($"Set ALPACA_KEY and ALPACA_SECRET to stream US stocks ({name} is empty).");
 
     private DateTime lastClosed;
     private Bar? forming;
@@ -37,6 +40,17 @@ sealed class AlpacaFeed(Desk desk, IConfiguration config, ILogger<AlpacaFeed> lo
         http.DefaultRequestHeaders.Add("APCA-API-KEY-ID", key);
         http.DefaultRequestHeaders.Add("APCA-API-SECRET-KEY", secret);
         return http;
+    }
+
+    // The clock endpoint is paper-only: a live-account key gets a 401 there but still streams data.
+    private async Task<string> MarketStatusOrDefault(HttpClient http, CancellationToken ct)
+    {
+        try { return await MarketStatus(http, ct); }
+        catch (HttpRequestException ex)
+        {
+            log.LogInformation("Market clock unavailable ({Message}); streaming without it", ex.Message);
+            return "Live · Alpaca IEX feed";
+        }
     }
 
     private static async Task<string> MarketStatus(HttpClient http, CancellationToken ct)
@@ -71,7 +85,8 @@ sealed class AlpacaFeed(Desk desk, IConfiguration config, ILogger<AlpacaFeed> lo
     private async Task Run(CancellationToken ct)
     {
         using HttpClient http = Http();
-        if (desk.Bars.Results.Count == 0) { await Seed(http, ct); }
+        // every connect re-seeds, so a reconnect backfills the gap; the hub replaces bars by timestamp
+        await Seed(http, ct);
 
         using ClientWebSocket ws = new();
         await ws.ConnectAsync(new Uri("wss://stream.data.alpaca.markets/v2/iex"), ct);
@@ -83,7 +98,7 @@ sealed class AlpacaFeed(Desk desk, IConfiguration config, ILogger<AlpacaFeed> lo
             updatedBars = new[] { desk.Symbol },
             trades = new[] { desk.Symbol }
         }, ct);
-        desk.SetStatus(await MarketStatus(http, ct));
+        desk.SetStatus(await MarketStatusOrDefault(http, ct));
 
         byte[] buffer = new byte[1 << 16];
         using MemoryStream message = new();
