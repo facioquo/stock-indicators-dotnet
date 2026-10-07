@@ -22,7 +22,7 @@ Then tell them how to change the symbol and the recipe, and offer the next steps
 - `KrakenFeed.cs` and `AlpacaFeed.cs`: history seeding and the live WebSocket loop for each provider
 - `wwwroot/index.html`: the chart and signal panel
 
-Copy them into a new project, then run `dotnet run -- --symbol ETH/USD` or `dotnet run -- --symbol MSFT` and open the URL it prints. The stock feed reads `ALPACA_API_KEY` and `ALPACA_SECRET_KEY` from the environment. Adapt the feed, recipe, or chart to what the developer asked for; building from this baseline is faster and more reliable than writing the plumbing from scratch.
+Copy them into a new project, then run `dotnet run -- --symbol ETH/USD` or `dotnet run -- --symbol MSFT` and open the URL it prints. The stock feed reads `ALPACA_KEY` and `ALPACA_SECRET` from the environment. Adapt the feed, recipe, or chart to what the developer asked for; building from this baseline is faster and more reliable than writing the plumbing from scratch.
 
 ## Ask for
 
@@ -34,7 +34,7 @@ Copy them into a new project, then run `dotnet run -- --symbol ETH/USD` or `dotn
 | Situation | Feed | Notes |
 | --------- | ---- | ----- |
 | Crypto, any time | Kraken public API, no key | What the reference app uses. Symbols look like `BTC/USD`, `ETH/USD`, `SOL/USD`. Available in the US. |
-| US equity, market open | Alpaca market data, free plan (IEX feed) | Needs a free key pair in `ALPACA_API_KEY` and `ALPACA_SECRET_KEY`. Facts below. |
+| US equity, market open | Alpaca market data, free plan (IEX feed) | Needs a free key pair in `ALPACA_KEY` and `ALPACA_SECRET`. Facts below. |
 | US equity, market closed | Alpaca, same as above | Regular hours are 9:30–16:00 America/New_York, weekdays. Load the most recent real sessions, show **Market closed · opens {next open}**, and keep the feed subscribed so the first live bar lands at the open. To watch signals fire right now, offer a crypto pair, which trades around the clock. |
 
 Facts about the Kraken feed you cannot infer from the code alone:

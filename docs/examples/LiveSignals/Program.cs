@@ -3,7 +3,7 @@ using System.Threading.Channels;
 // Live signal desk: real market feed -> BarHub -> chained indicator hubs -> SSE -> browser chart.
 //   dotnet run                      BTC/USD from Kraken's public feed, no key
 //   dotnet run -- --symbol ETH/USD  any Kraken pair
-//   dotnet run -- --symbol MSFT     US stock from Alpaca; needs ALPACA_API_KEY and ALPACA_SECRET_KEY
+//   dotnet run -- --symbol MSFT     US stock from Alpaca; needs ALPACA_KEY and ALPACA_SECRET
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 string symbol = builder.Configuration["symbol"] ?? "BTC/USD";
 

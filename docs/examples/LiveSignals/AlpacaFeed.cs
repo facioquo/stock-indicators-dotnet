@@ -4,15 +4,15 @@ using System.Text;
 using System.Text.Json;
 using FacioQuo.Stock.Indicators;
 
-// Alpaca market data, free plan (IEX feed). Needs ALPACA_API_KEY and ALPACA_SECRET_KEY.
+// Alpaca market data, free plan (IEX feed). Needs ALPACA_KEY and ALPACA_SECRET.
 // "bars" arrive just after each minute closes and "updatedBars" revise a minute a late trade changed;
 // trades in between build the forming candle, which the closed bar then replaces by timestamp.
 sealed class AlpacaFeed(Desk desk, IConfiguration config, ILogger<AlpacaFeed> log) : BackgroundService
 {
-    private readonly string key = config["ALPACA_API_KEY"]
-        ?? throw new InvalidOperationException("Set ALPACA_API_KEY and ALPACA_SECRET_KEY to stream US stocks.");
-    private readonly string secret = config["ALPACA_SECRET_KEY"]
-        ?? throw new InvalidOperationException("Set ALPACA_SECRET_KEY to stream US stocks.");
+    private readonly string key = config["ALPACA_KEY"]
+        ?? throw new InvalidOperationException("Set ALPACA_KEY and ALPACA_SECRET to stream US stocks.");
+    private readonly string secret = config["ALPACA_SECRET"]
+        ?? throw new InvalidOperationException("Set ALPACA_SECRET to stream US stocks.");
 
     private DateTime lastClosed;
     private Bar? forming;

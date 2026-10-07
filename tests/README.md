@@ -22,7 +22,7 @@ Mark any test class that calls an external service, so the unit run excludes it.
 public class MyIntegrationTests : TestBase
 ```
 
-Tests that fetch live bars from Alpaca read `ALPACA_API_KEY` and `ALPACA_SECRET_KEY` from the environment and report inconclusive when either is missing.
+Tests that fetch live bars from Alpaca read `ALPACA_KEY` and `ALPACA_SECRET` from the environment and report inconclusive when either is missing.
 
 ## Regression baselines
 
