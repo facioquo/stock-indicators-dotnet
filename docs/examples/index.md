@@ -54,15 +54,12 @@ setx ALPACA_SECRET "MY-ALPACA-SECRET"
  * points in the overbought and oversold regions of the indicator.
  */
 
-// fetch historical quotes from data provider
-List<Quote> quotesList = GetQuotesFromFeed()
-  .ToList();
+// fetch historical price bars from data provider
+IReadOnlyList<Bar> bars = GetBarsFromFeed();
 
 // calculate Stochastic RSI
-List<StochRsiResult> resultsList =
-  quotesList
-  .ToStochRsi(14, 14, 3, 1)
-  .ToList();
+IReadOnlyList<StochRsiResult> resultsList =
+  bars.ToStochRsi(14, 14, 3, 1);
 
 // initialize
 decimal trdPrice = 0;
@@ -73,9 +70,9 @@ Console.WriteLine("   Date   Close  StRSI Signal  Cross  Net Gains");
 Console.WriteLine("-------------------------------------------------------");
 
 // roll through source values
-for (int i = 1; i < quotesList.Count; i++)
+for (int i = 1; i < bars.Count; i++)
 {
-  Quote q = quotesList[i];
+  Bar q = bars[i];
   StochRsiResult e = resultsList[i];   // evaluation period
   StochRsiResult l = resultsList[i - 1]; // last (prior) period
   string cross = string.Empty;

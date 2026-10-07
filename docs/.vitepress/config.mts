@@ -2,7 +2,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import { defineConfig, type DefaultTheme, type HeadConfig } from 'vitepress'
 import llmstxt, { copyOrDownloadAsMarkdownButtons } from 'vitepress-plugin-llms'
-import { identityBlock, readBuildInfo, SITE_URL, writeAgentArtifacts } from './agent-artifacts.ts'
+import { AGENT_DETAILS, identityBlock, readBuildInfo, SITE_URL, writeAgentArtifacts } from './agent-artifacts.ts'
 import { pageRoute } from './routes.ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -541,6 +541,7 @@ export default defineConfig({
       ].join('\n\n'),
       customTemplateVariables: {
         title: 'Stock Indicators for .NET',
+        details: AGENT_DETAILS,
         identity: identityBlock(buildInfo),
       },
       sidebar: createLlmsSidebar
@@ -593,6 +594,7 @@ export default defineConfig({
     'examples/ConsoleApp/**',
     'examples/CustomIndicatorsUsage/**',
     'examples/UseQuoteApi/**',
+    'examples/LiveSignals/**',
     'examples/**/*.{sln,csproj,cs,json,png,zip,editorconfig}',
     'shared/**',
     'tests/**',

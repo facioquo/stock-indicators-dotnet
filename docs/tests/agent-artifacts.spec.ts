@@ -4,6 +4,7 @@ import { existsSync, readdirSync, readFileSync } from 'fs'
 import { dirname, join, relative, sep } from 'path'
 import { fileURLToPath } from 'url'
 import {
+  AGENT_GUIDES_DIR,
   buildSearchIndex,
   DOCS_VERSION,
   normalizeDocument,
@@ -45,7 +46,7 @@ function isPage(route: string): boolean {
 }
 
 const pageMarkdown = (): string[] => listFiles(DIST)
-  .filter((file) => file.endsWith('.md') && !file.startsWith('.well-known/'))
+  .filter((file) => file.endsWith('.md') && !file.startsWith('.well-known/') && !file.startsWith(`${AGENT_GUIDES_DIR}/`))
 
 test.describe('Markdown normalization', () => {
   test('renders containers as alerts and leaves fenced code alone', () => {
@@ -297,6 +298,27 @@ test.describe('Build output', () => {
       expect(markdown).toContain(`package: ${PACKAGE_ID}`)
       expect(markdown).toContain(`docs_version: ${DOCS_VERSION}`)
       expect(markdown).toContain(`dotnet add package ${PACKAGE_ID}`)
+    }
+  })
+
+  test('agent setup guides ship, link to each other, and are reachable from llms.txt', () => {
+    const start = `${SITE_URL}/${AGENT_GUIDES_DIR}/start.md`
+    expect(read('llms.txt')).toContain(start)
+    expect(read('.well-known/agent-skills/stock-indicators-dotnet/SKILL.md')).toContain(start)
+
+    const routes = JSON.parse(read('_routes.json')) as { exclude: string[] }
+    expect(routes.exclude).toContain(`/${AGENT_GUIDES_DIR}/*`)
+
+    const guides = listFiles(DIST).filter((file) => file.startsWith(`${AGENT_GUIDES_DIR}/`))
+    expect(guides).toContain(`${AGENT_GUIDES_DIR}/start.md`)
+    for (const file of guides) {
+      // every site link must resolve to a built page twin or another guide
+      const links = [...read(file).matchAll(/https:\/\/dotnet\.stockindicators\.dev(\/[^)\s#`>]+)/g)]
+        .map((match) => match[1].replace(/^\//, ''))
+        .filter((link) => !link.includes('{')) // URL templates such as /indicators/{name}.md
+      for (const link of links) {
+        expect(existsSync(join(DIST, link)), `${file} → /${link}`).toBe(true)
+      }
     }
   })
 
