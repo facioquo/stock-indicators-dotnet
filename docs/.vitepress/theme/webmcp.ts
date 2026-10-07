@@ -6,10 +6,7 @@ interface WebMcpTool {
   title: string
   description: string
   inputSchema: Record<string, unknown>
-  annotations: {
-    readOnlyHint: boolean
-    untrustedContentHint: boolean
-  }
+  annotations: { readOnlyHint: boolean }
   execute: (
     input: Record<string, unknown>,
     options: { signal: AbortSignal }
@@ -23,13 +20,7 @@ interface ModelContext {
   ) => Promise<void>
 }
 
-// The specification places `modelContext` on Document; Chrome's early preview
-// and agent-readiness scanners expose it on Navigator.
 interface WebMcpDocument extends Document {
-  modelContext?: ModelContext
-}
-
-interface WebMcpNavigator extends Navigator {
   modelContext?: ModelContext
 }
 
@@ -53,6 +44,12 @@ const STOP_WORDS = new Set([
   'a', 'an', 'and', 'are', 'can', 'do', 'for', 'how', 'i', 'in', 'is', 'my',
   'of', 'on', 'or', 'the', 'to', 'use', 'what', 'with'
 ])
+
+// The spec rejects a failed `execute` with a message-less UnknownError, so an
+// expected input failure is returned as a result for the agent to read.
+function inputError(message: string): { error: string } {
+  return { error: message }
+}
 
 async function fetchText(url: URL, signal: AbortSignal): Promise<string> {
   const response = await fetch(url, { signal })
@@ -104,7 +101,7 @@ async function searchDocumentation(
 ): Promise<unknown> {
   const query = typeof input.query === 'string' ? input.query.trim() : ''
   if (!query || query.length > MAX_QUERY_LENGTH) {
-    throw new Error(`query must contain between 1 and ${MAX_QUERY_LENGTH} characters.`)
+    return inputError(`query must contain between 1 and ${MAX_QUERY_LENGTH} characters.`)
   }
 
   const phrase = query.toLocaleLowerCase()
@@ -125,7 +122,7 @@ async function getDocumentationPage(
 ): Promise<unknown> {
   const raw = typeof input.path === 'string' ? input.path.trim() : ''
   if (!raw || raw.length > MAX_PATH_LENGTH) {
-    throw new Error(`path must contain between 1 and ${MAX_PATH_LENGTH} characters.`)
+    return inputError(`path must contain between 1 and ${MAX_PATH_LENGTH} characters.`)
   }
 
   const requested = URL.parse(raw, window.location.origin)
@@ -134,7 +131,7 @@ async function getDocumentationPage(
     : undefined
   const entry = target && (await loadIndex(signal)).find((page) => page.entry.url === target)?.entry
   if (!entry) {
-    throw new Error(`No documentation page matches "${raw}". Use search_documentation to find a page path.`)
+    return inputError(`No documentation page matches "${raw}". Use search_documentation to find a page path.`)
   }
 
   const url = new URL(entry.url, window.location.origin)
@@ -154,7 +151,6 @@ export function installWebMcpTools(): void {
   if (typeof document === 'undefined') return
 
   const modelContext = (document as WebMcpDocument).modelContext
-    ?? (navigator as WebMcpNavigator).modelContext
   if (!modelContext) return
 
   const tools: WebMcpTool[] = [
@@ -175,13 +171,13 @@ export function installWebMcpTools(): void {
         required: ['query'],
         additionalProperties: false
       },
-      annotations: { readOnlyHint: true, untrustedContentHint: true },
+      annotations: { readOnlyHint: true },
       execute: searchDocumentation
     },
     {
       name: 'get_documentation_page',
       title: 'Get a documentation page as Markdown',
-      description: 'Return the complete Markdown, with provenance frontmatter, for one page in the documentation index, such as a result URL from search_documentation. Fails with an error when no indexed page matches. This operation does not change site or user data.',
+      description: 'Return the complete Markdown, with provenance frontmatter, for one page in the documentation index, such as a result URL from search_documentation. Returns an error field when no indexed page matches. This operation does not change site or user data.',
       inputSchema: {
         type: 'object',
         properties: {
@@ -195,7 +191,7 @@ export function installWebMcpTools(): void {
         required: ['path'],
         additionalProperties: false
       },
-      annotations: { readOnlyHint: true, untrustedContentHint: true },
+      annotations: { readOnlyHint: true },
       execute: getDocumentationPage
     },
     {
@@ -203,7 +199,7 @@ export function installWebMcpTools(): void {
       title: 'Get current page as Markdown',
       description: 'Return the complete Markdown source for the documentation page currently open in this browser tab, or the documentation index from the home page. This operation does not change site or user data.',
       inputSchema: { type: 'object', additionalProperties: false },
-      annotations: { readOnlyHint: true, untrustedContentHint: true },
+      annotations: { readOnlyHint: true },
       execute: getCurrentPageMarkdown
     }
   ]
