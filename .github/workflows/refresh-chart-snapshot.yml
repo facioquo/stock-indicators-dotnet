@@ -54,6 +54,14 @@ jobs:
       - name: Regenerate snapshot
         run: pnpm run snapshot:charts
 
+      # A pull request opened with GITHUB_TOKEN triggers no workflows, so the
+      # snapshot is checked here before it is proposed.
+      - name: Install Playwright browser
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Test offline chart snapshot
+        run: pnpm run test:offline
+
       - name: Create pull request
         uses: peter-evans/create-pull-request@v8
         with:

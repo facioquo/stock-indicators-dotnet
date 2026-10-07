@@ -100,20 +100,26 @@ async function renderCharts(): Promise<void> {
     chartManager = manager
     manager.initializeOverlay(canvas, quotes, BAR_COUNT)
 
-    for (const spec of LANDING_OVERLAY_SPECS) {
-      const listing = findListing(listings, spec.uiid)
-      if (!listing) {
-        throw new Error(`Indicator listing not found for uiid "${spec.uiid}".`)
-      }
+    // Requested together so an API outage costs one retry window, not five.
+    const overlays = await Promise.all(
+      LANDING_OVERLAY_SPECS.map(async (spec) => {
+        const listing = findListing(listings, spec.uiid)
+        if (!listing) {
+          throw new Error(`Indicator listing not found for uiid "${spec.uiid}".`)
+        }
 
-      const selection = normalizeSelection(
-        createDefaultSelection(listing, spec.params, 'landing-home-'),
-        spec.label
-      )
-      applySeriesColors(selection, spec.colors)
-      const data = loadStaticIndicatorData(await client.getSelectionData(selection, listing))
-      if (disposed || token !== loadToken) return
+        const selection = normalizeSelection(
+          createDefaultSelection(listing, spec.params, 'landing-home-'),
+          spec.label
+        )
+        applySeriesColors(selection, spec.colors)
+        const data = loadStaticIndicatorData(await client.getSelectionData(selection, listing))
+        return { selection, listing, data }
+      })
+    )
+    if (disposed || token !== loadToken) return
 
+    for (const { selection, listing, data } of overlays) {
       manager.processSelectionData(selection, listing, data)
       manager.displaySelection(selection, listing)
     }

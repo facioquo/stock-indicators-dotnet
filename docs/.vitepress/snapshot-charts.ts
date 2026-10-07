@@ -32,7 +32,7 @@ function findListing(listings: IndicatorListing[], uiid: string): IndicatorListi
 const listings = await createApiClient(config).getListings()
 
 const requests: Array<{ uiid: string; params?: Record<string, number> }> = [
-  ...Object.values(CHART_INDICATORS).flatMap(({ uiid }) => (uiid ? [{ uiid }] : [])),
+  ...Object.values(CHART_INDICATORS).flatMap(({ uiid, params }) => (uiid ? [{ uiid, params }] : [])),
   ...LANDING_OVERLAY_SPECS.map(({ uiid, params }) => ({ uiid, params }))
 ]
 
@@ -41,6 +41,13 @@ const selections: IndicatorSelection[] = requests.map(({ uiid, params }) =>
 )
 
 const files = await createOfflineSnapshot(config, { selections })
+
+// An empty array is a 200 the API should not answer: offline the chart would
+// render blank, so keep the last good snapshot instead.
+const empty = files.filter(({ data }) => !Array.isArray(data) || data.length === 0)
+if (empty.length > 0) {
+  throw new Error(`Empty snapshot data for: ${empty.map(({ path }) => path).join(', ')}`)
+}
 
 await rm(staging, { recursive: true, force: true })
 const written = new Set<string>()

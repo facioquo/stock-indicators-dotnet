@@ -20,7 +20,7 @@ function handleStale(context: string): void {
   console.warn(`[stock-charts] Live "${context}" request failed; showing recent cached data.`)
 }
 
-/** Snapshot root, served from `public/`. */
+/** Snapshot root, served from `public/`; the site is hosted at the domain root, so no base prefix. */
 export const CHART_SNAPSHOT_PATH = '/data/chart-api'
 
 /** Note in the dev console when a chart falls back to the committed snapshot. */
