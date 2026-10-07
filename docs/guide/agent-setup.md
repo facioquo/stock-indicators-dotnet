@@ -21,7 +21,7 @@ The [agent setup guide](https://dotnet.stockindicators.dev/agents/start.md) tell
 | [Tour](https://dotnet.stockindicators.dev/agents/tour.md) | Short, runnable demos of what sets the library apart, and ideas for what you could build |
 | [Migrate](https://dotnet.stockindicators.dev/agents/migrate.md) | A v2 codebase moved to v3, with output checked against the old results |
 
-Live signals for crypto pairs need no account. For US stocks, have a free [Alpaca](https://alpaca.markets/) API key ready in `ALPACA_KEY` and `ALPACA_SECRET`.
+Live signals for crypto pairs need no account. For US stocks, have a free [Alpaca](https://alpaca.markets/) API key ready in `ALPACA_API_KEY` and `ALPACA_SECRET_KEY`.
 
 ## Work with a coding agent
 

@@ -18,14 +18,14 @@ internal static class FeedData
 
            (2) manually install in your environment (replace value)
 
-           setx ALPACA_KEY "y0ur_Alp@ca_K3Y_v@lue"
-           setx ALPACA_SECRET "y0ur_Alp@ca_S3cret_v@lue"
+           setx ALPACA_API_KEY "y0ur_Alp@ca_K3Y_v@lue"
+           setx ALPACA_SECRET_KEY "y0ur_Alp@ca_S3cret_v@lue"
 
          ****************************************************/
 
         // get and validate keys
-        string? alpacaApiKey = Environment.GetEnvironmentVariable("ALPACA_KEY");
-        string? alpacaSecret = Environment.GetEnvironmentVariable("ALPACA_SECRET");
+        string? alpacaApiKey = Environment.GetEnvironmentVariable("ALPACA_API_KEY");
+        string? alpacaSecret = Environment.GetEnvironmentVariable("ALPACA_SECRET_KEY");
 
         if (string.IsNullOrEmpty(alpacaApiKey) || string.IsNullOrEmpty(alpacaSecret))
         {

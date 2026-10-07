@@ -56,8 +56,8 @@ jobs:
 
       - name: Test integrations
         env:
-          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
-          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+          ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
+          ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
           DOTNET_CONFIGURATION: Release
         run: >
           dotnet test

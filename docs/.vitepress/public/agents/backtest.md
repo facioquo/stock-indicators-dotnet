@@ -13,7 +13,7 @@ Offer an equity-curve chart only if they want one.
 
 ## Data
 
-Fetch real history from a provider, ending today: Alpaca daily bars for US equities (free key in `ALPACA_KEY` and `ALPACA_SECRET`), or Kraken's public OHLC endpoint for crypto (`interval=1440` returns about two years of daily bars, no key). Ask which rules to test; if they have none, offer the recipes from [live-signals](https://dotnet.stockindicators.dev/agents/live-signals.md) so the same rules can later run live.
+Fetch real history from a provider, ending today: Alpaca daily bars for US equities (free key in `ALPACA_API_KEY` and `ALPACA_SECRET_KEY`), or Kraken's public OHLC endpoint for crypto (`interval=1440` returns about two years of daily bars, no key). Ask which rules to test; if they have none, offer the recipes from [live-signals](https://dotnet.stockindicators.dev/agents/live-signals.md) so the same rules can later run live.
 
 ## Get these right
 

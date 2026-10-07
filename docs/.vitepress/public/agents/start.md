@@ -9,7 +9,7 @@ The finish line is never "printed some SMA values." This library calculates indi
 - **Work from real feeds.** Act as if the developer will trade on the result: use live or current data from a real provider. Never invent price data, and never substitute stored history for a feed. If a provider needs a key the developer has not supplied, ask for it.
 - **Use v3 only.** Install `FacioQuo.Stock.Indicators`. `Skender.Stock.Indicators` is the superseded v2 package; v2 names such as `GetSma`, `Quote`, and `Date` do not exist in v3.
 - **Read before you write.** Fetch the page for every indicator you use (`https://dotnet.stockindicators.dev/indicators/{name}.md`), and follow its parameters, warmup, and result properties exactly. The index is at `https://dotnet.stockindicators.dev/llms.txt`.
-- **Ask before** installing SDKs or global tools, or writing outside the current workspace. Read API keys from environment variables (Alpaca: `ALPACA_KEY` and `ALPACA_SECRET`; a gitignored `.env` file is a common local source), never from source, and never commit them.
+- **Ask before** installing SDKs or global tools, or writing outside the current workspace. Read API keys from environment variables (Alpaca: `ALPACA_API_KEY` and `ALPACA_SECRET_KEY`; a gitignored `.env` file is a common local source), never from source, and never commit them.
 - **Signals inform; they do not trade.** Do not place orders. If the developer asks for execution, use a broker's paper-trading account and say so.
 
 ## Choose a playbook

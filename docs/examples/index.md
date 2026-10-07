@@ -23,8 +23,8 @@ Run the following command line items to set, after replacing the `MY-ALPACA-KEY`
 
 ```bash
 # use your own keys
-setx ALPACA_KEY "MY-ALPACA-KEY"
-setx ALPACA_SECRET "MY-ALPACA-SECRET"
+setx ALPACA_API_KEY "MY-ALPACA-KEY"
+setx ALPACA_SECRET_KEY "MY-ALPACA-SECRET"
 ```
 
 ## Get and run the sample projects
