@@ -529,6 +529,15 @@ export default defineConfig({
     languageAlias: { prompt: 'txt' },
     config(md) {
       md.use(copyOrDownloadAsMarkdownButtons)
+
+      // name the copy control for what it copies; custom.scss shows it as a labelled button
+      const fence = md.renderer.rules.fence!
+      md.renderer.rules.fence = (...args) => {
+        const html = fence(...args)
+        return args[0][args[1]].info.trim() === 'prompt'
+          ? html.replace('title="Copy code"', 'title="Copy prompt" aria-label="Copy prompt"')
+          : html
+      }
     }
   },
 

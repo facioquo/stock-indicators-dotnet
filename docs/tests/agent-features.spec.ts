@@ -97,6 +97,25 @@ test('Copy page control appears once, in the hero, on hub pages', async ({ page 
   }
 })
 
+test('Prompt fences name their copy control for what it copies', async ({ context, page }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+  await page.goto('/guide/agent-setup', { waitUntil: 'domcontentloaded' })
+
+  await expect(page.locator('div.language-prompt button[title="Copy code"]')).toHaveCount(0)
+  const button = page.locator('div.language-prompt').first().getByRole('button', { name: 'Copy prompt' })
+  await expect(button).toBeVisible()
+  // the accessible name alone also matches the CSS label, so pin the markdown rename
+  await expect(button).toHaveAttribute('aria-label', 'Copy prompt')
+
+  // The pointer is still over the button right after a click, so the copied
+  // state must hold under :hover, where VitePress's own rules compete.
+  await button.hover()
+  await button.click()
+  await expect(button).toHaveClass(/copied/)
+  const pseudo = await button.evaluate((el) => getComputedStyle(el, '::before').display)
+  expect(pseudo).toBe('none')
+})
+
 test('WebMCP ignores navigator.modelContext, which the spec does not define', async ({ page }) => {
   await page.addInitScript(() => {
     const names: string[] = []
