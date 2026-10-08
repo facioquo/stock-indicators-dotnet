@@ -4,11 +4,11 @@ import { getTestIdPrefix } from '@facioquo/indy-charts/vue'
 
 import { indicatorPages } from './chart-pages'
 import {
-  mockStockChartsApi,
+  serveChartsFromSnapshot,
   CHART_MARKERS,
   CHART_TERMINAL_SELECTOR,
   type ChartPhase,
-} from './chart-api-mock'
+} from './chart-helpers'
 
 /**
  * Wait for a chart to reach a terminal state (ready, empty, or error).
@@ -40,7 +40,7 @@ async function waitForChartPhase(page: Page, testId: string): Promise<ChartPhase
 // ---------------------------------------------------------------------------
 
 test('SMA overlay chart renders from the snapshot', async ({ page }) => {
-  await mockStockChartsApi(page)
+  await serveChartsFromSnapshot(page)
   await page.goto('/indicators/sma')
 
   const prefix = getTestIdPrefix('Sma')
@@ -60,7 +60,7 @@ test('SMA overlay chart renders from the snapshot', async ({ page }) => {
 // ---------------------------------------------------------------------------
 
 test('RSI oscillator chart renders from the snapshot', async ({ page }) => {
-  await mockStockChartsApi(page)
+  await serveChartsFromSnapshot(page)
   await page.goto('/indicators/rsi')
 
   const prefix = getTestIdPrefix('Rsi')
@@ -80,7 +80,7 @@ test('RSI oscillator chart renders from the snapshot', async ({ page }) => {
 // ---------------------------------------------------------------------------
 
 test('Home page charts render from the snapshot', async ({ page }) => {
-  await mockStockChartsApi(page)
+  await serveChartsFromSnapshot(page)
   await page.goto('/')
 
   await expect(page.getByTestId('landing-charts-root')).toBeVisible({ timeout: 15_000 })
@@ -105,7 +105,7 @@ const INDICATOR_PAGES = indicatorPages()
 
 for (const { page: pageName, indicator } of INDICATOR_PAGES) {
   test(`${pageName} - ${indicator} indicator page chart renders from the snapshot`, async ({ page }) => {
-    await mockStockChartsApi(page)
+    await serveChartsFromSnapshot(page)
     await page.goto(`/indicators/${pageName}`)
 
     const prefix = getTestIdPrefix(indicator)

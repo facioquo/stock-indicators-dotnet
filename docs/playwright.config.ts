@@ -4,7 +4,7 @@ import { defineConfig, devices } from '@playwright/test'
  * Playwright configuration for the documentation site's browser tests.
  *
  * All projects share one browser stack and one preview server:
- *   charts         - visual chart rendering, mocked against static fixture data
+ *   charts         - every chart renders from the committed snapshot, the API answering 404
  *   offline        - every chart renders from the bundled snapshot with the API blocked
  *   a11y           - axe-core WCAG 2.1 A/AA scan of every page in the sitemap
  *   agent-features - llms.txt, Markdown page actions, and WebMCP tools

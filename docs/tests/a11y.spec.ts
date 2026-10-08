@@ -4,7 +4,7 @@ import { readFileSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 
-import { mockStockChartsApi, CHART_TERMINAL_SELECTOR } from './chart-api-mock'
+import { serveChartsFromSnapshot, CHART_MARKERS, CHART_TERMINAL_SELECTOR } from './chart-helpers'
 import { assertBuildHasNoAnalytics, blockAnalytics } from './analytics-guard'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -70,7 +70,7 @@ for (const path of PAGES) {
     // Serve charts from the committed snapshot, as the chart suite does. Without this
     // the scan waits on the live API — slow, and it would only ever scan the
     // failure UI rather than a rendered chart.
-    await mockStockChartsApi(page)
+    await serveChartsFromSnapshot(page)
 
     await page.goto(path, { waitUntil: 'domcontentloaded' })
 
@@ -82,9 +82,10 @@ for (const path of PAGES) {
 
     const charts = page.locator('[data-testid$="-root"]')
     for (let i = 0; i < (await charts.count()); i++) {
-      await expect(
-        charts.nth(i).locator(CHART_TERMINAL_SELECTOR).first()
-      ).toBeVisible({ timeout: 20_000 })
+      const chart = charts.nth(i)
+      await expect(chart.locator(CHART_TERMINAL_SELECTOR).first()).toBeVisible({ timeout: 20_000 })
+      // A gap in the snapshot would otherwise pass as a scan of the failure UI.
+      await expect(chart.locator(`${CHART_MARKERS.error}, ${CHART_MARKERS.empty}`)).toHaveCount(0)
     }
 
     const { violations } = await new AxeBuilder({ page })

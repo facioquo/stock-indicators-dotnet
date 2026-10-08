@@ -3,7 +3,7 @@ import { test, expect, type Page } from '@playwright/test'
 import { getTestIdPrefix } from '@facioquo/indy-charts/vue'
 
 import { indicatorPages } from './chart-pages'
-import { CHART_MARKERS } from './chart-api-mock'
+import { CHART_MARKERS } from './chart-helpers'
 
 /**
  * Acceptance test for the offline guarantee: with the chart API unreachable and

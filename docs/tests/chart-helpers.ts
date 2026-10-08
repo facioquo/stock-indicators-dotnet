@@ -4,8 +4,7 @@ import type { Page, Route } from '@playwright/test'
  * Make the live chart API unavailable so every chart is served by the library's
  * own offline fallback from the committed snapshot (`pnpm run snapshot:charts`),
  * the same files and code path production uses when the API is gone. Suites are
- * hermetic and never depend on the live API, and no fixture set is kept apart
- * from the snapshot.
+ * hermetic and never depend on the live API.
  *
  * Requests fail with a 404 rather than a connection error: the client does not
  * retry it, so the fallback answers at once instead of after a backoff window.
@@ -15,7 +14,7 @@ import type { Page, Route } from '@playwright/test'
  */
 const API = 'charts-api\\.stockindicators\\.dev'
 
-export async function mockStockChartsApi(page: Page): Promise<void> {
+export async function serveChartsFromSnapshot(page: Page): Promise<void> {
   await page.route(new RegExp(`${API}/`), (route: Route) =>
     route.fulfill({ status: 404, contentType: 'application/json', body: '{}' })
   )
