@@ -2,7 +2,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import { defineConfig, type DefaultTheme, type HeadConfig } from 'vitepress'
 import llmstxt, { copyOrDownloadAsMarkdownButtons } from 'vitepress-plugin-llms'
-import { identityBlock, readBuildInfo, SITE_URL, writeAgentArtifacts } from './agent-artifacts.ts'
+import { AGENT_DETAILS, identityBlock, readBuildInfo, SITE_URL, writeAgentArtifacts } from './agent-artifacts.ts'
 import { pageRoute } from './routes.ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -529,6 +529,15 @@ export default defineConfig({
     languageAlias: { prompt: 'txt' },
     config(md) {
       md.use(copyOrDownloadAsMarkdownButtons)
+
+      // name the copy control for what it copies; custom.scss shows it as a labelled button
+      const fence = md.renderer.rules.fence!
+      md.renderer.rules.fence = (...args) => {
+        const html = fence(...args)
+        return args[0][args[1]].info.trim() === 'prompt'
+          ? html.replace('title="Copy code"', 'title="Copy prompt" aria-label="Copy prompt"')
+          : html
+      }
     }
   },
 
@@ -541,6 +550,7 @@ export default defineConfig({
       ].join('\n\n'),
       customTemplateVariables: {
         title: 'Stock Indicators for .NET',
+        details: AGENT_DETAILS,
         identity: identityBlock(buildInfo),
       },
       sidebar: createLlmsSidebar
@@ -593,6 +603,7 @@ export default defineConfig({
     'examples/ConsoleApp/**',
     'examples/CustomIndicatorsUsage/**',
     'examples/UseQuoteApi/**',
+    'examples/LiveSignals/**',
     'examples/**/*.{sln,csproj,cs,json,png,zip,editorconfig}',
     'shared/**',
     'tests/**',

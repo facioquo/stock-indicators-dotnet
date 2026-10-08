@@ -5,15 +5,11 @@ description: Install the Stock Indicators for .NET library and calculate your fi
 
 # Getting started
 
-Install the library, give it your price history, and calculate your first indicator. Using a coding agent? Paste this prompt and it will walk you through these steps:
+Install the library, give it your price history, and calculate your first indicator. Using a coding agent? Paste this prompt; it asks what you want to build and sets you up on real market data:
 
-```prompt
-Read https://dotnet.stockindicators.dev/llms.txt and its getting started guide,
-then help me install the FacioQuo.Stock.Indicators NuGet package
-and calculate my first indicator from my own price data.
-```
+<!--@include: ../shared/agent-prompt.md-->
 
-See [Agent setup](/guide/agent-setup) for more prompts.
+See [Agent setup](/guide/agent-setup) for what it covers.
 
 ## Installation and setup
 
@@ -39,7 +35,7 @@ This page uses the **[Batch (Series)](/guide/styles/batch)** style, the simplest
 
 ### Try it now
 
-This complete console app builds sample bars in memory, so you can see results before connecting a market data provider.
+This complete console app downloads real Microsoft daily bars, so you can see results before connecting a market data provider.
 
 ```bash
 dotnet new console -n FirstIndicator
@@ -50,39 +46,47 @@ dotnet add package FacioQuo.Stock.Indicators
 Replace the contents of `Program.cs`, then run `dotnet run`.
 
 ```csharp
+using System.Globalization;
 using FacioQuo.Stock.Indicators;
 
-// sample bars stand in for data from your own provider
-List<Bar> bars = [];
-DateTime date = new(2025, 1, 2);
-decimal close = 100m;
+// 32 years of real Microsoft daily bars from the library's test data
+string url = "https://raw.githubusercontent.com/facioquo/stock-indicators-dotnet/main/tests/Library/TestData/quotes/msft.csv";
+string csv = await new HttpClient().GetStringAsync(url);
 
-for (int i = 0; i < 30; i++)
+List<Bar> bars = csv
+    .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+    .Skip(1) // header: date,open,high,low,close,volume
+    .Select(line => line.Trim().Split(','))
+    .Select(f => new Bar(
+        Timestamp: DateTime.Parse(f[0], CultureInfo.InvariantCulture),
+        Open: decimal.Parse(f[1], CultureInfo.InvariantCulture),
+        High: decimal.Parse(f[2], CultureInfo.InvariantCulture),
+        Low: decimal.Parse(f[3], CultureInfo.InvariantCulture),
+        Close: decimal.Parse(f[4], CultureInfo.InvariantCulture),
+        Volume: decimal.Parse(f[5], CultureInfo.InvariantCulture)))
+    .ToList();
+
+// calculate 50-period SMA and 14-period RSI
+IReadOnlyList<SmaResult> sma = bars.ToSma(50);
+IReadOnlyList<RsiResult> rsi = bars.ToRsi(14);
+
+for (int i = bars.Count - 5; i < bars.Count; i++)
 {
-    close += i % 3 == 0 ? -1.5m : 1m;
-    bars.Add(new Bar(date.AddDays(i), close - 0.5m, close + 1m, close - 1m, close, 1_000_000m));
-}
-
-// calculate 20-period SMA
-IReadOnlyList<SmaResult> results = bars.ToSma(20);
-
-foreach (SmaResult r in results.TakeLast(5))
-{
-    Console.WriteLine($"SMA on {r.Timestamp:yyyy-MM-dd} was {r.Sma:N4}");
+    Console.WriteLine($"{bars[i].Timestamp:yyyy-MM-dd}  close {bars[i].Close:N2}  SMA {sma[i].Sma:N2}  RSI {rsi[i].Rsi:N1}");
 }
 ```
 
 ```console
-SMA on 2025-01-27 was 101.8750
-SMA on 2025-01-28 was 102.1250
-SMA on 2025-01-29 was 102.2500
-SMA on 2025-01-30 was 102.3750
-SMA on 2025-01-31 was 102.6250
+2022-03-04  close 289.86  SMA 307.53  RSI 43.1
+2022-03-07  close 278.91  SMA 306.45  RSI 36.8
+2022-03-08  close 275.85  SMA 305.29  RSI 35.3
+2022-03-09  close 288.50  SMA 304.23  RSI 45.5
+2022-03-10  close 285.59  SMA 303.13  RSI 43.8
 ```
 
 ### Use your own price data
 
-Replace the sample bars with historical bars from your data provider. `GetBarsFromFeed()` stands in for [your own data acquisition](#where-can-i-get-historical-bar-data).
+Replace the downloaded bars with historical bars from your data provider. `GetBarsFromFeed()` stands in for [your own data acquisition](#where-can-i-get-historical-bar-data).
 
 ```csharp
 using FacioQuo.Stock.Indicators;

@@ -32,13 +32,9 @@ Upgrading from v2? See the [migration guide →](/migration/v3)
 
 ## Get started in minutes
 
-Paste this prompt into your coding agent:
+Paste this prompt into your coding agent. It asks what you want to build, then sets you up with live signals on a real symbol, a backtest, or a guided tour:
 
-```prompt
-Read https://dotnet.stockindicators.dev/llms.txt and its getting started guide,
-then help me install the FacioQuo.Stock.Indicators NuGet package
-and calculate my first indicator from my own price data.
-```
+<!--@include: ./shared/agent-prompt.md-->
 
 Or install it yourself and calculate your first indicator:
 
