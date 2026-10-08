@@ -13,13 +13,9 @@ import {
 
 import { DARK_SURFACE, LIGHT_SURFACE } from '../theme/chart-theme'
 import { CHART_API_BASE_URL, CHART_API_RESILIENCE } from '../theme/chart-api'
+import { LANDING_OVERLAY_SPECS } from '../theme/landing-overlays'
 
 const BAR_COUNT = 250
-const EMA_FAST_COLOR = '#ff4d8d'
-const EMA_SLOW_COLOR = '#26c6da'
-const LINEAR_COLOR = '#ff7f11'
-const MARUBOZU_COLOR = '#9aa5b1'
-
 const overlayCanvas = ref<HTMLCanvasElement | null>(null)
 const phase = ref<'idle' | 'loading' | 'ready' | 'error'>('idle')
 const errorMessage = ref('Unable to load chart preview.')
@@ -30,21 +26,6 @@ let themeObserver: MutationObserver | null = null
 let resizeHandler: (() => void) | null = null
 let disposed = false
 let loadToken = 0
-
-interface ChartSpec {
-  uiid: string
-  label: string
-  params?: Record<string, number>
-  colors?: string[]
-}
-
-const overlaySpecs: ChartSpec[] = [
-  { uiid: 'Ema', label: 'EMA(200)', params: { lookbackPeriods: 200 }, colors: [EMA_SLOW_COLOR] },
-  { uiid: 'Ema', label: 'EMA(50)', params: { lookbackPeriods: 50 }, colors: [EMA_FAST_COLOR] },
-  { uiid: 'LINEAR', label: 'LINEAR(30)', params: { lookbackPeriods: 30 }, colors: [LINEAR_COLOR] },
-  { uiid: 'MARUBOZU', label: 'MARUBOZU(90%)', params: { minBodyPercent: 90 }, colors: [MARUBOZU_COLOR] },
-  { uiid: 'ATR-STOP-CLOSE', label: 'ATR-STOP(21,3,CLOSE)', params: { lookbackPeriods: 21, multiplier: 3 } }
-]
 
 function isDark(): boolean {
   return typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
@@ -119,20 +100,26 @@ async function renderCharts(): Promise<void> {
     chartManager = manager
     manager.initializeOverlay(canvas, quotes, BAR_COUNT)
 
-    for (const spec of overlaySpecs) {
-      const listing = findListing(listings, spec.uiid)
-      if (!listing) {
-        throw new Error(`Indicator listing not found for uiid "${spec.uiid}".`)
-      }
+    // Requested together so an API outage costs one retry window, not five.
+    const overlays = await Promise.all(
+      LANDING_OVERLAY_SPECS.map(async (spec) => {
+        const listing = findListing(listings, spec.uiid)
+        if (!listing) {
+          throw new Error(`Indicator listing not found for uiid "${spec.uiid}".`)
+        }
 
-      const selection = normalizeSelection(
-        createDefaultSelection(listing, spec.params, 'landing-home-'),
-        spec.label
-      )
-      applySeriesColors(selection, spec.colors)
-      const data = loadStaticIndicatorData(await client.getSelectionData(selection, listing))
-      if (disposed || token !== loadToken) return
+        const selection = normalizeSelection(
+          createDefaultSelection(listing, spec.params, 'landing-home-'),
+          spec.label
+        )
+        applySeriesColors(selection, spec.colors)
+        const data = loadStaticIndicatorData(await client.getSelectionData(selection, listing))
+        return { selection, listing, data }
+      })
+    )
+    if (disposed || token !== loadToken) return
 
+    for (const { selection, listing, data } of overlays) {
       manager.processSelectionData(selection, listing, data)
       manager.displaySelection(selection, listing)
     }

@@ -64,6 +64,12 @@ jobs:
         if: ${{ !cancelled() }}
         run: pnpm run test:agents
 
+      # Blocks the chart API and asserts every chart still renders with data
+      # from the snapshot committed under docs/.vitepress/public/data/chart-api.
+      - name: Test offline chart snapshot
+        if: ${{ !cancelled() }}
+        run: pnpm run test:offline
+
       - name: Upload report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7

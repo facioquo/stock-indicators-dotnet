@@ -12,8 +12,10 @@
     "docs:dev": "vitepress dev",
     "docs:build": "vitepress build",
     "docs:preview": "vitepress preview",
+    "snapshot:charts": "node .vitepress/snapshot-charts.ts",
     "test": "playwright test",
     "test:charts": "playwright test --project=charts",
+    "test:offline": "playwright test --project=offline",
     "test:a11y": "playwright test --project=a11y --project=analytics",
     "test:agents": "playwright test --project=agent-features",
     "test:layout": "playwright test --project=layout",
@@ -31,7 +33,7 @@
     "wrangler": "^4.147.0"
   },
   "dependencies": {
-    "@facioquo/indy-charts": "^0.11.0",
+    "@facioquo/indy-charts": "^0.14.0",
     "chart.js": "^4.5.1",
     "chartjs-plugin-annotation": "^3.1.0"
   }
