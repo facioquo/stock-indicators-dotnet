@@ -13,6 +13,8 @@ export const PACKAGE_ID = 'FacioQuo.Stock.Indicators'
 export const DOCS_VERSION = 'v3'
 
 const SKILLS_DIR = '.well-known/agent-skills'
+// Hand-written agent setup guides (public/agents/); already portable Markdown, not page twins.
+export const AGENT_GUIDES_DIR = 'agents'
 // Read by the WebMCP tools in theme/webmcp.ts.
 export const SEARCH_INDEX = 'search-index.json'
 const SKILLS_SCHEMA = 'https://schemas.agentskills.io/discovery/0.2.0/schema.json'
@@ -48,6 +50,12 @@ export function identityBlock({ generated, commit }: BuildInfo): string {
   ]
   return lines.join('\n')
 }
+
+// The llms.txt preamble: where an agent helping someone get started should go first.
+export const AGENT_DETAILS = [
+  `> Helping a developer get set up? Start with the agent setup guide at ${SITE_URL}/${AGENT_GUIDES_DIR}/start.md.`,
+  '> Use real market data, never invented bars: the guide lists keyless live feeds and real historical datasets.',
+].join('\n')
 
 const ALERTS: Record<string, string> = {
   info: 'NOTE',
@@ -291,7 +299,7 @@ function writeSkillsIndex(outDir: string): void {
  * `buildEnd` with the (rewritten) source path of every page.
  */
 export function writeAgentArtifacts(outDir: string, sourcePages: string[], build: BuildInfo): void {
-  const pages = listFiles(outDir).filter((file) => file.endsWith('.md') && !file.startsWith('.well-known/'))
+  const pages = listFiles(outDir).filter((file) => file.endsWith('.md') && !file.startsWith('.well-known/') && !file.startsWith(`${AGENT_GUIDES_DIR}/`))
   const markdownRoutes = new Set(pages.map((file) => `/${file}`))
   const routeByMarkdown = new Map(sourcePages.map((source) => {
     const route = pageRoute(source)

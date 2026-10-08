@@ -5,6 +5,7 @@
     "/assets/*",
     "/data/*",
     "/.well-known/*",
+    "/agents/*",
     "/contributors.json",
     "/hashmap.json",
     "/favicon.ico",

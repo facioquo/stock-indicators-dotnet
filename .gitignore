@@ -88,3 +88,6 @@ _site/
 vendor/
 coverage/
 nul
+
+# local secrets (see .env.example)
+.env
