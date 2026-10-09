@@ -6,9 +6,12 @@ namespace FacioQuo.Stock.Indicators;
 // OBSOLETE IN v3.0.0
 public static partial class Indicator
 {
+    private const string FromEnumerable = "; call `.ToSortedList()` first if your source is an `IEnumerable`";
+    private const string FromTuples = "; convert each tuple to `new TimeValue(d, v)`, then call `.ToSortedList()`";
+
     // GENERAL INDICATOR METHODS
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetAdl(..)` to `ToAdl(..)`", false)]
+    [Obsolete("Rename `GetAdl(..)` to `ToAdl(..)`" + FromEnumerable, false)]
     public static IEnumerable<AdlResult> GetAdl(
     this IEnumerable<IBar> bars)
     => bars.ToSortedList().ToAdl();
@@ -20,13 +23,13 @@ public static partial class Indicator
     => bars.ToSortedList().ToAdl();
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetAdx(..)` to `ToAdx(..)`", false)]
+    [Obsolete("Rename `GetAdx(..)` to `ToAdx(..)`" + FromEnumerable, false)]
     public static IEnumerable<AdxResult> GetAdx(
         this IEnumerable<IBar> bars, int lookbackPeriods = 14)
         => bars.ToSortedList().ToAdx(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetAlligator(..)` to `ToAlligator(..)`", false)]
+    [Obsolete("Rename `GetAlligator(..)` to `ToAlligator(..)`" + FromEnumerable, false)]
     public static IEnumerable<AlligatorResult> GetAlligator(
         this IEnumerable<IBar> bars,
         int jawPeriods = 13,
@@ -41,7 +44,7 @@ public static partial class Indicator
             lipsPeriods, lipsOffset);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToAlligator(..)' method.  Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToAlligator(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<AlligatorResult> GetAlligator(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int jawPeriods = 13,
@@ -59,7 +62,7 @@ public static partial class Indicator
             lipsPeriods, lipsOffset);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetAlma(..)` to `ToAlma(..)`", false)]
+    [Obsolete("Rename `GetAlma(..)` to `ToAlma(..)`" + FromEnumerable, false)]
     public static IEnumerable<AlmaResult> GetAlma(
         this IEnumerable<IBar> bars,
         int lookbackPeriods = 9,
@@ -68,7 +71,7 @@ public static partial class Indicator
         => bars.ToSortedList().ToAlma(lookbackPeriods, offset, sigma);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToAlma(..)' method.  Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToAlma(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<AlmaResult> GetAlma(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods = 9,
@@ -79,19 +82,19 @@ public static partial class Indicator
             .ToAlma(lookbackPeriods, offset, sigma);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetAroon(..)` to `ToAroon(..)`", false)]
+    [Obsolete("Rename `GetAroon(..)` to `ToAroon(..)`" + FromEnumerable, false)]
     public static IEnumerable<AroonResult> GetAroon(
         this IEnumerable<IBar> bars, int lookbackPeriods = 25)
         => bars.ToSortedList().ToAroon(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetAtr(..)` to `ToAtr(..)`", false)]
+    [Obsolete("Rename `GetAtr(..)` to `ToAtr(..)`" + FromEnumerable, false)]
     public static IEnumerable<AtrResult> GetAtr(
         this IEnumerable<IBar> bars, int lookbackPeriods = 14)
         => bars.ToSortedList().ToAtr(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetAtrStop(..)` to `ToAtrStop(..)`", false)]
+    [Obsolete("Rename `GetAtrStop(..)` to `ToAtrStop(..)`" + FromEnumerable, false)]
     public static IEnumerable<AtrStopResult> GetAtrStop(
         this IEnumerable<IBar> bars,
         int lookbackPeriods = 21,
@@ -100,13 +103,13 @@ public static partial class Indicator
         => bars.ToSortedList().ToAtrStop(lookbackPeriods, multiplier, endType);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetAwesome(..)` to `ToAwesome(..)`", false)]
+    [Obsolete("Rename `GetAwesome(..)` to `ToAwesome(..)`" + FromEnumerable, false)]
     public static IEnumerable<AwesomeResult> GetAwesome(
         this IEnumerable<IBar> bars, int fastPeriods = 5, int slowPeriods = 34)
         => bars.ToSortedList().ToAwesome(fastPeriods, slowPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToAwesome(..)' method.  Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToAwesome(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<AwesomeResult> GetAwesome(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int fastPeriods = 5,
@@ -117,7 +120,7 @@ public static partial class Indicator
            .ToAwesome(fastPeriods, slowPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetBeta(..)` to `ToBeta(..)`", false)]
+    [Obsolete("Rename `GetBeta(..)` to `ToBeta(..)`" + FromEnumerable, false)]
     public static IEnumerable<BetaResult> GetBeta(
         this IEnumerable<IBar> quotesEval,
         IEnumerable<IBar> quotesMarket,
@@ -128,7 +131,7 @@ public static partial class Indicator
             .ToBeta(quotesMarket.ToSortedReusableList(), lookbackPeriods, type);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToBeta(..)' method.  Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToBeta(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<BetaResult> GetBeta(
         this IEnumerable<(DateTime d, double v)> evalTuple,
         IEnumerable<(DateTime d, double v)> mrktTuple,
@@ -145,7 +148,7 @@ public static partial class Indicator
                 type);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetBollingerBands(..)` to `ToBollingerBands(..)`", false)]
+    [Obsolete("Rename `GetBollingerBands(..)` to `ToBollingerBands(..)`" + FromEnumerable, false)]
     public static IEnumerable<BollingerBandsResult> GetBollingerBands(
         this IEnumerable<IBar> bars,
         int lookbackPeriods = 20,
@@ -156,7 +159,7 @@ public static partial class Indicator
                 standardDeviations);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToBollingerBands(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToBollingerBands(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<BollingerBandsResult> GetBollingerBands(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods = 20,
@@ -167,25 +170,25 @@ public static partial class Indicator
             .ToBollingerBands(lookbackPeriods, standardDeviations);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetBop(..)` to `ToBop(..)`", false)]
+    [Obsolete("Rename `GetBop(..)` to `ToBop(..)`" + FromEnumerable, false)]
     public static IEnumerable<BopResult> GetBop(
         this IEnumerable<IBar> bars, int smoothPeriods = 14)
         => bars.ToSortedList().ToBop(smoothPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetCci(..)` to `ToCci(..)`", false)]
+    [Obsolete("Rename `GetCci(..)` to `ToCci(..)`" + FromEnumerable, false)]
     public static IEnumerable<CciResult> GetCci(
         this IEnumerable<IBar> bars, int lookbackPeriods = 20)
         => bars.ToSortedList().ToCci(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetChaikinOsc(..)` to `ToChaikinOsc(..)`", false)]
+    [Obsolete("Rename `GetChaikinOsc(..)` to `ToChaikinOsc(..)`" + FromEnumerable, false)]
     public static IEnumerable<ChaikinOscResult> GetChaikinOsc(
         this IEnumerable<IBar> bars, int fastPeriods = 3, int slowPeriods = 10)
         => bars.ToSortedList().ToChaikinOsc(fastPeriods, slowPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetChandelier(..)` to `ToChandelier(..)`", false)]
+    [Obsolete("Rename `GetChandelier(..)` to `ToChandelier(..)`" + FromEnumerable, false)]
     public static IEnumerable<ChandelierResult> GetChandelier(
         this IEnumerable<IBar> bars,
             int lookbackPeriods = 22,
@@ -195,25 +198,25 @@ public static partial class Indicator
             .ToChandelier(lookbackPeriods, multiplier, (Direction)type);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetChop(..)` to `ToChop(..)`", false)]
+    [Obsolete("Rename `GetChop(..)` to `ToChop(..)`" + FromEnumerable, false)]
     public static IEnumerable<ChopResult> GetChop(
         this IEnumerable<IBar> bars, int lookbackPeriods = 14)
         => bars.ToSortedList().ToChop(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetCmf(..)` to `ToCmf(..)`", false)]
+    [Obsolete("Rename `GetCmf(..)` to `ToCmf(..)`" + FromEnumerable, false)]
     public static IEnumerable<CmfResult> GetCmf(
         this IEnumerable<IBar> bars, int lookbackPeriods = 20)
         => bars.ToSortedList().ToCmf(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetCmo(..)` to `ToCmo(..)`", false)]
+    [Obsolete("Rename `GetCmo(..)` to `ToCmo(..)`" + FromEnumerable, false)]
     public static IEnumerable<CmoResult> GetCmo(
         this IEnumerable<IBar> bars, int lookbackPeriods)
         => bars.ToSortedList().ToCmo(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToCmo(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToCmo(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<CmoResult> GetCmo(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods)
@@ -223,7 +226,7 @@ public static partial class Indicator
             .ToCmo(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetConnorsRsi(..)` to `ToConnorsRsi(..)`", false)]
+    [Obsolete("Rename `GetConnorsRsi(..)` to `ToConnorsRsi(..)`" + FromEnumerable, false)]
     public static IEnumerable<ConnorsRsiResult> GetConnorsRsi(
         this IEnumerable<IBar> bars,
         int rsiPeriods = 3, int streakPeriods = 2, int rankPeriods = 100)
@@ -231,7 +234,7 @@ public static partial class Indicator
             .ToConnorsRsi(rsiPeriods, streakPeriods, rankPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToConnorsRsi(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToConnorsRsi(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<ConnorsRsiResult> GetConnorsRsi(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int rsiPeriods = 3,
@@ -243,14 +246,14 @@ public static partial class Indicator
             .ToConnorsRsi(rsiPeriods, streakPeriods, rankPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetCorrelation(..)` to `ToCorrelation(..)`", false)]
+    [Obsolete("Rename `GetCorrelation(..)` to `ToCorrelation(..)`" + FromEnumerable, false)]
     public static IEnumerable<CorrResult> GetCorrelation(
         this IEnumerable<IBar> quotesA,
         IEnumerable<IBar> quotesB, int lookbackPeriods)
         => quotesA.ToSortedList().ToCorrelation(quotesB.ToSortedList(), lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToCorrelation(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToCorrelation(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<CorrResult> GetCorrelation(
         this IEnumerable<(DateTime d, double v)> tuplesA,
         IEnumerable<(DateTime d, double v)> tuplesB,
@@ -265,13 +268,13 @@ public static partial class Indicator
                 lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetDema(..)` to `ToDema(..)`", false)]
+    [Obsolete("Rename `GetDema(..)` to `ToDema(..)`" + FromEnumerable, false)]
     public static IEnumerable<DemaResult> GetDema(
         this IEnumerable<IBar> bars, int lookbackPeriods)
         => bars.ToSortedList().ToDema(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToDema(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToDema(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<DemaResult> GetDema(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods)
@@ -281,25 +284,25 @@ public static partial class Indicator
             .ToDema(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetDoji(..)` to `ToDoji(..)`", false)]
+    [Obsolete("Rename `GetDoji(..)` to `ToDoji(..)`" + FromEnumerable, false)]
     public static IEnumerable<CandleResult> GetDoji(
         this IEnumerable<IBar> bars, double maxPriceChangePercent = 0.1)
         => bars.ToSortedList().ToDoji(maxPriceChangePercent);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetDonchian(..)` to `ToDonchian(..)`", false)]
+    [Obsolete("Rename `GetDonchian(..)` to `ToDonchian(..)`" + FromEnumerable, false)]
     public static IEnumerable<DonchianResult> GetDonchian(
         this IEnumerable<IBar> bars, int lookbackPeriods = 20)
         => bars.ToSortedList().ToDonchian(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetDpo(..)` to `ToDpo(..)`", false)]
+    [Obsolete("Rename `GetDpo(..)` to `ToDpo(..)`" + FromEnumerable, false)]
     public static IEnumerable<DpoResult> GetDpo(
         this IEnumerable<IBar> bars, int lookbackPeriods)
         => bars.ToSortedList().ToDpo(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToDpo(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToDpo(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<DpoResult> GetDpo(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods)
@@ -309,13 +312,13 @@ public static partial class Indicator
             .ToDpo(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetDynamic(..)` to `ToDynamic(..)`", false)]
+    [Obsolete("Rename `GetDynamic(..)` to `ToDynamic(..)`" + FromEnumerable, false)]
     public static IEnumerable<DynamicResult> GetDynamic(
         this IEnumerable<IBar> bars, int lookbackPeriods, double kFactor = 0.6)
         => bars.ToSortedList().ToDynamic(lookbackPeriods, kFactor);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToDynamic(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToDynamic(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<DynamicResult> GetDynamic(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods,
@@ -326,19 +329,19 @@ public static partial class Indicator
             .ToDynamic(lookbackPeriods, kFactor);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetElderRay(..)` to `ToElderRay(..)`", false)]
+    [Obsolete("Rename `GetElderRay(..)` to `ToElderRay(..)`" + FromEnumerable, false)]
     public static IEnumerable<ElderRayResult> GetElderRay(
         this IEnumerable<IBar> bars, int lookbackPeriods = 13)
         => bars.ToSortedList().ToElderRay(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetEma(..)` to `ToEma(..)`", false)]
+    [Obsolete("Rename `GetEma(..)` to `ToEma(..)`" + FromEnumerable, false)]
     public static IEnumerable<EmaResult> GetEma(
         this IEnumerable<IBar> bars, int lookbackPeriods)
         => bars.ToSortedList().ToEma(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToEma(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToEma(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<EmaResult> GetEma(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods)
@@ -348,13 +351,13 @@ public static partial class Indicator
             .ToEma(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetEpma(..)` to `ToEpma(..)`", false)]
+    [Obsolete("Rename `GetEpma(..)` to `ToEpma(..)`" + FromEnumerable, false)]
     public static IEnumerable<EpmaResult> GetEpma(
         this IEnumerable<IBar> bars, int lookbackPeriods)
         => bars.ToSortedList().ToEpma(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToEpma(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToEpma(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<EpmaResult> GetEpma(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods)
@@ -364,19 +367,19 @@ public static partial class Indicator
             .ToEpma(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetFcb(..)` to `ToFcb(..)`", false)]
+    [Obsolete("Rename `GetFcb(..)` to `ToFcb(..)`" + FromEnumerable, false)]
     public static IEnumerable<FcbResult> GetFcb(
         this IEnumerable<IBar> bars, int windowSpan = 2)
         => bars.ToSortedList().ToFcb(windowSpan);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetFisherTransform(..)` to `ToFisherTransform(..)`", false)]
+    [Obsolete("Rename `GetFisherTransform(..)` to `ToFisherTransform(..)`" + FromEnumerable, false)]
     public static IEnumerable<FisherTransformResult> GetFisherTransform(
         this IEnumerable<IBar> bars, int lookbackPeriods = 10)
         => bars.ToSortedList().ToFisherTransform(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToFisherTransform(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToFisherTransform(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<FisherTransformResult> GetFisherTransform(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods = 10)
@@ -386,31 +389,31 @@ public static partial class Indicator
             .ToFisherTransform(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetForceIndex(..)` to `ToForceIndex(..)`", false)]
+    [Obsolete("Rename `GetForceIndex(..)` to `ToForceIndex(..)`" + FromEnumerable, false)]
     public static IEnumerable<ForceIndexResult> GetForceIndex(
         this IEnumerable<IBar> bars, int lookbackPeriods = 2)
         => bars.ToSortedList().ToForceIndex(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetFractal(..)` to `ToFractal(..)`", false)]
+    [Obsolete("Rename `GetFractal(..)` to `ToFractal(..)`" + FromEnumerable, false)]
     public static IEnumerable<FractalResult> GetFractal(
         this IEnumerable<IBar> bars, int windowSpan = 2, EndType endType = EndType.HighLow)
         => bars.ToSortedList().ToFractal(windowSpan, windowSpan, endType);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetFractal(..)` to `ToFractal(..)`", false)]
+    [Obsolete("Rename `GetFractal(..)` to `ToFractal(..)`" + FromEnumerable, false)]
     public static IEnumerable<FractalResult> GetFractal(
         this IEnumerable<IBar> bars, int leftSpan, int rightSpan, EndType endType = EndType.HighLow)
         => bars.ToSortedList().ToFractal(leftSpan, rightSpan, endType);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetGator(..)` to `ToGator(..)`", false)]
+    [Obsolete("Rename `GetGator(..)` to `ToGator(..)`" + FromEnumerable, false)]
     public static IEnumerable<GatorResult> GetGator(
         this IEnumerable<IBar> bars)
         => bars.ToSortedList().ToGator();
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToGator(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToGator(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<GatorResult> GetGator(
         this IEnumerable<(DateTime d, double v)> priceTuples)
         => priceTuples
@@ -419,19 +422,19 @@ public static partial class Indicator
             .ToGator();
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetHeikinAshi(..)` to `ToHeikinAshi(..)`", false)]
+    [Obsolete("Rename `GetHeikinAshi(..)` to `ToHeikinAshi(..)`" + FromEnumerable, false)]
     public static IEnumerable<HeikinAshiResult> GetHeikinAshi(
         this IEnumerable<IBar> bars)
         => bars.ToSortedList().ToHeikinAshi();
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetHma(..)` to `ToHma(..)`", false)]
+    [Obsolete("Rename `GetHma(..)` to `ToHma(..)`" + FromEnumerable, false)]
     public static IEnumerable<HmaResult> GetHma(
         this IEnumerable<IBar> bars, int lookbackPeriods)
         => bars.ToSortedList().ToHma(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToHma(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToHma(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<HmaResult> GetHma(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods)
@@ -441,13 +444,13 @@ public static partial class Indicator
             .ToHma(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetHtTrendline(..)` to `ToHtTrendline(..)`", false)]
+    [Obsolete("Rename `GetHtTrendline(..)` to `ToHtTrendline(..)`" + FromEnumerable, false)]
     public static IEnumerable<HtlResult> GetHtTrendline(
         this IEnumerable<IBar> bars)
         => bars.ToSortedList().ToHtTrendline();
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToHtTrendline(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToHtTrendline(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<HtlResult> GetHtTrendline(
         this IEnumerable<(DateTime d, double v)> priceTuples)
         => priceTuples
@@ -456,14 +459,14 @@ public static partial class Indicator
             .ToHtTrendline();
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetHurst(..)` to `ToHurst(..)`", false)]
+    [Obsolete("Rename `GetHurst(..)` to `ToHurst(..)`" + FromEnumerable, false)]
     public static IEnumerable<HurstResult> GetHurst<TBar>(
         this IEnumerable<TBar> bars, int lookbackPeriods = 100)
         where TBar : IBar
         => bars.ToSortedReusableList().ToHurst(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToHurst(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToHurst(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<HurstResult> GetHurst(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods = 100)
@@ -473,7 +476,7 @@ public static partial class Indicator
             .ToHurst(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetIchimoku(..)` to `ToIchimoku(..)`", false)]
+    [Obsolete("Rename `GetIchimoku(..)` to `ToIchimoku(..)`" + FromEnumerable, false)]
     public static IEnumerable<IchimokuResult> GetIchimoku(
         this IEnumerable<IBar> bars,
             int tenkanPeriods = 9,
@@ -483,7 +486,7 @@ public static partial class Indicator
             .ToIchimoku(tenkanPeriods, kijunPeriods, senkouBPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetKama(..)` to `ToKama(..)`", false)]
+    [Obsolete("Rename `GetKama(..)` to `ToKama(..)`" + FromEnumerable, false)]
     public static IEnumerable<KamaResult> GetKama(
         this IEnumerable<IBar> bars,
             int erPeriods = 10,
@@ -492,7 +495,7 @@ public static partial class Indicator
         => bars.ToSortedList().ToKama(erPeriods, fastPeriods, slowPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToKama(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToKama(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<KamaResult> GetKama(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int erPeriods = 10,
@@ -504,7 +507,7 @@ public static partial class Indicator
             .ToKama(erPeriods, fastPeriods, slowPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetKeltner(..)` to `ToKeltner(..)`", false)]
+    [Obsolete("Rename `GetKeltner(..)` to `ToKeltner(..)`" + FromEnumerable, false)]
     public static IEnumerable<KeltnerResult> GetKeltner(
         this IEnumerable<IBar> bars,
         int emaPeriods = 20,
@@ -513,7 +516,7 @@ public static partial class Indicator
         => bars.ToSortedList().ToKeltner(emaPeriods, multiplier, atrPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetKvo(..)` to `ToKvo(..)`", false)]
+    [Obsolete("Rename `GetKvo(..)` to `ToKvo(..)`" + FromEnumerable, false)]
     public static IEnumerable<KvoResult> GetKvo(
         this IEnumerable<IBar> bars,
         int fastPeriods = 34,
@@ -523,7 +526,7 @@ public static partial class Indicator
         .ToKvo(fastPeriods, slowPeriods, signalPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetMacd(..)` to `ToMacd(..)`", false)]
+    [Obsolete("Rename `GetMacd(..)` to `ToMacd(..)`" + FromEnumerable, false)]
     public static IEnumerable<MacdResult> GetMacd(
         this IEnumerable<IBar> bars,
         int fastPeriods = 12,
@@ -532,7 +535,7 @@ public static partial class Indicator
         => bars.ToSortedList().ToMacd(fastPeriods, slowPeriods, signalPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToMacd(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToMacd(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<MacdResult> GetMacd(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int fastPeriods = 12,
@@ -544,7 +547,7 @@ public static partial class Indicator
             .ToMacd(fastPeriods, slowPeriods, signalPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetMaEnvelopes(..)` to `ToMaEnvelopes(..)`", false)]
+    [Obsolete("Rename `GetMaEnvelopes(..)` to `ToMaEnvelopes(..)`" + FromEnumerable, false)]
     public static IEnumerable<MaEnvelopeResult> GetMaEnvelopes(
         this IEnumerable<IBar> bars,
         int lookbackPeriods,
@@ -554,7 +557,7 @@ public static partial class Indicator
             .ToMaEnvelopes(lookbackPeriods, percentOffset, movingAverageType);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToMaEnvelopes(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToMaEnvelopes(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<MaEnvelopeResult> GetMaEnvelopes(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods = 20,
@@ -566,7 +569,7 @@ public static partial class Indicator
             .ToMaEnvelopes(lookbackPeriods, percentOffset, movingAverageType);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetMama(..)` to `ToMama(..)`", false)]
+    [Obsolete("Rename `GetMama(..)` to `ToMama(..)`" + FromEnumerable, false)]
     public static IEnumerable<MamaResult> GetMama(
         this IEnumerable<IBar> bars,
         double fastLimit = 0.5,
@@ -574,7 +577,7 @@ public static partial class Indicator
         => bars.ToSortedList().ToMama(fastLimit, slowLimit);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToMama(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToMama(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<MamaResult> GetMama(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         double fastLimit = 0.5,
@@ -585,19 +588,19 @@ public static partial class Indicator
             .ToMama(fastLimit, slowLimit);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetMarubozu(..)` to `ToMarubozu(..)`", false)]
+    [Obsolete("Rename `GetMarubozu(..)` to `ToMarubozu(..)`" + FromEnumerable, false)]
     public static IEnumerable<CandleResult> GetMarubozu(
         this IEnumerable<IBar> bars, double minBodyPercent = 95)
         => bars.ToSortedList().ToMarubozu(minBodyPercent);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetMfi(..)` to `ToMfi(..)`", false)]
+    [Obsolete("Rename `GetMfi(..)` to `ToMfi(..)`" + FromEnumerable, false)]
     public static IEnumerable<MfiResult> GetMfi(
         this IEnumerable<IBar> bars, int lookbackPeriods = 14)
         => bars.ToSortedList().ToMfi(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetObv(..)` to `ToObv(..)`", false)]
+    [Obsolete("Rename `GetObv(..)` to `ToObv(..)`" + FromEnumerable, false)]
     public static IEnumerable<ObvResult> GetObv(
         this IEnumerable<IBar> bars)
         => bars.ToSortedList().ToObv();
@@ -609,7 +612,7 @@ public static partial class Indicator
         => bars.ToSortedList().ToObv();
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetParabolicSar(..)` to `ToParabolicSar(..)`", false)]
+    [Obsolete("Rename `GetParabolicSar(..)` to `ToParabolicSar(..)`" + FromEnumerable, false)]
     public static IEnumerable<ParabolicSarResult> GetParabolicSar(
         this IEnumerable<IBar> bars,
         double accelerationStep = 0.02,
@@ -618,7 +621,7 @@ public static partial class Indicator
             .ToParabolicSar(accelerationStep, maxAccelerationFactor);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetParabolicSar(..)` to `ToParabolicSar(..)`", false)]
+    [Obsolete("Rename `GetParabolicSar(..)` to `ToParabolicSar(..)`" + FromEnumerable, false)]
     public static IEnumerable<ParabolicSarResult> GetParabolicSar(
         this IEnumerable<IBar> bars,
         double accelerationStep,
@@ -628,7 +631,7 @@ public static partial class Indicator
             .ToParabolicSar(accelerationStep, maxAccelerationFactor, initialFactor);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetPivotPoints(..)` to `ToPivotPoints(..)`", false)]
+    [Obsolete("Rename `GetPivotPoints(..)` to `ToPivotPoints(..)`" + FromEnumerable, false)]
     public static IEnumerable<PivotPointsResult> GetPivotPoints(
         this IEnumerable<IBar> bars,
         BarInterval windowSize,
@@ -644,7 +647,7 @@ public static partial class Indicator
         => bars.ToSortedList().ToPivotPoints((BarInterval)windowSize, pointType);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetPivots(..)` to `ToPivots(..)`", false)]
+    [Obsolete("Rename `GetPivots(..)` to `ToPivots(..)`" + FromEnumerable, false)]
     public static IEnumerable<PivotsResult> GetPivots(
         this IEnumerable<IBar> bars,
         int leftSpan = 2,
@@ -655,7 +658,7 @@ public static partial class Indicator
             .ToPivots(leftSpan, rightSpan, maxTrendPeriods, endType);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetPmo(..)` to `ToPmo(..)`", false)]
+    [Obsolete("Rename `GetPmo(..)` to `ToPmo(..)`" + FromEnumerable, false)]
     public static IEnumerable<PmoResult> GetPmo(
         this IEnumerable<IBar> bars,
         int timePeriods = 35,
@@ -664,7 +667,7 @@ public static partial class Indicator
         => bars.ToSortedList().ToPmo(timePeriods, smoothPeriods, signalPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToPmo(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToPmo(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<PmoResult> GetPmo(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int timePeriods = 35,
@@ -676,7 +679,7 @@ public static partial class Indicator
             .ToPmo(timePeriods, smoothPeriods, signalPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetPrs(..)` to `ToPrs(..)`", false)]
+    [Obsolete("Rename `GetPrs(..)` to `ToPrs(..)`" + FromEnumerable, false)]
     public static IEnumerable<PrsResult> GetPrs(
     this IEnumerable<IBar> quotesEval,
     IEnumerable<IBar> quotesBase, int? lookbackPeriods = null)
@@ -698,7 +701,7 @@ public static partial class Indicator
                 .ToPrs(quotesBase.ToSortedList().Use(CandlePart.Close));
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToPrs(..)' method. Tuple arguments were removed. "
+    [Obsolete("Use 'ToPrs(..)' method. Tuple arguments were removed" + FromTuples + ". "
             + "`smaPeriods` is ignored: v3 has no PrsSma result. "
             + "Chain `results.ToSma(smaPeriods)` instead.", false)]
     public static IEnumerable<PrsResult> GetPrs(
@@ -723,26 +726,26 @@ public static partial class Indicator
                 lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetPvo(..)` to `ToPvo(..)`", false)]
+    [Obsolete("Rename `GetPvo(..)` to `ToPvo(..)`" + FromEnumerable, false)]
     public static IEnumerable<PvoResult> GetPvo(
         this IEnumerable<IBar> bars,
         int fastPeriods = 12, int slowPeriods = 26, int signalPeriods = 9)
         => bars.ToSortedList().ToPvo(fastPeriods, slowPeriods, signalPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetRenko(..)` to `ToRenko(..)`", false)]
+    [Obsolete("Rename `GetRenko(..)` to `ToRenko(..)`" + FromEnumerable, false)]
     public static IEnumerable<RenkoResult> GetRenko(
         this IEnumerable<IBar> bars, decimal brickSize, EndType endType = EndType.Close)
         => bars.ToSortedList().ToRenko(brickSize, endType);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetRenkoAtr(..)` to `ToRenkoAtr(..)`", false)]
+    [Obsolete("Rename `GetRenkoAtr(..)` to `ToRenkoAtr(..)`" + FromEnumerable, false)]
     public static IEnumerable<RenkoResult> GetRenkoAtr(
         this IEnumerable<IBar> bars, int atrPeriods, EndType endType = EndType.Close)
         => bars.ToSortedList().ToRenkoAtr(atrPeriods, endType);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetRoc(..)` to `ToRoc(..)`", false)]
+    [Obsolete("Rename `GetRoc(..)` to `ToRoc(..)`" + FromEnumerable, false)]
     public static IEnumerable<RocResult> GetRoc(
         this IEnumerable<IBar> bars, int lookbackPeriods)
         => bars.ToSortedList().ToRoc(lookbackPeriods);
@@ -754,7 +757,7 @@ public static partial class Indicator
         => bars.ToSortedList().Use(CandlePart.Close).ToRoc(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToRoc(..)' method. Tuple arguments were removed. "
+    [Obsolete("Use 'ToRoc(..)' method. Tuple arguments were removed" + FromTuples + ". "
             + "`smaPeriods` is ignored: v3 has no RocSma result. "
             + "Chain `results.ToSma(smaPeriods)` instead.", false)]
     public static IEnumerable<RocResult> GetRoc(
@@ -767,7 +770,7 @@ public static partial class Indicator
             .ToRoc(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetRocWb(..)` to `ToRocWb(..)`", false)]
+    [Obsolete("Rename `GetRocWb(..)` to `ToRocWb(..)`" + FromEnumerable, false)]
     public static IEnumerable<RocWbResult> GetRocWb(
         this IEnumerable<IBar> bars,
         int lookbackPeriods, int emaPeriods, int stdDevPeriods)
@@ -775,7 +778,7 @@ public static partial class Indicator
             .ToRocWb(lookbackPeriods, emaPeriods, stdDevPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToRocWb(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToRocWb(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<RocWbResult> GetRocWb(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods,
@@ -787,7 +790,7 @@ public static partial class Indicator
             .ToRocWb(lookbackPeriods, emaPeriods, stdDevPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetRollingPivots(..)` to `ToRollingPivots(..)`", false)]
+    [Obsolete("Rename `GetRollingPivots(..)` to `ToRollingPivots(..)`" + FromEnumerable, false)]
     public static IEnumerable<RollingPivotsResult> GetRollingPivots(
         this IEnumerable<IBar> bars,
         int windowPeriods,
@@ -797,13 +800,13 @@ public static partial class Indicator
             .ToRollingPivots(windowPeriods, offsetPeriods, pointType);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetRsi(..)` to `ToRsi(..)`", false)]
+    [Obsolete("Rename `GetRsi(..)` to `ToRsi(..)`" + FromEnumerable, false)]
     public static IEnumerable<RsiResult> GetRsi(
         this IEnumerable<IBar> bars, int lookbackPeriods = 14)
         => bars.ToSortedList().ToRsi(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToRsi(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToRsi(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<RsiResult> GetRsi(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods)
@@ -813,13 +816,13 @@ public static partial class Indicator
             .ToRsi(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetSlope(..)` to `ToSlope(..)`", false)]
+    [Obsolete("Rename `GetSlope(..)` to `ToSlope(..)`" + FromEnumerable, false)]
     public static IEnumerable<SlopeResult> GetSlope(
         this IEnumerable<IBar> bars, int lookbackPeriods)
         => bars.ToSortedList().ToSlope(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToSlope(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToSlope(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<SlopeResult> GetSlope(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods)
@@ -829,13 +832,13 @@ public static partial class Indicator
             .ToSlope(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetSma(..)` to `ToSma(..)`", false)]
+    [Obsolete("Rename `GetSma(..)` to `ToSma(..)`" + FromEnumerable, false)]
     public static IEnumerable<SmaResult> GetSma(
         this IEnumerable<IBar> bars, int lookbackPeriods)
         => bars.ToSortedList().ToSma(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToSma(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToSma(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<SmaResult> GetSma(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods)
@@ -845,13 +848,13 @@ public static partial class Indicator
             .ToSma(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetSmaAnalysis(..)` to `ToSmaAnalysis(..)`", false)]
+    [Obsolete("Rename `GetSmaAnalysis(..)` to `ToSmaAnalysis(..)`" + FromEnumerable, false)]
     public static IEnumerable<SmaAnalysisResult> GetSmaAnalysis(
         this IEnumerable<IBar> bars, int lookbackPeriods)
         => bars.ToSortedList().ToSmaAnalysis(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToSmaAnalysis(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToSmaAnalysis(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<SmaAnalysisResult> GetSmaAnalysis(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods)
@@ -861,7 +864,7 @@ public static partial class Indicator
             .ToSmaAnalysis(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetSmi(..)` to `ToSmi(..)`", false)]
+    [Obsolete("Rename `GetSmi(..)` to `ToSmi(..)`" + FromEnumerable, false)]
     public static IEnumerable<SmiResult> GetSmi(
         this IEnumerable<IBar> bars,
         int lookbackPeriods = 13,
@@ -872,13 +875,13 @@ public static partial class Indicator
             .ToSmi(lookbackPeriods, firstSmoothPeriods, secondSmoothPeriods, signalPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetSmma(..)` to `ToSmma(..)`", false)]
+    [Obsolete("Rename `GetSmma(..)` to `ToSmma(..)`" + FromEnumerable, false)]
     public static IEnumerable<SmmaResult> GetSmma(
         this IEnumerable<IBar> bars, int lookbackPeriods)
         => bars.ToSortedList().ToSmma(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToSmma(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToSmma(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<SmmaResult> GetSmma(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods)
@@ -888,7 +891,7 @@ public static partial class Indicator
             .ToSmma(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetStarcBands(..)` to `ToStarcBands(..)`", false)]
+    [Obsolete("Rename `GetStarcBands(..)` to `ToStarcBands(..)`" + FromEnumerable, false)]
     public static IEnumerable<StarcBandsResult> GetStarcBands(
         this IEnumerable<IBar> bars,
         int smaPeriods,
@@ -897,7 +900,7 @@ public static partial class Indicator
         => bars.ToSortedList().ToStarcBands(smaPeriods, multiplier, atrPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetStc(..)` to `ToStc(..)`", false)]
+    [Obsolete("Rename `GetStc(..)` to `ToStc(..)`" + FromEnumerable, false)]
     public static IEnumerable<StcResult> GetStc(
         this IEnumerable<IBar> bars,
         int cyclePeriods = 10,
@@ -906,7 +909,7 @@ public static partial class Indicator
         => bars.ToSortedList().ToStc(cyclePeriods, fastPeriods, slowPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToStc(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToStc(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<StcResult> GetStc(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int cyclePeriods = 10,
@@ -918,7 +921,7 @@ public static partial class Indicator
             .ToStc(cyclePeriods, fastPeriods, slowPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetStdDev(..)` to `ToStdDev(..)`", false)]
+    [Obsolete("Rename `GetStdDev(..)` to `ToStdDev(..)`" + FromEnumerable, false)]
     public static IEnumerable<StdDevResult> GetStdDev(
         this IEnumerable<IBar> bars, int lookbackPeriods)
         => bars.ToSortedList().ToStdDev(lookbackPeriods);
@@ -930,7 +933,7 @@ public static partial class Indicator
         => bars.ToSortedList().Use(CandlePart.Close).ToStdDev(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToStdDev(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToStdDev(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<StdDevResult> GetStdDev(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods)
@@ -940,14 +943,14 @@ public static partial class Indicator
             .ToStdDev(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetStdDevChannels(..)` to `ToStdDevChannels(..)`. "
+    [Obsolete("Rename `GetStdDevChannels(..)` to `ToStdDevChannels(..)`" + FromEnumerable + ". "
             + "If using `lookbackPeriods=null`, replace with `lookbackPeriods=source.Count`.", false)]
     public static IEnumerable<StdDevChannelsResult> GetStdDevChannels(
         this IEnumerable<IBar> bars, int? lookbackPeriods = 20, double stdDeviations = 2)
         => bars.ToSortedList().ToStdDevChannels(lookbackPeriods ?? bars.Count(), stdDeviations);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToStdDevChannels(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToStdDevChannels(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<StdDevChannelsResult> GetStdDevChannels(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int? lookbackPeriods = 20,
@@ -964,7 +967,7 @@ public static partial class Indicator
     }
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetStoch(..)` to `ToStoch(..)`", false)]
+    [Obsolete("Rename `GetStoch(..)` to `ToStoch(..)`" + FromEnumerable, false)]
     public static IEnumerable<StochResult> GetStoch(
         this IEnumerable<IBar> bars,
         int lookbackPeriods = 14,
@@ -973,7 +976,7 @@ public static partial class Indicator
         => bars.ToSortedList().ToStoch(lookbackPeriods, signalPeriods, smoothPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToStochRsi(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToStochRsi(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<StochRsiResult> GetStochRsi(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int rsiPeriods = 14,
@@ -986,7 +989,7 @@ public static partial class Indicator
             .ToStochRsi(rsiPeriods, stochPeriods, signalPeriods, smoothPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetStoch(..)` to `ToStoch(..)`", false)]
+    [Obsolete("Rename `GetStoch(..)` to `ToStoch(..)`" + FromEnumerable, false)]
     public static IEnumerable<StochResult> GetStoch(
             this IEnumerable<IBar> bars,
             int lookbackPeriods,
@@ -1004,7 +1007,7 @@ public static partial class Indicator
             movingAverageType);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetStochRsi(..)` to `ToStochRsi(..)`", false)]
+    [Obsolete("Rename `GetStochRsi(..)` to `ToStochRsi(..)`" + FromEnumerable, false)]
     public static IEnumerable<StochRsiResult> GetStochRsi(
             this IEnumerable<IBar> bars,
             int rsiPeriods,
@@ -1018,19 +1021,19 @@ public static partial class Indicator
             smoothPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetSuperTrend(..)` to `ToSuperTrend(..)`", false)]
+    [Obsolete("Rename `GetSuperTrend(..)` to `ToSuperTrend(..)`" + FromEnumerable, false)]
     public static IEnumerable<SuperTrendResult> GetSuperTrend(
         this IEnumerable<IBar> bars, int lookbackPeriods = 10, double multiplier = 3)
         => bars.ToSortedList().ToSuperTrend(lookbackPeriods, multiplier);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetT3(..)` to `ToT3(..)`", false)]
+    [Obsolete("Rename `GetT3(..)` to `ToT3(..)`" + FromEnumerable, false)]
     public static IEnumerable<T3Result> GetT3(
         this IEnumerable<IBar> bars, int lookbackPeriods = 5, double volumeFactor = 0.7)
         => bars.ToSortedList().ToT3(lookbackPeriods, volumeFactor);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToT3(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToT3(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<T3Result> GetT3(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods = 5,
@@ -1041,13 +1044,13 @@ public static partial class Indicator
             .ToT3(lookbackPeriods, volumeFactor);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetTema(..)` to `ToTema(..)`", false)]
+    [Obsolete("Rename `GetTema(..)` to `ToTema(..)`" + FromEnumerable, false)]
     public static IEnumerable<TemaResult> GetTema(
         this IEnumerable<IBar> bars, int lookbackPeriods)
         => bars.ToSortedList().ToTema(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToTema(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToTema(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<TemaResult> GetTema(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods)
@@ -1057,19 +1060,19 @@ public static partial class Indicator
             .ToTema(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetTr(..)` to `ToTr(..)`", false)]
+    [Obsolete("Rename `GetTr(..)` to `ToTr(..)`" + FromEnumerable, false)]
     public static IEnumerable<TrResult> GetTr(
         this IEnumerable<IBar> bars)
         => bars.ToSortedList().ToTr();
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetTrix(..)` to `ToTrix(..)`", false)]
+    [Obsolete("Rename `GetTrix(..)` to `ToTrix(..)`" + FromEnumerable, false)]
     public static IEnumerable<TrixResult> GetTrix(
         this IEnumerable<IBar> bars, int lookbackPeriods)
         => bars.ToSortedList().ToTrix(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToTrix(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToTrix(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<TrixResult> GetTrix(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods)
@@ -1085,7 +1088,7 @@ public static partial class Indicator
         => bars.ToSortedList().Use(CandlePart.Close).ToTrix(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetTsi(..)` to `ToTsi(..)`", false)]
+    [Obsolete("Rename `GetTsi(..)` to `ToTsi(..)`" + FromEnumerable, false)]
     public static IEnumerable<TsiResult> GetTsi(
         this IEnumerable<IBar> bars,
         int lookbackPeriods = 25,
@@ -1095,7 +1098,7 @@ public static partial class Indicator
             .ToTsi(lookbackPeriods, smoothPeriods, signalPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToTsi(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToTsi(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<TsiResult> GetTsi(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods = 25,
@@ -1107,13 +1110,13 @@ public static partial class Indicator
             .ToTsi(lookbackPeriods, smoothPeriods, signalPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetUlcerIndex(..)` to `ToUlcerIndex(..)`", false)]
+    [Obsolete("Rename `GetUlcerIndex(..)` to `ToUlcerIndex(..)`" + FromEnumerable, false)]
     public static IEnumerable<UlcerIndexResult> GetUlcerIndex(
         this IEnumerable<IBar> bars, int lookbackPeriods = 14)
         => bars.ToSortedList().ToUlcerIndex(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToUlcerIndex(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToUlcerIndex(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<UlcerIndexResult> GetUlcerIndex(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods = 14)
@@ -1123,7 +1126,7 @@ public static partial class Indicator
             .ToUlcerIndex(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetUltimate(..)` to `ToUltimate(..)`", false)]
+    [Obsolete("Rename `GetUltimate(..)` to `ToUltimate(..)`" + FromEnumerable, false)]
     public static IEnumerable<UltimateResult> GetUltimate(
         this IEnumerable<IBar> bars,
         int shortPeriods = 7,
@@ -1132,7 +1135,7 @@ public static partial class Indicator
         => bars.ToSortedList().ToUltimate(shortPeriods, middlePeriods, longPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetVolatilityStop(..)` to `ToVolatilityStop(..)`", false)]
+    [Obsolete("Rename `GetVolatilityStop(..)` to `ToVolatilityStop(..)`" + FromEnumerable, false)]
     public static IEnumerable<VolatilityStopResult> GetVolatilityStop(
         this IEnumerable<IBar> bars,
         int lookbackPeriods = 7,
@@ -1140,13 +1143,13 @@ public static partial class Indicator
         => bars.ToSortedList().ToVolatilityStop(lookbackPeriods, multiplier);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetVortex(..)` to `ToVortex(..)`", false)]
+    [Obsolete("Rename `GetVortex(..)` to `ToVortex(..)`" + FromEnumerable, false)]
     public static IEnumerable<VortexResult> GetVortex(
         this IEnumerable<IBar> bars, int lookbackPeriods)
         => bars.ToSortedList().ToVortex(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetVwap(..)` to `ToVwap(..)`", false)]
+    [Obsolete("Rename `GetVwap(..)` to `ToVwap(..)`" + FromEnumerable, false)]
     public static IEnumerable<VwapResult> GetVwap(
         this IEnumerable<IBar> bars, DateTime? startDate = null)
     {
@@ -1158,25 +1161,25 @@ public static partial class Indicator
     }
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetVwma(..)` to `ToVwma(..)`", false)]
+    [Obsolete("Rename `GetVwma(..)` to `ToVwma(..)`" + FromEnumerable, false)]
     public static IEnumerable<VwmaResult> GetVwma(
         this IEnumerable<IBar> bars, int lookbackPeriods)
         => bars.ToSortedList().ToVwma(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetWilliamsR(..)` to `ToWilliamsR(..)`", false)]
+    [Obsolete("Rename `GetWilliamsR(..)` to `ToWilliamsR(..)`" + FromEnumerable, false)]
     public static IEnumerable<WilliamsResult> GetWilliamsR(
         this IEnumerable<IBar> bars, int lookbackPeriods = 14)
         => bars.ToSortedList().ToWilliamsR(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetWma(..)` to `ToWma(..)`", false)]
+    [Obsolete("Rename `GetWma(..)` to `ToWma(..)`" + FromEnumerable, false)]
     public static IEnumerable<WmaResult> GetWma(
         this IEnumerable<IBar> bars, int lookbackPeriods)
         => bars.ToSortedList().ToWma(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToWma(..)' method. Tuple arguments were removed.", false)]
+    [Obsolete("Use 'ToWma(..)' method. Tuple arguments were removed" + FromTuples, false)]
     public static IEnumerable<WmaResult> GetWma(
         this IEnumerable<(DateTime d, double v)> priceTuples,
         int lookbackPeriods)
@@ -1186,7 +1189,7 @@ public static partial class Indicator
             .ToWma(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetZigZag(..)` to `ToZigZag(..)`", false)]
+    [Obsolete("Rename `GetZigZag(..)` to `ToZigZag(..)`" + FromEnumerable, false)]
     public static IEnumerable<ZigZagResult> GetZigZag(
         this IEnumerable<IBar> bars,
         EndType endType = EndType.Close,
