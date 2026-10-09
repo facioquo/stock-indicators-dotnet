@@ -113,11 +113,14 @@ jobs:
           echo "name=${PACKAGE_NAME}" >> "$GITHUB_OUTPUT"
           echo "url=https://github.com/${{ github.repository }}/packages" >> "$GITHUB_OUTPUT"
 
+      # GitVersion exports InformationalVersion to the job environment, which MSBuild
+      # reads as a property; pass it explicitly so the assembly matches the package version.
       - name: Build library
         run: >
           dotnet build src/Indicators.csproj
           --configuration Release
           --property:Version=${{ steps.version_info.outputs.version }}
+          --property:InformationalVersion=${{ steps.version_info.outputs.version }}
           --property:DefineConstants=VERSIONED_BUILD
           --property:ContinuousIntegrationBuild=true
           -warnAsError
@@ -133,7 +136,7 @@ jobs:
 
       # ubuntu-slim has no pwsh, so match the stamped InformationalVersion
       # ("<version>+<sha>") in the assembly's metadata instead of reading it.
-      - name: Verify assembly version matches package
+      - name: Verify assembly version
         env:
           EXPECTED_VERSION: ${{ steps.version_info.outputs.version }}
         run: |

@@ -131,7 +131,7 @@ jobs:
           --output NuGet
           -p:PackageVersion=${{ steps.version_info.outputs.version }}
 
-      - name: Verify assembly version matches release
+      - name: Verify assembly version
         env:
           EXPECTED_VERSION: ${{ steps.version_info.outputs.version }}
         shell: pwsh
