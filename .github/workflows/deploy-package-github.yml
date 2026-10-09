@@ -139,7 +139,16 @@ jobs:
         run: |
           extract="${RUNNER_TEMP}/nupkg-verify"
           rm -rf "$extract" && mkdir -p "$extract"
-          nupkg=$(ls NuGet/*.nupkg | grep -v -e '\.symbols\.nupkg$' | head -n 1)
+          nupkg=""
+          for f in NuGet/*.nupkg; do
+            [[ "$f" == *.symbols.nupkg ]] && continue
+            nupkg="$f"
+            break
+          done
+          if [[ -z "$nupkg" ]]; then
+            echo "::error::No package found in NuGet/"
+            exit 1
+          fi
           unzip -q "$nupkg" 'lib/*' -d "$extract"
 
           mapfile -t dlls < <(find "$extract/lib" -name '*.dll')
