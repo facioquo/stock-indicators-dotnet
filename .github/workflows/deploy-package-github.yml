@@ -78,7 +78,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt-get update && sudo apt-get install -y libxml2-utils
+          sudo apt-get update && sudo apt-get install -y libxml2-utils unzip
           dotnet tool restore
 
       - name: Generate version info
@@ -130,6 +130,34 @@ jobs:
           --include-symbols
           --output NuGet
           -p:PackageVersion=${{ steps.version_info.outputs.version }}
+
+      # ubuntu-slim has no pwsh, so match the stamped InformationalVersion
+      # ("<version>+<sha>") in the assembly's metadata instead of reading it.
+      - name: Verify assembly version matches package
+        env:
+          EXPECTED_VERSION: ${{ steps.version_info.outputs.version }}
+        run: |
+          extract="${RUNNER_TEMP}/nupkg-verify"
+          rm -rf "$extract" && mkdir -p "$extract"
+          nupkg=$(ls NuGet/*.nupkg | grep -v -e '\.symbols\.nupkg$' | head -n 1)
+          unzip -q "$nupkg" 'lib/*' -d "$extract"
+
+          mapfile -t dlls < <(find "$extract/lib" -name '*.dll')
+          if [[ ${#dlls[@]} -eq 0 ]]; then
+            echo "::error::No assemblies found in $nupkg"
+            exit 1
+          fi
+
+          failed=0
+          for dll in "${dlls[@]}"; do
+            if grep -aqF "${EXPECTED_VERSION}+" "$dll"; then
+              echo "OK   ${dll#"$extract"/lib/}"
+            else
+              echo "::error::${dll#"$extract"/lib/} is not stamped with ${EXPECTED_VERSION}"
+              failed=1
+            fi
+          done
+          exit $failed
 
       - name: Save package
         uses: actions/upload-artifact@v7
