@@ -20,7 +20,7 @@ Paste this prompt into that agent:
 The [agent guide](https://dotnet.stockindicators.dev/agents/start.md) tells your agent to show you the library working before it asks you to install anything:
 
 - **If it can run code**, it does the work itself: installs the .NET SDK in its sandbox if needed, runs the library on live market data, and hands back a chart, findings backed by numbers, and the code that produced them.
-- **If it can't**, it says so in its first sentence, before writing any code, and hands you this prompt to run in an agent that can.
+- **If it can't**, it says so in its first sentence, before writing any code, and hands you the setup prompt above to run in an agent that can.
 - **It never fakes results.** No invented prices, no indicators recalculated in another language, and no old test data passed off as current.
 
 With no other instructions, it starts the live market desk and lists the other playbooks so you can redirect it:
