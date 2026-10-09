@@ -126,7 +126,11 @@ pnpm run docs:dev
 When adding or updating indicators:
 
 - Add or update the `/docs/indicators/` documentation files.
-- Indicator charts render live from the chart API, not from image files. Add `<StockIndicatorChart indicator="Name" />` to the page, add a `Name` key to `docs/.vitepress/theme/chart-indicators.ts` whose `uiid` the API serves, then refresh the [chart snapshot](#chart-snapshot). A chart needs the indicator listed in the [facioquo/stock-charts](https://github.com/facioquo/stock-charts) API first; open the change there. Until the API serves it, leave the chart out of the page.
+- Indicator charts render live from the chart API, not from image files:
+  - Add `<StockIndicatorChart indicator="Name" />` to the page. Most oscillator pages add `withOverlay` to their first chart.
+  - Add the same `Name` as a key in `docs/.vitepress/theme/chart-indicators.ts`. You choose the key (PascalCase, like `Macd` or `AroonOsc`); its `uiid` is the API's own id for the indicator, which can differ (`Aroon` is `AROON UP/DOWN`).
+  - Refresh the [chart snapshot](#chart-snapshot).
+  - A chart needs the indicator listed in the [facioquo/stock-charts](https://github.com/facioquo/stock-charts) API first; open the change there. Until the API serves it, leave the chart out of the page.
 - Other page image assets go in `/docs/.vitepress/public/assets/` and can be optimized to `webp` format using [ImageMagick](https://imagemagick.org) or the [cwebp Encoder CLI](https://developers.google.com/speed/webp/docs/cwebp) and a command like `cwebp -resize 832 0 -q 100 examples.png -o examples-832.webp`
 
 **Local cache cleanup note:** To clear documentation or workspace build caches, run the VS Code task `Clean: All` (or run platform-specific clean tasks). See `.vscode/tasks.json` for exact task names and behavior.
