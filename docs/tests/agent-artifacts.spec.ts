@@ -337,17 +337,19 @@ test.describe('Build output', () => {
     }
   })
 
-  test('agent guide, llms.txt, and example projects name the same package version', () => {
-    const version = PACKAGE_VERSION.replaceAll('.', '\\.')
-    expect(read(`${AGENT_GUIDES_DIR}/start.md`)).toMatch(new RegExp(`current version ${version}(?![\\d.])`))
-    expect(read('llms.txt')).toContain(`Current package version: ${PACKAGE_VERSION}.`)
-
-    // every package version the guides name, so a release can't leave one behind
-    for (const file of listFiles(DIST).filter((f) => f.startsWith(`${AGENT_GUIDES_DIR}/`))) {
-      for (const [literal] of read(file).matchAll(/(?<![\d.])\d+\.\d+\.\d+(?![\d.])/g)) {
-        expect(literal, `${file} names ${literal}`).toBe(PACKAGE_VERSION)
-      }
+  test('package version comes from the release tag, never a hand-kept literal', () => {
+    if (PACKAGE_VERSION) {
+      expect(read('llms.txt')).toContain(`Current package version: ${PACKAGE_VERSION}.`)
     }
+
+    // the guides name no x.y.z version, so a release can't leave one behind
+    for (const file of listFiles(DIST).filter((f) => f.startsWith(`${AGENT_GUIDES_DIR}/`))) {
+      const literals = [...read(file).matchAll(/(?<![\d.])\d+\.\d+\.\d+(?![\d.])/g)].map(([literal]) => literal)
+      expect(literals, file).toEqual([])
+    }
+
+    // example projects float to the latest release of this major version
+    const floating = `${DOCS_VERSION.replace(/^v/, '')}.*`
 
     const examples = join(REPO_ROOT, 'docs/examples')
     const projects = readdirSync(examples, { withFileTypes: true })
@@ -358,7 +360,7 @@ test.describe('Build output', () => {
     expect(projects.length).toBeGreaterThan(0)
     for (const project of projects) {
       const version = readFileSync(project, 'utf8').match(/Include="FacioQuo\.Stock\.Indicators" Version="([^"]+)"/)?.[1]
-      expect(version, relative(REPO_ROOT, project)).toBe(PACKAGE_VERSION)
+      expect(version, relative(REPO_ROOT, project)).toBe(floating)
     }
   })
 

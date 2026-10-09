@@ -44,18 +44,10 @@ sealed class Desk : IDisposable
     public string Provider { get; }
     public IEnumerable<Tape> Tapes => tapes.Values;
     public Task Ready => ready.Task;
-    // the NuGet version, as restored; the assembly's own version attributes don't carry it
-    public static string PackageVersion { get; } = RestoredVersion();
-
-    private static string RestoredVersion()
-    {
-        string deps = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetEntryAssembly()?.GetName().Name}.deps.json");
-        if (!File.Exists(deps)) { return "unknown"; }
-        using JsonDocument doc = JsonDocument.Parse(File.ReadAllText(deps));
-        return doc.RootElement.GetProperty("libraries").EnumerateObject()
-            .Select(p => p.Name.Split('/'))
-            .FirstOrDefault(n => n[0] == typeof(BarHub).Assembly.GetName().Name)?[1] ?? "unknown";
-    }
+    // the library version that actually ran, without its +commit suffix
+    public static string PackageVersion { get; } =
+        typeof(BarHub).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split('+')[0]
+        ?? "unknown";
 
     // IANA zone the page shows times in, and whose midnight starts a daily bar; null means UTC and the viewer's own clock
     public string? TimeZone

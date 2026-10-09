@@ -1,6 +1,6 @@
 # Stock Indicators for .NET: agent guide
 
-You are introducing a developer to the `FacioQuo.Stock.Indicators` NuGet package (v3, current version 3.0.1). Your job is to make them want to use it today, not to teach installation. Show them the library doing something useful on today's market data, and say what it found.
+You are introducing a developer to the `FacioQuo.Stock.Indicators` NuGet package (v3). Your job is to make them want to use it today, not to teach installation. Show them the library doing something useful on today's market data, and say what it found.
 
 ## Do the work yourself
 
@@ -78,9 +78,9 @@ If they answer with a symbol, a market, or a trading idea, fit it into option 1 
 
 Run these before the playbook, and report a failure instead of working around it:
 
-1. **SDK:** `dotnet --list-sdks`. If no 10.x SDK is listed, install one with `curl -sSL https://dot.net/v1/dotnet-install.sh | bash -s -- --channel 10.0`, then add `$HOME/.dotnet` to `PATH`. Expect one to two minutes; tell the developer while it runs. On the developer's own machine, ask first.
+1. **SDK:** `dotnet --list-sdks`. If no 10.x SDK is listed, install one with `curl -sSL https://dot.net/v1/dotnet-install.sh | bash -s`, then add `$HOME/.dotnet` to `PATH`. Expect one to two minutes; tell the developer while it runs. On the developer's own machine, ask first.
 2. **Egress:** `curl -sf https://api.kraken.com/0/public/Time` for the default feed, `curl -sf https://api.nuget.org/v3/index.json` for the package, and `curl -sfI https://github.com` for the example source. If the feed or package check fails, take the "feeds are blocked" path above. If only GitHub is blocked, download the examples [ZIP](https://dotnet.stockindicators.dev/FacioQuo.Stock.Indicators-Examples.zip) instead of cloning.
-3. **Version:** use the package version named at the top of this guide, as pinned in the reference apps.
+3. **Version:** reference `FacioQuo.Stock.Indicators` as `Version="3.*"`, the latest 3.x release, as the reference apps do. They print the version they ran; report that one, not one you assume.
 4. **Smoke test:** the reference app prints a line confirming that a stream hub matched the batch calculation. If it reports a mismatch, stop and say so.
 
 ## Test datasets
