@@ -2,6 +2,5 @@
   <RunConfiguration>
     <MaxCpuCount>0</MaxCpuCount>
     <TestCaseFilter>TestCategory=Integration</TestCaseFilter>
-    <TestSessionTimeout>1200000</TestSessionTimeout>
   </RunConfiguration>
 </RunSettings>

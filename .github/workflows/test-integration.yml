@@ -59,15 +59,19 @@ jobs:
           ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
           ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
           DOTNET_CONFIGURATION: Release
-        run: >
-          dotnet test
-          --configuration Release
-          --settings tests/tests.integration.runsettings
-          --results-directory ./test-results
-          --no-build
-          --verbosity normal
-          --report-trx
-          --ignore-exit-code 8
+        run: |
+          rc=0
+          for project in tests/Integration/Tests.Integration.csproj tests/PublicApi/Tests.PublicApi.csproj; do
+            dotnet test --project "$project" \
+              --configuration Release \
+              --settings tests/tests.integration.runsettings \
+              --timeout 20m \
+              --results-directory ./test-results \
+              --no-build \
+              --verbosity normal \
+              --report-trx || rc=$?
+          done
+          exit $rc
 
       - name: Post test summary
         uses: dorny/test-reporter@v3

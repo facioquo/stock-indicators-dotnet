@@ -80,5 +80,6 @@ jobs:
           dotnet test tests/Library/Tests.Indicators.csproj
           --configuration Release
           --settings tests/tests.unit.runsettings
+          --timeout 10m
           --framework ${{ env.TARGET_FRAMEWORK }}
           --no-build

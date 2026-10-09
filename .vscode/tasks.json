@@ -517,7 +517,7 @@
       "label": "Test: Unit tests with coverage",
       "detail": "Run tests with coverage collection",
       "type": "shell",
-      "command": "dotnet test --coverage --no-restore",
+      "command": "dotnet test tests/Library/Tests.Indicators.csproj --no-restore --settings tests/tests.unit.runsettings --coverage --coverage-output-format cobertura",
       "group": "test",
       "problemMatcher": "$msCompile"
     },

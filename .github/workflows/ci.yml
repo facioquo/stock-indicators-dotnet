@@ -97,6 +97,7 @@ jobs:
           --framework net10.0
           --configuration Release
           --settings tests/tests.unit.runsettings
+          --timeout 10m
           --results-directory ./test-results/unit
           --verbosity normal
           --report-trx
@@ -118,7 +119,7 @@ jobs:
         if: ${{ !cancelled() }}
         with:
           name: coverage-unit
-          path: test-results/unit/**/*.cobertura.xml
+          path: test-results/unit/*.cobertura.xml
           retention-days: 1
         continue-on-error: true
 
@@ -127,7 +128,7 @@ jobs:
         if: success() && github.actor != 'dependabot[bot]'
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: test-results/unit/**/*.cobertura.xml
+          coverage-reports: test-results/unit/*.cobertura.xml
         continue-on-error: true
 
   gate:
@@ -197,6 +198,7 @@ jobs:
           --framework net10.0
           --configuration Release
           --settings tests/tests.regression.runsettings
+          --timeout 15m
           --results-directory ./test-results/regression
           --verbosity normal
           --report-trx
