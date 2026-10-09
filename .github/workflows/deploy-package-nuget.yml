@@ -110,7 +110,7 @@ jobs:
           echo "url=https://www.nuget.org/packages/${PACKAGE_NAME}/${{ steps.version_info.outputs.version }}" >> "$GITHUB_OUTPUT"
 
       - name: Restore dependencies
-        run: dotnet restore src/Indicators.csproj
+        run: dotnet restore src/Indicators.csproj --property:ContinuousIntegrationBuild=true
 
       # Version must reach the build, not only the pack step: pack --no-build
       # wraps whatever assemblies were compiled (default 1.0.0) in the package.
@@ -136,9 +136,7 @@ jobs:
           EXPECTED_VERSION: ${{ steps.version_info.outputs.version }}
         shell: pwsh
         run: |
-          $nupkg = Get-ChildItem NuGet/*.nupkg |
-            Where-Object { $_.Name -notlike '*.symbols.nupkg' -and $_.Name -notlike '*.snupkg' } |
-            Select-Object -First 1
+          $nupkg = Get-ChildItem NuGet/*.nupkg | Select-Object -First 1
           $extract = Join-Path $env:RUNNER_TEMP 'nupkg-verify'
           Expand-Archive -Path $nupkg.FullName -DestinationPath $extract -Force
 
