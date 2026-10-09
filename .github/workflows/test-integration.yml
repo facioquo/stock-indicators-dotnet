@@ -65,7 +65,7 @@ jobs:
             dotnet test --project "$project" \
               --configuration Release \
               --settings tests/tests.integration.runsettings \
-              --timeout 20m \
+              --timeout 8m \
               --results-directory ./test-results \
               --no-build \
               --verbosity normal \
