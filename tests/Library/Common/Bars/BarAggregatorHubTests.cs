@@ -333,6 +333,32 @@ public class BarAggregatorHubTests : StreamHubTestBase, ITestBarObserver, ITestC
     }
 
     [TestMethod]
+    [DataRow(10080)] // one week: fixed Monday 00:00 buckets
+    [DataRow(7)]     // 7 minutes: a bucket spans midnight
+    public void PeriodBoundaries_MatchSeries(int periodMinutes)
+    {
+        TimeSpan period = TimeSpan.FromMinutes(periodMinutes);
+
+        // hourly bars from a Sunday evening through the following Tuesday
+        List<Bar> bars = [];
+        DateTime start = DateTime.Parse("2023-11-05 20:00", invariantCulture);
+        for (int i = 0; i < 60; i++)
+        {
+            bars.Add(new Bar(start.AddMinutes(i * 61), 100m + i, 105m + i, 99m + i, 102m + i, 1000m + i));
+        }
+
+        BarHub provider = new();
+        BarAggregatorHub aggregator = provider.ToBarAggregatorHub(period);
+        provider.Add(bars);
+
+        IReadOnlyList<Bar> expected = bars.Aggregate(period);
+        aggregator.Results.Should().BeEquivalentTo(expected, static o => o.WithStrictOrdering());
+
+        aggregator.Unsubscribe();
+        provider.EndTransmission();
+    }
+
+    [TestMethod]
     public void WithCachePruning_MatchesSeriesExactly()
     {
         const int maxCacheSize = 20;
