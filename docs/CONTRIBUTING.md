@@ -192,8 +192,8 @@ We use [GitVersion](https://gitversion.net) for automated [semantic versioning](
 GitVersion automatically determines version suffixes based on the branch:
 
 - **main branch**: The current stable line, produces `3.x.x` versions
-  - CI builds: `3.0.1-ci.345` (includes build metadata)
-  - Production: `3.0.1` (no suffix)
+  - CI builds: `3.0.2-ci.345` (includes build metadata)
+  - Production: `3.0.2` (no suffix)
 - **v2 branch** (support): Legacy compatibility line, produces stable `2.x.x` maintenance patch versions only (no preview suffix) — accepts security/compatibility fixes, not new features
 - **Release branches** (`v4`, `v5`, … matching the next major): Produce `x.x.x-preview.N` versions while the next major version is under development
 - **Feature branches**: `x.x.x-{branch-name}.N` (branch name becomes suffix)
@@ -233,7 +233,7 @@ Packages are deployed via two separate GitHub Actions workflows:
 
 - Published to GitHub Packages only
 - Version format: `{Major}.{Minor}.{Patch}-ci.{run_number}`
-- Examples: `3.0.1-ci.567` (main), `2.7.2-ci.1234` (v2)
+- Examples: `3.0.2-ci.567` (main), `2.7.2-ci.1234` (v2)
 - Idempotent: Each commit gets unique incrementing run number
 - No Git tags created
 
@@ -246,7 +246,7 @@ Packages are deployed via two separate GitHub Actions workflows:
 - Published to `nuget.org` only
 - Version comes directly from release tag (strips 'v' prefix)
 - Examples:
-  - Tag `3.0.1` → deploys `3.0.1` (stable, from `main`)
+  - Tag `3.0.2` → deploys `3.0.2` (stable, from `main`)
   - Tag `2.8.0` → deploys `2.8.0` (stable, from `v2` support branch)
   - Tag `4.0.0-preview.2` → deploys `4.0.0-preview.2` (preview, from a future major-version release branch)
 - Published releases: Full deployment to nuget.org
@@ -260,10 +260,10 @@ Packages are deployed via two separate GitHub Actions workflows:
 
 | Scenario | Trigger | Version | Registry | Notes |
 | :------- | :------ | :------ | :------- | :---- |
-| CI build | Push to main | `3.0.1-ci.1234` | GitHub Packages | Run 1234 |
-| CI build | Push to main | `3.0.1-ci.1235` | GitHub Packages | Run 1235 (next commit) |
+| CI build | Push to main | `3.0.2-ci.1234` | GitHub Packages | Run 1234 |
+| CI build | Push to main | `3.0.2-ci.1235` | GitHub Packages | Run 1235 (next commit) |
 | CI build | Push to v2 | `2.7.2-ci.567` | GitHub Packages | Run 567 |
-| Production | Release tag `3.0.1` | `3.0.1` | nuget.org | Stable version, main |
+| Production | Release tag `3.0.2` | `3.0.2` | nuget.org | Stable version, main |
 | Production | Release tag `2.8.0` | `2.8.0` | nuget.org | Stable maintenance version, v2 |
 | Production | Release tag `4.0.0-preview.2` | `4.0.0-preview.2` | nuget.org | Preview version, future major-version release branch |
 | Dry-run | Manual run, tag `3.0.2` | `3.0.2` | None (dry-run) | Build only, no deploy |
