@@ -5,6 +5,7 @@ using System.Text.Json;
 using FacioQuo.Stock.Indicators;
 
 // Alpaca market data, free plan (IEX feed). Needs ALPACA_KEY and ALPACA_SECRET.
+// Daily history (split- and dividend-adjusted) gives market context; one-minute bars drive signals.
 // "bars" arrive just after each minute closes and "updatedBars" revise a minute a late trade changed;
 // trades in between build the forming candle, which the closed bar then replaces by timestamp.
 sealed class AlpacaFeed(Desk desk, IConfiguration config, ILogger<AlpacaFeed> log) : BackgroundService
@@ -17,8 +18,8 @@ sealed class AlpacaFeed(Desk desk, IConfiguration config, ILogger<AlpacaFeed> lo
             ? value
             : throw new InvalidOperationException($"Set ALPACA_KEY and ALPACA_SECRET to stream US stocks ({name} is empty).");
 
-    private DateTime lastClosed;
-    private Bar? forming;
+    private readonly Dictionary<string, DateTime> lastClosed = [];
+    private readonly Dictionary<string, Bar> forming = [];
 
     protected override async Task ExecuteAsync(CancellationToken ct)
     {
@@ -66,24 +67,41 @@ sealed class AlpacaFeed(Desk desk, IConfiguration config, ILogger<AlpacaFeed> lo
         return $"Market closed · opens {next:ddd HH:mm} ET";
     }
 
-    private async Task Seed(HttpClient http, CancellationToken ct)
+    private static async Task<List<Bar>> History(HttpClient http, string symbol, string timeframe, DateTime start, string sort, CancellationToken ct)
     {
-        string start = DateTime.UtcNow.AddDays(-7).ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
         string url = "https://data.alpaca.markets/v2/stocks/bars"
-            + $"?symbols={Uri.EscapeDataString(desk.Symbol)}&timeframe=1Min&feed=iex&start={start}&limit=1000&sort=desc";
+            + $"?symbols={Uri.EscapeDataString(symbol)}&timeframe={timeframe}&feed=iex&adjustment=all"
+            + $"&start={start.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture)}&limit=1000&sort={sort}";
         using JsonDocument doc = JsonDocument.Parse(await http.GetStringAsync(url, ct));
 
-        if (!doc.RootElement.GetProperty("bars").TryGetProperty(desk.Symbol, out JsonElement rows))
+        if (!doc.RootElement.GetProperty("bars").TryGetProperty(symbol, out JsonElement rows))
         {
-            throw new InvalidOperationException($"Alpaca returned no IEX bars for {desk.Symbol}.");
+            throw new InvalidOperationException($"Alpaca returned no IEX bars for {symbol}.");
+        }
+        return [.. rows.EnumerateArray().Select(ToBar).OrderBy(b => b.Timestamp)];
+    }
+
+    private async Task Seed(HttpClient http, CancellationToken ct)
+    {
+        Dictionary<string, (List<Bar> Daily, List<Bar> Minutes)> history = [];
+        foreach (Tape tape in desk.Tapes)
+        {
+            // three years of sessions fit one page; minutes are fetched newest first, so the 1,000 are the most recent
+            history[tape.Symbol] = (
+                await History(http, tape.Symbol, "1Day", DateTime.UtcNow.AddYears(-3), "asc", ct),
+                await History(http, tape.Symbol, "1Min", DateTime.UtcNow.AddDays(-7), "desc", ct));
         }
 
-        // newest first, so the 1,000 bars are the most recent; replay them oldest first
+        // the newest daily bar is the current session's while the market is open
         desk.Replay(() =>
         {
-            foreach (JsonElement r in rows.EnumerateArray().Reverse()) { OnClosedBar(ToBar(r)); }
+            foreach ((string symbol, (List<Bar> daily, List<Bar> minutes)) in history)
+            {
+                foreach (Bar bar in daily) { desk.AddDaily(symbol, bar); }
+                foreach (Bar bar in minutes) { OnClosedBar(symbol, bar); }
+            }
         });
-        Console.WriteLine($"Seeded {rows.GetArrayLength()} one-minute bars for {desk.Symbol}; streaming live.");
+        Console.WriteLine($"Seeded daily and one-minute history for {history.Count} symbols from Alpaca; streaming live.");
     }
 
     private async Task Run(CancellationToken ct)
@@ -95,14 +113,10 @@ sealed class AlpacaFeed(Desk desk, IConfiguration config, ILogger<AlpacaFeed> lo
         using ClientWebSocket ws = new();
         await ws.ConnectAsync(new Uri("wss://stream.data.alpaca.markets/v2/iex"), ct);
         await Send(ws, new { action = "auth", key, secret }, ct);
-        await Send(ws, new
-        {
-            action = "subscribe",
-            bars = new[] { desk.Symbol },
-            updatedBars = new[] { desk.Symbol },
-            trades = new[] { desk.Symbol }
-        }, ct);
+        string[] symbols = [.. desk.Tapes.Select(t => t.Symbol)];
+        await Send(ws, new { action = "subscribe", bars = symbols, updatedBars = symbols, trades = symbols }, ct);
         desk.SetStatus(await MarketStatusOrDefault(http, ct));
+        desk.Seeded();
 
         // the banner follows the open and the close even when the feed is quiet
         using CancellationTokenSource stop = CancellationTokenSource.CreateLinkedTokenSource(ct);
@@ -146,7 +160,7 @@ sealed class AlpacaFeed(Desk desk, IConfiguration config, ILogger<AlpacaFeed> lo
                     case "error":
                         throw new InvalidOperationException($"Alpaca stream error: {m}");
                     case "b" or "u":
-                        OnClosedBar(ToBar(m));
+                        OnClosedBar(m.GetProperty("S").GetString()!, ToBar(m));
                         break;
                     case "t":
                         OnTrade(m);
@@ -156,34 +170,37 @@ sealed class AlpacaFeed(Desk desk, IConfiguration config, ILogger<AlpacaFeed> lo
         }
     }
 
-    private void OnClosedBar(Bar bar)
+    private void OnClosedBar(string symbol, Bar bar)
     {
-        desk.Add(bar);
-        desk.Close(bar.Timestamp);
-        if (bar.Timestamp > lastClosed) { lastClosed = bar.Timestamp; }
+        desk.AddMinute(symbol, bar);
+        desk.Close(symbol, bar.Timestamp);
+        if (bar.Timestamp > lastClosed.GetValueOrDefault(symbol)) { lastClosed[symbol] = bar.Timestamp; }
     }
 
     private void OnTrade(JsonElement trade)
     {
+        string symbol = trade.GetProperty("S").GetString()!;
+
         // nanosecond timestamps; only the minute matters here
         DateTime minute = DateTime.ParseExact(
             trade.GetProperty("t").GetString()![..16], "yyyy-MM-ddTHH:mm",
             CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal);
-        if (minute <= lastClosed) { return; } // that minute's closed bar is authoritative
+        if (minute <= lastClosed.GetValueOrDefault(symbol)) { return; } // that minute's closed bar is authoritative
 
         decimal price = trade.GetProperty("p").GetDecimal();
         decimal size = trade.GetProperty("s").GetDecimal();
 
-        forming = forming is null || forming.Timestamp != minute
+        Bar bar = !forming.TryGetValue(symbol, out Bar? f) || f.Timestamp != minute
             ? new Bar(minute, price, price, price, price, size)
-            : forming with
+            : f with
             {
-                High = Math.Max(forming.High, price),
-                Low = Math.Min(forming.Low, price),
+                High = Math.Max(f.High, price),
+                Low = Math.Min(f.Low, price),
                 Close = price,
-                Volume = forming.Volume + size
+                Volume = f.Volume + size
             };
-        desk.Add(forming);
+        forming[symbol] = bar;
+        desk.AddMinute(symbol, bar);
     }
 
     private static Bar ToBar(JsonElement b) => new(

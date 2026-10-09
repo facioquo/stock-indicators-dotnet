@@ -9,6 +9,7 @@ import {
   DOCS_VERSION,
   normalizeDocument,
   PACKAGE_ID,
+  PACKAGE_VERSION,
   renderContainers,
   SEARCH_INDEX,
   rewriteInternalLinks,
@@ -333,6 +334,23 @@ test.describe('Build output', () => {
       for (const dataset of datasets) {
         expect(existsSync(join(REPO_ROOT, 'tests/Library/TestData/quotes', dataset)), `${file} → dataset ${dataset}`).toBe(true)
       }
+    }
+  })
+
+  test('agent guide, llms.txt, and example projects name the same package version', () => {
+    expect(read(`${AGENT_GUIDES_DIR}/start.md`)).toContain(`current version ${PACKAGE_VERSION}`)
+    expect(read('llms.txt')).toContain(`Current package version: ${PACKAGE_VERSION}.`)
+
+    const examples = join(REPO_ROOT, 'docs/examples')
+    const projects = readdirSync(examples, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .flatMap((entry) => readdirSync(join(examples, entry.name))
+        .filter((file) => file.endsWith('.csproj'))
+        .map((file) => join(examples, entry.name, file)))
+    expect(projects.length).toBeGreaterThan(0)
+    for (const project of projects) {
+      const version = readFileSync(project, 'utf8').match(/Include="FacioQuo\.Stock\.Indicators" Version="([^"]+)"/)?.[1]
+      expect(version, relative(REPO_ROOT, project)).toBe(PACKAGE_VERSION)
     }
   })
 

@@ -11,6 +11,8 @@ import { markdownPath, pageRoute } from './routes.ts'
 export const SITE_URL = 'https://dotnet.stockindicators.dev'
 export const PACKAGE_ID = 'FacioQuo.Stock.Indicators'
 export const DOCS_VERSION = 'v3'
+// Latest published release; the agent guide and example projects must name the same version (see agent-artifacts.spec.ts).
+export const PACKAGE_VERSION = '3.0.1'
 
 const SKILLS_DIR = '.well-known/agent-skills'
 // Hand-written agent setup guides (public/agents/); already portable Markdown, not page twins.
@@ -53,8 +55,9 @@ export function identityBlock({ generated, commit }: BuildInfo): string {
 
 // The llms.txt preamble: where an agent helping someone get started should go first.
 export const AGENT_DETAILS = [
-  `> Helping a developer get set up? Start with the agent setup guide at ${SITE_URL}/${AGENT_GUIDES_DIR}/start.md.`,
-  '> Use real market data, never invented bars: the guide lists keyless live feeds and real historical datasets.',
+  `> Introducing a developer to this library? Start with the agent guide at ${SITE_URL}/${AGENT_GUIDES_DIR}/start.md.`,
+  '> If you can run code, run the library yourself on live market data and show the result before asking them to install anything.',
+  `> Current package version: ${PACKAGE_VERSION}. Use real market data, never invented bars.`,
 ].join('\n')
 
 const ALERTS: Record<string, string> = {

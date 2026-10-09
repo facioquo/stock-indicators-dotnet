@@ -12,6 +12,7 @@ To help you get started, here are a few minimalist [.NET](https://dotnet.microso
 - `CustomIndicatorsLibrary` shows how you can [create your own custom indicators](/guide/customization)
 - `CustomIndicatorsUsage` shows how you'd use custom indicators just like any other in the main library
 - `UseQuoteApi` shows how you'd get quotes from an API quote source, using the Alpaca SDK for .NET
+- `LiveSignals` is a live market desk: real crypto or US stock feeds, daily regimes and rotation across a basket, explained one-minute signals, and narrated insights in a browser or headless console (no key needed for crypto)
 
 For more information on how to use this library overall, see the [Guide](/guide/).
 

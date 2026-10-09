@@ -24,7 +24,7 @@ metadata:
 
 ## Helping someone get started
 
-Follow the setup guide at <https://dotnet.stockindicators.dev/agents/start.md>. It routes to playbooks for live signals, backtests, integration, a feature tour, and v2 migration, and lists keyless live feeds and real historical datasets. Never invent price data.
+Follow the agent guide at <https://dotnet.stockindicators.dev/agents/start.md>. When you can run code, it has you run the library yourself on live market data (by default a no-key live market desk with narrated insights) and return a visual with numeric findings before asking the developer to install anything. It also routes to playbooks for backtests, integration, a feature tour, and v2 migration. Never invent price data.
 
 ## Core pattern
 

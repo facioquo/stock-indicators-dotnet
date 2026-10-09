@@ -1,6 +1,6 @@
 # Playbook: add indicators to an existing app
 
-Read [start.md](https://dotnet.stockindicators.dev/agents/start.md) first; its ground rules apply here.
+Read [start.md](https://dotnet.stockindicators.dev/agents/start.md) first; its ground rules apply here. This playbook changes the developer's own code, so its finish line replaces start's.
 
 ## Finish line
 

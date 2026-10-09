@@ -3,31 +3,70 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Live signal desk</title>
+  <title>Live market desk</title>
   <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js" integrity="sha384-OK7vELvjHdhUFi31JYioPIcRHTROLdcDa6ZsNWgvgLaKj+9JqhU0Ad8g4wz3CXjA" crossorigin="anonymous"></script>
   <style>
-    body { margin: 0; font: 14px system-ui, sans-serif; background: #0f1115; color: #e6e6e6; display: grid; grid-template-columns: 1fr 340px; height: 100vh; }
-    #chart { min-height: 0; }
-    aside { border-left: 1px solid #262a33; padding: 16px; overflow: auto; }
-    h1 { font-size: 16px; margin: 0 0 4px; }
-    .meta { color: #8a90a0; margin-bottom: 16px; }
-    .status { color: #c8ccd6; margin-bottom: 8px; }
-    .sig { padding: 8px 0; border-top: 1px solid #262a33; }
-    .BUY b { color: #26a69a; } .SELL b { color: #ef5350; } .weak { color: #a3a9b8; }
-    @media (max-width: 720px) { body { grid-template-columns: 1fr; grid-template-rows: 60vh auto; height: auto; } aside { border-left: 0; border-top: 1px solid #262a33; } }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 14px system-ui, sans-serif; background: #0f1115; color: #e6e6e6; }
+    header { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; padding: 12px 16px; border-bottom: 1px solid #262a33; }
+    h1 { font-size: 16px; margin: 0; }
+    .meta, .muted { color: #8a90a0; }
+    header .actions { margin-left: auto; display: flex; gap: 8px; }
+    button, a.button { font: inherit; color: #e6e6e6; background: #1b1f27; border: 1px solid #3a404d; border-radius: 6px; padding: 4px 10px; cursor: pointer; text-decoration: none; }
+    button[aria-pressed="true"] { border-color: #26a69a; color: #26a69a; }
+    main { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 16px; padding: 16px; }
+    #cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; margin-bottom: 12px; }
+    .card { text-align: left; padding: 8px 10px; border-radius: 8px; background: #151821; border: 1px solid #262a33; }
+    .card[aria-pressed="true"] { border-color: #7aa2f7; }
+    .card b { font-size: 15px; } .card .px { float: right; }
+    .card div { margin-top: 2px; font-size: 12px; }
+    .up { color: #26a69a; } .down { color: #ef5350; }
+    .q-Leading { color: #26a69a; } .q-Weakening { color: #f5b942; } .q-Lagging { color: #ef5350; } .q-Improving { color: #7aa2f7; }
+    #chart { height: 440px; }
+    #quadrant svg { width: 100%; height: auto; border-radius: 8px; }
+    h2 { font-size: 14px; margin: 16px 0 4px; }
+    #insights { max-height: 50vh; overflow: auto; }
+    .note { padding: 8px 0; border-top: 1px solid #262a33; }
+    .note time { color: #8a90a0; margin-right: 6px; }
+    .note.fresh { animation: fade 3s ease-out; }
+    @keyframes fade { from { background: #1f2a3a; } to { background: transparent; } }
+    footer { padding: 0 16px 16px; color: #8a90a0; font-size: 12px; }
+    @media (max-width: 900px) { main { grid-template-columns: 1fr; } #chart { height: 360px; } }
+    @media (prefers-reduced-motion: reduce) { .note.fresh { animation: none; } }
   </style>
 </head>
 <body>
-  <div id="chart"></div>
-  <aside>
-    <h1 id="title">Connecting…</h1>
-    <div class="status" id="status" role="status" aria-live="polite"></div>
-    <div class="meta" id="meta">EMA 21/55 crossover · ADX ≥ 20 filter · 1.5×ATR stop · evaluated on closed 1-minute candles</div>
-    <div id="signals" aria-live="polite"></div>
-  </aside>
+  <header>
+    <h1>Live market desk</h1>
+    <span id="status" role="status">Connecting…</span>
+    <span class="meta" id="meta"></span>
+    <span class="actions">
+      <button id="voice" type="button" aria-pressed="false" title="Read new insights aloud">🔊 Narrate</button>
+      <a class="button" href="/snapshot" target="_blank" rel="noopener">Snapshot</a>
+    </span>
+  </header>
+  <main>
+    <section aria-label="Basket">
+      <div id="cards"></div>
+      <div class="muted" id="recipe">Selected symbol · one-minute candles · EMA 21/55 crossover · ADX ≥ 20 filter · 1.5×ATR stop · evaluated on closed candles</div>
+      <div id="chart"></div>
+    </section>
+    <aside>
+      <div id="quadrant"></div>
+      <h2>Briefing</h2>
+      <div id="briefing"></div>
+      <h2>Live</h2>
+      <div id="insights" aria-live="polite"></div>
+    </aside>
+  </main>
+  <footer id="footer"></footer>
   <script>
-    const el = document.getElementById('chart');
-    const chart = LightweightCharts.createChart(el, {
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const pct = (v) => v == null ? '–' : `${v >= 0 ? '+' : ''}${v.toFixed(1)}%`;
+    const price = (v) => v >= 1000 ? v.toLocaleString(undefined, { maximumFractionDigits: 2 }) : v >= 1 ? v.toFixed(2) : v.toPrecision(4);
+
+    const chart = LightweightCharts.createChart($('chart'), {
       autoSize: true,
       layout: { background: { color: '#0f1115' }, textColor: '#c8ccd6' },
       grid: { vertLines: { color: '#1b1f27' }, horzLines: { color: '#1b1f27' } },
@@ -37,7 +76,6 @@
     const fast = chart.addLineSeries({ color: '#f5b942', lineWidth: 2, title: 'EMA21' });
     const slow = chart.addLineSeries({ color: '#7aa2f7', lineWidth: 2, title: 'EMA55' });
 
-    let lastTime = 0;
     let zone;
     const fmt = (sec, opts) => new Intl.DateTimeFormat(undefined, { timeZone: zone, ...opts }).format(sec * 1000);
     const fmtFull = (sec) => fmt(sec, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -51,37 +89,111 @@
     const toSec = (iso) => Math.floor(new Date(iso.endsWith('Z') ? iso : iso + 'Z') / 1000);
     const line = (rows, key) => rows.filter(r => r[key] != null).map(r => ({ time: r.t, value: r[key] }));
 
-    const source = new EventSource('/stream');
-    // EventSource reconnects by itself; say so rather than leave stale data looking live
-    source.onerror = () => { document.getElementById('status').textContent = 'Connection lost · retrying…'; };
-    source.onmessage = (e) => {
-      const p = JSON.parse(e.data);
-      zone = p.tz || undefined;
-      const bars = p.rows.map(r => ({ time: r.t, open: r.o, high: r.h, low: r.l, close: r.c }));
-      if (p.full) {
-        candles.setData(bars); fast.setData(line(p.rows, 'fast')); slow.setData(line(p.rows, 'slow'));
-        lastTime = bars.length ? bars[bars.length - 1].time : 0;
+    // every symbol's one-minute tape is kept, so switching the chart is instant
+    const tapes = {};
+    let selected, drawn, lastTime = 0;
+
+    function merge(p) {
+      const t = tapes[p.symbol] ??= { rows: new Map(), signals: [] };
+      if (p.full) t.rows = new Map();
+      p.rows.forEach(r => t.rows.set(r.t, r));
+      t.signals = p.signals;
+    }
+
+    function draw(full) {
+      const t = tapes[selected];
+      if (!t) return;
+      const rows = [...t.rows.values()].sort((a, b) => a.t - b.t);
+      const bars = rows.map(r => ({ time: r.t, open: r.o, high: r.h, low: r.l, close: r.c }));
+      if (full || drawn !== selected) {
+        const p = rows.length ? rows[rows.length - 1].c : 1;
+        candles.applyOptions({ priceFormat: { type: 'price', precision: p < 1 ? 5 : 2, minMove: p < 1 ? 0.00001 : 0.01 } });
+        candles.setData(bars); fast.setData(line(rows, 'fast')); slow.setData(line(rows, 'slow'));
+        drawn = selected;
       } else {
         // the chart only accepts updates to its newest point or later
-        const fresh = (pts) => pts.filter(v => v.time >= lastTime);
-        fresh(bars).forEach(b => candles.update(b));
-        fresh(line(p.rows, 'fast')).forEach(v => fast.update(v));
-        fresh(line(p.rows, 'slow')).forEach(v => slow.update(v));
-        if (bars.length) lastTime = Math.max(lastTime, bars[bars.length - 1].time);
+        const recent = rows.slice(-3), fresh = (pts) => pts.filter(v => v.time >= lastTime);
+        fresh(bars.slice(-3)).forEach(b => candles.update(b));
+        fresh(line(recent, 'fast')).forEach(v => fast.update(v));
+        fresh(line(recent, 'slow')).forEach(v => slow.update(v));
       }
-      const last = p.rows[p.rows.length - 1];
-      document.getElementById('title').textContent = `${p.symbol}  ${last ? last.c : ''}`;
-      document.getElementById('status').textContent = p.status;
-      candles.setMarkers(p.signals.map(s => ({
+      lastTime = bars.length ? bars[bars.length - 1].time : 0;
+      candles.setMarkers(t.signals.map(s => ({
         time: toSec(s.time),
         position: s.side === 'BUY' ? 'belowBar' : 'aboveBar',
         color: s.side === 'BUY' ? '#26a69a' : '#ef5350',
         shape: s.side === 'BUY' ? 'arrowUp' : 'arrowDown',
         text: s.side
       })));
-      document.getElementById('signals').innerHTML = p.signals.slice().reverse().map(s =>
-        `<div class="sig ${s.side} ${s.strong ? '' : 'weak'}"><b>${s.side}</b> ${s.price.toFixed(2)} · ${fmtFull(toSec(s.time))}<br>${s.reason}</div>`
-      ).join('') || 'No crossovers yet in this window.';
+    }
+
+    function select(symbol) {
+      selected = symbol;
+      document.querySelectorAll('.card').forEach(c => c.setAttribute('aria-pressed', c.dataset.symbol === symbol));
+      draw(true);
+    }
+
+    function cards(d) {
+      $('cards').innerHTML = d.regimes.map(r => `
+        <button type="button" class="card" data-symbol="${esc(r.symbol)}" aria-pressed="${r.symbol === selected}">
+          <b>${esc(r.symbol)}</b><span class="px">${price(r.price)}</span>
+          <div class="${r.dayChange >= 0 ? 'up' : 'down'}">${pct(r.dayChange)} today</div>
+          <div>${esc(r.label)}</div>
+          <div class="${r.quadrant ? 'q-' + r.quadrant : 'muted'}">${r.quadrant ? esc(r.quadrant) + ' vs ' + esc(d.benchmark) : r.symbol === d.benchmark ? 'Benchmark' : '–'}</div>
+          <div class="muted">${r.lastSignal ? `${r.lastSignal.side} ${fmtFull(toSec(r.lastSignal.time))}` : 'No 1-min signal yet'}</div>
+        </button>`).join('');
+    }
+
+    // narration: insights stream in; the voice reads only the ones that arrive after it is switched on
+    const seen = new Set();
+    let first = true;
+    const voice = $('voice');
+    const speakable = 'speechSynthesis' in window;
+    if (!speakable) voice.hidden = true;
+    voice.onclick = () => {
+      const on = voice.getAttribute('aria-pressed') !== 'true';
+      voice.setAttribute('aria-pressed', on);
+      if (!on) speechSynthesis.cancel();
+    };
+    const speak = (text) => {
+      if (!speakable || voice.getAttribute('aria-pressed') !== 'true') return;
+      speechSynthesis.speak(new SpeechSynthesisUtterance(text.replace(/\/USD\b/g, '').replace(/×/g, ' times ')));
+    };
+
+    function notes(list) {
+      const fresh = list.filter(i => !seen.has(i.time + i.text));
+      fresh.forEach(i => { seen.add(i.time + i.text); if (!first) speak(i.text); });
+      const note = (i) =>
+        `<div class="note ${!first && fresh.includes(i) ? 'fresh' : ''}"><time>${fmt(toSec(i.time), { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</time>${esc(i.text)}</div>`;
+      $('briefing').innerHTML = list.filter(i => !i.live).map(note).join('') || '<div class="muted">Loading history…</div>';
+      $('insights').innerHTML = list.filter(i => i.live).reverse().map(note).join('') || '<div class="muted">Signals, rotations, and market pulses appear here as they happen.</div>';
+      first = false;
+    }
+
+    $('cards').addEventListener('click', (e) => {
+      const card = e.target.closest('.card');
+      if (card) select(card.dataset.symbol);
+    });
+
+    const source = new EventSource('/stream');
+    // EventSource reconnects by itself; say so rather than leave stale data looking live
+    source.onerror = () => { $('status').textContent = 'Connection lost · retrying…'; };
+    source.onmessage = (e) => {
+      const p = JSON.parse(e.data);
+      if (p.type === 'tape') {
+        merge(p);
+        selected ??= p.symbol;
+        if (p.symbol === selected) draw(p.full);
+        return;
+      }
+      const d = p.desk;
+      zone = p.tz || undefined;
+      $('status').textContent = d.status;
+      $('meta').textContent = `${d.provider} · ${d.regimes.length} symbols vs ${d.benchmark} · ${d.dailyBars.toLocaleString()} daily + ${d.minuteBars.toLocaleString()} one-minute bars`;
+      $('quadrant').innerHTML = p.quadrant;
+      cards(d);
+      notes(d.insights);
+      $('footer').textContent = `Calculated live with FacioQuo.Stock.Indicators ${d.packageVersion}. Daily context uses today's forming bar, so it is provisional until the close. Descriptive analysis, not investment advice.`;
     };
   </script>
 </body>
