@@ -8,6 +8,8 @@ public static partial class Indicator
 {
     private const string FromEnumerable = "; call `.ToSortedList()` first if your source is an `IEnumerable`";
     private const string FromTuples = "; convert each tuple to `new TimeValue(d, v)`, then call `.ToSortedList()`";
+    private const string FromEnumerablePair = "; call `.ToSortedList()` on both sources first if either is an `IEnumerable`";
+    private const string FromTuplesPair = "; convert both tuple sources to `new TimeValue(d, v)`, then call `.ToSortedList()` on each";
 
     // GENERAL INDICATOR METHODS
     [ExcludeFromCodeCoverage]
@@ -120,7 +122,7 @@ public static partial class Indicator
            .ToAwesome(fastPeriods, slowPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetBeta(..)` to `ToBeta(..)`" + FromEnumerable, false)]
+    [Obsolete("Rename `GetBeta(..)` to `ToBeta(..)`" + FromEnumerablePair, false)]
     public static IEnumerable<BetaResult> GetBeta(
         this IEnumerable<IBar> quotesEval,
         IEnumerable<IBar> quotesMarket,
@@ -131,7 +133,7 @@ public static partial class Indicator
             .ToBeta(quotesMarket.ToSortedReusableList(), lookbackPeriods, type);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToBeta(..)' method. Tuple arguments were removed" + FromTuples, false)]
+    [Obsolete("Use 'ToBeta(..)' method. Tuple arguments were removed" + FromTuplesPair, false)]
     public static IEnumerable<BetaResult> GetBeta(
         this IEnumerable<(DateTime d, double v)> evalTuple,
         IEnumerable<(DateTime d, double v)> mrktTuple,
@@ -246,14 +248,14 @@ public static partial class Indicator
             .ToConnorsRsi(rsiPeriods, streakPeriods, rankPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetCorrelation(..)` to `ToCorrelation(..)`" + FromEnumerable, false)]
+    [Obsolete("Rename `GetCorrelation(..)` to `ToCorrelation(..)`" + FromEnumerablePair, false)]
     public static IEnumerable<CorrResult> GetCorrelation(
         this IEnumerable<IBar> quotesA,
         IEnumerable<IBar> quotesB, int lookbackPeriods)
         => quotesA.ToSortedList().ToCorrelation(quotesB.ToSortedList(), lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToCorrelation(..)' method. Tuple arguments were removed" + FromTuples, false)]
+    [Obsolete("Use 'ToCorrelation(..)' method. Tuple arguments were removed" + FromTuplesPair, false)]
     public static IEnumerable<CorrResult> GetCorrelation(
         this IEnumerable<(DateTime d, double v)> tuplesA,
         IEnumerable<(DateTime d, double v)> tuplesB,
@@ -639,7 +641,7 @@ public static partial class Indicator
         => bars.ToSortedList().ToPivotPoints(windowSize, pointType);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `PeriodSize` to `BarInterval`.", false)]
+    [Obsolete("Rename `GetPivotPoints(..)` to `ToPivotPoints(..)` and `PeriodSize` to `BarInterval`" + FromEnumerable, false)]
     public static IEnumerable<PivotPointsResult> GetPivotPoints(
         this IEnumerable<IBar> bars,
         PeriodSize windowSize,
@@ -679,7 +681,7 @@ public static partial class Indicator
             .ToPmo(timePeriods, smoothPeriods, signalPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetPrs(..)` to `ToPrs(..)`" + FromEnumerable, false)]
+    [Obsolete("Rename `GetPrs(..)` to `ToPrs(..)`" + FromEnumerablePair, false)]
     public static IEnumerable<PrsResult> GetPrs(
     this IEnumerable<IBar> quotesEval,
     IEnumerable<IBar> quotesBase, int? lookbackPeriods = null)
@@ -701,7 +703,7 @@ public static partial class Indicator
                 .ToPrs(quotesBase.ToSortedList().Use(CandlePart.Close));
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Use 'ToPrs(..)' method. Tuple arguments were removed" + FromTuples + ". "
+    [Obsolete("Use 'ToPrs(..)' method. Tuple arguments were removed" + FromTuplesPair + ". "
             + "`smaPeriods` is ignored: v3 has no PrsSma result. "
             + "Chain `results.ToSma(smaPeriods)` instead.", false)]
     public static IEnumerable<PrsResult> GetPrs(
@@ -1149,7 +1151,8 @@ public static partial class Indicator
         => bars.ToSortedList().ToVortex(lookbackPeriods);
 
     [ExcludeFromCodeCoverage]
-    [Obsolete("Rename `GetVwap(..)` to `ToVwap(..)`" + FromEnumerable, false)]
+    [Obsolete("Rename `GetVwap(..)` to `ToVwap(..)`" + FromEnumerable
+            + ". Use `ToVwap()` to start at the first bar, or `ToVwap(startDate)` with a non-null date.", false)]
     public static IEnumerable<VwapResult> GetVwap(
         this IEnumerable<IBar> bars, DateTime? startDate = null)
     {
