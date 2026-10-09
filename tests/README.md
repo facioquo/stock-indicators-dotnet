@@ -2,6 +2,8 @@
 
 Tests are split into three projects. The `.runsettings` files select tests by `[TestCategory]`.
 
+The projects run on [Microsoft.Testing.Platform](https://learn.microsoft.com/dotnet/core/testing/microsoft-testing-platform-intro), selected in `global.json`. `dotnet test` takes the MSTest runner's options, so VSTest-only options such as `--nologo`, `--logger`, and `--collect` fail with exit code 5; use `--report-trx` and `--coverage` instead.
+
 | Project | Holds | Command | VS Code task |
 | ------- | ----- | ------- | ------------ |
 | `Library/Tests.Indicators.csproj` | Unit tests | `dotnet test tests/Library/Tests.Indicators.csproj --settings tests/tests.unit.runsettings` | `Test: Unit tests` |

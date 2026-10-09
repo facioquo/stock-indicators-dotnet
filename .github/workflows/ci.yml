@@ -99,8 +99,9 @@ jobs:
           --settings tests/tests.unit.runsettings
           --results-directory ./test-results/unit
           --verbosity normal
-          --logger trx
-          --collect:"XPlat Code Coverage"
+          --report-trx
+          --coverage
+          --coverage-output-format cobertura
 
       - name: Post unit test results
         uses: dorny/test-reporter@v3
@@ -117,7 +118,7 @@ jobs:
         if: ${{ !cancelled() }}
         with:
           name: coverage-unit
-          path: test-results/unit/**/coverage.cobertura.xml
+          path: test-results/unit/**/*.cobertura.xml
           retention-days: 1
         continue-on-error: true
 
@@ -126,7 +127,7 @@ jobs:
         if: success() && github.actor != 'dependabot[bot]'
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: test-results/unit/**/coverage.cobertura.xml
+          coverage-reports: test-results/unit/**/*.cobertura.xml
         continue-on-error: true
 
   gate:
@@ -198,7 +199,7 @@ jobs:
           --settings tests/tests.regression.runsettings
           --results-directory ./test-results/regression
           --verbosity normal
-          --logger trx
+          --report-trx
 
       - name: Post regression test results
         uses: dorny/test-reporter@v3

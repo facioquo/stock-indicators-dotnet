@@ -16,8 +16,8 @@ Use this when a single gate fails, or you need the exact command, VS Code task, 
 | All fixers | Build, then the three fix commands above | `Lint: All (fix)` |
 | All linters | Build, then Roslynator, format, and markdown verify | `Lint: All` |
 | Build | `dotnet build "Stock.Indicators.sln" -v minimal --nologo` | `Build: .NET Solution (incremental)` |
-| Unit tests | `dotnet test tests/Library/Tests.Indicators.csproj --no-restore --nologo --settings tests/tests.unit.runsettings` | `Test: Unit tests` |
-| Regression tests | `dotnet test tests/Library/Tests.Indicators.csproj --no-restore --nologo --settings tests/tests.regression.runsettings` | `Test: Regression tests` |
+| Unit tests | `dotnet test tests/Library/Tests.Indicators.csproj --no-restore --settings tests/tests.unit.runsettings` | `Test: Unit tests` |
+| Regression tests | `dotnet test tests/Library/Tests.Indicators.csproj --no-restore --settings tests/tests.regression.runsettings` | `Test: Regression tests` |
 | Integration tests | `dotnet test` on `tests/Integration/Tests.Integration.csproj`, then `tests/PublicApi/Tests.PublicApi.csproj` | `Test: Integration` |
 | StreamHub audit | `bash tools/scripts/audit-streamhub.sh` | none |
 | Build, lint, unit test | — | `Verify: Quick checks (build + lint + unit test)` |

@@ -40,7 +40,7 @@ VS Code task: `Build: .NET Solution (incremental)`. Zero warnings and zero error
 ### Step 4: Run unit tests
 
 ```bash
-dotnet test tests/Library/Tests.Indicators.csproj --no-restore --nologo --settings tests/tests.unit.runsettings
+dotnet test tests/Library/Tests.Indicators.csproj --no-restore --settings tests/tests.unit.runsettings
 ```
 
 VS Code task: `Test: Unit tests`. The runsettings filter excludes the `Regression` and `Integration` test categories. Run `Test: Regression tests` as well when an indicator's calculation changed.
