@@ -109,26 +109,56 @@ jobs:
           echo "name=${PACKAGE_NAME}" >> "$GITHUB_OUTPUT"
           echo "url=https://www.nuget.org/packages/${PACKAGE_NAME}/${{ steps.version_info.outputs.version }}" >> "$GITHUB_OUTPUT"
 
-      - name: Replace version markers
-        uses: jacobtomlinson/gha-find-replace@v3
-        with:
-          find: "#{PACKAGE_VERSION}#"
-          replace: "${{ steps.version_info.outputs.version }}"
-          regex: false
-
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore src/Indicators.csproj --property:ContinuousIntegrationBuild=true
 
-      - name: Build solution
-        run: dotnet build --no-restore --configuration Release
+      # Version must reach the build, not only the pack step: pack --no-build
+      # wraps whatever assemblies were compiled (default 1.0.0) in the package.
+      - name: Build library
+        run: >
+          dotnet build src/Indicators.csproj
+          --no-restore
+          --configuration Release
+          --property:Version=${{ steps.version_info.outputs.version }}
+          --property:ContinuousIntegrationBuild=true
+          -warnAsError
 
       - name: Create NuGet package
+        run: >
+          dotnet pack src/Indicators.csproj
+          --no-build
+          --configuration Release
+          --output NuGet
+          -p:PackageVersion=${{ steps.version_info.outputs.version }}
+
+      - name: Verify assembly version matches release
+        env:
+          EXPECTED_VERSION: ${{ steps.version_info.outputs.version }}
+        shell: pwsh
         run: |
-          dotnet pack src/Indicators.csproj \
-            --no-build \
-            --configuration Release \
-            --output NuGet \
-            -p:PackageVersion=${{ steps.version_info.outputs.version }}
+          $nupkg = Get-ChildItem NuGet/*.nupkg | Select-Object -First 1
+          $extract = Join-Path $env:RUNNER_TEMP 'nupkg-verify'
+          Expand-Archive -Path $nupkg.FullName -DestinationPath $extract -Force
+
+          $dlls = Get-ChildItem -Path (Join-Path $extract 'lib') -Recurse -Filter '*.dll'
+          if (-not $dlls) {
+            Write-Error "No assemblies found in $($nupkg.Name)"
+            exit 1
+          }
+
+          $failed = $false
+          foreach ($dll in $dlls) {
+            # InformationalVersion is "<version>" or "<version>+<commit sha>"
+            $actual = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($dll.FullName).ProductVersion
+            $tfm = $dll.Directory.Name
+            if ($actual -eq $env:EXPECTED_VERSION -or $actual.StartsWith("$($env:EXPECTED_VERSION)+")) {
+              Write-Host "OK   $tfm/$($dll.Name): $actual"
+            } else {
+              Write-Host "::error::$tfm/$($dll.Name) is stamped '$actual', expected '$($env:EXPECTED_VERSION)'"
+              $failed = $true
+            }
+          }
+          if ($failed) { exit 1 }
 
       - name: Upload package artifact
         uses: actions/upload-artifact@v7
