@@ -32,7 +32,7 @@ Upgrading from v2? See the [migration guide →](/migration/v3)
 
 ## Get started in minutes
 
-Paste this prompt into your coding agent. It asks what you want to build, then sets you up with live signals on a real symbol, a backtest, or a guided tour:
+Paste this prompt into your coding agent. If it can run code, it runs the library on live market data itself and tells you what it found; no setup on your side:
 
 <!--@include: ./shared/agent-prompt.md-->
 

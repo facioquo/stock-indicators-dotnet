@@ -1,6 +1,6 @@
 ---
 title: Agent setup
-description: Get a coding agent to set you up with Stock Indicators for .NET on real market data, from live signals to backtests, with a copy-paste prompt.
+description: Paste one prompt into a coding agent and watch it run Stock Indicators for .NET on live market data, then narrate what it finds.
 ---
 
 # Agent setup
@@ -11,17 +11,23 @@ Paste this prompt into your coding agent (Claude, ChatGPT, Copilot, etc.):
 
 ## What your agent will do
 
-The [agent setup guide](https://dotnet.stockindicators.dev/agents/start.md) tells your agent to work from real market data, never invented bars, and to ask before installing tools or using API keys. It checks your workspace, asks what you want to build, and follows the matching playbook:
+The [agent guide](https://dotnet.stockindicators.dev/agents/start.md) tells your agent to show you the library working before it asks you to install anything:
 
-| You choose | You end up with |
-| ---------- | --------------- |
-| [Live signals](https://dotnet.stockindicators.dev/agents/live-signals.md) | A local web app streaming real candles for your symbol, with indicator overlays and explained buy and sell signals |
-| [Backtest](https://dotnet.stockindicators.dev/agents/backtest.md) | Your trading rules run over years of real daily history up to the latest close, with a trade list and results against buy-and-hold |
+- **If it can run code**, it does the work itself: installs the .NET SDK in its sandbox if needed, runs the library on live market data, and hands back a chart, findings backed by numbers, and the code that produced them.
+- **If it can't**, it says so up front and gives you the one command that runs the same thing on your machine.
+- **It never fakes results.** No invented prices, no indicators recalculated in another language, and no old test data passed off as current.
+
+With no other instructions, it starts the live market desk and lists the other playbooks so you can redirect it:
+
+| Playbook | You end up with |
+| -------- | --------------- |
+| [Live market desk](https://dotnet.stockindicators.dev/agents/live-signals.md) (default) | Eight crypto markets streaming live with no API key: each one's daily regime, its rotation against Bitcoin, explained buy and sell signals, and insights your agent narrates as they happen |
+| [Backtest](https://dotnet.stockindicators.dev/agents/backtest.md) | Your rules run over years of real daily history up to the latest close, with an equity curve and drawdown against buy-and-hold |
 | [Integrate](https://dotnet.stockindicators.dev/agents/integrate.md) | Indicators calculated inside your own app, from your own bar type, with a test that pins the results |
-| [Tour](https://dotnet.stockindicators.dev/agents/tour.md) | Short, runnable demos of what sets the library apart, and ideas for what you could build |
 | [Migrate](https://dotnet.stockindicators.dev/agents/migrate.md) | A v2 codebase moved to v3, with output checked against the old results |
+| [Tour](https://dotnet.stockindicators.dev/agents/tour.md) | Short, runnable demos of what sets the library apart, and ideas for what you could build |
 
-Live signals for crypto pairs need no account. For US stocks, have a free [Alpaca](https://alpaca.markets/) API key ready in `ALPACA_KEY` and `ALPACA_SECRET`.
+The desk also runs US stocks and sector ETFs; for those, have a free [Alpaca](https://alpaca.markets/) API key ready in `ALPACA_KEY` and `ALPACA_SECRET`.
 
 ## Work with a coding agent
 

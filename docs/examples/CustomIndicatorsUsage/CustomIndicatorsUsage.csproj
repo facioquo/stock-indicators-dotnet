@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FacioQuo.Stock.Indicators" Version="3.0.2" PrivateAssets="All" />
+    <PackageReference Include="FacioQuo.Stock.Indicators" Version="3.*" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>

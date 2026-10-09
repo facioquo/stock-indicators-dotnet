@@ -11,6 +11,20 @@ import { markdownPath, pageRoute } from './routes.ts'
 export const SITE_URL = 'https://dotnet.stockindicators.dev'
 export const PACKAGE_ID = 'FacioQuo.Stock.Indicators'
 export const DOCS_VERSION = 'v3'
+// Latest stable release, from the newest x.y.z git tag at build time, so the site never names a stale version.
+// Undefined in a clone without tags; llms.txt then omits it. Example projects float to it with `Version="3.*"`.
+export const PACKAGE_VERSION = latestReleaseTag()
+
+function latestReleaseTag(): string | undefined {
+  try {
+    return execSync('git tag --list --sort=-v:refname', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })
+      .split('\n')
+      .map((tag) => tag.trim())
+      .find((tag) => /^\d+\.\d+\.\d+$/.test(tag))
+  } catch {
+    return undefined
+  }
+}
 
 const SKILLS_DIR = '.well-known/agent-skills'
 // Hand-written agent setup guides (public/agents/); already portable Markdown, not page twins.
@@ -53,8 +67,10 @@ export function identityBlock({ generated, commit }: BuildInfo): string {
 
 // The llms.txt preamble: where an agent helping someone get started should go first.
 export const AGENT_DETAILS = [
-  `> Helping a developer get set up? Start with the agent setup guide at ${SITE_URL}/${AGENT_GUIDES_DIR}/start.md.`,
-  '> Use real market data, never invented bars: the guide lists keyless live feeds and real historical datasets.',
+  `> Introducing a developer to this library? Start with the agent guide at ${SITE_URL}/${AGENT_GUIDES_DIR}/start.md.`,
+  '> If you can run code, run the library yourself on live market data and show the result before asking them to install anything.',
+  ...(PACKAGE_VERSION ? [`> Current package version: ${PACKAGE_VERSION}.`] : []),
+  '> Use real market data, never invented bars.',
 ].join('\n')
 
 const ALERTS: Record<string, string> = {
