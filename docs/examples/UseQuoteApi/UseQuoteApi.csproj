@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Alpaca.Markets" Version="8.0.0" />
-    <PackageReference Include="FacioQuo.Stock.Indicators" Version="3.0.1" PrivateAssets="All" />
+    <PackageReference Include="FacioQuo.Stock.Indicators" Version="3.*" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>

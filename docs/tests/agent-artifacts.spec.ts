@@ -9,6 +9,7 @@ import {
   DOCS_VERSION,
   normalizeDocument,
   PACKAGE_ID,
+  PACKAGE_VERSION,
   renderContainers,
   SEARCH_INDEX,
   rewriteInternalLinks,
@@ -333,6 +334,33 @@ test.describe('Build output', () => {
       for (const dataset of datasets) {
         expect(existsSync(join(REPO_ROOT, 'tests/Library/TestData/quotes', dataset)), `${file} → dataset ${dataset}`).toBe(true)
       }
+    }
+  })
+
+  test('package version comes from the release tag, never a hand-kept literal', () => {
+    if (PACKAGE_VERSION) {
+      expect(read('llms.txt')).toContain(`Current package version: ${PACKAGE_VERSION}.`)
+    }
+
+    // the guides name no x.y.z version, so a release can't leave one behind
+    for (const file of listFiles(DIST).filter((f) => f.startsWith(`${AGENT_GUIDES_DIR}/`))) {
+      const literals = [...read(file).matchAll(/(?<![\d.])\d+\.\d+\.\d+(?![\d.])/g)].map(([literal]) => literal)
+      expect(literals, file).toEqual([])
+    }
+
+    // example projects float to the latest release of this major version
+    const floating = `${DOCS_VERSION.replace(/^v/, '')}.*`
+
+    const examples = join(REPO_ROOT, 'docs/examples')
+    const projects = readdirSync(examples, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .flatMap((entry) => readdirSync(join(examples, entry.name))
+        .filter((file) => file.endsWith('.csproj'))
+        .map((file) => join(examples, entry.name, file)))
+    expect(projects.length).toBeGreaterThan(0)
+    for (const project of projects) {
+      const version = readFileSync(project, 'utf8').match(/Include="FacioQuo\.Stock\.Indicators" Version="([^"]+)"/)?.[1]
+      expect(version, relative(REPO_ROOT, project)).toBe(floating)
     }
   })
 

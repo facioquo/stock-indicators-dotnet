@@ -5,7 +5,7 @@ description: Install the Stock Indicators for .NET library and calculate your fi
 
 # Getting started
 
-Install the library, give it your price history, and calculate your first indicator. Using a coding agent? Paste this prompt; it asks what you want to build and sets you up on real market data:
+Install the library, give it your price history, and calculate your first indicator. Using a coding agent? Paste this prompt; it runs the library on live market data itself and shows you the result:
 
 <!--@include: ../shared/agent-prompt.md-->
 

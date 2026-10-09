@@ -4,7 +4,7 @@ Read [start.md](https://dotnet.stockindicators.dev/agents/start.md) first; its g
 
 ## Finish line
 
-A small console project whose data demos print a result from real market data (the trade-aggregation and catalog demos show API shape only), plus a short "what you could build" list tailored to what the developer told you about themselves. Pick three demos that fit their interest. These demos show mechanics, so they use the test datasets from start.md; the data demos are verified against `FacioQuo.Stock.Indicators` 3.0.1 on `msft.csv`. Anything the developer will act on uses a live feed.
+A small console project whose data demos print a result from real market data (the trade-aggregation and catalog demos show API shape only), plus a short "what you could build" list tailored to what the developer told you about themselves. Run the demos yourself when you can execute code, and show their actual output; the provenance, speed, code, and next-prompt items of start's finish line apply. Pick three demos that fit their interest. These demos show mechanics, so they use the test datasets from start.md; the data demos were verified on `msft.csv` with the 3.x release current when this guide was written. Anything the developer will act on uses a live feed.
 
 Keep the narration to one line per demo: what it proves and why that matters. The output is the persuasion.
 
@@ -100,7 +100,7 @@ EmaHub emaOfTicks = oneMinute.ToEmaHub(20);
 The catalog describes every indicator, its parameters, and its results, and executes one by ID. That turns the library into a UI indicator picker, a strategy saved as JSON, or a set of tools an AI model can call.
 
 ```csharp
-int listings = Catalog.Get(Style.Series).Count; // 85 in 3.0.1
+int listings = Catalog.Get(Style.Series).Count; // 85 when this guide was written
 
 IReadOnlyList<RsiResult> rsi = Catalog.Get("RSI", Style.Series)!
     .WithParamValue("lookbackPeriods", 14)
@@ -110,7 +110,7 @@ IReadOnlyList<RsiResult> rsi = Catalog.Get("RSI", Style.Series)!
 
 ### Live, right now
 
-If they have two minutes, run the [live-signals](https://dotnet.stockindicators.dev/agents/live-signals.md) reference app: real Bitcoin candles, indicator overlays, and explained signals in a browser, no key required.
+If they have two minutes, run the [live market desk](https://dotnet.stockindicators.dev/agents/live-signals.md): eight live crypto markets with daily regimes, rotation against Bitcoin, explained signals, and a narrated insight feed, no key required.
 
 ## What you could build
 
