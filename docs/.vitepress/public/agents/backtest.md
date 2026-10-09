@@ -16,7 +16,7 @@ Start's finish line, delivered as:
 
 State these and proceed unless the developer has rules of their own:
 
-- **Rules:** the trend recipe from [live-signals](https://dotnet.stockindicators.dev/agents/live-signals.md): long when EMA(21) is above EMA(55) on daily closes, flat otherwise, so the same rules can later run live on the desk.
+- **Rules:** a daily trend rule built from the same EMA(21)/EMA(55) pair as the [live-signals](https://dotnet.stockindicators.dev/agents/live-signals.md) recipe: long when EMA(21) is above EMA(55) on daily closes, flat otherwise. The desk's live recipe is a one-minute crossover with a stop, so say that this tests the daily rule, not that recipe.
 - **Data:** `BTC/USD` daily bars from Kraken's public OHLC endpoint (`interval=1440`, about two years, no key), through the latest closed day. For US equities, use Alpaca daily bars (free key in `ALPACA_KEY` and `ALPACA_SECRET`, `adjustment=all` for splits and dividends).
 - **Costs:** 0.1% per side, stated in the result.
 
@@ -33,6 +33,6 @@ State these and proceed unless the developer has rules of their own:
 
 ## Next prompts
 
-- "Run these rules live on the market desk."
+- "Backtest the desk's one-minute crossover recipe, stop included."
 - "Test the same rules across the whole crypto basket, not one symbol."
 - "Add an ADX filter and compare the two."

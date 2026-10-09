@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 
 // No browser: insights print to the console as they happen; the snapshot is written once history
@@ -8,7 +9,7 @@ sealed class Headless(Desk desk, IConfiguration config, IHostApplicationLifetime
 
     protected override async Task ExecuteAsync(CancellationToken ct)
     {
-        double minutes = double.TryParse(config["minutes"], out double m) ? m : 3;
+        double minutes = double.TryParse(config["minutes"], NumberStyles.Float, CultureInfo.InvariantCulture, out double m) && m > 0 ? m : 3;
         string folder = Path.GetFullPath(config["out"] ?? "out");
 
         try

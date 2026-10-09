@@ -6,7 +6,8 @@ You are introducing a developer to the `FacioQuo.Stock.Indicators` NuGet package
 
 Decide what your environment can do before you reply, and say which case applies in your first message.
 
-- **You can run code and reach the internet** (a sandbox, a cloud agent, or a local coding agent): the developer sets up nothing. Install the .NET SDK if it is missing, run the real library on live market data, and return the result described under the finish line. Follow [Sandbox preflight](#sandbox-preflight).
+- **You can run code and reach the internet in a disposable sandbox** (a code-execution sandbox or a cloud agent): the developer sets up nothing. Install the .NET SDK if it is missing, run the real library on live market data, and return the result described under the finish line. Follow [Sandbox preflight](#sandbox-preflight).
+- **You are a coding agent on the developer's own machine:** do the same work, but if the .NET 10 SDK is missing, ask before installing it, and say that it is the only setup needed. Everything else follows the preflight.
 - **You can run code, but market feeds are blocked:** say so plainly. Do not substitute the test datasets below for current data. Give the developer the one command that runs the same result on their machine, and offer the [tour](https://dotnet.stockindicators.dev/agents/tour.md), which is built for stored history.
 - **You cannot run code** (a chat without execution): say so in your first reply. Describe what the default playbook produces, show the short API snippet below, and give the one command that runs it locally. Suggest an agent that can run it for them.
 
@@ -14,7 +15,7 @@ Never fake a result. Do not reimplement indicators in another language, do not c
 
 ## Finish line
 
-Every playbook ends with all of these:
+Unless a playbook states its own finish line, it ends with all of these:
 
 1. **A visual** that answers a market question: a rendered chart, an image, or a page the developer can open.
 2. **Two or three findings** in plain sentences, each backed by numbers, that tell a trader or portfolio manager something they would not see on a price chart.
@@ -77,9 +78,9 @@ If they answer with a symbol, a market, or a trading idea, fit it into option 1 
 
 Run these before the playbook, and report a failure instead of working around it:
 
-1. **SDK:** `dotnet --list-sdks`. If no 10.x SDK is listed, install one with `curl -sSL https://dot.net/v1/dotnet-install.sh | bash -s -- --channel 10.0`, then add `$HOME/.dotnet` to `PATH`. Expect one to two minutes; tell the developer while it runs.
-2. **Egress:** `curl -sf https://api.kraken.com/0/public/Time` for the default feed, and `curl -sf https://api.nuget.org/v3/index.json` for the package. If either fails, take the "feeds are blocked" path above.
-3. **Version:** use `FacioQuo.Stock.Indicators` 3.0.1, as pinned in the reference apps.
+1. **SDK:** `dotnet --list-sdks`. If no 10.x SDK is listed, install one with `curl -sSL https://dot.net/v1/dotnet-install.sh | bash -s -- --channel 10.0`, then add `$HOME/.dotnet` to `PATH`. Expect one to two minutes; tell the developer while it runs. On the developer's own machine, ask first.
+2. **Egress:** `curl -sf https://api.kraken.com/0/public/Time` for the default feed, `curl -sf https://api.nuget.org/v3/index.json` for the package, and `curl -sfI https://github.com` for the example source. If the feed or package check fails, take the "feeds are blocked" path above. If only GitHub is blocked, download the examples [ZIP](https://dotnet.stockindicators.dev/FacioQuo.Stock.Indicators-Examples.zip) instead of cloning.
+3. **Version:** use the package version named at the top of this guide, as pinned in the reference apps.
 4. **Smoke test:** the reference app prints a line confirming that a stream hub matched the batch calculation. If it reports a mismatch, stop and say so.
 
 ## Test datasets

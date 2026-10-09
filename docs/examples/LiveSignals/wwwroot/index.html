@@ -48,15 +48,15 @@
   <main>
     <section aria-label="Basket">
       <div id="cards"></div>
-      <div class="muted" id="recipe">Selected symbol · one-minute candles · EMA 21/55 crossover · ADX ≥ 20 filter · 1.5×ATR stop · evaluated on closed candles</div>
+      <div class="muted" id="recipe">Selected symbol · one-minute candles · EMA 21/55 crossover · ADX below 20 flagged as weak · 1.5×ATR stop · evaluated on closed candles</div>
       <div id="chart"></div>
     </section>
     <aside>
       <div id="quadrant"></div>
       <h2>Briefing</h2>
-      <div id="briefing"></div>
+      <div id="briefing"><div class="muted">Loading history…</div></div>
       <h2>Live</h2>
-      <div id="insights" aria-live="polite"></div>
+      <div id="insights" aria-live="polite"><div class="muted">Signals, rotations, and market pulses appear here as they happen.</div></div>
     </aside>
   </main>
   <footer id="footer"></footer>
@@ -133,15 +133,27 @@
       draw(true);
     }
 
+    // cards update in place, so a focused card keeps focus while prices tick
     function cards(d) {
-      $('cards').innerHTML = d.regimes.map(r => `
-        <button type="button" class="card" data-symbol="${esc(r.symbol)}" aria-pressed="${r.symbol === selected}">
+      const box = $('cards');
+      d.regimes.forEach(r => {
+        let card = box.querySelector(`.card[data-symbol="${CSS.escape(r.symbol)}"]`);
+        if (!card) {
+          card = document.createElement('button');
+          card.type = 'button';
+          card.className = 'card';
+          card.dataset.symbol = r.symbol;
+          box.append(card);
+        }
+        card.setAttribute('aria-pressed', r.symbol === selected);
+        const move = r.dayChange == null ? 'muted' : r.dayChange >= 0 ? 'up' : 'down';
+        card.innerHTML = `
           <b>${esc(r.symbol)}</b><span class="px">${price(r.price)}</span>
-          <div class="${r.dayChange >= 0 ? 'up' : 'down'}">${pct(r.dayChange)} today</div>
+          <div class="${move}">${pct(r.dayChange)} today</div>
           <div>${esc(r.label)}</div>
           <div class="${r.quadrant ? 'q-' + r.quadrant : 'muted'}">${r.quadrant ? esc(r.quadrant) + ' vs ' + esc(d.benchmark) : r.symbol === d.benchmark ? 'Benchmark' : '–'}</div>
-          <div class="muted">${r.lastSignal ? `${r.lastSignal.side} ${fmtFull(toSec(r.lastSignal.time))}` : 'No 1-min signal yet'}</div>
-        </button>`).join('');
+          <div class="muted">${r.lastSignal ? `${r.lastSignal.side} ${fmtFull(toSec(r.lastSignal.time))}` : 'No 1-min signal yet'}</div>`;
+      });
     }
 
     // narration: insights stream in; the voice reads only the ones that arrive after it is switched on
@@ -153,6 +165,8 @@
     voice.onclick = () => {
       const on = voice.getAttribute('aria-pressed') !== 'true';
       voice.setAttribute('aria-pressed', on);
+      // while the page speaks, the live region stays quiet so a screen reader doesn't say each insight twice
+      $('insights').setAttribute('aria-live', on ? 'off' : 'polite');
       if (!on) speechSynthesis.cancel();
     };
     const speak = (text) => {
@@ -160,13 +174,21 @@
       speechSynthesis.speak(new SpeechSynthesisUtterance(text.replace(/\/USD\b/g, '').replace(/×/g, ' times ')));
     };
 
+    // only new insights are added, so the live region announces each one once
     function notes(list) {
       const fresh = list.filter(i => !seen.has(i.time + i.text));
+      if (!fresh.length) return;
       fresh.forEach(i => { seen.add(i.time + i.text); if (!first) speak(i.text); });
       const note = (i) =>
-        `<div class="note ${!first && fresh.includes(i) ? 'fresh' : ''}"><time>${fmt(toSec(i.time), { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</time>${esc(i.text)}</div>`;
-      $('briefing').innerHTML = list.filter(i => !i.live).map(note).join('') || '<div class="muted">Loading history…</div>';
-      $('insights').innerHTML = list.filter(i => i.live).reverse().map(note).join('') || '<div class="muted">Signals, rotations, and market pulses appear here as they happen.</div>';
+        `<div class="note ${first ? '' : 'fresh'}"><time>${fmt(toSec(i.time), { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</time>${esc(i.text)}</div>`;
+      const briefing = fresh.filter(i => !i.live), live = fresh.filter(i => i.live);
+      if (briefing.length) $('briefing').innerHTML = list.filter(i => !i.live).map(note).join('');
+      if (live.length) {
+        const feed = $('insights');
+        feed.querySelector('.muted')?.remove();
+        feed.insertAdjacentHTML('afterbegin', live.reverse().map(note).join(''));
+        while (feed.children.length > 60) feed.lastElementChild.remove();
+      }
       first = false;
     }
 

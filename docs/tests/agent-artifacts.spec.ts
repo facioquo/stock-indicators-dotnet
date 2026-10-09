@@ -338,8 +338,16 @@ test.describe('Build output', () => {
   })
 
   test('agent guide, llms.txt, and example projects name the same package version', () => {
-    expect(read(`${AGENT_GUIDES_DIR}/start.md`)).toContain(`current version ${PACKAGE_VERSION}`)
+    const version = PACKAGE_VERSION.replaceAll('.', '\\.')
+    expect(read(`${AGENT_GUIDES_DIR}/start.md`)).toMatch(new RegExp(`current version ${version}(?![\\d.])`))
     expect(read('llms.txt')).toContain(`Current package version: ${PACKAGE_VERSION}.`)
+
+    // every package version the guides name, so a release can't leave one behind
+    for (const file of listFiles(DIST).filter((f) => f.startsWith(`${AGENT_GUIDES_DIR}/`))) {
+      for (const [literal] of read(file).matchAll(/(?<![\d.])\d+\.\d+\.\d+(?![\d.])/g)) {
+        expect(literal, `${file} names ${literal}`).toBe(PACKAGE_VERSION)
+      }
+    }
 
     const examples = join(REPO_ROOT, 'docs/examples')
     const projects = readdirSync(examples, { withFileTypes: true })

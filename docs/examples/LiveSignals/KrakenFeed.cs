@@ -10,6 +10,7 @@ using FacioQuo.Stock.Indicators;
 // Updates then repeat the forming candle with the same timestamp until the next one begins.
 sealed class KrakenFeed(Desk desk, ILogger<KrakenFeed> log) : BackgroundService
 {
+    private static readonly TimeSpan Pace = TimeSpan.FromSeconds(1);
     private readonly Dictionary<string, DateTime> latest = [];
 
     protected override async Task ExecuteAsync(CancellationToken ct)
@@ -58,9 +59,14 @@ sealed class KrakenFeed(Desk desk, ILogger<KrakenFeed> log) : BackgroundService
     {
         using HttpClient http = new();
         Dictionary<string, (List<Bar> Daily, List<Bar> Minutes)> history = [];
+        // Kraken asks public clients to stay near one call a second; a reconnect re-seeds, so it paces too
         foreach (Tape tape in desk.Tapes)
         {
-            history[tape.Symbol] = (await History(http, tape.Symbol, 1440, ct), await History(http, tape.Symbol, 1, ct));
+            List<Bar> daily = await History(http, tape.Symbol, 1440, ct);
+            await Task.Delay(Pace, ct);
+            List<Bar> minutes = await History(http, tape.Symbol, 1, ct);
+            await Task.Delay(Pace, ct);
+            history[tape.Symbol] = (daily, minutes);
         }
 
         // the newest daily row is today's, still forming

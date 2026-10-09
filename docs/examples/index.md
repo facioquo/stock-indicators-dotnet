@@ -18,7 +18,7 @@ For more information on how to use this library overall, see the [Guide](/guide/
 
 ## Getting started with our sample projects
 
-We use an external API quote source for our **streaming** and **quote API** examples.  If you intend to run those locally, you'll need to [get a free Alpaca API key and secret](https://docs.alpaca.markets/), then set your local environment variables.
+`LiveSignals` streams crypto from Kraken's public feed by default, with no key. Its US stock mode and the `UseQuoteApi` example use Alpaca market data instead; to run those, [get a free Alpaca API key and secret](https://docs.alpaca.markets/), then set your local environment variables.
 
 Run the following command line items to set, after replacing the `MY-ALPACA-KEY` and `MY-ALPACA-SECRET` values; then restart your IDE.
 

@@ -50,11 +50,11 @@ sealed class Desk : IDisposable
     private static string RestoredVersion()
     {
         string deps = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetEntryAssembly()?.GetName().Name}.deps.json");
-        if (!File.Exists(deps)) { return "3.x"; }
+        if (!File.Exists(deps)) { return "unknown"; }
         using JsonDocument doc = JsonDocument.Parse(File.ReadAllText(deps));
         return doc.RootElement.GetProperty("libraries").EnumerateObject()
             .Select(p => p.Name.Split('/'))
-            .FirstOrDefault(n => n[0] == typeof(BarHub).Assembly.GetName().Name)?[1] ?? "3.x";
+            .FirstOrDefault(n => n[0] == typeof(BarHub).Assembly.GetName().Name)?[1] ?? "unknown";
     }
 
     // IANA zone the page shows times in, and whose midnight starts a daily bar; null means UTC and the viewer's own clock
@@ -63,6 +63,9 @@ sealed class Desk : IDisposable
         get => zone?.Id;
         init => zone = value is null ? null : TimeZoneInfo.FindSystemTimeZoneById(value);
     }
+
+    // daily bars a week: crypto trades every day, US markets on weekdays
+    public int BarsPerWeek => zone is null ? 7 : 5;
 
     public DateTime DayOf(DateTime utc) => zone is null
         ? utc.Date
@@ -124,7 +127,7 @@ sealed class Desk : IDisposable
             if (replaying || !ready.Task.IsCompleted) { return; }
 
             Refresh();
-            Regime r = regimes[symbol];
+            if (!regimes.TryGetValue(symbol, out Regime? r)) { return; }
             if (signal is not null)
             {
                 bool with = (signal.Side == "BUY" && r.Trend == "Uptrend") || (signal.Side == "SELL" && r.Trend == "Downtrend");
@@ -150,11 +153,17 @@ sealed class Desk : IDisposable
             Refresh();
 
             Tape bench = tapes[Benchmark];
-            bool parity = bench.Daily.Results.ToSma(200).Select(r => r.Sma).SequenceEqual(bench.Sma200.Results.Select(r => r.Sma));
+            List<double?> batch = [.. bench.Daily.Results.ToSma(200).Select(r => r.Sma)];
+            List<double?> stream = [.. bench.Sma200.Results.Select(r => r.Sma)];
+            int compared = batch.Count(v => v is not null);
+            string parity = compared == 0
+                ? $"{Benchmark} has too little daily history for SMA(200), so stream and batch results were not compared."
+                : batch.SequenceEqual(stream)
+                    ? $"The stream hub's SMA(200) on {Benchmark} matches the batch calculation exactly, across {compared:N0} values."
+                    : "Stream and batch SMA(200) differ; please report this.";
             Say(null, "proof",
                 $"Streamed {barsIn:N0} real bars from {Provider} through {tapes.Values.Sum(t => t.HubCount)} chained indicator hubs "
-                + $"({tapes.Count} symbols) in {compute.Elapsed.TotalMilliseconds:N0} ms. "
-                + (parity ? $"The stream hub's SMA(200) on {Benchmark} matches the batch calculation exactly." : "Stream and batch SMA(200) differ; please report this."));
+                + $"({tapes.Count} symbols) in {compute.Elapsed.TotalMilliseconds:N0} ms. {parity}");
 
             foreach ((string? symbol, string kind, string text) in Analysis.Brief([.. regimes.Values], Benchmark))
             {
@@ -181,7 +190,7 @@ sealed class Desk : IDisposable
         Tape bench = tapes[Benchmark];
         foreach (Tape t in tapes.Values.Where(t => t.Daily.Results.Count > 0))
         {
-            regimes[t.Symbol] = Analysis.Evaluate(t, bench.Daily.Results.Count > 0 ? bench : null);
+            regimes[t.Symbol] = Analysis.Evaluate(t, bench.Daily.Results.Count > 0 ? bench : null, BarsPerWeek);
         }
     }
 
@@ -265,22 +274,25 @@ sealed class Desk : IDisposable
     {
         string key = $"{symbol}|{kind}";
         if (states.TryGetValue(key, out string? was) && was == state) { return; }
-        states[key] = state;
-        if (!quietly && was is not null) { Say(symbol, kind, text); }
+        // record the state only once it has been said, so a change held back by the quiet period is retried
+        if (quietly || was is null || Say(symbol, kind, text)) { states[key] = state; }
     }
 
-    // One voice: every insight goes to the console, the page, and the snapshot. A flickering state is said at most once per quiet period.
-    private void Say(string? symbol, string kind, string text, bool force = false)
+    // One voice: every insight goes to the console, the page, and the snapshot. A flickering state is said at most once per quiet period;
+    // the briefing doesn't start that period. Returns whether it was said.
+    private bool Say(string? symbol, string kind, string text, bool force = false)
     {
         DateTime now = DateTime.UtcNow;
         string key = $"{symbol}|{kind}";
-        if (!force && symbol is not null && ready.Task.IsCompleted && spoken.TryGetValue(key, out DateTime last) && now - last < Quiet) { return; }
-        spoken[key] = now;
+        bool live = ready.Task.IsCompleted;
+        if (!force && symbol is not null && live && spoken.TryGetValue(key, out DateTime last) && now - last < Quiet) { return false; }
+        if (live) { spoken[key] = now; }
 
         string line = symbol is null || text.StartsWith(symbol, StringComparison.Ordinal) ? text : $"{symbol} {text}";
-        insights.Add(new Insight(now, symbol, kind, line, Live: ready.Task.IsCompleted));
+        insights.Add(new Insight(now, symbol, kind, line, Live: live));
         Console.WriteLine($"{now:HH:mm:ss}Z  {line}");
         dirty = true;
+        return true;
     }
 
     private void Flush()
@@ -308,11 +320,6 @@ sealed class Desk : IDisposable
                 tapes.Values.Sum(t => t.Daily.Results.Count),
                 tapes.Values.Sum(t => t.Minutes.Results.Count));
         }
-    }
-
-    public string TapeJson(string symbol)
-    {
-        lock (gate) { return tapes.TryGetValue(symbol, out Tape? t) ? TapePayload(t, full: true) : "{}"; }
     }
 
     public ChannelReader<string> Subscribe(CancellationToken ct)

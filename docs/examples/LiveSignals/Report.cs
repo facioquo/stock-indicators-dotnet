@@ -81,7 +81,7 @@ static class Report
         }
 
         svg.Append(CultureInfo.InvariantCulture,
-            $"""<text x="{Pad}" y="{Size - 8}" fill="#8a90a0">vs {HtmlEncode(s.Benchmark)} · daily · tails: last 4 weeks, weekly points</text></svg>""");
+            $"""<text x="{Pad}" y="{Size - 8}" fill="#8a90a0">vs {HtmlEncode(s.Benchmark)} · daily · tails: last 4 weeks, one point a week</text></svg>""");
         return svg.ToString();
     }
 

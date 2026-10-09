@@ -11,15 +11,16 @@ sealed class Tape
         Symbol = symbol;
         this.dayOf = dayOf;
 
-        Fast = Minutes.ToEmaHub(21);
-        Slow = Minutes.ToEmaHub(55);
-        Adx = Minutes.ToAdxHub(14);
-        Atr = Minutes.ToAtrHub(14);
+        // count the hubs as they are built, so the proof line can't drift from the code
+        Fast = Hub(Minutes.ToEmaHub(21));
+        Slow = Hub(Minutes.ToEmaHub(55));
+        Adx = Hub(Minutes.ToAdxHub(14));
+        Atr = Hub(Minutes.ToAtrHub(14));
 
-        Sma50 = Daily.ToSmaHub(50);
-        Sma200 = Daily.ToSmaHub(200);
-        DailyAdx = Daily.ToAdxHub(14);
-        DailyAtr = Daily.ToAtrHub(14);
+        Sma50 = Hub(Daily.ToSmaHub(50));
+        Sma200 = Hub(Daily.ToSmaHub(200));
+        DailyAdx = Hub(Daily.ToAdxHub(14));
+        DailyAtr = Hub(Daily.ToAtrHub(14));
     }
 
     public string Symbol { get; }
@@ -39,7 +40,13 @@ sealed class Tape
     public AdxHub DailyAdx { get; }
     public AtrHub DailyAtr { get; }
 
-    public int HubCount => 8;
+    public int HubCount { get; private set; }
+
+    private T Hub<T>(T hub)
+    {
+        HubCount++;
+        return hub;
+    }
 
     public decimal? Price => Minutes.Results.Count > 0 ? Minutes.Results[^1].Close : Daily.Results.Count > 0 ? Daily.Results[^1].Close : null;
 
@@ -47,8 +54,10 @@ sealed class Tape
     // Volume is left as seeded: no daily metric here uses it, and repeated forming updates would double-count it.
     public void AddMinute(Bar bar, bool live)
     {
+        // a late closed or revised minute must not move today's close back behind a newer one
+        bool late = Minutes.Results.Count > 0 && bar.Timestamp < Minutes.Results[^1].Timestamp;
         Minutes.Add(bar);
-        if (!live || Daily.Results.Count == 0) { return; }
+        if (!live || late || Daily.Results.Count == 0) { return; }
 
         IBar today = Daily.Results[^1];
         DateTime day = dayOf(bar.Timestamp);

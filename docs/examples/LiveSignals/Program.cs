@@ -19,6 +19,10 @@ if (!crypto && symbols.Exists(s => s.Contains('/')))
     throw new ArgumentException("Use either crypto pairs (BTC/USD) or US stocks (MSFT) in one run, not both.");
 }
 string benchmark = (options["benchmark"] ?? (crypto ? "BTC/USD" : "SPY")).ToUpperInvariant();
+if (benchmark.Contains('/') != crypto)
+{
+    throw new ArgumentException("The benchmark must come from the same market as the symbols: a crypto pair (BTC/USD) or a US stock (SPY).");
+}
 symbols = [benchmark, .. symbols.Where(s => s != benchmark).Distinct()];
 
 Desk desk = new(symbols, benchmark, crypto ? "Kraken public API" : "Alpaca IEX feed")
@@ -55,7 +59,6 @@ app.UseStaticFiles();
 
 app.MapGet("/stream", (Desk d, CancellationToken ct) =>
     TypedResults.ServerSentEvents(d.Subscribe(ct).ReadAllAsync(ct)));
-app.MapGet("/tape", (Desk d, string symbol) => TypedResults.Text(d.TapeJson(symbol), "application/json"));
 app.MapGet("/snapshot", (Desk d) => TypedResults.Text(Report.Html(d.Snapshot()), "text/html"));
 
 app.Run();

@@ -28,12 +28,11 @@ sealed record RotationPoint(DateTime Time, double Ratio, double Momentum);
 
 static class Analysis
 {
-    private const int Year = 365;
-    private const int TailDays = 20;
-    private const int TailStep = 5;
-
-    public static Regime Evaluate(Tape tape, Tape? benchmark)
+    // Windows are counted in bars, so they follow the market's calendar: 7 daily bars a week for crypto, 5 for US markets.
+    public static Regime Evaluate(Tape tape, Tape? benchmark, int barsPerWeek)
     {
+        int year = 52 * barsPerWeek;
+
         IReadOnlyList<IBar> daily = tape.Daily.Results;
         IBar last = daily[^1];
         double price = (double)last.Close;
@@ -53,14 +52,14 @@ static class Analysis
         string strength = adx switch { null => "n/a", >= 25 => $"strong {side}", >= 20 => $"moderate {side}", _ => "weak trend" };
 
         // today's ATR as a percent of price, ranked against its own past year
-        List<double> atrp = tape.DailyAtr.Results.TakeLast(Year).Where(r => r.Atrp is not null).Select(r => r.Atrp!.Value).ToList();
+        List<double> atrp = tape.DailyAtr.Results.TakeLast(year).Where(r => r.Atrp is not null).Select(r => r.Atrp!.Value).ToList();
         double? volPct = atrp.Count > 20 ? 100.0 * atrp.Count(v => v <= atrp[^1]) / atrp.Count : null;
         string volatility = volPct switch { null => "n/a", >= 80 => "stressed", <= 20 => "calm", _ => "normal" };
 
-        double high = daily.TakeLast(Year).Max(b => (double)b.High);
+        double high = daily.TakeLast(year).Max(b => (double)b.High);
 
         IReadOnlyList<RotationPoint> rotation = benchmark is null || benchmark == tape ? [] : Rotation(tape, benchmark);
-        IReadOnlyList<RotationPoint> tail = Tail(rotation);
+        IReadOnlyList<RotationPoint> tail = Tail(rotation, barsPerWeek);
 
         return new Regime(
             tape.Symbol, last.Timestamp, price, dayChange, trend,
@@ -116,10 +115,10 @@ static class Analysis
     }
 
     // the last four weeks, one point a week, ending today
-    private static List<RotationPoint> Tail(IReadOnlyList<RotationPoint> points)
+    private static List<RotationPoint> Tail(IReadOnlyList<RotationPoint> points, int barsPerWeek)
     {
         List<RotationPoint> tail = [];
-        for (int back = Math.Min(TailDays, points.Count - 1); back >= 0; back -= TailStep)
+        for (int back = Math.Min(4 * barsPerWeek, points.Count - 1); back >= 0; back -= barsPerWeek)
         {
             tail.Add(points[points.Count - 1 - back]);
         }
@@ -153,7 +152,7 @@ static class Analysis
         {
             RotationPoint a = mover.Tail[0], b = mover.Tail[^1];
             notes.Add((mover.Symbol, "rotation",
-                $"{mover.Symbol} rotated from {QuadrantOf(a).ToLowerInvariant()} to {mover.Quadrant!.ToLowerInvariant()} against {benchmark} over four weeks "
+                $"{mover.Symbol} rotated from {QuadrantOf(a).ToLowerInvariant()} to {mover.Quadrant!.ToLowerInvariant()} against {benchmark} over {Weeks(mover.Tail)} "
                 + $"(RS-ratio {a.Ratio:F1} → {b.Ratio:F1}, RS-momentum {a.Momentum:F1} → {b.Momentum:F1})."));
         }
 
@@ -163,7 +162,7 @@ static class Analysis
         {
             notes.Add((falsePositive.Symbol, "divergence",
                 $"{falsePositive.Symbol} leads {benchmark} on relative strength but is {Math.Abs(falsePositive.VsSma200 ?? 0):F1}% below its own 200-day SMA: "
-                + "it is falling more slowly than the benchmark, not rising."));
+                + "outperforming the benchmark is not the same as rising, and its long-term trend is still down."));
         }
 
         // a long-term uptrend whose current directional move is down
@@ -214,6 +213,9 @@ static class Analysis
         List<double> v = [.. values.Order()];
         return v.Count == 0 ? 0 : v[v.Count / 2];
     }
+
+    private static string Weeks(IReadOnlyList<RotationPoint> tail) =>
+        tail.Count - 1 == 1 ? "one week" : $"{tail.Count - 1} weeks";
 
     private static double Distance(RotationPoint a, RotationPoint b) => Math.Sqrt(Math.Pow(b.Ratio - a.Ratio, 2) + Math.Pow(b.Momentum - a.Momentum, 2));
 
