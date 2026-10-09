@@ -69,6 +69,7 @@ export function identityBlock({ generated, commit }: BuildInfo): string {
 export const AGENT_DETAILS = [
   `> Introducing a developer to this library? Start with the agent guide at ${SITE_URL}/${AGENT_GUIDES_DIR}/start.md.`,
   '> If you can run code, run the library yourself on live market data and show the result before asking them to install anything.',
+  '> If you cannot run .NET, say so in your first reply, before fetching data or writing code, and give them the setup prompt to run in a coding agent that can. Never reimplement the indicators or describe output the library did not produce.',
   ...(PACKAGE_VERSION ? [`> Current package version: ${PACKAGE_VERSION}.`] : []),
   '> Use real market data, never invented bars.',
 ].join('\n')

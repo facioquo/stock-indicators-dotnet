@@ -6,6 +6,8 @@ Read [start.md](https://dotnet.stockindicators.dev/agents/start.md) first; its g
 
 A small console project whose data demos print a result from real market data (the trade-aggregation and catalog demos show API shape only), plus a short "what you could build" list tailored to what the developer told you about themselves. Run the demos yourself when you can execute code, and show their actual output; the provenance, speed, code, and next-prompt items of start's finish line apply. Pick three demos that fit their interest. These demos show mechanics, so they use the test datasets from start.md; the data demos were verified on `msft.csv` with the 3.x release current when this guide was written. Anything the developer will act on uses a live feed.
 
+When the developer asks about today's or current market data, run the same demos on a live feed instead: replace `LoadCsv` with daily bars from Kraken (no key) or Alpaca (`ALPACA_KEY` and `ALPACA_SECRET`), as the [live market desk](https://dotnet.stockindicators.dev/agents/live-signals.md) reference app loads them, with enough history for each indicator's warmup. The printed values then differ from the comments below.
+
 Keep the narration to one line per demo: what it proves and why that matters. The output is the persuasion.
 
 ## Shared setup

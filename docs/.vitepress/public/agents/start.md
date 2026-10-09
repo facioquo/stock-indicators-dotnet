@@ -9,9 +9,9 @@ Decide what your environment can do before you reply, and say which case applies
 - **You can run code and reach the internet in a disposable sandbox** (a code-execution sandbox or a cloud agent): the developer sets up nothing. Install the .NET SDK if it is missing, run the real library on live market data, and return the result described under the finish line. Follow [Sandbox preflight](#sandbox-preflight).
 - **You are a coding agent on the developer's own machine:** do the same work, but if the .NET 10 SDK is missing, ask before installing it, and say that it is the only setup needed. Everything else follows the preflight.
 - **You can run code, but market feeds are blocked:** say so plainly. Do not substitute the test datasets below for current data. Give the developer the one command that runs the same result on their machine, and offer the [tour](https://dotnet.stockindicators.dev/agents/tour.md), which is built for stored history.
-- **You cannot run code** (a chat without execution): say so in your first reply. Describe what the default playbook produces, show the short API snippet below, and give the one command that runs it locally. Suggest an agent that can run it for them.
+- **You cannot run .NET** (a chat without execution, or a sandbox that cannot install the SDK or reach NuGet): say so in the first sentence of your first reply, before fetching data or writing code, and name the limit as your runtime, not the library. Give the developer this same prompt to paste into a coding agent that can run code, such as Claude Code, Codex, or GitHub Copilot's coding agent, and list what it needs from [Agent setup](https://dotnet.stockindicators.dev/guide/agent-setup.md). Then describe what the default playbook produces and show the short API snippet below.
 
-Never fake a result. Do not reimplement indicators in another language, do not compute them by hand, and do not invent or estimate prices. If the real library did not run, say that it did not.
+Never fake a result. Do not reimplement indicators in another language, do not compute them by hand, and do not invent or estimate prices. Never present code you did not run as the demo, and never describe library output you did not produce. If the real library did not run, say that it did not.
 
 ## Finish line
 
@@ -26,6 +26,16 @@ Unless a playbook states its own finish line, it ends with all of these:
 7. A one-line note that this is descriptive analysis, not investment advice.
 
 "Printed some SMA values" never counts.
+
+## Check before you report
+
+A result counts only when every line holds. If one fails, fix it or say which one failed.
+
+- [ ] The numbers came from the `FacioQuo.Stock.Indicators` package, run in this session, not from a reimplementation.
+- [ ] Bars are oldest-first, one interval, with unique timestamps.
+- [ ] The history covers the warmup of the most demanding indicator used, and every value reported falls after it.
+- [ ] You named the data provider, the symbols, and the bar interval.
+- [ ] You gave the timestamp of the latest bar, and said whether that bar is complete or still forming.
 
 ## Why this library (say this briefly)
 
@@ -100,7 +110,7 @@ Base URL: `https://raw.githubusercontent.com/facioquo/stock-indicators-dotnet/ma
 ## Library facts that shape every playbook
 
 - Bars must be in chronological order with one consistent interval. Every indicator returns one result per input bar, with `null` values until its warmup completes.
-- Load at least the warmup the indicator page asks for, and more for smoothed indicators (EMA, RSI, ADX, MACD) whose values converge slowly; a few hundred bars is a sound floor.
+- Size the history to the most demanding indicator in the set, not to the range you display: find its warmup and convergence guidance on its indicator page, fetch that many bars before the first one you report, and add more for smoothed indicators (EMA, RSI, ADX, MACD) whose values converge slowly. A few hundred bars is a sound floor; SMA(200) on daily bars needs about a year before its first value.
 - Three styles, identical results: Series (`bars.ToRsi(14)`), Buffer lists (`new RsiList(14)` then `.Add(bar)`), and Stream hubs (`barHub.ToRsiHub(14)`). Stream hubs accept late, out-of-order, and same-timestamp-revised bars and recalculate what they affect.
 - Indicators chain: `bars.ToObv().ToRsi(14)`, or `barHub.ToEmaHub(20).ToRsiHub(14)`.
 - When you combine symbols, align them by timestamp, not by position; markets keep different calendars.
