@@ -25,7 +25,6 @@
   <ItemGroup>
     <PackageReference Include="Alpaca.Markets" />
     <PackageReference Include="FluentAssertions" />
-    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
     <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
     <PackageReference Include="MSTest.TestAdapter" />
     <PackageReference Include="MSTest.TestFramework" />
