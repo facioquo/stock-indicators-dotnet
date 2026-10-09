@@ -339,7 +339,7 @@ public class BarAggregatorHubTests : StreamHubTestBase, ITestBarObserver, ITestC
     {
         TimeSpan period = TimeSpan.FromMinutes(periodMinutes);
 
-        // hourly bars from a Sunday evening through the following Tuesday
+        // 61-minute bars from a Sunday evening (crossing Monday 00:00) through Wednesday morning
         List<Bar> bars = [];
         DateTime start = DateTime.Parse("2023-11-05 20:00", invariantCulture);
         for (int i = 0; i < 60; i++)
