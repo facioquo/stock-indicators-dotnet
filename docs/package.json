@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Stock Indicators for .NET documentation",
   "type": "module",
-  "packageManager": "pnpm@12.9.1",
+  "packageManager": "pnpm@12.10.1",
   "engines": {
     "node": ">=24"
   },
@@ -24,13 +24,13 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
     "@octokit/rest": "^22.0.1",
-    "@playwright/test": "^1.63.0",
+    "@playwright/test": "^1.64.0",
     "@types/node": "^26",
     "sass-embedded": "^1.105.1",
     "vitepress": "2.0.0-alpha.20",
     "vitepress-plugin-llms": "1.14.0",
     "vue": "^3.5.43",
-    "wrangler": "^4.147.0"
+    "wrangler": "^4.149.0"
   },
   "dependencies": {
     "@facioquo/indy-charts": "^0.14.0",
