@@ -144,6 +144,7 @@ Charts fall back to a snapshot of the chart API committed under `docs/.vitepress
 
 - Regenerate it by hand with `pnpm run snapshot:charts` after adding a chart to `.vitepress/theme/chart-indicators.ts` or changing the landing overlays.
 - `pnpm run test:offline` blocks the API and checks that every chart renders from the snapshot.
+- `pnpm run test:charts` and the a11y scan also serve charts from the snapshot, so a chart missing from it fails them too.
 
 ## Submitting changes
 

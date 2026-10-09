@@ -3,7 +3,7 @@ import { test, expect, type Page } from '@playwright/test'
 import { getTestIdPrefix } from '@facioquo/indy-charts/vue'
 
 import { indicatorPages } from './chart-pages'
-import { CHART_MARKERS } from './chart-api-mock'
+import { CHART_MARKERS } from './chart-helpers'
 
 /**
  * Acceptance test for the offline guarantee: with the chart API unreachable and
@@ -42,10 +42,7 @@ async function blockApi(page: Page): Promise<Traffic> {
   return traffic
 }
 
-// A chart with an oscillator pane but no overlay draws no overlay canvas, so
-// `CHART_MARKERS.ready` alone would miss it.
 const CHART_LOADING = '[data-testid$="-loading"]'
-const ANY_CANVAS = 'canvas[data-testid*="-canvas"]'
 
 /** A chart that is rendered with data: a canvas is up and no status block shows. */
 async function expectChartWithData(page: Page, prefix: string): Promise<void> {
@@ -54,7 +51,7 @@ async function expectChartWithData(page: Page, prefix: string): Promise<void> {
   // The loading block is the only non-terminal state; checking the others
   // before it clears would pass while a request is still retrying.
   await expect(root.locator(CHART_LOADING)).toHaveCount(0, { timeout: 30_000 })
-  await expect(root.locator(ANY_CANVAS).first()).toBeVisible({ timeout: 30_000 })
+  await expect(root.locator(CHART_MARKERS.ready).first()).toBeVisible({ timeout: 30_000 })
   await expect(root.locator(CHART_MARKERS.empty)).toHaveCount(0)
   await expect(root.locator(CHART_MARKERS.error)).toHaveCount(0)
 }

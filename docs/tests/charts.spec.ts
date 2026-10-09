@@ -4,11 +4,11 @@ import { getTestIdPrefix } from '@facioquo/indy-charts/vue'
 
 import { indicatorPages } from './chart-pages'
 import {
-  mockStockChartsApi,
+  serveChartsFromSnapshot,
   CHART_MARKERS,
   CHART_TERMINAL_SELECTOR,
   type ChartPhase,
-} from './chart-api-mock'
+} from './chart-helpers'
 
 /**
  * Wait for a chart to reach a terminal state (ready, empty, or error).
@@ -29,29 +29,18 @@ async function waitForChartPhase(page: Page, testId: string): Promise<ChartPhase
 
   // Error before ready: prevents a residual canvas from masking an error state.
   for (const phase of ['error', 'empty', 'ready'] as const) {
-    if (await root.locator(CHART_MARKERS[phase]).isVisible()) return phase
+    if (await root.locator(CHART_MARKERS[phase]).first().isVisible()) return phase
   }
 
   throw new Error(`Chart ${testId} did not reach a terminal state`)
-}
-
-/**
- * Read the data-error-kind attribute on the error block, when phase === 'error'.
- * Returns 'author' for misconfigured registries / missing uiids / missing setup,
- * 'data' for upstream API or fixture issues.
- */
-async function getErrorKind(page: Page, testId: string): Promise<string | null> {
-  return page
-    .locator(`[data-testid="${testId}-error"]`)
-    .getAttribute('data-error-kind')
 }
 
 // ---------------------------------------------------------------------------
 // Overlay chart — SMA on the SMA indicator page
 // ---------------------------------------------------------------------------
 
-test('SMA overlay chart renders from static fixture data', async ({ page }) => {
-  await mockStockChartsApi(page)
+test('SMA overlay chart renders from the snapshot', async ({ page }) => {
+  await serveChartsFromSnapshot(page)
   await page.goto('/indicators/sma')
 
   const prefix = getTestIdPrefix('Sma')
@@ -70,8 +59,8 @@ test('SMA overlay chart renders from static fixture data', async ({ page }) => {
 // Oscillator chart — RSI on the RSI indicator page
 // ---------------------------------------------------------------------------
 
-test('RSI oscillator chart renders from static fixture data', async ({ page }) => {
-  await mockStockChartsApi(page)
+test('RSI oscillator chart renders from the snapshot', async ({ page }) => {
+  await serveChartsFromSnapshot(page)
   await page.goto('/indicators/rsi')
 
   const prefix = getTestIdPrefix('Rsi')
@@ -90,8 +79,8 @@ test('RSI oscillator chart renders from static fixture data', async ({ page }) =
 // Home page charts — BollingerBands, Macd, Stc
 // ---------------------------------------------------------------------------
 
-test('Home page charts reach a terminal state', async ({ page }) => {
-  await mockStockChartsApi(page)
+test('Home page charts render from the snapshot', async ({ page }) => {
+  await serveChartsFromSnapshot(page)
   await page.goto('/')
 
   await expect(page.getByTestId('landing-charts-root')).toBeVisible({ timeout: 15_000 })
@@ -104,19 +93,19 @@ test('Home page charts reach a terminal state', async ({ page }) => {
     const root = page.locator(`[data-testid="${prefix}-root"]`)
     await expect(root).toBeVisible({ timeout: 15_000 })
     const phase = await waitForChartPhase(page, prefix)
-    expect(['ready', 'empty']).toContain(phase)
+    expect(phase, `Expected ${id} to be ready but got "${phase}"`).toBe('ready')
   }
 })
 
 // ---------------------------------------------------------------------------
-// Bulk smoke test — every indicator page must reach a non-author terminal state
+// Bulk smoke test — every indicator page must render its chart with data
 // ---------------------------------------------------------------------------
 
 const INDICATOR_PAGES = indicatorPages()
 
 for (const { page: pageName, indicator } of INDICATOR_PAGES) {
-  test(`${pageName} - ${indicator} indicator page chart reaches terminal state`, async ({ page }) => {
-    await mockStockChartsApi(page)
+  test(`${pageName} - ${indicator} indicator page chart renders from the snapshot`, async ({ page }) => {
+    await serveChartsFromSnapshot(page)
     await page.goto(`/indicators/${pageName}`)
 
     const prefix = getTestIdPrefix(indicator)
@@ -125,16 +114,8 @@ for (const { page: pageName, indicator } of INDICATOR_PAGES) {
 
     const phase = await waitForChartPhase(page, prefix)
 
-    if (phase === 'error') {
-      // Author-facing errors (typoed catalog, missing uiid, missing setup) must
-      // never reach CI. Data errors (offline fixture gap) are tolerated.
-      const kind = await getErrorKind(page, prefix)
-      expect(
-        kind,
-        `Author-facing error on ${pageName} — fix the catalog entry or fixture`
-      ).toBe('data')
-    } else {
-      expect(['ready', 'empty']).toContain(phase)
-    }
+    // The snapshot holds data for every chart, so anything but ready is a gap
+    // in it (or in the catalog) rather than an acceptable state.
+    expect(phase, `Expected ${pageName} - ${indicator} to be ready but got "${phase}"`).toBe('ready')
   })
 }
