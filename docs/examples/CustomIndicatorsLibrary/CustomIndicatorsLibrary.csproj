@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FacioQuo.Stock.Indicators" Version="3.0.1" PrivateAssets="All" />
+    <PackageReference Include="FacioQuo.Stock.Indicators" Version="3.0.2" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
