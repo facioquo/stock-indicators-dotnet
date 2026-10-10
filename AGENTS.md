@@ -48,7 +48,7 @@ Agents are the primary contributors; humans set direction, make architectural de
 dotnet build "Stock.Indicators.sln" -v minimal --nologo
 
 # Unit tests (excludes regression and integration categories)
-dotnet test tests/Library/Tests.Indicators.csproj --no-restore --nologo --settings tests/tests.unit.runsettings
+dotnet test tests/Library/Tests.Indicators.csproj --no-restore --settings tests/tests.unit.runsettings
 
 # Lint and fix (run markdownlint from the repo root so its config loads)
 dotnet format --severity info --no-restore

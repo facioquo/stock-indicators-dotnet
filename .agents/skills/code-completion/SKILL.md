@@ -1,11 +1,11 @@
 ---
 name: code-completion
-description: Quality gates for finishing work in this repository — dead-code cleanup, Roslynator and dotnet format fixes, markdownlint, build, unit tests, documentation, and Obsolete migration shims — with the exact commands and VS Code task names CI mirrors. Use before reporting any implementation, bug fix, or refactor as done, before committing, and when a CI quick-check, lint, or build step fails.
+description: Quality gates for finishing work in this repository — dead-code cleanup, Roslynator and dotnet format fixes, markdownlint, build, unit tests, documentation, and Obsolete migration shims — with the VS Code task behind each gate and the files that define the commands CI runs. Use before reporting any implementation, bug fix, or refactor as done, before committing, and when a CI quick-check, lint, or build step fails.
 ---
 
 # Code completion
 
-Run these gates before reporting any implementation cycle as done. Every command, CI-equivalent, VS Code task label, and configuration file location is in the [quality gates reference](references/quality-gates.md); load it when a gate fails or you need a single-gate command.
+Run these gates before reporting any implementation cycle as done. The VS Code task behind each gate, and the configuration and CI files that define them, are in the [quality gates reference](references/quality-gates.md); load it when a single gate fails.
 
 CI builds `src/Indicators.csproj` and `tests/Library/Tests.Indicators.csproj` with `-warnAsError`, so a warning that passes a local build fails CI.
 
@@ -39,11 +39,7 @@ VS Code task: `Build: .NET Solution (incremental)`. Zero warnings and zero error
 
 ### Step 4: Run unit tests
 
-```bash
-dotnet test tests/Library/Tests.Indicators.csproj --no-restore --nologo --settings tests/tests.unit.runsettings
-```
-
-VS Code task: `Test: Unit tests`. The runsettings filter excludes the `Regression` and `Integration` test categories. Run `Test: Regression tests` as well when an indicator's calculation changed.
+VS Code task: `Test: Unit tests`; the command and the runner's options are in `tests/README.md`. The runsettings filter excludes the `Regression` and `Integration` test categories. Run `Test: Regression tests` as well when an indicator's calculation changed.
 
 ### Step 5: Update documentation and migration shims
 
