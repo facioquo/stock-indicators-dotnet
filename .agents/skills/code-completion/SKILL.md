@@ -1,6 +1,6 @@
 ---
 name: code-completion
-description: Quality gates for finishing work in this repository — dead-code cleanup, Roslynator and dotnet format fixes, markdownlint, build, unit tests, documentation, and Obsolete migration shims — with the exact commands and VS Code task names CI mirrors. Use before reporting any implementation, bug fix, or refactor as done, before committing, and when a CI quick-check, lint, or build step fails.
+description: Quality gates for finishing work in this repository — dead-code cleanup, Roslynator and dotnet format fixes, markdownlint, build, unit tests, documentation, and Obsolete migration shims — with the VS Code task behind each gate and the files that define the commands CI runs. Use before reporting any implementation, bug fix, or refactor as done, before committing, and when a CI quick-check, lint, or build step fails.
 ---
 
 # Code completion
