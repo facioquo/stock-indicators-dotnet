@@ -6,9 +6,9 @@ namespace FacioQuo.Stock.Indicators;
 // OBSOLETE IN v3.0.0
 public static partial class Indicator
 {
-    private const string FromEnumerable = "; call `.ToSortedList()` first if your source is an `IEnumerable`";
+    private const string FromEnumerable = "; pass an `IReadOnlyList`, such as the `List` you already hold, and call `.ToSortedList()` only on a true `IEnumerable`";
     private const string FromTuples = "; convert each tuple to `new TimeValue(d, v)`, then call `.ToSortedList()`";
-    private const string FromEnumerablePair = "; call `.ToSortedList()` on both sources first if either is an `IEnumerable`";
+    private const string FromEnumerablePair = "; pass `IReadOnlyList` sources, such as the `List`s you already hold, and call `.ToSortedList()` only on a true `IEnumerable`";
     private const string FromTuplesPair = "; convert both tuple sources to `new TimeValue(d, v)`, then call `.ToSortedList()` on each";
 
     // GENERAL INDICATOR METHODS
