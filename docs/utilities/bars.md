@@ -99,6 +99,8 @@ IReadOnlyList<Bar> customBars = minuteBars.Aggregate(TimeSpan.FromMinutes(45));
 
 Each aggregated bar takes the first **Open**, highest **High**, lowest **Low**, last **Close**, summed **Volume**, and the period's starting **Timestamp**.
 
+Periods are fixed calendar buckets, not rolling windows, in the clock your timestamps already use; no time zone is applied. `Month` starts on the 1st of each month. `Week` starts Monday 00:00 and runs through Sunday. `Day` and shorter sizes start at midnight. A custom `TimeSpan` counts its buckets from `DateTime.MinValue`, so a size that does not divide 24 hours evenly, such as 7 minutes, does not restart at midnight. The streaming aggregator hubs use the same boundaries for every size except `Month`, which they do not support.
+
 ::: warning 🚩 Partially populated periods
 Partial period windows at the start, end, or market open/close can be misleading. For example, a lone 4:00pm minute bar aggregated into 15-minute bars yields a 4:00pm bar holding just one minute of data, while the prior 3:45pm bar holds the full 15 minutes. Filter out partial periods if they could skew your analysis.
 :::
