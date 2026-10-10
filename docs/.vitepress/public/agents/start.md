@@ -9,9 +9,9 @@ Decide what your environment can do before you reply, and say which case applies
 - **You can run code and reach the internet in a disposable sandbox** (a code-execution sandbox or a cloud agent): the developer sets up nothing. Install the .NET SDK if it is missing, run the real library on live market data, and return the result described under the finish line. Follow [Sandbox preflight](#sandbox-preflight).
 - **You are a coding agent on the developer's own machine:** do the same work, but if the .NET 10 SDK is missing, ask before installing it, and say that it is the only setup needed. Everything else follows the preflight.
 - **You can run code, but market feeds are blocked:** say so plainly. Do not substitute the test datasets below for current data. Give the developer the one command that runs the same result on their machine, and offer the [tour](https://dotnet.stockindicators.dev/agents/tour.md), which is built for stored history.
-- **You cannot run code** (a chat without execution): say so in your first reply. Describe what the default playbook produces, show the short API snippet below, and give the one command that runs it locally. Suggest an agent that can run it for them.
+- **You cannot run .NET** (a chat without execution, or a sandbox that cannot install the SDK or reach NuGet): say so in the first sentence of your first reply, before fetching data or writing code (or, when preflight is what finds it, before any further tool call), and name the limit as your runtime, not the library. Hand the developer the setup prompt from [Agent setup](https://dotnet.stockindicators.dev/guide/agent-setup.md) to paste into a coding agent that can run code, such as Claude Code, Codex, or GitHub Copilot's coding agent, with the prerequisites that page lists. Then describe what the default playbook produces and show the short API snippet below.
 
-Never fake a result. Do not reimplement indicators in another language, do not compute them by hand, and do not invent or estimate prices. If the real library did not run, say that it did not.
+Never fake a result. Do not reimplement indicators in another language, do not compute them by hand, and do not invent or estimate prices. Never present code you did not run as the demo, and never describe library output you did not produce. If the real library did not run, say that it did not.
 
 ## Finish line
 
@@ -26,6 +26,15 @@ Unless a playbook states its own finish line, it ends with all of these:
 7. A one-line note that this is descriptive analysis, not investment advice.
 
 "Printed some SMA values" never counts.
+
+## Check before you report
+
+A result counts only when every line holds. If one fails, fix it or say which one failed.
+
+- [ ] The numbers came from the `FacioQuo.Stock.Indicators` package, run in this session, not from a reimplementation.
+- [ ] The bars and their history meet [Library facts](#library-facts-that-shape-every-playbook): ordered, one interval, unique timestamps, and enough history that every value reported falls after warmup.
+- [ ] Provenance names the bar interval, and says whether the latest bar is complete or still forming.
+- [ ] If the library did not run, you said so first and handed off; no substitute demo.
 
 ## Why this library (say this briefly)
 
@@ -79,7 +88,7 @@ If they answer with a symbol, a market, or a trading idea, fit it into option 1 
 Run these before the playbook, and report a failure instead of working around it:
 
 1. **SDK:** `dotnet --list-sdks`. If no 10.x SDK is listed, install one with `curl -sSL https://dot.net/v1/dotnet-install.sh | bash -s`, then add `$HOME/.dotnet` to `PATH`. Expect one to two minutes; tell the developer while it runs. On the developer's own machine, ask first.
-2. **Egress:** `curl -sf https://api.kraken.com/0/public/Time` for the default feed, `curl -sf https://api.nuget.org/v3/index.json` for the package, and `curl -sfI https://github.com` for the example source. If the feed or package check fails, take the "feeds are blocked" path above. If only GitHub is blocked, download the examples [ZIP](https://dotnet.stockindicators.dev/FacioQuo.Stock.Indicators-Examples.zip) instead of cloning.
+2. **Egress:** `curl -sf https://api.kraken.com/0/public/Time` for the default feed, `curl -sf https://api.nuget.org/v3/index.json` for the package, and `curl -sfI https://github.com` for the example source. If the package check or the SDK install fails, take the "cannot run .NET" path above, even if the feed check also fails; if only the feed check fails, take the "feeds are blocked" path. If only GitHub is blocked, download the examples [ZIP](https://dotnet.stockindicators.dev/FacioQuo.Stock.Indicators-Examples.zip) instead of cloning.
 3. **Version:** reference `FacioQuo.Stock.Indicators` as `Version="3.*"`, the latest 3.x release, as the reference apps do. They print the version they ran; report that one, not one you assume.
 4. **Smoke test:** the reference app prints a line confirming that a stream hub matched the batch calculation. If it reports a mismatch, stop and say so.
 
@@ -99,8 +108,8 @@ Base URL: `https://raw.githubusercontent.com/facioquo/stock-indicators-dotnet/ma
 
 ## Library facts that shape every playbook
 
-- Bars must be in chronological order with one consistent interval. Every indicator returns one result per input bar, with `null` values until its warmup completes.
-- Load at least the warmup the indicator page asks for, and more for smoothed indicators (EMA, RSI, ADX, MACD) whose values converge slowly; a few hundred bars is a sound floor.
+- The library calculates; it does not supply market data. Bring bars from a provider. Bars must be oldest-first, with one consistent interval and unique timestamps. Every indicator returns one result per input bar, with `null` values until its warmup completes.
+- Size the history to the most demanding indicator in the set, not to the range you display: find its warmup and convergence guidance on its indicator page, fetch that many bars before the first one you report, and add more for smoothed indicators (EMA, RSI, ADX, MACD) whose values converge slowly. A few hundred bars is a sound floor; SMA(200) needs 200 bars before its first value.
 - Three styles, identical results: Series (`bars.ToRsi(14)`), Buffer lists (`new RsiList(14)` then `.Add(bar)`), and Stream hubs (`barHub.ToRsiHub(14)`). Stream hubs accept late, out-of-order, and same-timestamp-revised bars and recalculate what they affect.
 - Indicators chain: `bars.ToObv().ToRsi(14)`, or `barHub.ToEmaHub(20).ToRsiHub(14)`.
 - When you combine symbols, align them by timestamp, not by position; markets keep different calendars.

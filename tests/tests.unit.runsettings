@@ -1,7 +1,5 @@
 <RunSettings>
   <RunConfiguration>
-    <MaxCpuCount>0</MaxCpuCount>
     <TestCaseFilter>TestCategory!=Integration&amp;TestCategory!=Regression</TestCaseFilter>
-    <TestSessionTimeout>600000</TestSessionTimeout>
   </RunConfiguration>
 </RunSettings>
