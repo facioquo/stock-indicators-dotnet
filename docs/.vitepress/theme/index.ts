@@ -75,7 +75,8 @@ export default {
         barCount: 250,
         quoteCount: 250,
         showTooltips: false,
-        showRightAxisLabels: true
+        showRightAxisLabels: true,
+        showSeriesLegend: true
       },
       theme: {
         observeVitePressDarkMode: true,

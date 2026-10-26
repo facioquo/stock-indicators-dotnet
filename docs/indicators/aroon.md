@@ -10,8 +10,6 @@ Created by Tushar Chande, [Aroon (Up/Down)](https://www.google.com/search?q=Aroo
 
 <StockIndicatorChart indicator="Aroon" withOverlay />
 
-<ChartKey indicator="Aroon" />
-
 <StockIndicatorChart indicator="AroonOsc" />
 
 ```csharp

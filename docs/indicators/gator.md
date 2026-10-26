@@ -9,8 +9,6 @@ Created by Bill Williams, the Gator Oscillator is an expanded oscillator view of
 
 <StockIndicatorChart indicator="Gator" withOverlay />
 
-<ChartKey indicator="Gator" />
-
 ```csharp
 // C# usage syntax
 IReadOnlyList<GatorResult> results =

@@ -10,8 +10,6 @@ Created by Stephen Klinger, the [Klinger Volume Oscillator](https://www.investop
 
 <StockIndicatorChart indicator="Kvo" withOverlay />
 
-<ChartKey indicator="Kvo" />
-
 ```csharp
 // C# usage syntax
 IReadOnlyList<KvoResult> results =

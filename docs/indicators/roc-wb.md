@@ -10,8 +10,6 @@ Rate of Change (ROC) with Bands, created by Vitali Apirine, is a volatility band
 
 <StockIndicatorChart indicator="RocWb" withOverlay />
 
-<ChartKey indicator="RocWb" />
-
 ```csharp
 // C# usage syntax
 IReadOnlyList<RocWbResult> results =

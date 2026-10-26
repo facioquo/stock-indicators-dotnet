@@ -24,10 +24,10 @@ function loadSnapshot(): Promise<IndicatorListing[]> {
 import { computed, onMounted, ref } from 'vue'
 import { CHART_INDICATORS } from '../theme/chart-indicators'
 
-// Names each line of a multi-line chart. The charts library draws one label per
-// pane, so names and styles come from the committed catalog snapshot, which can
-// lag the live API the chart prefers (facioquo/stock-charts#599 tracks a
-// library legend).
+// Names each line of a multi-line overlay chart. The charts library's legend
+// names an overlay indicator once, not each of its lines (oscillator panes name
+// their own lines via `showSeriesLegend`), so names and styles come from the
+// committed catalog snapshot, which can lag the live API the chart prefers.
 const props = defineProps<{ indicator: string }>()
 
 type Swatch = 'solid' | 'dashed' | 'dotted' | 'bar'

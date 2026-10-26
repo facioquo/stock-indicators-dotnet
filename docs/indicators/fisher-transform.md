@@ -10,8 +10,6 @@ Created by John Ehlers, the [Fisher Transform](https://www.investopedia.com/term
 
 <StockIndicatorChart indicator="FisherTransform" withOverlay />
 
-<ChartKey indicator="FisherTransform" />
-
 ```csharp
 // C# usage syntax
 IReadOnlyList<FisherTransformResult> results =

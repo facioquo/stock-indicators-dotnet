@@ -6,8 +6,9 @@ import { fileURLToPath } from 'url'
 import { CHART_INDICATORS } from '../.vitepress/theme/chart-indicators'
 import { indicatorPages } from './chart-pages'
 
-// Every multi-line chart page carries a ChartKey, and the key's name rules hold
-// for the snapshot rows that exercise them.
+// Every multi-line overlay chart page carries a ChartKey, oscillator pages leave
+// line names to the chart's own series legend, and the key's name rules hold for
+// the snapshot rows that exercise them.
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const SNAPSHOT = join(__dirname, '../.vitepress/public/data/chart-api/indicators.json')
@@ -20,19 +21,32 @@ interface Listing {
 
 const listings = JSON.parse(readFileSync(SNAPSHOT, 'utf8')) as Listing[]
 
-test('every multi-line chart page renders a ChartKey', () => {
-  const missing = indicatorPages().filter(({ page, indicator }) => {
-    const uiid = CHART_INDICATORS[indicator]?.uiid?.toLowerCase()
+function multiLinePages(chartType: 'overlay' | 'oscillator') {
+  return indicatorPages().filter(({ indicator }) => {
+    const entry = CHART_INDICATORS[indicator]
+    if ((entry?.chartType ?? 'overlay') !== chartType) return false
+    const uiid = entry?.uiid?.toLowerCase()
     const listing = listings.find((l) => l.uiid.toLowerCase() === uiid)
-    if (!listing || listing.results.length < 2) return false
-    return !new RegExp(`<ChartKey\\s+indicator="${indicator}"`).test(readFileSync(join(PAGES, `${page}.md`), 'utf8'))
+    return (listing?.results.length ?? 0) > 1
   })
+}
+
+function hasKey(page: string, indicator: string): boolean {
+  return new RegExp(`<ChartKey\\s+indicator="${indicator}"`).test(readFileSync(join(PAGES, `${page}.md`), 'utf8'))
+}
+
+test('every multi-line overlay chart page renders a ChartKey', () => {
+  const missing = multiLinePages('overlay').filter(({ page, indicator }) => !hasKey(page, indicator))
   expect(missing.map((m) => `${m.page}:${m.indicator}`)).toEqual([])
+})
+
+test('no oscillator chart page renders a ChartKey', () => {
+  const extra = multiLinePages('oscillator').filter(({ page, indicator }) => hasKey(page, indicator))
+  expect(extra.map((m) => `${m.page}:${m.indicator}`)).toEqual([])
 })
 
 const NAMES: Array<{ page: string; names: string[] }> = [
   { page: 'fcb', names: ['Upper Band', 'Lower Band'] },
-  { page: 'vortex', names: ['VI+', 'VI-'] },
 ]
 
 for (const { page, names } of NAMES) {

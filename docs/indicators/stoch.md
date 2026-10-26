@@ -10,8 +10,6 @@ Created by George Lane, the [Stochastic Oscillator](https://en.wikipedia.org/wik
 
 <StockIndicatorChart indicator="Stoch" withOverlay />
 
-<ChartKey indicator="Stoch" />
-
 ```csharp
 // C# usage syntax (standard)
 IReadOnlyList<StochResult> results =

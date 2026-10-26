@@ -10,8 +10,6 @@ Created by Carl Swenlin, the DecisionPoint [Price Momentum Oscillator](https://w
 
 <StockIndicatorChart indicator="Pmo" withOverlay />
 
-<ChartKey indicator="Pmo" />
-
 ```csharp
 // C# usage syntax
 IReadOnlyList<PmoResult> results =

@@ -10,8 +10,6 @@ The [Percentage Volume Oscillator](https://www.google.com/search?q=Percentage+Vo
 
 <StockIndicatorChart indicator="Pvo" withOverlay />
 
-<ChartKey indicator="Pvo" />
-
 ```csharp
 // C# usage syntax
 IReadOnlyList<PvoResult> results =

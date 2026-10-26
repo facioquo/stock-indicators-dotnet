@@ -10,8 +10,6 @@ Created by Gerald Appel, [MACD](https://en.wikipedia.org/wiki/MACD) is a simple 
 
 <StockIndicatorChart indicator="Macd" withOverlay />
 
-<ChartKey indicator="Macd" />
-
 ```csharp
 // C# usage syntax (with Close price)
 IReadOnlyList<MacdResult> results =

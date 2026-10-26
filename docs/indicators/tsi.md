@@ -10,8 +10,6 @@ Created by William Blau, the [True Strength Index](https://en.wikipedia.org/wiki
 
 <StockIndicatorChart indicator="Tsi" withOverlay />
 
-<ChartKey indicator="Tsi" />
-
 ```csharp
 // C# usage syntax
 IReadOnlyList<TsiResult> results =

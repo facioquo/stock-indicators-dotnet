@@ -10,8 +10,6 @@ Created by Etienne Botes and Douglas Siepman, the [Vortex Indicator](https://en.
 
 <StockIndicatorChart indicator="Vortex" withOverlay />
 
-<ChartKey indicator="Vortex" />
-
 ```csharp
 // C# usage syntax
 IReadOnlyList<VortexResult> results =
