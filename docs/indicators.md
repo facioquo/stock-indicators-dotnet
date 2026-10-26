@@ -194,7 +194,7 @@ See also: [Moving Average Envelopes](/indicators/ma-envelopes)
 - [True Strength Index (TSI)](/indicators/tsi)
 - [Ulcer Index (UI)](/indicators/ulcer-index)
 
-#### Numerical analysis
+#### [Numerical analysis](/indicators/numerical-analysis)
 
 - [Beta coefficient (β)](/indicators/beta)
 - [Coefficient of determination](/indicators/correlation)
