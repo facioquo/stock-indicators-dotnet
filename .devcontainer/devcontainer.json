@@ -1,9 +1,5 @@
 {
-  // key references:
-  // https://code.visualstudio.com/docs/devcontainers/create-dev-container
-  // https://github.com/devcontainers/features
-  "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
-  "name": "stock.indicators",
+  "name": "stock-indicators",
   "image": "mcr.microsoft.com/devcontainers/base:bookworm",
   "features": {
     "ghcr.io/devcontainers/features/node:2": {
@@ -13,15 +9,12 @@
       "version": "10.0",
       "additionalVersions": "9.0,8.0"
     },
-    "ghcr.io/devcontainers/features/github-cli:1": {},
-    "ghcr.io/devcontainers/features/copilot-cli:1": {}
+    "ghcr.io/devcontainers/features/github-cli:1": {}
   },
   "customizations": {
     "vscode": {
       "settings": {
-        "chat.tools.global.autoApprove": true,
-        "dotnet.defaultSolution": "Stock.Indicators.sln",
-        "terminal.integrated.defaultProfile.linux": "zsh"
+        "dotnet.defaultSolution": "Stock.Indicators.sln"
       },
       "extensions": [
         "DavidAnson.vscode-markdownlint",
