@@ -1,219 +1,103 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
 # CodeRabbit config docs: https://docs.coderabbit.ai/reference/configuration
 
-# This CodeRabbit configuration only included overrides from our
-# organization-level configuration in facioquo/coderabbit .coderabbit.yaml
+# Repository-specific overrides for the inherited FacioQuo configuration.
 inheritance: true
 
-# REVIEW CONFIGURATION (overrides)
 reviews:
   review_status: false
   commit_status: false
 
-  # Automatic review scheduling
   auto_review:
     enabled: false
-    auto_incremental_review: false     # Review each push (default: true)
-    drafts: false                      # Review Draft pull requests (default: false)
+    auto_incremental_review: false
+    drafts: false
     base_branches:
       - ".*"
 
-  # Files to include/exclude from reviews
   path_filters:
-    - "**"                   # Include all (base)
-    - "!node_modules/"       # NPM dependencies
-    - "!*-lock.json"         # NPM/PNPM lock files
-    - "!packages.lock.json"  # NuGet lock file
-    - "!packages/"           # NuGet packages cache
-    - "!docs/.vitepress/cache/"  # VitePress cache
-    - "!docs/.vitepress/dist/"   # VitePress build output
-    - "!bin/"                # .NET build output
-    - "!obj/"                # .NET build intermediate files
-    - "!**/TestData/**/*.csv"   # Test data
-    - "!**/TestData/**/*.json"  # Test data
-    - "!**/*.g.cs"           # Generated source code
-    - "!**/*.docx"           # Office Word
-    - "!**/*.pptx"           # Office PowerPoint
-    - "!**/*.xlsx"           # Office Spreadsheets
-    - "!**/*.bak"            # Backup files
-    - "!**/*.zip"            # Compressed files
+    - "**"
+    - "!**/bin/**"
+    - "!**/obj/**"
+    - "!**/node_modules/**"
+    - "!**/.vitepress/cache/**"
+    - "!**/.vitepress/dist/**"
+    - "!**/TestData/**/*.{csv,json}"
+    - "!**/*.g.cs"
+    - "!**/*-lock.json"
+    - "!**/packages.lock.json"
+    - "!**/*.{bak,docx,pptx,xlsx,zip}"
 
-  # Path-based configuration
   path_instructions:
-
-    # Indicator documentation pages must stay aligned with the current API surface
-    - path: "docs/*indicators/*.md"
-      instructions: |
-        Keep each indicator page synchronized with its public API:
-        - Refresh the primary usage example (extension method and `Get{Indicator}` call) to match the latest signature and defaults
-        - Document required and optional parameters, warmup expectations, and key output columns
-        - Note any behavior changes, streaming considerations, or spec references introduced by the PR
-
-    # Source code - Focus on financial accuracy and performance
     - path: "src/**/*.cs"
       instructions: |
-        Focus on:
-        - **Mathematical accuracy**: Verify financial calculations against reference implementations
-        - **Performance**: Flag unnecessary allocations, excessive LINQ, boxing operations
-        - **Precision**: Ensure appropriate use of `double` vs `decimal` for financial calculations
-        - **Null safety**: Validate handling of insufficient data scenarios
-        - **Input validation**: Check parameter validation and error handling
-        - **Lookback periods**: Verify off-by-one errors in window calculations
-        - **Streaming support**: Ensure stateful indicators handle edge cases properly
-        - **Memory efficiency**: Check for proper span usage and buffer management
-        - **XML documentation**: Ensure all public APIs have complete documentation
+        Apply the nearest AGENTS.md and review for numerical correctness, deterministic warmup, validation, and public API compatibility. Series is the canonical implementation; BufferList and StreamHub results must match it exactly. Flag avoidable allocations or repeated enumeration on calculation paths, nullable internal numeric state, non-propagating NaN handling, epsilon comparisons, and public members without accurate XML documentation. Do not recommend changing a public name, signature, or default without an Obsolete migration shim and explicit approval.
 
-    # Test files - Ensure comprehensive coverage and accuracy validation
+    - path: "src/Indicators/**/*.Series.cs"
+      instructions: |
+        Require a single-pass implementation unless the mathematics prevents it. Verify formulas and convergence behavior against the authoritative reference cited by the change, not another library implementation. Confirm result count and timestamps match the input and warmup nulls are deterministic.
+
+    - path: "src/Indicators/**/*List.cs"
+      instructions: |
+        Confirm incremental results match Series exactly, MaxListSize pruning preserves calculation state, and chainable indicators implement the correct increment interface. Flag full-history recomputation and unbounded working buffers.
+
+    - path: "src/Indicators/**/*Hub.cs"
+      instructions: |
+        Confirm per-tick work is constant-time where the algorithm permits, results match Series exactly, and rebuilds restore all state outside the result cache. Flag direct cache mutation, missed rollback state, or behavior that breaks observer chaining.
+
+    - path: "src/Indicators/**/*.Catalog.cs"
+      instructions: |
+        Check that parameters, defaults, constraints, result names, chart panes, and To{Name}, To{Name}List, and To{Name}Hub methods match the implementation. Exactly one result may set isReusable: true when its result type exposes IReusable.Value. Verify the listing is registered and intentional shape changes update the catalog snapshot and metrics tests.
+
     - path: "tests/**/*.cs"
       instructions: |
-        Review for:
-        - **Test coverage**: Ensure edge cases and boundary conditions are tested
-        - **Mathematical validation**: Verify tests use manually calculated results
-        - **Performance tests**: Check benchmark tests for regression detection
-        - **Integration tests**: Validate API compatibility and chaining scenarios
-        - **Streaming tests**: Ensure real-time scenarios are properly tested
-        - **Error scenarios**: Verify exception handling and invalid input tests
+        Apply tests/AGENTS.md and the repository testing conventions. Require meaningful boundary, validation, warmup, and bad-data coverage. Indicator tests compare Series with approved regression fixtures and verify BufferList and StreamHub convergence; do not request duplicated tests or hand-calculated expectations when the authoritative fixture already covers the behavior. Flag weakened assertions, skipped tests, or baseline changes without corresponding implementation evidence.
 
-    # Catalog files - API definition accuracy
-    - path: "**/*.Catalog.cs"
+    - path: "tools/performance/**/*.cs"
       instructions: |
-        Verify:
-        - **Parameter definitions**: Check types, defaults, constraints match implementation
-        - **Result definitions**: Ensure property names match Models exactly
-        - **IReusable flags**: Verify only one result per indicator has isReusable=true
-        - **Method names**: Follow To{IndicatorName} pattern consistently
-        - **Category assignments**: Use appropriate technical analysis categories
+        Check BenchmarkDotNet setup, representative inputs, allocation measurements, and parity across Series, BufferList, and StreamHub styles. Flag benchmarks whose setup work leaks into the measured operation or whose baseline does not answer the stated performance question.
 
-    # Documentation - Accuracy and completeness
-    - path: "docs/**/*.md"
+    - path: "docs/indicators/**/*.md"
       instructions: |
-        Check for:
-        - **Accuracy**: Ensure content matches current implementation
-        - **Completeness**: Verify examples, parameters, and return values are documented
-        - **Accessibility**: Flag missing alt text, poor heading hierarchy
-        - **Link validity**: Check for broken internal/external links
-        - **Mathematical formulas**: Verify calculation descriptions are correct
+        Apply docs/AGENTS.md and verify the page matches the current To{Name} API, parameters and defaults, historical-bar requirements, warmup and convergence behavior, result properties, chaining support, and StreamHub and BufferList availability. Require sidebar and index registration only for a new page. Do not request behavior or examples that the implementation does not provide.
 
-    # VitePress site files
+    - path: "docs/**/*.{md,mdx}"
+      instructions: |
+        Check technical accuracy, accessible structure and image text, valid links, and VitePress-compatible syntax. Keep prose in present tense and flag claims that conflict with code or nearer AGENTS.md guidance.
+
     - path: "docs/**/*.{html,vue,mts,ts,js,css,scss}"
       instructions: |
-        Focus on:
-        - **Accessibility**: WCAG compliance, semantic HTML, proper ARIA labels
-        - **Performance**: Optimize images, minimize CSS/JS, efficient loading
-        - **Mobile responsiveness**: Ensure layouts work across devices
-        - **SEO**: Check meta tags, structured data, semantic markup
-        - **VitePress patterns**: Follow VitePress conventions and Vue best practices
+        Apply docs/AGENTS.md. Review accessibility, responsive behavior, VitePress and Vue conventions, build-time rendering, and client-side performance. Preserve the agent-artifact, route, and Cloudflare middleware contracts when related files change.
 
-    # Configuration and workflow files
-    - path: ".github/**/*.yml"
+    - path: ".github/**/*.{yml,yaml}"
       instructions: |
-        Review for:
-        - **Security**: No secrets in workflows, proper permissions
-        - **Efficiency**: Optimize CI/CD performance, avoid redundant builds
-        - **Dependencies**: Keep actions and versions current
-        - **Error handling**: Proper failure scenarios and notifications
+        Apply .github/AGENTS.md. Check least-privilege permissions, pinned action references, untrusted pull-request input, secret handling, concurrency, caching, and parity with the repository's documented quality gates.
 
-    # Project files and build configuration
-    - path: "**/*.{csproj,props,targets,sln}"
+    - path: "**/*.{csproj,props,targets,sln,slnx}"
       instructions: |
-        Verify:
-        - **Version consistency**: Package versions, target frameworks alignment
-        - **Security**: No vulnerable packages, proper security settings
-        - **Performance**: Compiler optimizations enabled for release builds
-        - **Analyzers**: Code quality rules properly configured
-        - **Packaging**: NuGet metadata complete and accurate
+        Check target-framework and central package consistency, analyzer enforcement, trimming and AOT compatibility, project references, and NuGet packaging metadata. The library must continue to target net10.0, net9.0, and net8.0 with warnings treated as errors in CI.
 
-  # Tool integrations
   tools:
-
-    # tools: default on
-    actionlint:              # GitHub Actions workflow static checker
+    actionlint:
       enabled: true
-    ast-grep:                # Code pattern analysis using AST
-      essential_rules: true
-    gitleaks:                # Secret/credential scanner
+    eslint:
       enabled: true
-    github-checks:           # GitHub Checks integration
+    github-checks:
       enabled: true
       timeout_ms: 90000
-    markdownlint:            # Markdown linter for consistency
+    gitleaks:
       enabled: true
-    osvScanner:              # Vulnerability package scanner
+    markdownlint:
       enabled: true
-    semgrep:                 # Security & code quality static analysis
+    osvScanner:
       enabled: true
-    shellcheck:              # Shell script linter
+    semgrep:
       enabled: true
-    yamllint:                # YAML linter
+    shellcheck:
+      enabled: true
+    yamllint:
       enabled: true
 
-    # tools: default off
-    biome:                   # Fast formatter, linter, and analyzer for web
-      enabled: false
-    brakeman:                # Rails security vulnerability scanner
-      enabled: false
-    buf:                     # Protobuf linter
-      enabled: false
-    checkov:                 # Infrastructure-as-code static analyzer
-      enabled: false
-    checkmake:               # Makefile linter
-      enabled: false
-    circleci:                # CircleCI config static checker
-      enabled: false
-    clang:                   # C/C++ static analysis tool
-      enabled: false
-    clippy:                  # Rust linter
-      enabled: false
-    cppcheck:                # C/C++ static analyzer
-      enabled: false
-    detekt:                  # Kotlin static analyzer
-      enabled: false
-    dotenvLint:              # .env file linter
-      enabled: false
-    eslint:                  # JavaScript/TypeScript linter
-      enabled: false
-    flake8:                  # Python linter
-      enabled: false
-    fortitudeLint:           # Fortran linter
-      enabled: false
-    golangci-lint:           # Go linter runner
-      enabled: false
-    hadolint:                # Dockerfile linter
-      enabled: false
-    htmlhint:                # HTML linter
-      enabled: false
-    languagetool:            # Grammar and style checker (30+ languages)
-      enabled: false
-    luacheck:                # Lua linter
-      enabled: false
-    oxc:                     # JavaScript/TypeScript linter in Rust
-      enabled: false
-    phpcs:                   # PHP linter and coding standard checker
-      enabled: false
-    phpmd:                   # PHP code quality analyzer
-      enabled: false
-    phpstan:                 # PHP static analysis tool
-      enabled: false
-    pmd:                     # Java/multilanguage static analyzer
-      enabled: false
-    prismaLint:              # Prisma schema linter
-      enabled: false
-    pylint:                  # Python static analyzer
-      enabled: false
-    regal:                   # Rego linter and language server
-      enabled: false
-    ruff:                    # Python linter and formatter
-      enabled: false
-    rubocop:                 # Ruby linter and code formatter
-      enabled: false
-    shopifyThemeCheck:       # Shopify Liquid theme linter
-      enabled: false
-    sqlfluff:                # SQL linter
-      enabled: false
-    swiftlint:               # Swift linter
-      enabled: false
-
-# CHAT FEATURES
 chat:
   art: false
   auto_reply: true
@@ -223,16 +107,12 @@ chat:
     linear:
       usage: disabled
 
-# KNOWLEDGE BASE
 knowledge_base:
   opt_out: false
   web_search:
     enabled: true
   code_guidelines:
     enabled: true
-    filePatterns:
-      - "**/AGENTS.md"
-      - ".agents/skills/**"
   learnings:
     scope: auto
   issues:
