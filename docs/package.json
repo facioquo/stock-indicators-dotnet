@@ -34,7 +34,7 @@
     "wrangler": "^4.153.0"
   },
   "dependencies": {
-    "@facioquo/indy-charts": "^0.18.0",
+    "@facioquo/indy-charts": "^0.18.1",
     "chart.js": "^4.6.1",
     "chartjs-plugin-annotation": "^3.1.0"
   }
