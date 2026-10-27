@@ -343,7 +343,7 @@ sealed class Desk : IDisposable
     }
 
     // full: every bar for the initial paint or a revised older candle; otherwise the last few
-    private string TapePayload(Tape tape, bool full)
+    private static string TapePayload(Tape tape, bool full)
     {
         IReadOnlyList<IBar> bars = tape.Minutes.Results;
         int from = full ? 0 : Math.Max(0, bars.Count - 3);

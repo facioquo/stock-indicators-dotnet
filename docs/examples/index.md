@@ -9,8 +9,8 @@ To help you get started, here are a few minimalist [.NET](https://dotnet.microso
 
 - `ConsoleApp` is a minimalist example of how to use the library (start here)
 - `Backtest` is a slightly more complicated example of how to analyze results
-- `CustomIndicatorsLibrary` shows how you can [create your own custom indicators](/guide/customization)
-- `CustomIndicatorsUsage` shows how you'd use custom indicators just like any other in the main library
+- `CustomIndicatorsLibrary` shows how to [create custom indicators](/guide/customization), including an ATR-weighted average and extended standard Pivot Points
+- `CustomIndicatorsUsage` calls both custom indicators just like indicators from the main library
 - `UseQuoteApi` shows how you'd get quotes from an API quote source, using the Alpaca SDK for .NET
 - `LiveSignals` is a live market desk: real crypto or US stock feeds, daily regimes and rotation across a basket, explained one-minute signals, and narrated insights in a browser or headless console (no key needed for crypto)
 
@@ -60,7 +60,7 @@ IReadOnlyList<Bar> bars = GetBarsFromFeed();
 
 // calculate Stochastic RSI
 IReadOnlyList<StochRsiResult> resultsList =
-  bars.ToStochRsi(14, 14, 3, 1);
+  bars.ToStochRsi(14, 14, 3);
 
 // initialize
 decimal trdPrice = 0;

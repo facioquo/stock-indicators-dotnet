@@ -19,25 +19,23 @@ string symbol = "AAPL";
  ************************************************************/
 
 // get and validate keys, see README.md
-string ALPACA_KEY = Environment.GetEnvironmentVariable("ALPACA_KEY");
-string ALPACA_SECRET = Environment.GetEnvironmentVariable("ALPACA_SECRET");
+string? configuredKey = Environment.GetEnvironmentVariable("ALPACA_KEY");
+string? configuredSecret = Environment.GetEnvironmentVariable("ALPACA_SECRET");
 
-if (string.IsNullOrEmpty(ALPACA_KEY))
+if (string.IsNullOrWhiteSpace(configuredKey))
 {
-    throw new ArgumentNullException(
-        ALPACA_KEY,
-        $"API KEY missing, use `setx ALPACA_KEY \"MY-ALPACA-KEY\"` to set.");
+    throw new InvalidOperationException(
+        "API key missing; set the ALPACA_KEY environment variable.");
 }
 
-if (string.IsNullOrEmpty(ALPACA_SECRET))
+if (string.IsNullOrWhiteSpace(configuredSecret))
 {
-    throw new ArgumentNullException(
-        ALPACA_SECRET,
-        $"API SECRET missing, use `setx ALPACA_SECRET \"MY-ALPACA-SECRET\"` to set.");
+    throw new InvalidOperationException(
+        "API secret missing; set the ALPACA_SECRET environment variable.");
 }
 
 // connect to Alpaca REST API
-SecretKey secretKey = new(ALPACA_KEY, ALPACA_SECRET);
+SecretKey secretKey = new(configuredKey, configuredSecret);
 
 IAlpacaDataClient client = Environments.Paper.GetAlpacaDataClient(secretKey);
 
@@ -54,14 +52,14 @@ IPage<Alpaca.Markets.IBar> barSet = await client.ListHistoricalBarsAsync(request
 // convert library compatible quotes
 List<Bar> bars = barSet
     .Items
-    .Select(bar => new Bar(
+    .Select(static bar => new Bar(
         Timestamp: bar.TimeUtc,
         Open: bar.Open,
         High: bar.High,
         Low: bar.Low,
         Close: bar.Close,
         Volume: bar.Volume))
-    .OrderBy(x => x.Timestamp)
+    .OrderBy(static x => x.Timestamp)
     .ToList();
 
 // calculate 10-period SMA

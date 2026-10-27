@@ -11,26 +11,26 @@ At some point in your journey, you may want to create your own custom indicators
 Custom indicators are currently supported for the **Batch (Series)** style only. Creating custom [Buffer list](/guide/styles/buffer) or [Stream hub](/guide/styles/stream) indicators is not yet supported as a first-class extension point; support is planned for a future release (buffer lists: [#2096](https://github.com/facioquo/stock-indicators-dotnet/issues/2096), stream hubs: [#2097](https://github.com/facioquo/stock-indicators-dotnet/issues/2097)). To integrate custom logic with streaming data today, see [Custom observers](/guide/custom-observers).
 :::
 
-> ✨ Working example code is available in the [CustomIndicatorsLibrary](https://github.com/facioquo/stock-indicators-dotnet/tree/main/docs/examples/CustomIndicatorsLibrary) project.
+::: tip Working examples
+The [CustomIndicatorsLibrary](https://github.com/facioquo/stock-indicators-dotnet/tree/main/docs/examples/CustomIndicatorsLibrary) project includes an ATR-weighted moving average and extended standard Pivot Points with fifth support and resistance levels.
+:::
 
 ## Creating a custom indicator
 
 ### Step 1: Create the result class
 
-Create your results class by implementing the `IReusable` interface or inheriting from existing result patterns. This allows your custom indicator to be chainable with other indicators.
+Create a result record that implements `IReusable` when one property is the natural value for chaining. Use an explicit interface property to map that value.
 
 ```csharp
 using FacioQuo.Stock.Indicators;
 
-namespace Custom.Indicators;
+namespace Custom.Stock.Indicators;
 
 // Custom results class
-public record AtrWmaResult : IReusable
+public record AtrWmaResult(
+    DateTime Timestamp,
+    double? AtrWma = null) : IReusable
 {
-    public DateTime Timestamp { get; init; }
-    public double? AtrWma { get; init; }
-    
-    // Identify value to propagate in chains
     double IReusable.Value => AtrWma.Null2NaN();
 }
 ```
@@ -42,47 +42,34 @@ Create your custom algorithm following the same patterns as the main library.
 ```csharp
 using FacioQuo.Stock.Indicators;
 
-namespace Custom.Indicators;
+namespace Custom.Stock.Indicators;
 
 public static class CustomIndicators
 {
-    /// <summary>
-    /// ATR-weighted moving average (custom indicator example)
-    /// </summary>
-    /// <param name="bars">Historical price bars</param>
-    /// <param name="lookbackPeriods">Lookback period</param>
-    /// <returns>Collection of AtrWmaResult</returns>
     public static IReadOnlyList<AtrWmaResult> ToAtrWma(
         this IReadOnlyList<IBar> bars,
         int lookbackPeriods)
     {
         // Validate parameters
         ArgumentNullException.ThrowIfNull(bars);
-        
-        if (lookbackPeriods <= 0)
+
+        if (lookbackPeriods <= 1)
         {
             throw new ArgumentOutOfRangeException(
                 nameof(lookbackPeriods),
-                "Lookback periods must be greater than 0.");
+                "Lookback periods must be greater than 1.");
         }
 
-        // sort price bars (optional)
-        List<IBar> barsList = bars
-            .OrderBy(x => x.Timestamp)
-            .ToList();
-
         // initialize results
-        List<AtrWmaResult> results = new(barsList.Count);
+        List<AtrWmaResult> results = new(bars.Count);
 
         // get pre-requisite ATR values
-        List<AtrResult> atrResults = barsList
-            .ToAtr(lookbackPeriods)
-            .ToList();
+        IReadOnlyList<AtrResult> atrResults = bars.ToAtr(lookbackPeriods);
 
         // roll through source values
-        for (int i = 0; i < barsList.Count; i++)
+        for (int i = 0; i < bars.Count; i++)
         {
-            IBar b = barsList[i];
+            IBar b = bars[i];
             double atrWma = double.NaN;
 
             // only do calculations after uncalculable periods
@@ -93,14 +80,14 @@ public static class CustomIndicators
 
                 for (int p = i - lookbackPeriods + 1; p <= i; p++)
                 {
-                    double close = (double)barsList[p].Close;
+                    double close = (double)bars[p].Close;
                     double atr = atrResults[p].Atr ?? double.NaN;
 
                     sumWma += atr * close;
                     sumAtr += atr;
                 }
 
-                atrWma = sumWma / sumAtr;
+                atrWma = sumAtr != 0 ? sumWma / sumAtr : double.NaN;
             }
 
             // add record to results
@@ -114,13 +101,33 @@ public static class CustomIndicators
 }
 ```
 
+The method validates arguments, preserves the input order, returns one result per input bar, and represents unavailable values as `null` at the result boundary. It composes the built-in ATR calculation instead of duplicating it.
+
+### Composing an existing indicator
+
+A custom indicator can also adapt built-in results. `ToExtendedPivotPoints()` starts with standard [Pivot Points](/indicators/pivot-points), retains its existing levels, and derives `R4`, `R5`, `S4`, and `S5` from the same pivot range:
+
+```csharp
+IReadOnlyList<PivotPointsResult> pivots = bars.ToPivotPoints(
+    windowSize,
+    PivotPointType.Standard);
+
+// p is a warmed-up PivotPointsResult
+double r4 = (3 * p.R1.Value) - p.S1.Value - p.PP.Value;
+double r5 = (4 * p.R1.Value) - p.S1.Value - (2 * p.PP.Value);
+double s4 = (3 * p.S1.Value) - p.R1.Value - p.PP.Value;
+double s5 = (4 * p.S1.Value) - p.R1.Value - (2 * p.PP.Value);
+```
+
+The complete implementation in [`ExtendedPivotPoints.cs`](https://github.com/facioquo/stock-indicators-dotnet/blob/main/docs/examples/CustomIndicatorsLibrary/ExtendedPivotPoints.cs) handles warmup periods and returns a chainable result record. This pattern is useful for bespoke formulas that belong in application code rather than the shared package.
+
 ### Step 3: Use your custom indicator
 
 Use your custom indicator just like the built-in indicators:
 
 ```csharp
+using Custom.Stock.Indicators;
 using FacioQuo.Stock.Indicators;
-using Custom.Indicators;
 
 // Get historical price bars
 IReadOnlyList<Bar> bars = GetBarsFromFeed("MSFT");
@@ -149,35 +156,27 @@ var rsiOfAtrWma = bars
     .ToRsi(14);
 ```
 
-### Using multiple indicator styles
-
-You can also implement your custom indicator in other styles:
-
-- **Buffer list style** - For incremental processing
-- **Stream hub style** - For real-time data feeds
-
-See the [Guide](/guide/) for more information about different indicator styles.
-
 ### Best practices
 
 When creating custom indicators:
 
-1. **Validate inputs** - Always validate parameters and bars
-2. **Handle edge cases** - Check for insufficient data, null values
-3. **Follow naming conventions** - Use `To{IndicatorName}` pattern
-4. **Implement IReusable** - Enable chaining with other indicators
-5. **Add XML documentation** - Document parameters and return values
-6. **Test thoroughly** - Verify calculations against reference data
+1. **Validate inputs** — throw `ArgumentNullException` for a null source and `ArgumentOutOfRangeException` for invalid numeric parameters.
+2. **Preserve alignment** — return one result per input and keep the caller's ordering.
+3. **Represent warmup consistently** — calculate with `double.NaN` internally and convert unavailable result values to `null`.
+4. **Guard variable denominators** — return an unavailable value when division is undefined.
+5. **Follow naming conventions** — use `To{IndicatorName}` for the extension method and `{IndicatorName}Result` for its result.
+6. **Enable chaining deliberately** — implement `IReusable` only when the result has one natural reusable value.
+7. **Verify the formula independently** — test against manually calculated values or an authoritative publication.
 
 ## Example projects
 
 For complete working examples, see:
 
-- [CustomIndicatorsLibrary](https://github.com/facioquo/stock-indicators-dotnet/tree/main/docs/examples/CustomIndicatorsLibrary) - Shows how to create custom indicators
-- [CustomIndicatorsUsage](https://github.com/facioquo/stock-indicators-dotnet/tree/main/docs/examples/CustomIndicatorsUsage) - Shows how to use custom indicators
+- [CustomIndicatorsLibrary](https://github.com/facioquo/stock-indicators-dotnet/tree/main/docs/examples/CustomIndicatorsLibrary) — create custom indicators by composing library calculations
+- [CustomIndicatorsUsage](https://github.com/facioquo/stock-indicators-dotnet/tree/main/docs/examples/CustomIndicatorsUsage) — call custom indicators from an application
 
 ## See also
 
-- [Custom stream hub observers](/guide/custom-observers) - React to new stream data
-- [Utilities and helpers](/utilities/) - Tools for working with bars and results
-- [Contributing guidelines](/contributing) - How to contribute indicators to the library
+- [Custom stream hub observers](/guide/custom-observers) — react to new stream data
+- [Utilities and helpers](/utilities/) — tools for working with bars and results
+- [Contributing guidelines](/contributing) — contribute broadly reusable indicators to the library

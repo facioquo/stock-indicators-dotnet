@@ -59,7 +59,7 @@ static class Analysis
         double high = daily.TakeLast(year).Max(b => (double)b.High);
 
         IReadOnlyList<RotationPoint> rotation = benchmark is null || benchmark == tape ? [] : Rotation(tape, benchmark);
-        IReadOnlyList<RotationPoint> tail = Tail(rotation, barsPerWeek);
+        List<RotationPoint> tail = Tail(rotation, barsPerWeek);
 
         return new Regime(
             tape.Symbol, last.Timestamp, price, dayChange, trend,

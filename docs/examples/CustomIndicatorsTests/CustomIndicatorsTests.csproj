@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <EnableMSTestRunner>true</EnableMSTestRunner>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FacioQuo.Stock.Indicators" Version="3.*" PrivateAssets="All" />
+    <PackageReference Include="MSTest.TestAdapter" Version="4.5.1" />
+    <PackageReference Include="MSTest.TestFramework" Version="4.5.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CustomIndicatorsLibrary\CustomIndicatorsLibrary.csproj" />
+  </ItemGroup>
+
+</Project>

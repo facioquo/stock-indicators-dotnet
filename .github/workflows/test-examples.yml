@@ -46,3 +46,10 @@ jobs:
           --configuration Release
           --property:ContinuousIntegrationBuild=true
           -warnAsError
+
+      - name: Test custom indicators
+        run: >
+          dotnet test
+          --project docs/examples/CustomIndicatorsTests/CustomIndicatorsTests.csproj
+          --configuration Release
+          --no-build

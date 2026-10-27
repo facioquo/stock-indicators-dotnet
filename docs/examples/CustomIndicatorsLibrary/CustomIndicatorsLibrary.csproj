@@ -1,10 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="FacioQuo.Stock.Indicators" Version="3.*" PrivateAssets="All" />
   </ItemGroup>

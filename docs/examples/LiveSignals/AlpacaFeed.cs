@@ -50,7 +50,10 @@ sealed class AlpacaFeed(Desk desk, IConfiguration config, ILogger<AlpacaFeed> lo
         catch (Exception ex) when (!ct.IsCancellationRequested)
         {
             // a cosmetic call must never drop a healthy stream
-            log.LogInformation("Market clock unavailable ({Message}); streaming without it", ex.Message);
+            if (log.IsEnabled(LogLevel.Information))
+            {
+                log.LogInformation("Market clock unavailable ({Message}); streaming without it", ex.Message);
+            }
             return "Live · Alpaca IEX feed";
         }
     }

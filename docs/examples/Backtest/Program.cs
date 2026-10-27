@@ -22,8 +22,11 @@ using FacioQuo.Stock.Indicators;
 // We're mocking with a simple JSON file import
 string json = File.ReadAllText("quotes.data.json");
 
-IReadOnlyList<Bar> bars = JsonSerializer
+IReadOnlyCollection<Bar> importedBars = JsonSerializer
     .Deserialize<IReadOnlyCollection<Bar>>(json)
+    ?? throw new InvalidDataException("The price-bar file does not contain a JSON collection.");
+
+IReadOnlyList<Bar> bars = importedBars
     .ToSortedList();
 
 // Calculate Stochastic RSI
