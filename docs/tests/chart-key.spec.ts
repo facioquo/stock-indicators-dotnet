@@ -36,12 +36,16 @@ function hasKey(page: string, indicator: string): boolean {
 }
 
 test('every multi-line overlay chart page renders a ChartKey', () => {
-  const missing = multiLinePages('overlay').filter(({ page, indicator }) => !hasKey(page, indicator))
+  const pages = multiLinePages('overlay')
+  expect(pages).not.toHaveLength(0)
+  const missing = pages.filter(({ page, indicator }) => !hasKey(page, indicator))
   expect(missing.map((m) => `${m.page}:${m.indicator}`)).toEqual([])
 })
 
 test('no oscillator chart page renders a ChartKey', () => {
-  const extra = multiLinePages('oscillator').filter(({ page, indicator }) => hasKey(page, indicator))
+  const pages = multiLinePages('oscillator')
+  expect(pages).not.toHaveLength(0)
+  const extra = pages.filter(({ page, indicator }) => hasKey(page, indicator))
   expect(extra.map((m) => `${m.page}:${m.indicator}`)).toEqual([])
 })
 
