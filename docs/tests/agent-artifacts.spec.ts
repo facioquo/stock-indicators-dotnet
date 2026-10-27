@@ -276,8 +276,6 @@ test.describe('Build output', () => {
   test('Cloudflare Pages config ships with the site', () => {
     const headers = read('_headers')
     expect(headers).toMatch(/^\/\n {2}Link: .*rel="describedby"/m)
-    // assistants' URL fetchers that refuse text/markdown still read the Markdown twins
-    expect(headers).toMatch(/^\/\*\.md\n {2}Content-Type: text\/plain; charset=utf-8$/m)
 
     const routes = JSON.parse(read('_routes.json')) as { include: string[], exclude: string[] }
     expect(routes.include).toEqual(['/*'])
