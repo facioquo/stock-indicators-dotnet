@@ -16,9 +16,9 @@ https://:project.pages.dev/*
 
 # Markdown twins and agent playbooks: the URLs developers paste into AI
 # assistants. Served as plain text because some assistants' URL fetchers accept
-# text/plain but not text/markdown; a Markdown reader loses nothing. A request
-# that asks for Markdown by Accept header still gets text/markdown from the
-# middleware.
+# text/plain but not text/markdown; a Markdown reader loses nothing. A page
+# route requested with `Accept: text/markdown` still gets text/markdown from
+# the middleware.
 /*.md
   Content-Type: text/plain; charset=utf-8
   Content-Signal: search=yes, ai-input=yes, ai-train=yes

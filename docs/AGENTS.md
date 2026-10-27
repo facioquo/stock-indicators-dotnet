@@ -32,6 +32,7 @@ The site serves AI agents alongside people. `pnpm run test:agents` validates eve
 - `.vitepress/routes.ts` owns the route rules (page route, `.md` path) that the config, the artifact writer, and the middleware share; the patched plugin applies the same directory-index rule.
 - `functions/_middleware.ts` serves a page's `.md` twin when a request prefers `Accept: text/markdown`. Run it locally with `pnpm exec wrangler pages dev .vitepress/dist` after a build.
 - Cloudflare Pages config lives in `.vitepress/public/`: `_headers`, `_redirects`, `_routes.json`, and `robots.txt`. Keep static paths listed under `exclude` in `_routes.json` so they never invoke the middleware.
+- `_headers` serves every `.md` URL as `text/plain; charset=utf-8`, because some assistants' URL fetchers refuse `text/markdown`; only the middleware's `Accept`-negotiated responses carry `text/markdown`.
 
 ## Content conventions
 
