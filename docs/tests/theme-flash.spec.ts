@@ -61,6 +61,31 @@ test.describe('theme flash on load (#2169)', () => {
     expect(state.body).toBe(DARK_CANVAS)
   })
 
+  // The site opens dark whatever the visitor's system theme, and only a click
+  // on the appearance switch changes that. VitePress stores a choice that
+  // matches the system theme as `auto`, so a choice must survive a reload
+  // under both system themes, not just read back from storage.
+  for (const colorScheme of ['light', 'dark'] as const) {
+    test(`${colorScheme} system theme opens dark until the visitor switches`, async ({ page }) => {
+      await page.emulateMedia({ colorScheme })
+      const html = page.locator('html')
+      const appearance = page.locator('.VPNavBar .VPSwitchAppearance')
+
+      await page.goto('/', { waitUntil: 'load' })
+      await expect(html).toHaveClass(/dark/)
+
+      await appearance.click()
+      await expect(html).not.toHaveClass(/dark/)
+      await page.reload({ waitUntil: 'load' })
+      await expect(html).not.toHaveClass(/dark/)
+
+      await appearance.click()
+      await expect(html).toHaveClass(/dark/)
+      await page.reload({ waitUntil: 'load' })
+      await expect(html).toHaveClass(/dark/)
+    })
+  }
+
   test('explicit light preference restores light canvas and controls', async ({ page }) => {
     await page.addInitScript(
       key => localStorage.setItem(key, 'light'),
