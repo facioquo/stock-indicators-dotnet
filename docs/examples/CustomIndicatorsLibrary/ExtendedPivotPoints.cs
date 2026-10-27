@@ -4,7 +4,7 @@ namespace Custom.Stock.Indicators
 {
 
     /// <summary>
-    /// Represents standard Pivot Points extended through fifth support and resistance levels.
+    /// Represents alternative Pivot Points with custom fourth- and fifth-level bars added.
     /// </summary>
     [Serializable]
     public record ExtendedPivotPointsResult(
@@ -27,7 +27,7 @@ namespace Custom.Stock.Indicators
     public static partial class CustomIndicators
     {
         /// <summary>
-        /// Calculates standard Pivot Points with fourth and fifth support and resistance levels.
+        /// Calculates alternative Pivot Points with custom fourth- and fifth-level bars added.
         /// </summary>
         /// <param name="bars">Historical price bars in ascending order.</param>
         /// <param name="windowSize">Calendar interval used to form each completed pivot window.</param>

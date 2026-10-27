@@ -12,7 +12,7 @@ Custom indicators are currently supported for the **Batch (Series)** style only.
 :::
 
 ::: tip Working examples
-The [CustomIndicatorsLibrary](https://github.com/facioquo/stock-indicators-dotnet/tree/main/docs/examples/CustomIndicatorsLibrary) project includes an ATR-weighted moving average and extended standard Pivot Points with fifth support and resistance levels.
+The [CustomIndicatorsLibrary](https://github.com/facioquo/stock-indicators-dotnet/tree/main/docs/examples/CustomIndicatorsLibrary) project includes an ATR-weighted moving average and alternative Pivot Points with custom fourth- and fifth-level bars added.
 :::
 
 ## Creating a custom indicator
@@ -105,7 +105,7 @@ The method validates arguments, preserves the input order, returns one result pe
 
 ### Composing an existing indicator
 
-A custom indicator can also adapt built-in results. `ToExtendedPivotPoints()` starts with standard [Pivot Points](/indicators/pivot-points), retains its existing levels, and derives `R4`, `R5`, `S4`, and `S5` from the same pivot range:
+A custom indicator can also adapt built-in results. `ToExtendedPivotPoints()` starts with [Pivot Points](/indicators/pivot-points), retains its existing levels, and derives custom `R4`, `R5`, `S4`, and `S5` bars from the same pivot range:
 
 ```csharp
 IReadOnlyList<PivotPointsResult> pivots = bars.ToPivotPoints(
