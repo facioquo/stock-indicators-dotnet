@@ -5,6 +5,8 @@
 
 User-agent: *
 Content-Signal: search=yes, ai-input=yes, ai-train=yes
+Allow: /agents/
+Allow: /*.md$
 Allow: /
 
 # Named AI crawlers, current and legacy tokens (Claude-Web, anthropic-ai),
@@ -18,6 +20,8 @@ User-agent: Claude-SearchBot
 User-agent: Claude-Web
 User-agent: anthropic-ai
 User-agent: Google-Extended
+User-agent: GoogleOther
+User-agent: Google-CloudVertexBot
 User-agent: Applebot-Extended
 User-agent: PerplexityBot
 User-agent: Amazonbot
