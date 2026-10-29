@@ -19,7 +19,7 @@ features:
   - title: Utilities for price bars
     details: Prepare and transform historical price bars before using them with indicators.
     link: /utilities/bars
-    linkText: 6 utilities
+    linkText: 7 utilities
 
   - title: Utilities for indicator results
     details: Work with indicator results after calculation and analysis.
@@ -39,6 +39,7 @@ features:
 
 ## [Utilities for price bars](/utilities/bars)
 
+- [load bars from CSV](/utilities/bars#load-bars-from-csv)
 - [use alternate price](/utilities/bars#use-alternate-price)
 - [sort price bars](/utilities/bars#sort-bars)
 - [validate bar history](/utilities/bars#validate-bar-history)
