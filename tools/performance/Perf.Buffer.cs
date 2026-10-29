@@ -81,6 +81,7 @@ public class BufferIndicators
     [Benchmark] public TrList TrList() => q.ToTrList();
     [Benchmark] public TrixList TrixList() => q.ToTrixList(n);
     [Benchmark] public TsiList TsiList() => q.ToTsiList(25, 13, 7);
+    [Benchmark] public TtmSqueezeList TtmSqueezeList() => q.ToTtmSqueezeList(20, 2, 1.5);
     [Benchmark] public UlcerIndexList UlcerIndexList() => q.ToUlcerIndexList(n);
     [Benchmark] public UltimateList UltimateList() => q.ToUltimateList(7, 14, 28);
     [Benchmark] public VolatilityStopList VolatilityStopList() => q.ToVolatilityStopList(7, 3);

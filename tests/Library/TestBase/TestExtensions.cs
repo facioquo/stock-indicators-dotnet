@@ -736,6 +736,17 @@ public static class TestExtensions
         return barHub.ToTsiHub(lookbackPeriods, smoothPeriods, signalPeriods);
     }
 
+    public static TtmSqueezeHub ToTtmSqueezeHub(
+        this IReadOnlyList<IBar> bars,
+        int lookbackPeriods = 20,
+        double standardDeviations = 2,
+        double multiplier = 1.5)
+    {
+        BarHub barHub = new();
+        barHub.Add(bars);
+        return barHub.ToTtmSqueezeHub(lookbackPeriods, standardDeviations, multiplier);
+    }
+
     public static UlcerIndexHub ToUlcerIndexHub(
         this IReadOnlyList<IBar> bars,
         int lookbackPeriods = 14)

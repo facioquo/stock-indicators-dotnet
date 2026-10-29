@@ -107,6 +107,7 @@ features:
 - [Stochastic RSI](/indicators/stoch-rsi)
 - [Triple EMA Oscillator (TRIX)](/indicators/trix)
 - [True Strength Index (TSI)](/indicators/tsi)
+- [TTM Squeeze](/indicators/ttm-squeeze)
 - [Ultimate Oscillator](/indicators/ultimate)
 - [Williams %R](/indicators/williams-r)
 

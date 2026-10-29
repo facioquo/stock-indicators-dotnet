@@ -2082,6 +2082,36 @@ Results:
   - Tsi : Default : reusable=true : pane=Tsi
   - Signal : Default : reusable=false : pane=Tsi
 
+### TTM-SQUEEZE / Series
+Method: ToTtmSqueeze
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - standardDeviations : Double : optional
+  - multiplier : Double : optional
+Results:
+  - Momentum : Bar : reusable=true : pane=TtmSqueeze
+  - IsSqueezeOn : Default : reusable=false : pane=(none)
+
+### TTM-SQUEEZE / Buffer
+Method: ToTtmSqueezeList
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - standardDeviations : Double : optional
+  - multiplier : Double : optional
+Results:
+  - Momentum : Bar : reusable=true : pane=TtmSqueeze
+  - IsSqueezeOn : Default : reusable=false : pane=(none)
+
+### TTM-SQUEEZE / Stream
+Method: ToTtmSqueezeHub
+Parameters:
+  - lookbackPeriods : Int32 : optional
+  - standardDeviations : Double : optional
+  - multiplier : Double : optional
+Results:
+  - Momentum : Bar : reusable=true : pane=TtmSqueeze
+  - IsSqueezeOn : Default : reusable=false : pane=(none)
+
 ### ULCER / Series
 Method: ToUlcerIndex
 Parameters:

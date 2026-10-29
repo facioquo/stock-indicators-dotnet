@@ -115,6 +115,7 @@ public class StreamIndicators
     [Benchmark] public object TrHub() => barHub.ToTrHub().Results;
     [Benchmark] public object TrixHub() => barHub.ToTrixHub(n).Results;
     [Benchmark] public object TsiHub() => barHub.ToTsiHub(25, 13, 7).Results;
+    [Benchmark] public object TtmSqueezeHub() => barHub.ToTtmSqueezeHub(20, 2, 1.5).Results;
     [Benchmark] public object UlcerIndexHub() => barHub.ToUlcerIndexHub(n).Results;
     [Benchmark] public object UltimateHub() => barHub.ToUltimateHub(7, n, 28).Results;
     [Benchmark] public object VolatilityStopHub() => barHub.ToVolatilityStopHub(7, 3).Results;
