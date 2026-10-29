@@ -24,6 +24,11 @@ jobs:
     name: Cloudflare Pages
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # Fork PRs get no secrets, so the deploy cannot succeed for them. Skip it
+    # quietly; CI verifies forks.
+    if: |
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
     defaults:
       run:
         working-directory: docs
