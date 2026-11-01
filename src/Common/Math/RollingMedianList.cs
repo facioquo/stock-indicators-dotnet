@@ -80,7 +80,7 @@ public static partial class ResultMath
     /// </summary>
     /// <param name="source">Chainable results, time sorted.</param>
     /// <param name="lookbackPeriods">Number of periods in the window, including the current one.</param>
-    /// <returns>A buffer list of rolling median value values.</returns>
+    /// <returns>A buffer list of rolling median values.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the lookback periods are less than 1.</exception>
     public static RollingMedianList ToRollingMedianList(
         this IReadOnlyList<IReusable> source,
