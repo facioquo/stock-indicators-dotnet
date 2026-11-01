@@ -140,6 +140,72 @@ public abstract class ResultMathHubTestBase<THub> : StreamHubTestBase, ITestChai
     }
 
     [TestMethod]
+    public void NaNInRollbackWindow_LateArrivalAndRemoval_MatchesSeriesExactly()
+    {
+        // zero bars make ROC(1) emit NaN mid-series: single, consecutive, and late gaps
+        int[] zeroes = [30, 61, 62, 63, 200];
+        List<Bar> bars = [.. Bars.Select((b, i) => zeroes.Contains(i)
+            ? b with { Open = 0, High = 0, Low = 0, Close = 0 }
+            : b)];
+
+        BarHub barHub = new();
+        THub observer = NewHub(barHub.ToRocHub(1));
+
+        for (int i = 0; i < barsCount; i++)
+        {
+            // skip one just after the NaN run, so its rebuild window replays the NaNs
+            if (i == 66) { continue; }
+
+            barHub.Add(bars[i]);
+        }
+
+        barHub.Add(bars[66]);
+        observer.Results.IsExactly(Series(bars.ToRoc(1)));
+
+        // removal whose replay window also holds the NaN run
+        barHub.RemoveAt(70);
+        bars.RemoveAt(70);
+        observer.Results.IsExactly(Series(bars.ToRoc(1)));
+
+        observer.Unsubscribe();
+        barHub.EndTransmission();
+    }
+
+    [TestMethod]
+    public void SameTimestampCorrection_BeforeWindowFills_MatchesSeriesExactly()
+    {
+        // correcting an early bar rolls back to a restore index below the lookback
+        const int correctionIndex = 5;
+
+        List<Bar> bars = [.. Bars];
+        Bar original = bars[correctionIndex];
+        Bar corrected = original with {
+            Open = original.Open * 1.05m,
+            High = original.High * 1.05m,
+            Low = original.Low * 1.05m,
+            Close = original.Close * 1.05m
+        };
+
+        BarHub barHub = new();
+        THub observer = NewHub(barHub);
+
+        barHub.Add(bars);
+        barHub.Add(corrected);
+
+        bars[correctionIndex] = corrected;
+        observer.Results.Should().HaveCount(barsCount);
+        observer.Results.IsExactly(Series(bars));
+
+        observer.Unsubscribe();
+        barHub.EndTransmission();
+    }
+
+    [TestMethod]
+    public void Exceptions_NullProvider_ThrowsArgumentNullException()
+        => FluentActions.Invoking(() => NewHub(null!))
+            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("chainProvider");
+
+    [TestMethod]
     public override void ToStringOverride_ReturnsExpectedName()
     {
         THub hub = NewHub(new BarHub());

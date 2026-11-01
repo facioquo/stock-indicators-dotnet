@@ -68,7 +68,7 @@ public static partial class ResultMath
     /// <remarks>If providers contain historical data, this hub will fast-forward its cache.</remarks>
     /// <param name="chainProvider">Chain provider.</param>
     /// <param name="lookbackPeriods">Number of periods in the window, including the current one.</param>
-    /// <returns>A hub of rolling median value values.</returns>
+    /// <returns>A hub of rolling median values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="chainProvider"/> is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">
     /// Thrown when the lookback periods are less than 1 or exceed the provider's cache size.
@@ -76,5 +76,8 @@ public static partial class ResultMath
     public static RollingMedianHub ToRollingMedianHub(
         this IChainProvider<IReusable> chainProvider,
         int lookbackPeriods)
-        => new(chainProvider, lookbackPeriods);
+    {
+        ArgumentNullException.ThrowIfNull(chainProvider);
+        return new(chainProvider, lookbackPeriods);
+    }
 }

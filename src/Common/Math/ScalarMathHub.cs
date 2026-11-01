@@ -56,7 +56,10 @@ public static partial class ResultMath
     public static ScalarMathHub ToPlusHub(
         this IChainProvider<IReusable> chainProvider,
         double amount)
-        => new(chainProvider, ScalarOperation.Plus, amount);
+    {
+        ArgumentNullException.ThrowIfNull(chainProvider);
+        return new(chainProvider, ScalarOperation.Plus, amount);
+    }
 
     /// <summary>
     /// Creates a streaming hub that offsets every value by a percentage of itself.
@@ -69,7 +72,10 @@ public static partial class ResultMath
     public static ScalarMathHub ToPlusPercentHub(
         this IChainProvider<IReusable> chainProvider,
         double percentOffset)
-        => new(chainProvider, ScalarOperation.PlusPercent, percentOffset);
+    {
+        ArgumentNullException.ThrowIfNull(chainProvider);
+        return new(chainProvider, ScalarOperation.PlusPercent, percentOffset);
+    }
 
     /// <summary>
     /// Creates a streaming hub that subtracts a fixed amount from every value.
@@ -82,7 +88,10 @@ public static partial class ResultMath
     public static ScalarMathHub ToMinusHub(
         this IChainProvider<IReusable> chainProvider,
         double amount)
-        => new(chainProvider, ScalarOperation.Minus, amount);
+    {
+        ArgumentNullException.ThrowIfNull(chainProvider);
+        return new(chainProvider, ScalarOperation.Minus, amount);
+    }
 
     /// <summary>
     /// Creates a streaming hub that multiplies every value by a fixed factor.
@@ -95,7 +104,10 @@ public static partial class ResultMath
     public static ScalarMathHub ToTimesHub(
         this IChainProvider<IReusable> chainProvider,
         double factor)
-        => new(chainProvider, ScalarOperation.Times, factor);
+    {
+        ArgumentNullException.ThrowIfNull(chainProvider);
+        return new(chainProvider, ScalarOperation.Times, factor);
+    }
 
     /// <summary>
     /// Creates a streaming hub that divides every value by a fixed divisor.
@@ -108,5 +120,8 @@ public static partial class ResultMath
     public static ScalarMathHub ToDividedByHub(
         this IChainProvider<IReusable> chainProvider,
         double divisor)
-        => new(chainProvider, ScalarOperation.DividedBy, divisor);
+    {
+        ArgumentNullException.ThrowIfNull(chainProvider);
+        return new(chainProvider, ScalarOperation.DividedBy, divisor);
+    }
 }
