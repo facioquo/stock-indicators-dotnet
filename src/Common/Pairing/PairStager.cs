@@ -161,15 +161,17 @@ internal sealed class PairStager
     }
 
     /// <summary>
-    /// Removes a side's values before a timestamp.
+    /// Removes a side's values at or before a timestamp.
     /// </summary>
     /// <param name="side">Side to trim.</param>
-    /// <param name="timestamp">Oldest timestamp to keep.</param>
-    internal void RemoveBefore(PairSide side, DateTime timestamp)
+    /// <param name="timestamp">Newest timestamp to remove.</param>
+    internal void RemoveThrough(PairSide side, DateTime timestamp)
     {
         PruningList<TimeValue> list = List(side);
         int index = list.IndexGte(timestamp);
-        int count = index == -1 ? list.Count : index;
+        int count = index == -1
+            ? list.Count
+            : list[index].Timestamp == timestamp ? index + 1 : index;
 
         if (count > 0)
         {

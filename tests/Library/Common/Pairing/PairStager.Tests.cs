@@ -142,17 +142,25 @@ public class PairStagerTests : TestBase
     }
 
     [TestMethod]
-    public void RemoveBefore_KeepsTimestampAndLater()
+    public void RemoveThrough_KeepsLaterTimestamps()
     {
         PairStager stager = Filled(5);
 
-        stager.RemoveBefore(PairSide.Source, At(2));
+        stager.RemoveThrough(PairSide.Source, At(1));
         stager.Count(PairSide.Source).Should().Be(3);
         stager.TryGetPair(At(1), out _).Should().BeFalse();
         stager.TryGetPair(At(2), out _).Should().BeTrue();
 
+        // a timestamp between values removes the earlier ones only
+        stager.RemoveThrough(PairSide.Source, At(2).AddHours(12));
+        stager.Count(PairSide.Source).Should().Be(2);
+
+        // a timestamp before the oldest removes nothing
+        stager.RemoveThrough(PairSide.Source, At(-1));
+        stager.Count(PairSide.Source).Should().Be(2);
+
         // a timestamp past the newest removes everything
-        stager.RemoveBefore(PairSide.Source, At(9));
+        stager.RemoveThrough(PairSide.Source, At(9));
         stager.Count(PairSide.Source).Should().Be(0);
     }
 
