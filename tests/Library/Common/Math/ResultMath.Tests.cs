@@ -29,6 +29,28 @@ public class ResultMaths : TestBaseWithPrecision
     }
 
     [TestMethod]
+    public void PairwiseOperations_ChainedIndicatorComposition_MatchesHandLoop()
+    {
+        // MACD − EMA(MACD) + SMA, the composition requested in Discussion #977
+        IReadOnlyList<MacdResult> macd = Bars.ToMacd(12, 26, 9);
+        IReadOnlyList<EmaResult> macdEma = macd.ToEma(9);
+        IReadOnlyList<SmaResult> sma = Bars.ToSma(9);
+
+        IReadOnlyList<TimeValue> composed = macd.Minus(macdEma).Plus(sma);
+
+        double[] expected = [.. Enumerable.Range(0, Bars.Count)
+            .Select(i => macd[i].Value - macdEma[i].Value + sma[i].Value)];
+
+        Values(composed).Should().Equal(expected);
+        composed.Select(static x => x.Timestamp)
+            .Should().Equal(Bars.Select(static x => x.Timestamp));
+
+        // MACD warms up for 25 periods, then EMA(9) needs 8 more
+        composed.TakeWhile(static x => double.IsNaN(x.Value)).Should().HaveCount(33);
+        composed.Skip(33).Should().OnlyContain(static x => !double.IsNaN(x.Value));
+    }
+
+    [TestMethod]
     public void ScalarOperations_FixedAmount_ReturnExpectedValues()
     {
         List<TimeValue> a = Series(10, -4, double.NaN);

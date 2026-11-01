@@ -67,6 +67,10 @@ Result math utilities combine or transform chainable indicator results — any s
 IReadOnlyList<TimeValue> spread = bars.ToSma(10).Minus(bars.ToSma(20));
 IReadOnlyList<SmaResult> smoothed = spread.ToSma(5);
 
+// MACD less its own 9-period EMA, plus a 9-period SMA of price
+IReadOnlyList<MacdResult> macd = bars.ToMacd(12, 26, 9);
+IReadOnlyList<TimeValue> composite = macd.Minus(macd.ToEma(9)).Plus(bars.ToSma(9));
+
 // upper envelope 2.5% above the EMA
 IReadOnlyList<TimeValue> upper = bars.ToEma(20).PlusPercent(2.5);
 
