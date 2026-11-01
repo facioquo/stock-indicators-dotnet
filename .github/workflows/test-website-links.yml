@@ -1,4 +1,4 @@
-name: Website URLs
+name: Test website links
 
 on:
   workflow_dispatch:

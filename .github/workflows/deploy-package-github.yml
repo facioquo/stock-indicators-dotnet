@@ -1,4 +1,4 @@
-name: Deploy package (CI)
+name: Deploy package (GitHub Packages)
 
 ## CI Package Deployment
 # Automatically builds and publishes packages to GitHub Packages on every push to main or v* branches.

@@ -25,7 +25,7 @@ An alternate Python variant of this library is available at [python.stockindicat
 
 ## Attributions
 
-This NuGet library project is developed with support from [community contributors](/#contribute-to-help-others).
+This NuGet library project is developed with support from [community contributors](/#community-and-support).
 
 Our documentation, examples, and testing is additionally built upon the work of several excellent open-source projects and data providers.
 
