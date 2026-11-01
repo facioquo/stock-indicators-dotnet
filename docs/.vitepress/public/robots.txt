@@ -26,6 +26,9 @@ User-agent: Applebot-Extended
 User-agent: PerplexityBot
 User-agent: Amazonbot
 User-agent: CCBot
+User-agent: Bytespider
 User-agent: meta-externalagent
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+Allow: /
 
 Sitemap: https://dotnet.stockindicators.dev/sitemap.xml
