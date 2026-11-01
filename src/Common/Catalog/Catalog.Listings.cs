@@ -287,14 +287,14 @@ public static partial class Catalog
         _listings.Add(MgDynamic.SeriesListing);
         _listings.Add(MgDynamic.StreamListing);
 
+        // MIN-WITH (Min With Series)
+        _listings.Add(IndyMath.MinWithSeriesListing);
+
         // MINUS (Minus Amount)
         _listings.Add(IndyMath.MinusSeriesListing);
 
         // MINUS-SERIES (Minus Series)
         _listings.Add(IndyMath.MinusOtherSeriesListing);
-
-        // MIN-WITH (Min With Series)
-        _listings.Add(IndyMath.MinWithSeriesListing);
 
         // OBV (On Balance Volume)
         _listings.Add(Obv.BufferListing);
@@ -361,11 +361,6 @@ public static partial class Catalog
         _listings.Add(RocWb.StreamListing);
         _listings.Add(RocWb.BufferListing);
 
-        // Rolling Pivot Points
-        _listings.Add(RollingPivots.BufferListing);
-        _listings.Add(RollingPivots.SeriesListing);
-        _listings.Add(RollingPivots.StreamListing);
-
         // ROLLING-MAX (Rolling Max)
         _listings.Add(IndyMath.RollingMaxSeriesListing);
 
@@ -374,6 +369,11 @@ public static partial class Catalog
 
         // ROLLING-MIN (Rolling Min)
         _listings.Add(IndyMath.RollingMinSeriesListing);
+
+        // Rolling Pivot Points
+        _listings.Add(RollingPivots.BufferListing);
+        _listings.Add(RollingPivots.SeriesListing);
+        _listings.Add(RollingPivots.StreamListing);
 
         // RSI (Relative Strength Index)
         _listings.Add(Rsi.BufferListing);

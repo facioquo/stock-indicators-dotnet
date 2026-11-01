@@ -77,6 +77,11 @@ public class IndyMathSeriesTests : StaticSeriesTestBase
         Values(a.MaxWith(b)).Should().Equal(6, 8, 4, null);
         Values(a.MinWith(b)).Should().Equal(2, 0, -3, null);
 
+        // NaN in the other series also propagates to null
+        Values(b.MaxWith(a)).Should().Equal(6, 8, 4, null);
+        Values(b.MinWith(a)).Should().Equal(2, 0, -3, null);
+        Values(b.Minus(a)).Should().Equal(-4, -8, 7, null);
+
         a.Plus(b).Select(static x => x.Timestamp)
             .Should().Equal(a.Select(static x => x.Timestamp));
     }
