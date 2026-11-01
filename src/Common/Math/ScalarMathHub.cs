@@ -11,12 +11,13 @@ public class ScalarMathHub
     internal ScalarMathHub(
         IChainProvider<IReusable> provider,
         ScalarOperation operation,
-        double operand) : base(provider)
+        double operand,
+        string paramName) : base(provider)
     {
-        _kernel = new ScalarKernel(operation, operand);
+        _kernel = new ScalarKernel(operation, operand, paramName);
         Operation = operation;
         Operand = operand;
-        Name = _kernel.Name;
+        Name = ScalarKernel.FormatName(operation, operand);
 
         Reinitialize();
     }
@@ -58,7 +59,7 @@ public static partial class ResultMath
         double amount)
     {
         ArgumentNullException.ThrowIfNull(chainProvider);
-        return new(chainProvider, ScalarOperation.Plus, amount);
+        return new(chainProvider, ScalarOperation.Plus, amount, nameof(amount));
     }
 
     /// <summary>
@@ -74,7 +75,7 @@ public static partial class ResultMath
         double percentOffset)
     {
         ArgumentNullException.ThrowIfNull(chainProvider);
-        return new(chainProvider, ScalarOperation.PlusPercent, percentOffset);
+        return new(chainProvider, ScalarOperation.PlusPercent, percentOffset, nameof(percentOffset));
     }
 
     /// <summary>
@@ -90,7 +91,7 @@ public static partial class ResultMath
         double amount)
     {
         ArgumentNullException.ThrowIfNull(chainProvider);
-        return new(chainProvider, ScalarOperation.Minus, amount);
+        return new(chainProvider, ScalarOperation.Minus, amount, nameof(amount));
     }
 
     /// <summary>
@@ -106,7 +107,7 @@ public static partial class ResultMath
         double factor)
     {
         ArgumentNullException.ThrowIfNull(chainProvider);
-        return new(chainProvider, ScalarOperation.Times, factor);
+        return new(chainProvider, ScalarOperation.Times, factor, nameof(factor));
     }
 
     /// <summary>
@@ -122,6 +123,6 @@ public static partial class ResultMath
         double divisor)
     {
         ArgumentNullException.ThrowIfNull(chainProvider);
-        return new(chainProvider, ScalarOperation.DividedBy, divisor);
+        return new(chainProvider, ScalarOperation.DividedBy, divisor, nameof(divisor));
     }
 }

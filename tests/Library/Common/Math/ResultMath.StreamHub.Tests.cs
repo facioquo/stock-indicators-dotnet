@@ -255,6 +255,10 @@ public class ScalarMathHubTests : ResultMathHubTestBase<ScalarMathHub>
             .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("divisor");
         FluentActions.Invoking(() => barHub.ToPlusHub(double.NaN))
             .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("amount");
+        FluentActions.Invoking(() => barHub.ToTimesHub(double.NaN))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("factor");
+        FluentActions.Invoking(() => barHub.ToPlusPercentHub(double.NaN))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("percentOffset");
     }
 }
 
