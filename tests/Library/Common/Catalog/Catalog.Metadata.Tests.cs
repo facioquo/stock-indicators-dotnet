@@ -144,7 +144,7 @@ public class CatalogMetadataTests : TestBase
     /// </summary>
     /// <remarks>
     /// IndyMath Series methods read as arithmetic (<c>a.Minus(b).Plus(c)</c>) rather than
-    /// taking the <c>To</c> prefix; their BufferList and StreamHub factories keep it.
+    /// taking the <c>To</c> prefix, so the prefix rule exempts them.
     /// </remarks>
     /// <param name="listing">Catalog listing to check.</param>
     /// <returns><c>true</c> for an IndyMath Series operator.</returns>
