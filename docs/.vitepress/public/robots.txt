@@ -1,6 +1,6 @@
 # Stock Indicators for .NET documentation is open to search engines,
-# AI assistants, and model training alike (except Bytespider): current v3 guidance in AI
-# tools keeps developers off the superseded v2 API.
+# AI assistants, and model training alike, except Bytespider: current v3
+# guidance in AI tools keeps developers off the superseded v2 API.
 # Content Signals: https://contentsignals.org/
 
 User-agent: *
@@ -9,28 +9,6 @@ Allow: /agents/
 Allow: /*.md$
 Allow: /
 
-# Named AI crawlers, current and legacy tokens (Claude-Web, anthropic-ai),
-# because agent-readiness scanners look for explicit AI rules.
-User-agent: GPTBot
-User-agent: OAI-SearchBot
-User-agent: ChatGPT-User
-User-agent: ClaudeBot
-User-agent: Claude-User
-User-agent: Claude-SearchBot
-User-agent: Claude-Web
-User-agent: anthropic-ai
-User-agent: Google-Extended
-User-agent: GoogleOther
-User-agent: Google-CloudVertexBot
-User-agent: Applebot-Extended
-User-agent: PerplexityBot
-User-agent: Amazonbot
-User-agent: CCBot
-User-agent: meta-externalagent
-Content-Signal: search=yes, ai-input=yes, ai-train=yes
-Allow: /
-
-# Excluded from all content.
 User-agent: Bytespider
 Disallow: /
 

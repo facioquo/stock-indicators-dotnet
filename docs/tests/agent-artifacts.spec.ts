@@ -266,10 +266,9 @@ test.describe('Build output', () => {
   test('robots.txt allows AI agents and declares content signals', () => {
     const robots = read('robots.txt')
     expect(robots).toMatch(/^User-agent: \*$/m)
-    expect(robots).toMatch(/^User-agent: GPTBot$/m)
-    expect(robots).toMatch(/^User-agent: ClaudeBot$/m)
     expect(robots).toMatch(/^Content-Signal: search=yes, ai-input=yes, ai-train=yes$/m)
-    expect(robots).not.toMatch(/^Disallow: \/\s*$/m)
+    expect(robots).toMatch(/^User-agent: Bytespider\r?\nDisallow: \/$/m)
+    expect(robots.match(/^Disallow: \/\s*$/gm)).toHaveLength(1)
     expect(robots).toContain(`Sitemap: ${SITE_URL}/sitemap.xml`)
   })
 
