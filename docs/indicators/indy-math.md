@@ -55,7 +55,7 @@ A fixed number is always the right-hand operand.  An invalid fixed number or loo
 
 Fixed-amount and two-series methods need no warmup.  Rolling windows need at least `N` periods.
 
-`source` and `other` must have the same number of results with identical timestamps at every position, which holds for any two indicators calculated from the same bars.  A length or timestamp mismatch throws an `InvalidBarsException` rather than pairing values from different periods.  Series with different date ranges are not aligned for you: trim both to the same range first.  See [the Guide](/guide/getting-started#historical-bars) for more information.
+`source` and `other` must have the same number of results with identical timestamps at every position, which holds for any two indicators calculated from the same bars.  In the Series methods, a length or timestamp mismatch throws an `InvalidBarsException` rather than pairing values from different periods; the streaming forms skip the unmatched timestamp instead.  Series with different date ranges are not aligned for you: trim both to the same range first.  See [the Guide](/guide/getting-started#historical-bars) for more information.
 
 ## Response
 
@@ -64,7 +64,7 @@ IReadOnlyList<MathResult>
 ```
 
 - This method returns a time series of all available indicator values for the `source` provided.
-- It always returns the same number of elements as there are in the source series.
+- The Series method always returns the same number of elements as there are in the source series.
 - It does not return a single incremental indicator value.
 - A period is `null` where an input is `null`, such as an indicator warmup period, and where a two-series divisor is 0.  Rolling windows are also `null` for the first `N-1` periods and while the window holds a `null` value.
 
@@ -160,7 +160,7 @@ void OnFastReceived(IReusable value) => spread.AddSource(value);
 void OnSlowReceived(IReusable value) => spread.AddOther(value);
 ```
 
-A timestamp that only one series holds produces no result.  Each series must arrive in chronological order.
+A timestamp that only one series holds produces no result, where the Series method throws.  Each series must arrive in strictly increasing order: an older or equal timestamp on a side throws an `InvalidOperationException`, whatever `ThrowOnOutOfOrder` is set to.  Each side stages at most `MaxListSize` values, so a side that falls further behind than that loses the pairs the leading side has dropped.
 
 ::: warning 🚩 Two-series methods have no stream hub form
 `.Plus(other)`, `.Minus(other)`, `.Times(other)`, `.DividedBy(other)`, `.MaxWith(other)`, and `.MinWith(other)` have no `To{Method}Hub` form.  Use the buffer-style list, or the Series (batch) implementation with periodic recalculation instead.

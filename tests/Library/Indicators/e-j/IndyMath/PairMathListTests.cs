@@ -109,9 +109,30 @@ public class PairMathListTests : TestBase
     }
 
     [TestMethod]
+    public void OffsetRanges_SkipUnmatchedWhereSeriesThrows()
+    {
+        // the Series method rejects these inputs; the list pairs the overlap
+        IReadOnlyList<IReusable> late = Source.Skip(100).ToList();
+        IReadOnlyList<IReusable> early = Other.Take(400).ToList();
+
+        FluentActions.Invoking(() => late.Plus(early))
+            .Should().ThrowExactly<InvalidBarsException>();
+
+        PairMathList overlap = new(PairOperation.Plus, late, early);
+        overlap.Should().HaveCount(300);
+        overlap.IsExactly(Source.Skip(100).Take(300).ToList().Plus(Other.Skip(100).Take(300).ToList()));
+
+        PairMathList disjoint = new(PairOperation.Plus, Source.Skip(300).ToList(), Other.Take(300).ToList());
+        disjoint.Should().BeEmpty();
+    }
+
+    [TestMethod]
     public void OutOfOrderOnOneSide_Throws()
     {
         PairMathList list = new(PairOperation.Plus, Source.Take(10).ToList(), Other.Take(10).ToList());
+
+        // the check is not opt-in, unlike the inherited one
+        list.ThrowOnOutOfOrder.Should().BeFalse();
 
         FluentActions.Invoking(() => list.AddSource(Source[5]))
             .Should().ThrowExactly<InvalidOperationException>()
@@ -120,6 +141,14 @@ public class PairMathListTests : TestBase
         FluentActions.Invoking(() => list.AddOther(Other[9]))
             .Should().ThrowExactly<InvalidOperationException>()
             .WithMessage("*other timestamp*not after the last other timestamp*");
+
+        // an equal timestamp is a revision, which a BufferList cannot apply
+        FluentActions.Invoking(() => list.AddSource(Source[9]))
+            .Should().ThrowExactly<InvalidOperationException>();
+        FluentActions.Invoking(() => list.AddOther(Other[9].Timestamp, Other[9].Value))
+            .Should().ThrowExactly<InvalidOperationException>();
+
+        list.Should().HaveCount(10);
 
         // a value one side skipped cannot be added late; that needs a StreamHub
         PairMathList gapped = new(PairOperation.Plus);
@@ -162,16 +191,66 @@ public class PairMathListTests : TestBase
     }
 
     [TestMethod]
-    public void MaxListSize_BoundsTheLeadingSide()
+    public void PairedAdd_OutOfOrderOther_LeavesListUnchanged()
     {
+        PairMathList list = new(PairOperation.Plus);
+        list.Add(Source[0], Other[0]);
+        list.Add(Source[1], Other[1]);
+
+        FluentActions.Invoking(() => list.Add(Source[2], Other[1]))
+            .Should().ThrowExactly<InvalidOperationException>()
+            .WithMessage("*other timestamp*");
+
+        // the source side was not staged, so the corrected pair is accepted
+        list.Should().HaveCount(2);
+        list.Add(Source[2], Other[2]);
+        list.Should().HaveCount(3);
+        list.IsExactly(Source.Take(3).ToList().Plus(Other.Take(3).ToList()));
+    }
+
+    [TestMethod]
+    public void MaxListSize_LaggingSideStopsPartway_LosesDroppedPairs()
+    {
+        // the source runs 100 values ahead, so only its newest 50 stay staged;
+        // the other side then supplies 60, of which the first 50 find nothing to pair
         PairMathList list = new(PairOperation.MinWith) { MaxListSize = 50 };
-
-        // the source runs 100 values ahead; only its newest 50 stay staged
         list.AddSource(Source.Take(100).ToList());
-        list.AddOther(Other.Take(100).ToList());
+        list.AddOther(Other.Take(60).ToList());
 
-        list.Should().HaveCount(50);
-        list.IsExactly(Source.Take(100).ToList().MinWith(Other.Take(100).ToList()).TakeLast(50));
+        list.Should().HaveCount(10);
+        list.IsExactly(Source.Skip(50).Take(10).ToList().MinWith(Other.Skip(50).Take(10).ToList()));
+
+        // the Series method keeps every pair
+        Source.Take(60).ToList().MinWith(Other.Take(60).ToList()).Should().HaveCount(60);
+    }
+
+    [TestMethod]
+    public void MaxListSize_LoweredAfterStaging_AppliesOnNextAdd()
+    {
+        PairMathList list = new(PairOperation.Plus);
+        list.AddSource(Source.Take(100).ToList());
+
+        // the smaller limit trims the source side as soon as it is added to again
+        list.MaxListSize = 20;
+        list.AddSource(Source.Skip(100).Take(10).ToList());
+        list.AddOther(Other.Take(110).ToList());
+
+        list.Should().HaveCount(20);
+        list.IsExactly(Source.Skip(90).Take(20).ToList().Plus(Other.Skip(90).Take(20).ToList()));
+    }
+
+    [TestMethod]
+    public void DividedBy_ZeroOnEitherSide_MatchesSeriesExactly()
+    {
+        IReadOnlyList<IReusable> source = WithZero(WithZero(Source, 200), 350);
+        IReadOnlyList<IReusable> other = WithZero(WithZero(Other, 300), 350);
+
+        PairMathList list = source.ToDividedByList(other);
+
+        list.IsExactly(source.DividedBy(other));
+        list[200].Result.Should().Be(0);   // 0 ÷ x
+        list[300].Result.Should().BeNull(); // x ÷ 0
+        list[350].Result.Should().BeNull(); // 0 ÷ 0
     }
 
     [TestMethod]
@@ -205,7 +284,14 @@ public class PairMathListTests : TestBase
         FluentActions.Invoking(() => list.Add(Source[0], null!))
             .Should().ThrowExactly<ArgumentNullException>();
         FluentActions.Invoking(static () => Source.ToPlusList((IReadOnlyList<IReusable>)null!))
-            .Should().ThrowExactly<ArgumentNullException>();
+            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("other");
+        FluentActions.Invoking(static () => ((IReadOnlyList<IReusable>)null!).ToPlusList(Other))
+            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("source");
+
+        // a null element in a batch is reported, not dereferenced
+        List<IReusable> withNull = [Source[0], null!];
+        FluentActions.Invoking(() => list.AddSource(withNull))
+            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("values");
     }
 
     private static void AssertEveryOperation(Action<PairMathList> feed)
