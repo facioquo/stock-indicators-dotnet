@@ -1,4 +1,4 @@
-name: Examples
+name: Test examples
 
 on:
   push:
