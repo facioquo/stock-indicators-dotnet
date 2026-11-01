@@ -100,9 +100,30 @@ Rolling windows include the current period and return `NaN` for the first `lookb
 Methods that combine two series require both to hold the same number of results with identical timestamps at every position, which holds for any two indicators calculated from the same bars. A length or timestamp mismatch throws an `InvalidBarsException` rather than pairing values from different periods. Series with different date ranges are not aligned for you: trim both to the same range first, and remove warmup periods from neither or both.
 :::
 
-::: info Series only
-Result math runs on complete result lists. It has no BufferList or StreamHub form.
-:::
+### Incremental buffer lists
+
+The single-series methods also come as [BufferList](/guide/styles/buffer) types that compute each result as you add a value, and match the Series results exactly. Pairwise methods that combine two series are available only as Series.
+
+| Series | BufferList |
+| ------ | ---------- |
+| `.Plus(amount)`, `.Minus(amount)`, `.Times(factor)`, `.DividedBy(divisor)`, `.PlusPercent(percentOffset)` | `ScalarMathList`, from `.ToPlusList(amount)`, `.ToMinusList(amount)`, `.ToTimesList(factor)`, `.ToDividedByList(divisor)`, or `.ToPlusPercentList(percentOffset)` |
+| `.RollingMax(lookbackPeriods)` | `RollingMaxList`, from `.ToRollingMaxList(lookbackPeriods)` |
+| `.RollingMin(lookbackPeriods)` | `RollingMinList`, from `.ToRollingMinList(lookbackPeriods)` |
+| `.RollingMedian(lookbackPeriods)` | `RollingMedianList`, from `.ToRollingMedianList(lookbackPeriods)` |
+
+```csharp
+// highest close over the last 20 periods, updated per bar
+RollingMaxList highest = new(lookbackPeriods: 20);
+
+foreach (Bar bar in bars)
+{
+  highest.Add(bar);
+  double latest = highest[^1].Value;
+}
+
+// or construct a scalar list directly
+ScalarMathList upper = new(ScalarOperation.PlusPercent, 2.5, bars.ToEma(20));
+```
 
 ## Remove warmup periods
 
