@@ -44,8 +44,10 @@ internal sealed class PairHub
         _otherObserver = new OtherObserver(this);
         Name = "PAIR";
 
-        // follow the other side first, then stage its history: a value that
-        // arrives in between is staged twice, which Set makes idempotent
+        // follow the other side first, then stage its history: an appended value that
+        // arrives in between is staged twice, which Set makes idempotent; a correction
+        // or removal in between is not repaired, so build the hub while the other
+        // provider is not being driven from another thread
         _otherSubscription = other.Subscribe(_otherObserver);
 
         // the snapshot takes the other provider's lock, so take it before this hub's

@@ -36,8 +36,8 @@ Extend this pattern for a new quantizer instead of writing bespoke bucketing.
 - The source provider is the hub's `Provider`. A private observer follows the other provider and stages its values in the hub. The constructor copies the other provider's `Snapshot()` once, before taking the hub's lock; after that the hub reads the other provider's cache only inside that provider's own notification.
 - Never index the other provider's cache from `ToIndicator`. The original `PairsHub` did, and #1824 removed it because removals, re-adds, and rollbacks could not be kept consistent across the two caches (see #1827).
 - The hub's own `PairedValue` cache gives random access to paired history, so a two-series hub whose formula spans a lookback window, as Beta, Correlation, and PRS do, reads pairs from its `ProviderCache` instead of two caches.
-- Lock order stays provider first, then hub: each side's notification takes the hub's `CacheLock`, and the hub never takes either provider's lock.
-- Both providers must be driven from one thread at a time, as they are when both descend from one `BarHub`, because a rebuild from either side replays the source provider's cache.
+- Lock order stays provider first, then hub: each side's notification takes the hub's `CacheLock`, and the hub never takes a provider's lock while holding its own `CacheLock`.
+- Both providers must be driven from one thread at a time, as they are when both descend from one `BarHub`, because a rebuild from either side replays the source provider's cache. That includes construction: a correction or removal on the other side between the subscription and the staging of its snapshot is not repaired.
 - Each side keeps at most `MaxCacheSize` staged values, oldest dropped first. Upstream prune notifications from the other side do not trim the staged values, so a later rebuild can still pair them.
 - `Unsubscribe()` releases the other provider through `ReleaseLinkedProviders()`.
 
