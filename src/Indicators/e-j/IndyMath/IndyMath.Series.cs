@@ -195,7 +195,7 @@ public static partial class IndyMath
         int lookbackPeriods)
     {
         ArgumentNullException.ThrowIfNull(source);
-        return source.Rolling(new RollingExtremeWindow(lookbackPeriods, isMax: true).Add);
+        return source.Map(new RollingExtremeWindow(lookbackPeriods, isMax: true).Add);
     }
 
     /// <summary>
@@ -214,7 +214,7 @@ public static partial class IndyMath
         int lookbackPeriods)
     {
         ArgumentNullException.ThrowIfNull(source);
-        return source.Rolling(new RollingExtremeWindow(lookbackPeriods, isMax: false).Add);
+        return source.Map(new RollingExtremeWindow(lookbackPeriods, isMax: false).Add);
     }
 
     /// <summary>
@@ -238,7 +238,7 @@ public static partial class IndyMath
         int lookbackPeriods)
     {
         ArgumentNullException.ThrowIfNull(source);
-        return source.Rolling(new RollingMedianWindow(lookbackPeriods).Add);
+        return source.Map(new RollingMedianWindow(lookbackPeriods).Add);
     }
 
     /// <summary>
@@ -253,17 +253,7 @@ public static partial class IndyMath
         ScalarKernel kernel)
     {
         ArgumentNullException.ThrowIfNull(source);
-
-        int length = source.Count;
-        List<MathResult> results = new(length);
-
-        for (int i = 0; i < length; i++)
-        {
-            IReusable s = source[i];
-            results.Add(new MathResult(s.Timestamp, kernel.Apply(s.Value).NaN2Null()));
-        }
-
-        return results;
+        return source.Map(kernel.Apply);
     }
 
     /// <summary>
@@ -315,14 +305,14 @@ public static partial class IndyMath
     }
 
     /// <summary>
-    /// Advances a rolling window over every value in a series.
+    /// Maps every value in a series through a function, keeping each timestamp.
     /// </summary>
     /// <param name="source">Chainable results, time sorted.</param>
-    /// <param name="advance">Window step that takes the next value and returns the window result.</param>
-    /// <returns>Time series of window results.</returns>
-    private static List<MathResult> Rolling(
+    /// <param name="map">Function from the next value to its result; a rolling window's step is one.</param>
+    /// <returns>Time series of results.</returns>
+    private static List<MathResult> Map(
         this IReadOnlyList<IReusable> source,
-        Func<double, double> advance)
+        Func<double, double> map)
     {
         int length = source.Count;
         List<MathResult> results = new(length);
@@ -330,7 +320,7 @@ public static partial class IndyMath
         for (int i = 0; i < length; i++)
         {
             IReusable s = source[i];
-            results.Add(new MathResult(s.Timestamp, advance(s.Value).NaN2Null()));
+            results.Add(new MathResult(s.Timestamp, map(s.Value).NaN2Null()));
         }
 
         return results;
