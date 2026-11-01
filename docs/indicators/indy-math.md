@@ -103,11 +103,18 @@ IReadOnlyList<MathResult> highestHigh = bars.ToBarPart(CandlePart.High).RollingM
 Results can be further processed on `Result` with additional chain-enabled indicators.
 
 ```csharp
-// example
-var results = bars
+// RSI of the spread between a fast and a slow moving average
+IReadOnlyList<RsiResult> spreadRsi = bars
     .ToSma(10)
     .Minus(bars.ToSma(20))
-    .ToSma(5);
+    .ToRsi(14);
+
+// percent below the 20-period closing high, smoothed by a 5-period EMA
+IReadOnlyList<EmaResult> drawdown = bars
+    .DividedBy(bars.RollingMax(20))
+    .Minus(1)
+    .Times(100)
+    .ToEma(5);
 ```
 
 See [Chaining indicators](/guide/chaining) for more.
