@@ -233,8 +233,13 @@ public class PairMathListTests : TestBase
         // the smaller limit trims the source side as soon as it is added to again
         list.MaxListSize = 20;
         list.AddSource(Source.Skip(100).Take(10).ToList());
-        list.AddOther(Other.Take(110).ToList());
+        list.AddOther(Other.Take(60).ToList());
 
+        // only source timestamps 90 to 109 stay staged, so none of the 60 find a partner;
+        // without the shrink all 60 would pair and the result list would hold 20
+        list.Should().BeEmpty();
+
+        list.AddOther(Other.Skip(60).Take(50).ToList());
         list.Should().HaveCount(20);
         list.IsExactly(Source.Skip(90).Take(20).ToList().Plus(Other.Skip(90).Take(20).ToList()));
     }

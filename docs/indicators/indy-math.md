@@ -55,7 +55,7 @@ A fixed number is always the right-hand operand.  An invalid fixed number or loo
 
 Fixed-amount and two-series methods need no warmup.  Rolling windows need at least `N` periods.
 
-`source` and `other` must have the same number of results with identical timestamps at every position, which holds for any two indicators calculated from the same bars.  In the Series methods, a length or timestamp mismatch throws an `InvalidBarsException` rather than pairing values from different periods; the streaming forms skip the unmatched timestamp instead.  Series with different date ranges are not aligned for you: trim both to the same range first.  See [the Guide](/guide/getting-started#historical-bars) for more information.
+`source` and `other` must have the same number of results with identical timestamps at every position, which holds for any two indicators calculated from the same bars.  In the Series methods, a length or timestamp mismatch throws an `InvalidBarsException` rather than pairing values from different periods; the buffer-style list skips the unmatched timestamp instead.  Series with different date ranges are not aligned for you: trim both to the same range first.  See [the Guide](/guide/getting-started#historical-bars) for more information.
 
 ## Response
 
