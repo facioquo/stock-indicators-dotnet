@@ -1,6 +1,6 @@
 # Stock Indicators for .NET documentation is open to search engines,
-# AI assistants, and model training alike, except Bytespider: current v3
-# guidance in AI tools keeps developers off the superseded v2 API.
+# AI assistants, and model training alike: current v3 guidance in AI
+# tools keeps developers off the superseded v2 API.
 # Content Signals: https://contentsignals.org/
 
 User-agent: *
@@ -8,8 +8,5 @@ Content-Signal: search=yes, ai-input=yes, ai-train=yes
 Allow: /agents/
 Allow: /*.md$
 Allow: /
-
-User-agent: Bytespider
-Disallow: /
 
 Sitemap: https://dotnet.stockindicators.dev/sitemap.xml

@@ -267,8 +267,7 @@ test.describe('Build output', () => {
     const robots = read('robots.txt')
     expect(robots).toMatch(/^User-agent: \*$/m)
     expect(robots).toMatch(/^Content-Signal: search=yes, ai-input=yes, ai-train=yes$/m)
-    expect(robots).toMatch(/^User-agent: Bytespider\r?\nDisallow: \/$/m)
-    expect(robots.match(/^Disallow: \/\s*$/gm)).toHaveLength(1)
+    expect(robots).not.toMatch(/^Disallow: \/\s*$/m)
     expect(robots).toContain(`Sitemap: ${SITE_URL}/sitemap.xml`)
   })
 
