@@ -81,6 +81,40 @@ public abstract class ResultMathHubTestBase<THub> : StreamHubTestBase, ITestChai
     }
 
     [TestMethod]
+    public void WithCachePruning_CorrectionWithinRetainedWindow_MatchesSeriesExactly()
+    {
+        // the closest correction to the pruned head whose replay window is still fully
+        // retained; nearer corrections hit the documented rollback-after-prune limit
+        const int maxCacheSize = 50;
+        const int totalBars = 100;
+        const int retainedOffset = 20;
+
+        List<Bar> bars = [.. Bars.Take(totalBars)];
+
+        BarHub barHub = new(maxCacheSize);
+        THub observer = NewHub(barHub);
+        barHub.Add(bars);
+
+        int correctionIndex = totalBars - maxCacheSize + retainedOffset;
+        Bar original = bars[correctionIndex];
+        Bar corrected = original with {
+            Open = original.Open * 1.05m,
+            High = original.High * 1.05m,
+            Low = original.Low * 1.05m,
+            Close = original.Close * 1.05m
+        };
+
+        barHub.Add(corrected);
+        bars[correctionIndex] = corrected;
+
+        observer.Results.Should().HaveCount(maxCacheSize);
+        observer.Results.IsExactly(Series(bars).TakeLast(maxCacheSize).ToList());
+
+        observer.Unsubscribe();
+        barHub.EndTransmission();
+    }
+
+    [TestMethod]
     public void ChainObserver_ChainedProvider_MatchesSeriesExactly()
     {
         const int smaPeriods = 5;
@@ -281,9 +315,10 @@ public class RollingMaxHubTests : ResultMathHubTestBase<RollingMaxHub>
         FluentActions.Invoking(static () => new BarHub().ToRollingMaxHub(0))
             .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("lookbackPeriods");
 
-        // the window must fit in the provider's cache
+        // the window must fit in the provider's cache, and may fill it exactly
         FluentActions.Invoking(static () => new BarHub(50).ToRollingMaxHub(51))
             .Should().ThrowExactly<ArgumentOutOfRangeException>();
+        new BarHub(50).ToRollingMaxHub(50).LookbackPeriods.Should().Be(50);
     }
 }
 
@@ -303,6 +338,16 @@ public class RollingMinHubTests : ResultMathHubTestBase<RollingMinHub>
     [TestMethod]
     public void Properties_AfterConstruction_ReflectArguments()
         => new BarHub().ToRollingMinHub(14).LookbackPeriods.Should().Be(14);
+
+    [TestMethod]
+    public void Exceptions_InvalidLookback_ThrowsArgumentOutOfRangeException()
+    {
+        FluentActions.Invoking(static () => new BarHub().ToRollingMinHub(0))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("lookbackPeriods");
+        FluentActions.Invoking(static () => new BarHub(50).ToRollingMinHub(51))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>();
+        new BarHub(50).ToRollingMinHub(50).LookbackPeriods.Should().Be(50);
+    }
 }
 
 [TestClass]
@@ -317,6 +362,16 @@ public class RollingMedianHubTests : ResultMathHubTestBase<RollingMedianHub>
 
     protected override IReadOnlyList<TimeValue> Series(IReadOnlyList<IReusable> source)
         => source.RollingMedian(lookbackPeriods);
+
+    [TestMethod]
+    public void Exceptions_InvalidLookback_ThrowsArgumentOutOfRangeException()
+    {
+        FluentActions.Invoking(static () => new BarHub().ToRollingMedianHub(0))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("lookbackPeriods");
+        FluentActions.Invoking(static () => new BarHub(50).ToRollingMedianHub(51))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>();
+        new BarHub(50).ToRollingMedianHub(50).LookbackPeriods.Should().Be(50);
+    }
 
     [TestMethod]
     public void OddLookback_StreamedBars_MatchesSeriesExactly()
