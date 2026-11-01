@@ -1,13 +1,13 @@
-name: Refresh chart snapshot
+name: Regenerate chart snapshots
 
 on:
   schedule:
     - cron: "0 6 1 * *"
   workflow_dispatch:
 
+# The pull request is written with a facioquobo App token, so GITHUB_TOKEN only reads.
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
   packages: read
 
 concurrency:
@@ -19,8 +19,8 @@ env:
   NODE_VERSION: 24
 
 jobs:
-  refresh:
-    name: Regenerate offline chart snapshot
+  regenerate:
+    name: Regenerate offline chart snapshots
     runs-on: ubuntu-latest
     timeout-minutes: 20
     defaults:
@@ -54,26 +54,48 @@ jobs:
       - name: Regenerate snapshot
         run: pnpm run snapshot:charts
 
-      # A pull request opened with GITHUB_TOKEN triggers no workflows, so the
-      # snapshot is checked here before it is proposed.
+      # Checked before the pull request opens, so a broken snapshot is never proposed.
       - name: Install Playwright browser
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Test offline chart snapshot
         run: pnpm run test:offline
 
+      # Minted after the tests, so its one-hour life covers only the pull request. With no
+      # owner, the token covers this repository alone; these two permissions bound it.
+      # A pull request opened as the App, unlike one opened with GITHUB_TOKEN, runs CI.
+      - name: Mint facioquobo token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.FACIOQUOBO_CLIENT_ID }}
+          private-key: ${{ secrets.FACIOQUOBO_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
+      - name: Resolve facioquobo commit identity
+        id: app-user
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
+        run: |
+          user_id=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)
+          echo "identity=${APP_SLUG}[bot] <${user_id}+${APP_SLUG}[bot]@users.noreply.github.com>" >> "$GITHUB_OUTPUT"
+
       - name: Create pull request
         uses: peter-evans/create-pull-request@v8
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
+          author: ${{ steps.app-user.outputs.identity }}
+          committer: ${{ steps.app-user.outputs.identity }}
           add-paths: docs/.vitepress/public/data/chart-api
-          commit-message: "chore: Refresh chart snapshot"
-          title: "chore: Refresh chart snapshot"
+          commit-message: "chore: Regenerate chart snapshots"
+          title: "chore: Regenerate chart snapshots"
           body: |
             Regenerates the offline chart snapshot from the live chart API with `pnpm run snapshot:charts`.
 
             The snapshot is the data the docs charts fall back to when the API is unreachable. Review the diff for unexpected indicator changes.
 
             Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          branch: refresh-chart-snapshot
+          branch: regenerate-chart-snapshots
           delete-branch: true

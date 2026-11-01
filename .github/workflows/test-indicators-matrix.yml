@@ -1,4 +1,4 @@
-name: Test Indicators (matrix)
+name: Test indicators (matrix)
 
 on:
   push:
