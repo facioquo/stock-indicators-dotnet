@@ -121,4 +121,4 @@ See [Chaining indicators](/guide/chaining) for more.
 
 ## Streaming
 
-Streaming is not supported for this indicator.  The two-series methods require a second synchronized series, which cannot be expressed in the single-series streaming model.  Use the Series (batch) implementation with periodic recalculation instead.
+Streaming is not supported for these methods yet.  The fixed-amount and rolling methods are Series-only so far, and the two-series methods require a second synchronized series, which cannot be expressed in the single-series streaming model.  Use the Series (batch) implementation with periodic recalculation instead.
