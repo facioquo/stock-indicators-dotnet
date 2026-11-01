@@ -27,6 +27,17 @@ This folder holds the streaming framework (`StreamHub/`, `BufferLists/`), the ca
 
 Extend this pattern for a new quantizer instead of writing bespoke bucketing.
 
+## Two-series pairing
+
+`PairHub` (`StreamHub/PairHub.cs`) streams two chain providers as one `PairedValue` series, and `PairStager` (`Pairing/PairStager.cs`) is the matching kernel it shares with two-series buffer lists.
+
+- Pairs match on timestamp only. A timestamp that only one side holds produces no result, never a pair with a neighbor; a late value for it re-pairs through the usual rebuild.
+- The source provider is the hub's `Provider`. A private observer follows the other provider and stages its values in the hub, so the hub never reads the other provider's cache outside that provider's own notification.
+- Lock order stays provider first, then hub: each side's notification takes the hub's `CacheLock`, and the hub never takes either provider's lock.
+- Both providers must be driven from one thread at a time, as they are when both descend from one `BarHub`, because a rebuild from either side replays the source provider's cache.
+- Each side keeps at most `MaxCacheSize` staged values, oldest dropped first. Upstream prune notifications from the other side do not trim the staged values, so a later rebuild can still pair them.
+- `Unsubscribe()` releases the other provider through `ReleaseLinkedProviders()`.
+
 ## Thread safety
 
 `StreamHub<TIn, TOut>` (`StreamHub/StreamHub.cs`) holds the private `CacheLock` monitor for every cache mutation.
