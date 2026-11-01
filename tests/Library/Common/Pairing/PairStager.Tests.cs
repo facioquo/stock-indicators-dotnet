@@ -99,6 +99,28 @@ public class PairStagerTests : TestBase
     }
 
     [TestMethod]
+    public void MaxCount_Lowered_AppliesOnNextSet()
+    {
+        PairStager stager = new(10);
+
+        for (int i = 0; i < 5; i++)
+        {
+            stager.Set(PairSide.Source, At(i), i);
+        }
+
+        stager.MaxCount = 2;
+        stager.MaxCount.Should().Be(2);
+        stager.Count(PairSide.Source).Should().Be(5);
+
+        stager.Set(PairSide.Source, At(5), 5);
+        stager.Count(PairSide.Source).Should().Be(2);
+        stager.Last(PairSide.Source).Should().Be(At(5));
+
+        FluentActions.Invoking(() => stager.MaxCount = 0)
+            .Should().ThrowExactly<ArgumentOutOfRangeException>();
+    }
+
+    [TestMethod]
     public void Last_EmptySide_ReturnsNull()
     {
         PairStager stager = new(10);

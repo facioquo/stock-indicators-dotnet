@@ -31,16 +31,24 @@ internal sealed class PairStager
 {
     private readonly PruningList<TimeValue> _source = new();
     private readonly PruningList<TimeValue> _other = new();
-    private readonly int _maxCount;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PairStager"/> class.
     /// </summary>
     /// <param name="maxCount">Most values each side keeps.</param>
-    internal PairStager(int maxCount)
+    internal PairStager(int maxCount) => MaxCount = maxCount;
+
+    /// <summary>
+    /// Gets or sets the most values each side keeps; a smaller limit applies on the next <see cref="Set"/>.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the value is less than 1.</exception>
+    internal int MaxCount
     {
-        ArgumentOutOfRangeException.ThrowIfLessThan(maxCount, 1);
-        _maxCount = maxCount;
+        get;
+        set {
+            ArgumentOutOfRangeException.ThrowIfLessThan(value, 1, "maxCount");
+            field = value;
+        }
     }
 
     /// <summary>
@@ -77,9 +85,9 @@ internal sealed class PairStager
         {
             list.Add(item);
 
-            if (list.Count > _maxCount)
+            if (list.Count > MaxCount)
             {
-                list.RemoveRange(0, list.Count - _maxCount);
+                list.RemoveRange(0, list.Count - MaxCount);
             }
 
             return;
@@ -95,9 +103,9 @@ internal sealed class PairStager
         {
             list.Insert(index, item);
 
-            if (list.Count > _maxCount)
+            if (list.Count > MaxCount)
             {
-                list.RemoveRange(0, list.Count - _maxCount);
+                list.RemoveRange(0, list.Count - MaxCount);
             }
         }
     }
