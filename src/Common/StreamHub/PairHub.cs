@@ -48,9 +48,12 @@ internal sealed class PairHub
         // arrives in between is staged twice, which Set makes idempotent
         _otherSubscription = other.Subscribe(_otherObserver);
 
+        // the snapshot takes the other provider's lock, so take it before this hub's
+        IReadOnlyList<IReusable> history = other.Snapshot();
+
         lock (CacheLock)
         {
-            foreach (IReusable item in other.Snapshot())
+            foreach (IReusable item in history)
             {
                 _stager.Set(PairSide.Other, item.Timestamp, item.Value);
             }

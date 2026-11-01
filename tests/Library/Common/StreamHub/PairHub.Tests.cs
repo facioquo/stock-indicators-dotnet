@@ -196,9 +196,85 @@ public class PairHubTests : TestBase
             source.Add(Feed[i]);
         }
 
+        // the prune rule keeps MaxCacheSize - 1 after each trim
         pair.MaxCacheSize.Should().Be(50);
-        pair.Results.Should().HaveCountLessThanOrEqualTo(50);
+        pair.Results.Count.Should().BeInRange(49, 50);
+        pair.Results[^1].Timestamp.Should().Be(Feed[^1].Timestamp);
         pair.Results.IsExactly(Join(Feed, Feed).TakeLast(pair.Results.Count));
+
+        source.EndTransmission();
+        other.EndTransmission();
+    }
+
+    [TestMethod]
+    public void Pruning_OtherCacheSmaller_LateArrivalRepairsBeyondOtherCache()
+    {
+        // the other provider prunes to 50, but the hub stages up to the source's 120,
+        // so a source rebuild can still pair timestamps the other provider no longer holds
+        const int lateIndex = 120;
+
+        BarHub source = new(120);
+        BarHub other = new(50);
+        PairHub pair = new(source, other);
+
+        for (int i = 0; i < TotalBars; i++)
+        {
+            other.Add(Feed[i]);
+
+            if (i != lateIndex)
+            {
+                source.Add(Feed[i]);
+            }
+        }
+
+        other.Results[0].Timestamp.Should().BeAfter(Feed[lateIndex].Timestamp);
+        pair.Results.Should().NotContain(x => x.Timestamp == Feed[lateIndex].Timestamp);
+
+        source.Add(Feed[lateIndex]);
+
+        pair.Results.Should().Contain(x => x.Timestamp == Feed[lateIndex].Timestamp);
+        pair.Results.Count.Should().BeInRange(pair.MaxCacheSize - 1, pair.MaxCacheSize);
+        pair.Results[^1].Timestamp.Should().Be(Feed[^1].Timestamp);
+        pair.Results.IsExactly(Join(Feed, Feed).TakeLast(pair.Results.Count));
+
+        source.EndTransmission();
+        other.EndTransmission();
+    }
+
+    [TestMethod]
+    public void Diamond_RootLateArrival_MatchesSeriesExactly()
+        => AssertDiamondMutation(static (root, feed) =>             // the skipped bar arrives last
+            root.Add(feed[SkipIndex]), skipOnFeed: true);
+
+    [TestMethod]
+    public void Diamond_RootRemoval_MatchesSeriesExactly()
+        => AssertDiamondMutation(static (root, feed) => {
+            root.RemoveAt(SkipIndex);
+            feed.RemoveAt(SkipIndex);
+        });
+
+    [TestMethod]
+    public void Diamond_RootCorrection_MatchesSeriesExactly()
+        => AssertDiamondMutation(static (root, feed) => {
+            Bar corrected = feed[SkipIndex] with { Close = feed[SkipIndex].Close * 1.05m };
+            root.Add(corrected);
+            feed[SkipIndex] = corrected;
+        });
+
+    [TestMethod]
+    public void OtherRemovesNewest_RemovesPair()
+    {
+        BarHub source = new();
+        BarHub other = new();
+        PairHub pair = new(source, other);
+        source.Add(Feed);
+        other.Add(Feed);
+
+        // nothing is left to re-stage after the removed timestamp
+        other.RemoveAt(TotalBars - 1);
+
+        pair.Results.Should().HaveCount(TotalBars - 1);
+        pair.Results.IsExactly(Join(Feed, WithoutIndex(TotalBars - 1)));
 
         source.EndTransmission();
         other.EndTransmission();
@@ -282,6 +358,55 @@ public class PairHubTests : TestBase
         pair.ToString().Should().Be("PAIR");
 
         barHub.EndTransmission();
+    }
+
+    /// <summary>
+    /// Applies one root mutation to a diamond, with the source side subscribed
+    /// first and then the other side first, and compares each with the oracle.
+    /// One root change reaches the hub twice, once per side, so the end state
+    /// must not depend on which side rebuilds first.
+    /// </summary>
+    private static void AssertDiamondMutation(Action<BarHub, List<Bar>> mutate, bool skipOnFeed = false)
+    {
+        foreach (bool otherFirst in new[] { false, true })
+        {
+            BarHub root = new();
+            SmaHub sma;
+            EmaHub ema;
+
+            if (otherFirst)
+            {
+                ema = root.ToEmaHub(10);
+                sma = root.ToSmaHub(5);
+            }
+            else
+            {
+                sma = root.ToSmaHub(5);
+                ema = root.ToEmaHub(10);
+            }
+
+            PairHub pair = new(sma, ema);
+            List<Bar> feed = [.. Feed];
+
+            for (int i = 0; i < TotalBars; i++)
+            {
+                if (skipOnFeed && i == SkipIndex)
+                {
+                    continue;
+                }
+
+                root.Add(feed[i]);
+            }
+
+            IReadOnlyList<PairedValue> before = pair.Snapshot();
+            mutate(root, feed);
+
+            // the mutation must change the output, or the replay goes unchecked
+            pair.Results.Should().NotEqual(before);
+            pair.Results.IsExactly(Join(feed.ToSma(5), feed.ToEma(10)), $"otherFirst={otherFirst}");
+
+            root.EndTransmission();
+        }
     }
 
     private static void AssertTwoRoots(Action<BarHub, BarHub, Bar> feedOne)
