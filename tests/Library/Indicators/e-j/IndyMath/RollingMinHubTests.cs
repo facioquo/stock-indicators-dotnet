@@ -89,14 +89,18 @@ public class RollingMinHubTests : StreamHubTestBase, ITestChainObserver, ITestCh
         const int correctionIndex = totalBars - maxCacheSize + retainedOffset;
         Bar original = bars[correctionIndex];
         Bar corrected = original with {
-            Open = original.Open * 1.05m,
-            High = original.High * 1.05m,
-            Low = original.Low * 1.05m,
-            Close = original.Close * 1.05m
+            Open = original.Open * 0.95m,
+            High = original.High * 0.95m,
+            Low = original.Low * 0.95m,
+            Close = original.Close * 0.95m
         };
 
         barHub.Add(corrected);
         bars[correctionIndex] = corrected;
+
+        // the correction must change the retained output, or the replay goes unchecked
+        Series(bars).TakeLast(maxCacheSize)
+            .Should().NotEqual(Series(Bars.Take(totalBars).ToList()).TakeLast(maxCacheSize));
 
         observer.Results.Should().HaveCount(maxCacheSize);
         observer.Results.IsExactly(Series(bars).TakeLast(maxCacheSize).ToList());
@@ -205,10 +209,10 @@ public class RollingMinHubTests : StreamHubTestBase, ITestChainObserver, ITestCh
         List<Bar> bars = [.. Bars];
         Bar original = bars[correctionIndex];
         Bar corrected = original with {
-            Open = original.Open * 1.05m,
-            High = original.High * 1.05m,
-            Low = original.Low * 1.05m,
-            Close = original.Close * 1.05m
+            Open = original.Open * 0.95m,
+            High = original.High * 0.95m,
+            Low = original.Low * 0.95m,
+            Close = original.Close * 0.95m
         };
 
         BarHub barHub = new();
@@ -218,6 +222,10 @@ public class RollingMinHubTests : StreamHubTestBase, ITestChainObserver, ITestCh
         barHub.Add(corrected);
 
         bars[correctionIndex] = corrected;
+
+        // the correction must change the output, or the replay goes unchecked
+        Series(bars).Should().NotEqual(Series(Bars));
+
         observer.Results.Should().HaveCount(barsCount);
         observer.Results.IsExactly(Series(bars));
 

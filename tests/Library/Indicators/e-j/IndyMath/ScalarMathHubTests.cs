@@ -96,6 +96,10 @@ public class ScalarMathHubTests : StreamHubTestBase, ITestChainObserver, ITestCh
         barHub.Add(corrected);
         bars[correctionIndex] = corrected;
 
+        // the correction must change the retained output, or the replay goes unchecked
+        Series(bars).TakeLast(maxCacheSize)
+            .Should().NotEqual(Series(Bars.Take(totalBars).ToList()).TakeLast(maxCacheSize));
+
         observer.Results.Should().HaveCount(maxCacheSize);
         observer.Results.IsExactly(Series(bars).TakeLast(maxCacheSize).ToList());
 
@@ -216,6 +220,10 @@ public class ScalarMathHubTests : StreamHubTestBase, ITestChainObserver, ITestCh
         barHub.Add(corrected);
 
         bars[correctionIndex] = corrected;
+
+        // the correction must change the output, or the replay goes unchecked
+        Series(bars).Should().NotEqual(Series(Bars));
+
         observer.Results.Should().HaveCount(barsCount);
         observer.Results.IsExactly(Series(bars));
 
