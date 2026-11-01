@@ -2,7 +2,7 @@
 #
 # Broken-link check over the built site.
 #
-# This script is the single definition of the check: the "Website URLs"
+# This script is the single definition of the check: the "Test website links"
 # workflow runs it too, so the ignore lists below cannot drift between local
 # runs and CI the way they did when both kept their own copy.
 #
