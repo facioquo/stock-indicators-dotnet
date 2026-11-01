@@ -119,7 +119,7 @@ internal static class ListingExecutor
                     ListingExecutionBuilder.ValidateValue(param, value);
                     parameterList.Add(
                         listing.Style == Style.Stream && param.DataType == IndicatorParam.SeriesDataType
-                            ? ToStreamSource(listing, param, value)
+                            ? ToStreamSource(listing, param, value, nameof(parameters))
                             : value);
                 }
                 else if (param.DataType == IndicatorParam.SeriesDataType)
@@ -229,9 +229,11 @@ internal static class ListingExecutor
     /// <param name="listing">Listing being executed.</param>
     /// <param name="param">Series parameter the value fills.</param>
     /// <param name="value">Supplied series, already validated as reusable values.</param>
+    /// <param name="paramName">Caller-facing parameter name the exception reports.</param>
     /// <returns>A hub that holds the series.</returns>
     /// <exception cref="ArgumentException">Thrown when the series is not made of bars.</exception>
-    private static BarHub ToStreamSource(IndicatorListing listing, IndicatorParam param, object value)
+    private static BarHub ToStreamSource(
+        IndicatorListing listing, IndicatorParam param, object value, string paramName)
     {
         IReadOnlyList<IReusable> series = (IReadOnlyList<IReusable>)value;
 
@@ -248,7 +250,7 @@ internal static class ListingExecutor
         throw new ArgumentException(
             $"Series parameter '{param.ParameterName}' of indicator '{listing.Uiid}' (Stream) needs bars, "
           + "because a stream hub is fed from a bar series; supply bars or use the Series or Buffer style.",
-            nameof(value));
+            paramName);
     }
 
     private static BarHub ToBarHub(IEnumerable<IBar> bars)

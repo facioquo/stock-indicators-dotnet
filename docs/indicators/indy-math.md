@@ -162,7 +162,7 @@ void OnSlowReceived(IReusable value) => spread.AddOther(value);
 
 A timestamp that only one series holds produces no result, where the Series method throws.  Each series must arrive in strictly increasing order: an older or equal timestamp on a side throws an `InvalidOperationException`, whatever `ThrowOnOutOfOrder` is set to.  Each side stages at most `MaxListSize` values, so a side that falls further behind than that loses the pairs the leading side has dropped.
 
-Two-series stream hubs take a second chain provider, such as `.ToMinusHub(other)`, built on `PairMathHub`.  A result is added once both providers hold the same timestamp.  A value that arrives late, or is revised or removed, on either side is handled by the usual rebuild.  This streams the MACD composite from the example above:
+Two-series stream hubs take a second chain provider, such as `.ToMinusHub(other)`, built on `PairMathHub`.  A result is added once both providers hold the same timestamp.  Neither list rule applies to a hub: a value that arrives late, or is revised or removed, on either side is handled by the usual rebuild rather than an exception, and each side stages up to the hub's cache size rather than `MaxListSize`.  This streams the MACD composite from the example above:
 
 ```csharp
 BarHub barHub = new();

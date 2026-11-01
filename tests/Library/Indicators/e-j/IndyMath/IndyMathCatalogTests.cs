@@ -137,7 +137,8 @@ public class IndyMathCatalogTests : TestBase
                 .FromSource((IEnumerable<IBar>)Bars)
                 .Execute<MathResult>())
             .Should().Throw<ArgumentException>()
-            .WithMessage("*'other'*needs bars*");
+            .WithMessage("*'other'*needs bars*")
+            .And.ParamName.Should().Be("parameters");
     }
 
     [TestMethod]
