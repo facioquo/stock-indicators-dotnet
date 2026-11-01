@@ -48,9 +48,7 @@ internal sealed class ScalarKernel
         }
 
         _operation = operation;
-        _operand = operation == ScalarOperation.PlusPercent
-            ? 1d + (operand / 100d)
-            : operand;
+        _operand = operand;
     }
 
     /// <summary>
@@ -67,6 +65,11 @@ internal sealed class ScalarKernel
     /// <summary>
     /// Applies the operation to one value.
     /// </summary>
+    /// <remarks>
+    /// A percent offset is added as <c>value × percent ÷ 100</c> rather than by a
+    /// precomputed factor: <c>1 + 2.5 / 100</c> rounds below 1.025, which would make
+    /// <c>100 + 2.5%</c> come out one step short of 102.5.
+    /// </remarks>
     /// <param name="value">Source value; NaN propagates.</param>
     /// <returns>The operation result.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -74,7 +77,8 @@ internal sealed class ScalarKernel
         => _operation switch {
             ScalarOperation.Plus => value + _operand,
             ScalarOperation.Minus => value - _operand,
-            ScalarOperation.Times or ScalarOperation.PlusPercent => value * _operand,
+            ScalarOperation.Times => value * _operand,
+            ScalarOperation.PlusPercent => value + (value * _operand / 100d),
             _ => value / _operand
         };
 }
