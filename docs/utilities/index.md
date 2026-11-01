@@ -24,7 +24,7 @@ features:
   - title: Utilities for indicator results
     details: Work with indicator results after calculation and analysis.
     link: /utilities/results
-    linkText: 4 utilities
+    linkText: 5 utilities
 
   - title: Additional utilities
     details: Numerical methods and math helpers for creating custom indicators.
@@ -51,6 +51,7 @@ features:
 - [remove warmup periods](/utilities/results#remove-warmup-periods)
 - [condense](/utilities/results#condense)
 - [find by date](/utilities/results#find-by-date)
+- [result math](/utilities/results#result-math)
 - [sort results](/utilities/results#sort-results).
 
 ## [Additional helper utilities](/utilities/helpers)

@@ -58,6 +58,43 @@ var result = results.FirstOrDefault(r => r.Timestamp.Date == target);
 
 For range queries or filtering by value, use LINQ `.Where()` rather than repeated `.Find()` calls.
 
+## Result math
+
+Result math utilities combine or transform chainable indicator results — any series of `IReusable` values, including price bars — so simple custom indicators need no hand-written loop. Each returns one `TimeValue` per source result, which chains into any indicator that accepts reusable values.
+
+```csharp
+// spread between a fast and a slow moving average, then smoothed
+IReadOnlyList<TimeValue> spread = bars.ToSma(10).Minus(bars.ToSma(20));
+IReadOnlyList<SmaResult> smoothed = spread.ToSma(5);
+
+// upper envelope 2.5% above the EMA
+IReadOnlyList<TimeValue> upper = bars.ToEma(20).PlusPercent(2.5);
+
+// highest close over the last 20 periods
+IReadOnlyList<TimeValue> highest = bars.RollingMax(20);
+```
+
+| Method | Returns |
+| ------ | ------- |
+| `.Plus(other)` / `.Plus(amount)` | sum of two series, or the series plus a fixed amount |
+| `.PlusPercent(percentOffset)` | each value offset by a percent of itself, where `-2.5` subtracts 2.5% |
+| `.Minus(other)` / `.Minus(amount)` | difference of two series, or the series minus a fixed amount |
+| `.Times(other)` / `.Times(factor)` | product of two series, or the series times a fixed factor |
+| `.DividedBy(other)` / `.DividedBy(divisor)` | quotient of two series (`NaN` where the divisor is 0), or the series over a fixed, non-zero divisor |
+| `.MaxWith(other)` / `.MinWith(other)` | larger or smaller of two series at each period |
+| `.RollingMax(lookbackPeriods)` / `.RollingMin(lookbackPeriods)` | highest or lowest value over a rolling window |
+| `.RollingMedian(lookbackPeriods)` | median over a rolling window, averaging the two middle values when the window is even |
+
+Rolling windows include the current period and return `NaN` for the first `lookbackPeriods − 1` periods. `NaN` values, such as indicator warmup periods, propagate: a pairwise result is `NaN` where either input is, and a rolling result is `NaN` while its window holds one. Fixed amounts, factors, and offsets must be finite numbers.
+
+::: warning 🚩 Timestamps must match
+Methods that combine two series require both to hold the same number of results with identical timestamps at every position, which holds for any two indicators calculated from the same bars. A length or timestamp mismatch throws an `InvalidBarsException` rather than pairing values from different periods.
+:::
+
+::: info Series only
+Result math runs on complete result lists. It has no BufferList or StreamHub form.
+:::
+
 ## Remove warmup periods
 
 `results.RemoveWarmupPeriods()` trims the initial warmup periods from indicator results. An overload `.RemoveWarmupPeriods(removePeriods)` lets you specify the exact amount.
