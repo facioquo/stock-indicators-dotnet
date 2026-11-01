@@ -92,6 +92,14 @@ public class ResultMaths : TestBaseWithPrecision
     }
 
     [TestMethod]
+    public void RollingMedian_InfiniteValues_PropagateWithoutOverflowFallback()
+    {
+        List<TimeValue> a = Series(double.PositiveInfinity, double.PositiveInfinity, double.NegativeInfinity);
+
+        Values(a.RollingMedian(2)).Should().Equal(double.NaN, double.PositiveInfinity, double.NaN);
+    }
+
+    [TestMethod]
     public void RollingMedian_SubnormalValues_ReturnsExactMidpoint()
     {
         List<TimeValue> a = Series(double.Epsilon, double.Epsilon, double.Epsilon * 3);
