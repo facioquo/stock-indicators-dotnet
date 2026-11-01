@@ -8,8 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="FacioQuo.Stock.Indicators" Version="3.*" PrivateAssets="All" />
-    <PackageReference Include="MSTest.TestAdapter" Version="4.5.1" />
-    <PackageReference Include="MSTest.TestFramework" Version="4.5.1" />
+    <PackageReference Include="MSTest.TestAdapter" Version="4.5.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="4.5.2" />
   </ItemGroup>
 
   <ItemGroup>
