@@ -92,6 +92,14 @@ public class ResultMaths : TestBaseWithPrecision
     }
 
     [TestMethod]
+    public void RollingMedian_SubnormalValues_ReturnsExactMidpoint()
+    {
+        List<TimeValue> a = Series(double.Epsilon, double.Epsilon, double.Epsilon * 3);
+
+        Values(a.RollingMedian(2)).Should().Equal(double.NaN, double.Epsilon, double.Epsilon * 2);
+    }
+
+    [TestMethod]
     public void RollingWindows_LookbackAtOrBeyondCount_ReturnWarmupOnly()
     {
         List<TimeValue> a = Series(3, 1, 4, 1, 5);

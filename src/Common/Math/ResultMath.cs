@@ -233,6 +233,10 @@ public static class ResultMath
     /// is even; <see cref="double.NaN"/> for the first <c>lookbackPeriods − 1</c> periods and
     /// wherever the window holds a NaN value.
     /// </returns>
+    /// <remarks>
+    /// The window is kept sorted, so each period costs O(log k) comparisons plus an O(k) shift,
+    /// and the series costs O(n·k) for a lookback of k periods.
+    /// </remarks>
     /// <exception cref="ArgumentNullException">Thrown when the series is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the lookback periods are less than 1.</exception>
     public static IReadOnlyList<TimeValue> RollingMedian(
@@ -276,7 +280,7 @@ public static class ResultMath
             double median = i < lookbackPeriods - 1 || nanCount > 0
                 ? double.NaN
                 : isEven
-                    ? (window[mid - 1] / 2d) + (window[mid] / 2d) // avoids overflow near double.MaxValue
+                    ? Midpoint(window[mid - 1], window[mid])
                     : window[mid];
 
             results.Add(new TimeValue(source[i].Timestamp, median));
@@ -427,6 +431,21 @@ public static class ResultMath
         }
 
         return results;
+    }
+
+    /// <summary>
+    /// Averages two values, exactly when their sum is finite and without overflow when it is not.
+    /// </summary>
+    /// <param name="a">First value.</param>
+    /// <param name="b">Second value.</param>
+    /// <returns>The value halfway between <paramref name="a"/> and <paramref name="b"/>.</returns>
+    private static double Midpoint(double a, double b)
+    {
+        double sum = a + b;
+
+        return double.IsInfinity(sum) && double.IsFinite(a) && double.IsFinite(b)
+            ? (a / 2d) + (b / 2d)
+            : sum / 2d;
     }
 
     /// <summary>

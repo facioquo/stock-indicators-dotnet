@@ -86,7 +86,7 @@ IReadOnlyList<TimeValue> highestHigh = bars.ToBarPart(CandlePart.High).RollingMa
 | `.DividedBy(other)` / `.DividedBy(divisor)` | quotient of two series (`NaN` where the divisor is 0), or the series over a fixed, non-zero divisor |
 | `.MaxWith(other)` / `.MinWith(other)` | larger or smaller of two series at each period |
 | `.RollingMax(lookbackPeriods)` / `.RollingMin(lookbackPeriods)` | highest or lowest value over a rolling window |
-| `.RollingMedian(lookbackPeriods)` | median over a rolling window, averaging the two middle values when the window is even |
+| `.RollingMedian(lookbackPeriods)` | median over a rolling window, averaging the two middle values when the window is even; its cost grows with the window, O(n·k) |
 
 A fixed number is always the right-hand operand. For a percent decrease, pass `PlusPercent` a negative offset. Price bars contribute their close; select another part with [`.ToBarPart()`](/indicators/bar-part) first.
 
