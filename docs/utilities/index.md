@@ -24,7 +24,7 @@ features:
   - title: Utilities for indicator results
     details: Work with indicator results after calculation and analysis.
     link: /utilities/results
-    linkText: 5 utilities
+    linkText: 4 utilities
 
   - title: Additional utilities
     details: Numerical methods and math helpers for creating custom indicators.

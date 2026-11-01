@@ -127,7 +127,7 @@ public static partial class IndyMath
             .WithName("Divided By Divisor")
             .WithId("DIVIDED-BY")
             .WithCategory(Category.PriceTransform)
-            .AddParameter<double>("divisor", "Divisor", isRequired: true, defaultValue: 2.0, minimum: -1000000.0, maximum: 1000000.0)
+            .AddParameter<double>("divisor", "Divisor", description: "Value to divide each result by; must not be 0", isRequired: true, defaultValue: 2.0, minimum: -1000000.0, maximum: 1000000.0)
             .AddResult(nameof(MathResult.Result), "Divided By Divisor", "IndyMath", ResultType.Default, isReusable: true)
             .Build();
 
