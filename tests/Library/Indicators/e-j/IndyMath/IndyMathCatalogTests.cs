@@ -47,9 +47,6 @@ public class IndyMathCatalogTests : TestBase
             AssertListing(listing, uiid, name, Style.Series, method);
             listing.Parameters.Select(static p => p.ParameterName)
                 .Should().Equal("source", "other");
-
-            // the two-series stream hubs come later
-            Catalog.Get(uiid, Style.Stream).Should().BeNull();
         }
     }
 
@@ -86,6 +83,15 @@ public class IndyMathCatalogTests : TestBase
             listing.Parameters.Should().ContainSingle()
                 .Which.ParameterName.Should().Be(parameter);
         }
+
+        foreach ((string uiid, string name, string method) in Pairwise)
+        {
+            IndicatorListing listing = Catalog.Get(uiid, Style.Stream);
+
+            AssertListing(listing, uiid, name, Style.Stream, $"To{method}Hub");
+            listing.Parameters.Select(static p => p.ParameterName)
+                .Should().Equal("source", "other");
+        }
     }
 
     [TestMethod]
@@ -108,6 +114,30 @@ public class IndyMathCatalogTests : TestBase
             .Execute<MathResult>();
 
         viaCatalog.IsExactly(Bars.Minus(OtherBars));
+    }
+
+    [TestMethod]
+    public void IndyMathPairwiseStream_ExplicitSources_MatchesDirectCall()
+    {
+        IReadOnlyList<MathResult> viaCatalog = Catalog.Get("MINUS-SERIES", Style.Stream)
+            .WithParamValue("other", OtherBars)
+            .FromSource((IEnumerable<IBar>)Bars)
+            .Execute<MathResult>();
+
+        viaCatalog.IsExactly(Bars.Minus(OtherBars));
+    }
+
+    [TestMethod]
+    public void IndyMathPairwiseStream_NonBarSeries_Throws()
+    {
+        IReadOnlyList<IReusable> sma = OtherBars.ToSma(10);
+
+        FluentActions.Invoking(() => Catalog.Get("MINUS-SERIES", Style.Stream)
+                .WithParamValue("other", sma)
+                .FromSource((IEnumerable<IBar>)Bars)
+                .Execute<MathResult>())
+            .Should().Throw<ArgumentException>()
+            .WithMessage("*'other'*needs bars*");
     }
 
     [TestMethod]

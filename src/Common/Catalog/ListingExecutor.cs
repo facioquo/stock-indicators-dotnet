@@ -117,7 +117,10 @@ internal static class ListingExecutor
                     }
 
                     ListingExecutionBuilder.ValidateValue(param, value);
-                    parameterList.Add(value);
+                    parameterList.Add(
+                        listing.Style == Style.Stream && param.DataType == IndicatorParam.SeriesDataType
+                            ? ToStreamSource(listing, param, value)
+                            : value);
                 }
                 else if (param.DataType == IndicatorParam.SeriesDataType)
                 {
@@ -219,6 +222,34 @@ internal static class ListingExecutor
     }
 
     private const int BarHubDefaultCacheSize = 100_000;
+
+    /// <summary>
+    /// Feeds a supplied series to its own hub, because a Stream method takes a hub provider.
+    /// </summary>
+    /// <param name="listing">Listing being executed.</param>
+    /// <param name="param">Series parameter the value fills.</param>
+    /// <param name="value">Supplied series, already validated as reusable values.</param>
+    /// <returns>A hub that holds the series.</returns>
+    /// <exception cref="ArgumentException">Thrown when the series is not made of bars.</exception>
+    private static BarHub ToStreamSource(IndicatorListing listing, IndicatorParam param, object value)
+    {
+        IReadOnlyList<IReusable> series = (IReadOnlyList<IReusable>)value;
+
+        if (series is IReadOnlyList<IBar> bars)
+        {
+            return ToBarHub(bars);
+        }
+
+        if (series.All(static x => x is IBar))
+        {
+            return ToBarHub(series.Cast<IBar>());
+        }
+
+        throw new ArgumentException(
+            $"Series parameter '{param.ParameterName}' of indicator '{listing.Uiid}' (Stream) needs bars, "
+          + "because a stream hub is fed from a bar series; supply bars or use the Series or Buffer style.",
+            nameof(value));
+    }
 
     private static BarHub ToBarHub(IEnumerable<IBar> bars)
     {

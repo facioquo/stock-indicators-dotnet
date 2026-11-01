@@ -121,7 +121,7 @@ See [Chaining indicators](/guide/chaining) for more.
 
 ## Streaming
 
-The fixed-amount, percent-offset, and rolling-window methods stream.  Each fixed-operand and rolling Series method has a buffer-style form named `To{Method}List` and a stream hub form named `To{Method}Hub`, such as `.ToPlusList(amount)` or `.ToRollingMaxHub(lookbackPeriods)`.
+Every method streams.  Each Series method has a buffer-style form named `To{Method}List` and a stream hub form named `To{Method}Hub`, such as `.ToPlusList(amount)` or `.ToRollingMaxHub(lookbackPeriods)`.
 
 Use the buffer-style `List<T>` when you need incremental calculations without a hub:
 
@@ -162,8 +162,23 @@ void OnSlowReceived(IReusable value) => spread.AddOther(value);
 
 A timestamp that only one series holds produces no result.  Each series must arrive in chronological order.
 
-::: warning 🚩 Two-series methods have no stream hub form
-`.Plus(other)`, `.Minus(other)`, `.Times(other)`, `.DividedBy(other)`, `.MaxWith(other)`, and `.MinWith(other)` have no `To{Method}Hub` form.  Use the buffer-style list, or the Series (batch) implementation with periodic recalculation instead.
-:::
+Two-series stream hubs take a second chain provider, such as `.ToMinusHub(other)`, built on `PairMathHub`.  A result is added once both providers hold the same timestamp.  A value that arrives late, or is revised or removed, on either side is handled by the usual rebuild.  This streams the MACD composite from the example above:
+
+```csharp
+BarHub barHub = new();
+MacdHub macd = barHub.ToMacdHub(12, 26, 9);
+
+PairMathHub composite = macd
+    .ToMinusHub(macd.ToEmaHub(9))
+    .ToPlusHub(barHub.ToSmaHub(9));
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<MathResult> results = composite.Results;
+```
+
+Timestamps match exactly; there is no tolerance for clock skew between the two series.  Drive both providers from one thread at a time, as when both descend from one `BarHub`.
 
 See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.

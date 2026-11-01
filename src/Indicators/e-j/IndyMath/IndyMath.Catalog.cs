@@ -229,6 +229,15 @@ public static partial class IndyMath
             .Build();
 
     /// <summary>
+    /// PLUS-SERIES Stream Listing
+    /// </summary>
+    internal static readonly IndicatorListing PlusOtherStreamListing =
+        new CatalogListingBuilder(PlusOtherCommonListing)
+            .WithStyle(Style.Stream)
+            .WithMethodName(typeof(IndyMath), "ToPlusHub")
+            .Build();
+
+    /// <summary>
     /// MINUS-SERIES Common Base Listing
     /// </summary>
     internal static readonly IndicatorListing MinusOtherCommonListing =
@@ -257,6 +266,15 @@ public static partial class IndyMath
         new CatalogListingBuilder(MinusOtherCommonListing)
             .WithStyle(Style.Buffer)
             .WithMethodName(typeof(IndyMath), "ToMinusList")
+            .Build();
+
+    /// <summary>
+    /// MINUS-SERIES Stream Listing
+    /// </summary>
+    internal static readonly IndicatorListing MinusOtherStreamListing =
+        new CatalogListingBuilder(MinusOtherCommonListing)
+            .WithStyle(Style.Stream)
+            .WithMethodName(typeof(IndyMath), "ToMinusHub")
             .Build();
 
     /// <summary>
@@ -291,6 +309,15 @@ public static partial class IndyMath
             .Build();
 
     /// <summary>
+    /// TIMES-SERIES Stream Listing
+    /// </summary>
+    internal static readonly IndicatorListing TimesOtherStreamListing =
+        new CatalogListingBuilder(TimesOtherCommonListing)
+            .WithStyle(Style.Stream)
+            .WithMethodName(typeof(IndyMath), "ToTimesHub")
+            .Build();
+
+    /// <summary>
     /// DIVIDED-BY-SERIES Common Base Listing
     /// </summary>
     internal static readonly IndicatorListing DividedByOtherCommonListing =
@@ -319,6 +346,15 @@ public static partial class IndyMath
         new CatalogListingBuilder(DividedByOtherCommonListing)
             .WithStyle(Style.Buffer)
             .WithMethodName(typeof(IndyMath), "ToDividedByList")
+            .Build();
+
+    /// <summary>
+    /// DIVIDED-BY-SERIES Stream Listing
+    /// </summary>
+    internal static readonly IndicatorListing DividedByOtherStreamListing =
+        new CatalogListingBuilder(DividedByOtherCommonListing)
+            .WithStyle(Style.Stream)
+            .WithMethodName(typeof(IndyMath), "ToDividedByHub")
             .Build();
 
     /// <summary>
@@ -353,6 +389,15 @@ public static partial class IndyMath
             .Build();
 
     /// <summary>
+    /// MAX-WITH Stream Listing
+    /// </summary>
+    internal static readonly IndicatorListing MaxWithStreamListing =
+        new CatalogListingBuilder(MaxWithCommonListing)
+            .WithStyle(Style.Stream)
+            .WithMethodName(typeof(IndyMath), "ToMaxWithHub")
+            .Build();
+
+    /// <summary>
     /// MIN-WITH Common Base Listing
     /// </summary>
     internal static readonly IndicatorListing MinWithCommonListing =
@@ -381,6 +426,15 @@ public static partial class IndyMath
         new CatalogListingBuilder(MinWithCommonListing)
             .WithStyle(Style.Buffer)
             .WithMethodName(typeof(IndyMath), "ToMinWithList")
+            .Build();
+
+    /// <summary>
+    /// MIN-WITH Stream Listing
+    /// </summary>
+    internal static readonly IndicatorListing MinWithStreamListing =
+        new CatalogListingBuilder(MinWithCommonListing)
+            .WithStyle(Style.Stream)
+            .WithMethodName(typeof(IndyMath), "ToMinWithHub")
             .Build();
 
     /// <summary>

@@ -607,6 +607,14 @@ Parameters:
 Results:
   - Result : Default : reusable=true : pane=IndyMath
 
+### DIVIDED-BY-SERIES / Stream
+Method: ToDividedByHub
+Parameters:
+  - source : IReadOnlyList<T> where T : IReusable : required
+  - other : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
+
 ### DOJI / Series
 Method: ToDoji
 Parameters:
@@ -1274,6 +1282,14 @@ Parameters:
 Results:
   - Result : Default : reusable=true : pane=Price
 
+### MAX-WITH / Stream
+Method: ToMaxWithHub
+Parameters:
+  - source : IReadOnlyList<T> where T : IReusable : required
+  - other : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
 ### MFI / Series
 Method: ToMfi
 Parameters:
@@ -1314,6 +1330,14 @@ Parameters:
 Results:
   - Result : Default : reusable=true : pane=Price
 
+### MIN-WITH / Stream
+Method: ToMinWithHub
+Parameters:
+  - source : IReadOnlyList<T> where T : IReusable : required
+  - other : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
 ### MINUS / Series
 Method: Minus
 Parameters:
@@ -1345,6 +1369,14 @@ Results:
 
 ### MINUS-SERIES / Buffer
 Method: ToMinusList
+Parameters:
+  - source : IReadOnlyList<T> where T : IReusable : required
+  - other : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
+
+### MINUS-SERIES / Stream
+Method: ToMinusHub
 Parameters:
   - source : IReadOnlyList<T> where T : IReusable : required
   - other : IReadOnlyList<T> where T : IReusable : required
@@ -1511,6 +1543,14 @@ Results:
 
 ### PLUS-SERIES / Buffer
 Method: ToPlusList
+Parameters:
+  - source : IReadOnlyList<T> where T : IReusable : required
+  - other : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
+
+### PLUS-SERIES / Stream
+Method: ToPlusHub
 Parameters:
   - source : IReadOnlyList<T> where T : IReusable : required
   - other : IReadOnlyList<T> where T : IReusable : required
@@ -2268,6 +2308,14 @@ Results:
 
 ### TIMES-SERIES / Buffer
 Method: ToTimesList
+Parameters:
+  - source : IReadOnlyList<T> where T : IReusable : required
+  - other : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
+
+### TIMES-SERIES / Stream
+Method: ToTimesHub
 Parameters:
   - source : IReadOnlyList<T> where T : IReusable : required
   - other : IReadOnlyList<T> where T : IReusable : required
