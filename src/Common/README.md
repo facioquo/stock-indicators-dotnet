@@ -9,6 +9,7 @@ Shared types, base classes, and utilities that every indicator implementation bu
 - `Enums/` - Shared enumerations
 - `Exceptions/` - Custom exceptions
 - `Math/` - Numerical utilities (deterministic double-precision math, null-safe wrappers, and rounding/statistics helpers)
+- `Pairing/` - Two-series timestamp matching for paired hubs and buffer lists
 - `Pruning/` - Cache-trimming helpers and the internal self-pruning list
 - `Reusable/` - Core `ISeries` / `IReusable` interfaces, `TimeValue`, and chaining extensions
 - `SeekSort/` - Index-seeking and sorting extensions
