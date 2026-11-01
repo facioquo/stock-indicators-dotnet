@@ -29,13 +29,13 @@ Extend this pattern for a new quantizer instead of writing bespoke bucketing.
 
 ## Two-series pairing
 
-`PairHub` (`StreamHub/PairHub.cs`) streams two chain providers as one `PairedValue` series, and `PairStager` (`Pairing/PairStager.cs`) is the matching kernel it shares with two-series buffer lists.
+`PairHub` (`StreamHub/PairHub.cs`) streams two chain providers as one `PairedValue` series. `PairStager` (`Pairing/PairStager.cs`) is its matching kernel, kept free of hub state so a two-series buffer list can use it without a hub.
 
 - Pairs match on timestamp only. A timestamp that only one side holds produces no result, never a pair with a neighbor; a late value for it re-pairs through the usual rebuild.
 - Matching is exact. Tolerance for clock skew between the two sides (proposed in #1733) is deliberately out of scope.
-- The source provider is the hub's `Provider`. A private observer follows the other provider and stages its values in the hub, so the hub never reads the other provider's cache outside that provider's own notification.
+- The source provider is the hub's `Provider`. A private observer follows the other provider and stages its values in the hub. The constructor copies the other provider's `Snapshot()` once, before taking the hub's lock; after that the hub reads the other provider's cache only inside that provider's own notification.
 - Never index the other provider's cache from `ToIndicator`. The original `PairsHub` did, and #1824 removed it because removals, re-adds, and rollbacks could not be kept consistent across the two caches (see #1827).
-- The hub's own `PairedValue` cache gives random access to paired history, which indicators such as Beta, Correlation, and PRS need over a lookback window.
+- The hub's own `PairedValue` cache gives random access to paired history, so a two-series hub whose formula spans a lookback window, as Beta, Correlation, and PRS do, reads pairs from its `ProviderCache` instead of two caches.
 - Lock order stays provider first, then hub: each side's notification takes the hub's `CacheLock`, and the hub never takes either provider's lock.
 - Both providers must be driven from one thread at a time, as they are when both descend from one `BarHub`, because a rebuild from either side replays the source provider's cache.
 - Each side keeps at most `MaxCacheSize` staged values, oldest dropped first. Upstream prune notifications from the other side do not trim the staged values, so a later rebuild can still pair them.
