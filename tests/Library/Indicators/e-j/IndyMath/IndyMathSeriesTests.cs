@@ -27,7 +27,7 @@ public class IndyMathSeriesTests : StaticSeriesTestBase
 
         plus[0].Result.Should().Be(Bars[0].Value + 1);
         plus[501].Result.Should().Be(Bars[501].Value + 1);
-        percent[501].Result.Should().Be(Bars[501].Value * (1d + (2.5 / 100d)));
+        percent[501].Result.Should().Be(Bars[501].Value + (Bars[501].Value * 2.5 / 100d));
 
         spread.Take(19).Should().OnlyContain(static x => x.Result == null);
         spread[19].Result.Should().NotBeNull();
@@ -138,6 +138,9 @@ public class IndyMathSeriesTests : StaticSeriesTestBase
         IReadOnlyList<MathResult> up = a.PlusPercent(2.5);
         up[0].Result.Should().BeApproximately(205, Money6);
         up[1].Result.Should().BeApproximately(-51.25, Money6);
+
+        // the offset form is exact here; a precomputed 1.025 factor lands one step short
+        Series(100).PlusPercent(2.5)[0].Result.Should().Be(102.5);
 
         IReadOnlyList<MathResult> down = a.PlusPercent(-10);
         down[0].Result.Should().BeApproximately(180, Money6);

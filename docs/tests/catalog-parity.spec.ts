@@ -234,6 +234,11 @@ function pageMethods(file: string, markdown: string): string[] {
   return PAGE_METHODS.get(file) ?? (call ? [call] : [])
 }
 
+test('every listed page method is defined in the source', () => {
+  const missing = [...PAGE_METHODS].flatMap(([file, names]) => names.filter((m) => !methods.has(m)).map((m) => `${file}: ${m}`))
+  expect(missing, missing.join('\n')).toEqual([])
+})
+
 const pages = readdirSync(PAGES).filter((f) => f.endsWith('.md')).sort()
 
 for (const file of pages) {
@@ -308,15 +313,16 @@ test('every known minimum drift still drifts', () => {
   const observed = new Map<string, string>()
   for (const file of pages) {
     const markdown = readFileSync(join(PAGES, file), 'utf8')
-    const method = seriesCall(markdown)
-    const overloads = method ? methods.get(method) : undefined
-    if (!method || !overloads) continue
     const lines = markdown.split('\n')
     const start = lines.findIndex((l) => /^##\s+Parameters\s*$/.test(l))
-    const types = new Map(overloads.flat().map((p) => [p.name, p.type]))
-    for (const row of start < 0 ? [] : tableAfter(lines, start)) {
-      const drift = minimumDrift(method, row, types.get(row.name) ?? '')
-      if (drift) observed.set(drift.key, `${drift.documented}/${drift.catalog}`)
+    for (const method of pageMethods(file, markdown)) {
+      const overloads = methods.get(method)
+      if (!overloads) continue
+      const types = new Map(overloads.flat().map((p) => [p.name, p.type]))
+      for (const row of start < 0 ? [] : tableAfter(lines, start)) {
+        const drift = minimumDrift(method, row, types.get(row.name) ?? '')
+        if (drift) observed.set(drift.key, `${drift.documented}/${drift.catalog}`)
+      }
     }
   }
   const stale = [...KNOWN_MINIMUM_DRIFT]
@@ -327,8 +333,8 @@ test('every known minimum drift still drifts', () => {
 
 test('every indicator page names a Series method the source defines', () => {
   const uncovered = pages.filter((file) => {
-    const method = seriesCall(readFileSync(join(PAGES, file), 'utf8'))
-    return OVERVIEW_PAGES.has(file) ? false : !method || !methods.has(method)
+    const names = pageMethods(file, readFileSync(join(PAGES, file), 'utf8'))
+    return OVERVIEW_PAGES.has(file) ? false : names.length === 0 || !names.every((m) => methods.has(m))
   })
   expect(uncovered, `no checked Series method: ${uncovered.join(', ')}`).toEqual([])
 })
