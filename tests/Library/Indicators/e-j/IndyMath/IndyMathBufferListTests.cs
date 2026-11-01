@@ -1,11 +1,11 @@
 namespace BufferLists;
 
 /// <summary>
-/// Series-parity tests shared by every result math buffer list.
+/// Series-parity tests shared by every IndyMath buffer list.
 /// </summary>
 /// <typeparam name="TList">Buffer list under test.</typeparam>
-public abstract class ResultMathBufferListTestBase<TList> : BufferListTestBase, ITestChainBufferList
-    where TList : BufferList<TimeValue>
+public abstract class IndyMathBufferListTestBase<TList> : BufferListTestBase, ITestChainBufferList
+    where TList : BufferList<MathResult>
 {
     // SMA warmup NaNs, plus single, consecutive, and trailing NaNs mid-series
     private static readonly int[] gaps = [30, 61, 62, 63, 200, 501];
@@ -29,7 +29,7 @@ public abstract class ResultMathBufferListTestBase<TList> : BufferListTestBase, 
     /// <summary>
     /// Calculates the canonical Series results for the same operation.
     /// </summary>
-    protected abstract IReadOnlyList<TimeValue> Series(IReadOnlyList<IReusable> source);
+    protected abstract IReadOnlyList<MathResult> Series(IReadOnlyList<IReusable> source);
 
     [TestMethod]
     public void AddBar_IncrementsResults()
@@ -117,7 +117,7 @@ public abstract class ResultMathBufferListTestBase<TList> : BufferListTestBase, 
     public override void Clear_WithState_ResetsState()
     {
         List<IReusable> subset = [.. reusables.Take(80)];
-        IReadOnlyList<TimeValue> expected = Series(subset);
+        IReadOnlyList<MathResult> expected = Series(subset);
 
         TList sut = NewList(subset);
         sut.IsExactly(expected);
@@ -151,7 +151,7 @@ public abstract class ResultMathBufferListTestBase<TList> : BufferListTestBase, 
         sut.MaxListSize = maxListSize;
         Chain(sut).Add(reusables);
 
-        IReadOnlyList<TimeValue> expected = Series(reusables)
+        IReadOnlyList<MathResult> expected = Series(reusables)
             .Skip(reusables.Count - maxListSize)
             .ToList();
 
@@ -161,14 +161,14 @@ public abstract class ResultMathBufferListTestBase<TList> : BufferListTestBase, 
 }
 
 [TestClass]
-public class ScalarMathBufferListTests : ResultMathBufferListTestBase<ScalarMathList>
+public class ScalarMathBufferListTests : IndyMathBufferListTestBase<ScalarMathList>
 {
     protected override ScalarMathList NewList() => new(ScalarOperation.PlusPercent, -2.5);
 
     protected override ScalarMathList NewList(IReadOnlyList<IReusable> values)
         => new(ScalarOperation.PlusPercent, -2.5, values);
 
-    protected override IReadOnlyList<TimeValue> Series(IReadOnlyList<IReusable> source)
+    protected override IReadOnlyList<MathResult> Series(IReadOnlyList<IReusable> source)
         => source.PlusPercent(-2.5);
 
     [TestMethod]
@@ -217,7 +217,7 @@ public class ScalarMathBufferListTests : ResultMathBufferListTestBase<ScalarMath
 }
 
 [TestClass]
-public class RollingMaxBufferListTests : ResultMathBufferListTestBase<RollingMaxList>
+public class RollingMaxBufferListTests : IndyMathBufferListTestBase<RollingMaxList>
 {
     private const int lookbackPeriods = 20;
 
@@ -225,7 +225,7 @@ public class RollingMaxBufferListTests : ResultMathBufferListTestBase<RollingMax
 
     protected override RollingMaxList NewList(IReadOnlyList<IReusable> values) => new(lookbackPeriods, values);
 
-    protected override IReadOnlyList<TimeValue> Series(IReadOnlyList<IReusable> source)
+    protected override IReadOnlyList<MathResult> Series(IReadOnlyList<IReusable> source)
         => source.RollingMax(lookbackPeriods);
 
     [TestMethod]
@@ -257,7 +257,7 @@ public class RollingMaxBufferListTests : ResultMathBufferListTestBase<RollingMax
 }
 
 [TestClass]
-public class RollingMinBufferListTests : ResultMathBufferListTestBase<RollingMinList>
+public class RollingMinBufferListTests : IndyMathBufferListTestBase<RollingMinList>
 {
     private const int lookbackPeriods = 20;
 
@@ -265,7 +265,7 @@ public class RollingMinBufferListTests : ResultMathBufferListTestBase<RollingMin
 
     protected override RollingMinList NewList(IReadOnlyList<IReusable> values) => new(lookbackPeriods, values);
 
-    protected override IReadOnlyList<TimeValue> Series(IReadOnlyList<IReusable> source)
+    protected override IReadOnlyList<MathResult> Series(IReadOnlyList<IReusable> source)
         => source.RollingMin(lookbackPeriods);
 
     [TestMethod]
@@ -296,7 +296,7 @@ public class RollingMinBufferListTests : ResultMathBufferListTestBase<RollingMin
 }
 
 [TestClass]
-public class RollingMedianBufferListTests : ResultMathBufferListTestBase<RollingMedianList>
+public class RollingMedianBufferListTests : IndyMathBufferListTestBase<RollingMedianList>
 {
     private const int lookbackPeriods = 20;
 
@@ -304,7 +304,7 @@ public class RollingMedianBufferListTests : ResultMathBufferListTestBase<Rolling
 
     protected override RollingMedianList NewList(IReadOnlyList<IReusable> values) => new(lookbackPeriods, values);
 
-    protected override IReadOnlyList<TimeValue> Series(IReadOnlyList<IReusable> source)
+    protected override IReadOnlyList<MathResult> Series(IReadOnlyList<IReusable> source)
         => source.RollingMedian(lookbackPeriods);
 
     [TestMethod]

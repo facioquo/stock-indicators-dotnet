@@ -1,20 +1,20 @@
 namespace FacioQuo.Stock.Indicators;
 
 /// <summary>
-/// Streaming hub for the rolling median value.
+/// Streaming hub for the rolling lowest value.
 /// </summary>
-public class RollingMedianHub
-    : ChainHub<IReusable, TimeValue>
+public class RollingMinHub
+    : ChainHub<IReusable, MathResult>, IRollingMath
 {
-    private readonly RollingMedianWindow _window;
+    private readonly RollingExtremeWindow _window;
 
-    internal RollingMedianHub(
+    internal RollingMinHub(
         IChainProvider<IReusable> provider,
         int lookbackPeriods) : base(provider)
     {
-        _window = new RollingMedianWindow(lookbackPeriods);
+        _window = new RollingExtremeWindow(lookbackPeriods, isMax: false);
         LookbackPeriods = lookbackPeriods;
-        Name = $"ROLLINGMEDIAN({lookbackPeriods})";
+        Name = $"ROLLINGMIN({lookbackPeriods})";
 
         ValidateCacheSize(lookbackPeriods, Name);
 
@@ -27,14 +27,14 @@ public class RollingMedianHub
     public int LookbackPeriods { get; }
 
     /// <inheritdoc/>
-    protected override (TimeValue result, int index)
+    protected override (MathResult result, int index)
         ToIndicator(IReusable item, int? indexHint)
     {
         ArgumentNullException.ThrowIfNull(item);
 
         int i = indexHint ?? ProviderCache.IndexOf(item, true);
 
-        return (new TimeValue(item.Timestamp, _window.Add(item.Value)), i);
+        return (new MathResult(item.Timestamp, _window.Add(item.Value).NaN2Null()), i);
     }
 
     /// <summary>
@@ -60,20 +60,20 @@ public class RollingMedianHub
     }
 }
 
-public static partial class ResultMath
+public static partial class IndyMath
 {
     /// <summary>
-    /// Creates a streaming hub for the rolling median value.
+    /// Creates a streaming hub for the rolling lowest value.
     /// </summary>
     /// <remarks>If providers contain historical data, this hub will fast-forward its cache.</remarks>
     /// <param name="chainProvider">Chain provider.</param>
     /// <param name="lookbackPeriods">Number of periods in the window, including the current one.</param>
-    /// <returns>A hub of rolling median values.</returns>
+    /// <returns>A hub of rolling lowest values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="chainProvider"/> is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">
     /// Thrown when the lookback periods are less than 1 or exceed the provider's cache size.
     /// </exception>
-    public static RollingMedianHub ToRollingMedianHub(
+    public static RollingMinHub ToRollingMinHub(
         this IChainProvider<IReusable> chainProvider,
         int lookbackPeriods)
     {

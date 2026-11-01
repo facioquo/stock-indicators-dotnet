@@ -3,7 +3,7 @@ namespace FacioQuo.Stock.Indicators;
 /// <summary>
 /// Arithmetic between incremental reusable values and a fixed operand.
 /// </summary>
-public class ScalarMathList : BufferList<TimeValue>, IIncrementFromChain
+public class ScalarMathList : BufferList<MathResult>, IIncrementFromChain, IScalarMath
 {
     private readonly ScalarKernel _kernel;
 
@@ -60,7 +60,7 @@ public class ScalarMathList : BufferList<TimeValue>, IIncrementFromChain
 
     /// <inheritdoc />
     public void Add(DateTime timestamp, double value)
-        => AddInternal(new TimeValue(timestamp, _kernel.Apply(value)));
+        => AddInternal(new MathResult(timestamp, _kernel.Apply(value).NaN2Null()));
 
     /// <summary>
     /// Adds a new reusable value to the list.
@@ -89,7 +89,7 @@ public class ScalarMathList : BufferList<TimeValue>, IIncrementFromChain
     }
 }
 
-public static partial class ResultMath
+public static partial class IndyMath
 {
     /// <summary>
     /// Creates a buffer list that adds a fixed amount to every value.

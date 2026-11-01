@@ -1,26 +1,17 @@
 namespace StreamHubs;
 
-/// <summary>
-/// Series-parity tests shared by every result math streaming hub.
-/// </summary>
-/// <typeparam name="THub">Hub under test.</typeparam>
-public abstract class ResultMathHubTestBase<THub> : StreamHubTestBase, ITestChainObserver, ITestChainProvider
-    where THub : ChainHub<IReusable, TimeValue>
+[TestClass]
+public class RollingMedianHubTests : StreamHubTestBase, ITestChainObserver, ITestChainProvider
 {
-    /// <summary>
-    /// Creates the hub under test on a provider.
-    /// </summary>
-    protected abstract THub NewHub(IChainProvider<IReusable> provider);
+    private const int lookbackPeriods = 20;
 
-    /// <summary>
-    /// Calculates the canonical Series results for the same operation.
-    /// </summary>
-    protected abstract IReadOnlyList<TimeValue> Series(IReadOnlyList<IReusable> source);
+    private const string ExpectedName = "ROLLINGMEDIAN(20)";
 
-    /// <summary>
-    /// Gets the hub name the operation under test should report.
-    /// </summary>
-    protected abstract string ExpectedName { get; }
+    private static RollingMedianHub NewHub(IChainProvider<IReusable> provider)
+        => provider.ToRollingMedianHub(lookbackPeriods);
+
+    private static IReadOnlyList<MathResult> Series(IReadOnlyList<IReusable> source)
+        => source.RollingMedian(lookbackPeriods);
 
     [TestMethod]
     public void BarObserver_WithWarmupLateArrivalAndRemoval_MatchesSeriesExactly()
@@ -28,8 +19,8 @@ public abstract class ResultMathHubTestBase<THub> : StreamHubTestBase, ITestChai
         BarHub barHub = new();
         barHub.Add(Bars.Take(20));
 
-        THub observer = NewHub(barHub);
-        IReadOnlyList<TimeValue> sut = observer.Results;
+        RollingMedianHub observer = NewHub(barHub);
+        IReadOnlyList<MathResult> sut = observer.Results;
 
         for (int i = 20; i < barsCount; i++)
         {
@@ -63,12 +54,12 @@ public abstract class ResultMathHubTestBase<THub> : StreamHubTestBase, ITestChai
         const int totalBars = 100;
 
         IReadOnlyList<Bar> bars = Bars.Take(totalBars).ToList();
-        IReadOnlyList<TimeValue> expected = Series(bars)
+        IReadOnlyList<MathResult> expected = Series(bars)
             .TakeLast(maxCacheSize)
             .ToList();
 
         BarHub barHub = new(maxCacheSize);
-        THub observer = NewHub(barHub);
+        RollingMedianHub observer = NewHub(barHub);
 
         barHub.Add(bars);
 
@@ -92,7 +83,7 @@ public abstract class ResultMathHubTestBase<THub> : StreamHubTestBase, ITestChai
         List<Bar> bars = [.. Bars.Take(totalBars)];
 
         BarHub barHub = new(maxCacheSize);
-        THub observer = NewHub(barHub);
+        RollingMedianHub observer = NewHub(barHub);
         barHub.Add(bars);
 
         const int correctionIndex = totalBars - maxCacheSize + retainedOffset;
@@ -121,7 +112,7 @@ public abstract class ResultMathHubTestBase<THub> : StreamHubTestBase, ITestChai
 
         // SMA warmup feeds NaN values into the hub under test
         BarHub barHub = new();
-        THub observer = NewHub(barHub.ToSmaHub(smaPeriods));
+        RollingMedianHub observer = NewHub(barHub.ToSmaHub(smaPeriods));
 
         for (int i = 0; i < barsCount; i++)
         {
@@ -134,7 +125,7 @@ public abstract class ResultMathHubTestBase<THub> : StreamHubTestBase, ITestChai
         barHub.Add(Bars[80]);
         barHub.RemoveAt(removeAtIndex);
 
-        IReadOnlyList<TimeValue> sut = observer.Results;
+        IReadOnlyList<MathResult> sut = observer.Results;
         sut.Should().HaveCount(barsCount - 1);
         sut.IsExactly(Series(RevisedBars.ToSma(smaPeriods)));
 
@@ -183,7 +174,7 @@ public abstract class ResultMathHubTestBase<THub> : StreamHubTestBase, ITestChai
             : b)];
 
         BarHub barHub = new();
-        THub observer = NewHub(barHub.ToRocHub(1));
+        RollingMedianHub observer = NewHub(barHub.ToRocHub(1));
 
         for (int i = 0; i < barsCount; i++)
         {
@@ -221,7 +212,7 @@ public abstract class ResultMathHubTestBase<THub> : StreamHubTestBase, ITestChai
         };
 
         BarHub barHub = new();
-        THub observer = NewHub(barHub);
+        RollingMedianHub observer = NewHub(barHub);
 
         barHub.Add(bars);
         barHub.Add(corrected);
@@ -242,126 +233,9 @@ public abstract class ResultMathHubTestBase<THub> : StreamHubTestBase, ITestChai
     [TestMethod]
     public override void ToStringOverride_ReturnsExpectedName()
     {
-        THub hub = NewHub(new BarHub());
+        RollingMedianHub hub = NewHub(new BarHub());
         hub.ToString().Should().Be(ExpectedName);
     }
-}
-
-[TestClass]
-public class ScalarMathHubTests : ResultMathHubTestBase<ScalarMathHub>
-{
-    protected override string ExpectedName => "PLUSPERCENT(-2.5)";
-
-    protected override ScalarMathHub NewHub(IChainProvider<IReusable> provider)
-        => provider.ToPlusPercentHub(-2.5);
-
-    protected override IReadOnlyList<TimeValue> Series(IReadOnlyList<IReusable> source)
-        => source.PlusPercent(-2.5);
-
-    [TestMethod]
-    public void EveryOperation_StreamedBars_MatchesSeriesExactly()
-    {
-        BarHub barHub = new();
-        ScalarMathHub plus = barHub.ToPlusHub(2.5);
-        ScalarMathHub minus = barHub.ToMinusHub(2.5);
-        ScalarMathHub times = barHub.ToTimesHub(-3);
-        ScalarMathHub divided = barHub.ToDividedByHub(7);
-
-        barHub.Add(Bars);
-
-        plus.Results.IsExactly(Bars.Plus(2.5));
-        minus.Results.IsExactly(Bars.Minus(2.5));
-        times.Results.IsExactly(Bars.Times(-3));
-        divided.Results.IsExactly(Bars.DividedBy(7));
-
-        divided.Operation.Should().Be(ScalarOperation.DividedBy);
-        divided.Operand.Should().Be(7);
-
-        barHub.EndTransmission();
-    }
-
-    [TestMethod]
-    public void Exceptions_InvalidOperand_ThrowsArgumentOutOfRangeException()
-    {
-        BarHub barHub = new();
-
-        FluentActions.Invoking(() => barHub.ToDividedByHub(0))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("divisor");
-        FluentActions.Invoking(() => barHub.ToPlusHub(double.NaN))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("amount");
-        FluentActions.Invoking(() => barHub.ToTimesHub(double.NaN))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("factor");
-        FluentActions.Invoking(() => barHub.ToPlusPercentHub(double.NaN))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("percentOffset");
-    }
-}
-
-[TestClass]
-public class RollingMaxHubTests : ResultMathHubTestBase<RollingMaxHub>
-{
-    private const int lookbackPeriods = 20;
-
-    protected override string ExpectedName => "ROLLINGMAX(20)";
-
-    protected override RollingMaxHub NewHub(IChainProvider<IReusable> provider)
-        => provider.ToRollingMaxHub(lookbackPeriods);
-
-    protected override IReadOnlyList<TimeValue> Series(IReadOnlyList<IReusable> source)
-        => source.RollingMax(lookbackPeriods);
-
-    [TestMethod]
-    public void Exceptions_InvalidLookback_ThrowsArgumentOutOfRangeException()
-    {
-        FluentActions.Invoking(static () => new BarHub().ToRollingMaxHub(0))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("lookbackPeriods");
-
-        // the window must fit in the provider's cache, and may fill it exactly
-        FluentActions.Invoking(static () => new BarHub(50).ToRollingMaxHub(51))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>();
-        new BarHub(50).ToRollingMaxHub(50).LookbackPeriods.Should().Be(50);
-    }
-}
-
-[TestClass]
-public class RollingMinHubTests : ResultMathHubTestBase<RollingMinHub>
-{
-    private const int lookbackPeriods = 20;
-
-    protected override string ExpectedName => "ROLLINGMIN(20)";
-
-    protected override RollingMinHub NewHub(IChainProvider<IReusable> provider)
-        => provider.ToRollingMinHub(lookbackPeriods);
-
-    protected override IReadOnlyList<TimeValue> Series(IReadOnlyList<IReusable> source)
-        => source.RollingMin(lookbackPeriods);
-
-    [TestMethod]
-    public void Properties_AfterConstruction_ReflectArguments()
-        => new BarHub().ToRollingMinHub(14).LookbackPeriods.Should().Be(14);
-
-    [TestMethod]
-    public void Exceptions_InvalidLookback_ThrowsArgumentOutOfRangeException()
-    {
-        FluentActions.Invoking(static () => new BarHub().ToRollingMinHub(0))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("lookbackPeriods");
-        FluentActions.Invoking(static () => new BarHub(50).ToRollingMinHub(51))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>();
-        new BarHub(50).ToRollingMinHub(50).LookbackPeriods.Should().Be(50);
-    }
-}
-
-[TestClass]
-public class RollingMedianHubTests : ResultMathHubTestBase<RollingMedianHub>
-{
-    private const int lookbackPeriods = 20;
-
-    protected override string ExpectedName => "ROLLINGMEDIAN(20)";
-
-    protected override RollingMedianHub NewHub(IChainProvider<IReusable> provider)
-        => provider.ToRollingMedianHub(lookbackPeriods);
-
-    protected override IReadOnlyList<TimeValue> Series(IReadOnlyList<IReusable> source)
-        => source.RollingMedian(lookbackPeriods);
 
     [TestMethod]
     public void Exceptions_InvalidLookback_ThrowsArgumentOutOfRangeException()

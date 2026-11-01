@@ -4,7 +4,7 @@ namespace FacioQuo.Stock.Indicators;
 /// Streaming hub for arithmetic between chained values and a fixed operand.
 /// </summary>
 public class ScalarMathHub
-    : ChainHub<IReusable, TimeValue>
+    : ChainHub<IReusable, MathResult>, IScalarMath
 {
     private readonly ScalarKernel _kernel;
 
@@ -33,18 +33,18 @@ public class ScalarMathHub
     public double Operand { get; }
 
     /// <inheritdoc/>
-    protected override (TimeValue result, int index)
+    protected override (MathResult result, int index)
         ToIndicator(IReusable item, int? indexHint)
     {
         ArgumentNullException.ThrowIfNull(item);
 
         int i = indexHint ?? ProviderCache.IndexOf(item, true);
 
-        return (new TimeValue(item.Timestamp, _kernel.Apply(item.Value)), i);
+        return (new MathResult(item.Timestamp, _kernel.Apply(item.Value).NaN2Null()), i);
     }
 }
 
-public static partial class ResultMath
+public static partial class IndyMath
 {
     /// <summary>
     /// Creates a streaming hub that adds a fixed amount to every value.

@@ -1,31 +1,31 @@
 namespace FacioQuo.Stock.Indicators;
 
 /// <summary>
-/// Rolling median value from incremental reusable values.
+/// Rolling lowest value from incremental reusable values.
 /// </summary>
-public class RollingMedianList : BufferList<TimeValue>, IIncrementFromChain
+public class RollingMinList : BufferList<MathResult>, IIncrementFromChain, IRollingMath
 {
-    private readonly RollingMedianWindow _window;
+    private readonly RollingExtremeWindow _window;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="RollingMedianList"/> class.
+    /// Initializes a new instance of the <see cref="RollingMinList"/> class.
     /// </summary>
     /// <param name="lookbackPeriods">Number of periods in the window, including the current one.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the lookback periods are less than 1.</exception>
-    public RollingMedianList(int lookbackPeriods)
+    public RollingMinList(int lookbackPeriods)
     {
-        _window = new RollingMedianWindow(lookbackPeriods);
+        _window = new RollingExtremeWindow(lookbackPeriods, isMax: false);
         LookbackPeriods = lookbackPeriods;
-        Name = $"ROLLINGMEDIAN({lookbackPeriods})";
+        Name = $"ROLLINGMIN({lookbackPeriods})";
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="RollingMedianList"/> class with initial reusable values.
+    /// Initializes a new instance of the <see cref="RollingMinList"/> class with initial reusable values.
     /// </summary>
     /// <param name="lookbackPeriods">Number of periods in the window, including the current one.</param>
     /// <param name="values">Initial reusable values to populate the list.</param>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the lookback periods are less than 1.</exception>
-    public RollingMedianList(int lookbackPeriods, IReadOnlyList<IReusable> values)
+    public RollingMinList(int lookbackPeriods, IReadOnlyList<IReusable> values)
         : this(lookbackPeriods) => Add(values);
 
     /// <summary>
@@ -35,7 +35,7 @@ public class RollingMedianList : BufferList<TimeValue>, IIncrementFromChain
 
     /// <inheritdoc />
     public void Add(DateTime timestamp, double value)
-        => AddInternal(new TimeValue(timestamp, _window.Add(value)));
+        => AddInternal(new MathResult(timestamp, _window.Add(value).NaN2Null()));
 
     /// <summary>
     /// Adds a new reusable value to the list.
@@ -73,16 +73,16 @@ public class RollingMedianList : BufferList<TimeValue>, IIncrementFromChain
     }
 }
 
-public static partial class ResultMath
+public static partial class IndyMath
 {
     /// <summary>
-    /// Creates a buffer list for the rolling median value.
+    /// Creates a buffer list for the rolling lowest value.
     /// </summary>
     /// <param name="source">Chainable results, time sorted.</param>
     /// <param name="lookbackPeriods">Number of periods in the window, including the current one.</param>
-    /// <returns>A buffer list of rolling median values.</returns>
+    /// <returns>A buffer list of rolling lowest values.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the lookback periods are less than 1.</exception>
-    public static RollingMedianList ToRollingMedianList(
+    public static RollingMinList ToRollingMinList(
         this IReadOnlyList<IReusable> source,
         int lookbackPeriods)
         => new(lookbackPeriods) { source };
