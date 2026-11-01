@@ -159,6 +159,7 @@ public static partial class Catalog
         _listings.Add(IndyMath.DividedByStreamListing);
 
         // DIVIDED-BY-SERIES (Divided By Series)
+        _listings.Add(IndyMath.DividedByOtherBufferListing);
         _listings.Add(IndyMath.DividedByOtherSeriesListing);
 
         // Doji
@@ -277,6 +278,7 @@ public static partial class Catalog
         _listings.Add(Marubozu.StreamListing);
 
         // MAX-WITH (Max With Series)
+        _listings.Add(IndyMath.MaxWithBufferListing);
         _listings.Add(IndyMath.MaxWithSeriesListing);
 
         // MFI (Money Flow Index)
@@ -290,6 +292,7 @@ public static partial class Catalog
         _listings.Add(MgDynamic.StreamListing);
 
         // MIN-WITH (Min With Series)
+        _listings.Add(IndyMath.MinWithBufferListing);
         _listings.Add(IndyMath.MinWithSeriesListing);
 
         // MINUS (Minus Amount)
@@ -298,6 +301,7 @@ public static partial class Catalog
         _listings.Add(IndyMath.MinusStreamListing);
 
         // MINUS-SERIES (Minus Series)
+        _listings.Add(IndyMath.MinusOtherBufferListing);
         _listings.Add(IndyMath.MinusOtherSeriesListing);
 
         // OBV (On Balance Volume)
@@ -331,6 +335,7 @@ public static partial class Catalog
         _listings.Add(IndyMath.PlusPercentStreamListing);
 
         // PLUS-SERIES (Plus Series)
+        _listings.Add(IndyMath.PlusOtherBufferListing);
         _listings.Add(IndyMath.PlusOtherSeriesListing);
 
         // PMO (Price Momentum Oscillator)
@@ -468,6 +473,7 @@ public static partial class Catalog
         _listings.Add(IndyMath.TimesStreamListing);
 
         // TIMES-SERIES (Times Series)
+        _listings.Add(IndyMath.TimesOtherBufferListing);
         _listings.Add(IndyMath.TimesOtherSeriesListing);
 
         // TR (True Range)

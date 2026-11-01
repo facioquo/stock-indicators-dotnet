@@ -150,8 +150,20 @@ IReadOnlyList<MathResult> results = observer.Results;
 
 Fixed-operand math uses one list type and one hub type for every operation: `new ScalarMathList(ScalarOperation.PlusPercent, 2.5)` and `ScalarMathHub`.
 
-::: warning 🚩 Two-series methods do not stream
-`.Plus(other)`, `.Minus(other)`, `.Times(other)`, `.DividedBy(other)`, `.MaxWith(other)`, and `.MinWith(other)` require a second synchronized series, which cannot be expressed in the single-series streaming model.  Use the Series (batch) implementation with periodic recalculation instead.
+Two-series methods have a buffer-style form too, such as `.ToMinusList(other)`, built on `PairMathList`.  Add each series separately as its values arrive; either one may run ahead, and a result is added once both hold the same timestamp:
+
+```csharp
+PairMathList spread = new(PairOperation.Minus);
+
+// call from each series' message handler
+void OnFastReceived(IReusable value) => spread.AddSource(value);
+void OnSlowReceived(IReusable value) => spread.AddOther(value);
+```
+
+A timestamp that only one series holds produces no result.  Each series must arrive in chronological order.
+
+::: warning 🚩 Two-series methods have no stream hub form
+`.Plus(other)`, `.Minus(other)`, `.Times(other)`, `.DividedBy(other)`, `.MaxWith(other)`, and `.MinWith(other)` have no `To{Method}Hub` form.  Use the buffer-style list, or the Series (batch) implementation with periodic recalculation instead.
 :::
 
 See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.

@@ -129,10 +129,10 @@ public class IndyMathPlusSeriesRegressionTests : RegressionTestBase<MathResult>
     public override void Series_AgainstBaseline_MatchesExactly() => OtherBars.Plus(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Series only: two-series input has no incremental form");
+    public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToPlusList(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Series only: two-series input has no incremental form");
+    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Two-series stream hubs are tracked in #2417");
 }
 
 [TestClass, TestCategory("Regression")]
@@ -144,10 +144,10 @@ public class IndyMathMinusSeriesRegressionTests : RegressionTestBase<MathResult>
     public override void Series_AgainstBaseline_MatchesExactly() => OtherBars.Minus(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Series only: two-series input has no incremental form");
+    public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToMinusList(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Series only: two-series input has no incremental form");
+    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Two-series stream hubs are tracked in #2417");
 }
 
 [TestClass, TestCategory("Regression")]
@@ -159,10 +159,10 @@ public class IndyMathTimesSeriesRegressionTests : RegressionTestBase<MathResult>
     public override void Series_AgainstBaseline_MatchesExactly() => OtherBars.Times(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Series only: two-series input has no incremental form");
+    public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToTimesList(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Series only: two-series input has no incremental form");
+    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Two-series stream hubs are tracked in #2417");
 }
 
 [TestClass, TestCategory("Regression")]
@@ -174,10 +174,10 @@ public class IndyMathDividedBySeriesRegressionTests : RegressionTestBase<MathRes
     public override void Series_AgainstBaseline_MatchesExactly() => OtherBars.DividedBy(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Series only: two-series input has no incremental form");
+    public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToDividedByList(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Series only: two-series input has no incremental form");
+    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Two-series stream hubs are tracked in #2417");
 }
 
 [TestClass, TestCategory("Regression")]
@@ -189,10 +189,10 @@ public class IndyMathMaxWithRegressionTests : RegressionTestBase<MathResult>
     public override void Series_AgainstBaseline_MatchesExactly() => OtherBars.MaxWith(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Series only: two-series input has no incremental form");
+    public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToMaxWithList(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Series only: two-series input has no incremental form");
+    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Two-series stream hubs are tracked in #2417");
 }
 
 [TestClass, TestCategory("Regression")]
@@ -204,8 +204,8 @@ public class IndyMathMinWithRegressionTests : RegressionTestBase<MathResult>
     public override void Series_AgainstBaseline_MatchesExactly() => OtherBars.MinWith(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Series only: two-series input has no incremental form");
+    public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToMinWithList(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Series only: two-series input has no incremental form");
+    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Two-series stream hubs are tracked in #2417");
 }

@@ -48,8 +48,7 @@ public class IndyMathCatalogTests : TestBase
             listing.Parameters.Select(static p => p.ParameterName)
                 .Should().Equal("source", "other");
 
-            // two-series input has no incremental form
-            Catalog.Get(uiid, Style.Buffer).Should().BeNull();
+            // the two-series stream hubs come later
             Catalog.Get(uiid, Style.Stream).Should().BeNull();
         }
     }
@@ -64,6 +63,15 @@ public class IndyMathCatalogTests : TestBase
             AssertListing(listing, uiid, name, Style.Buffer, $"To{method}List");
             listing.Parameters.Should().ContainSingle()
                 .Which.ParameterName.Should().Be(parameter);
+        }
+
+        foreach ((string uiid, string name, string method) in Pairwise)
+        {
+            IndicatorListing listing = Catalog.Get(uiid, Style.Buffer);
+
+            AssertListing(listing, uiid, name, Style.Buffer, $"To{method}List");
+            listing.Parameters.Select(static p => p.ParameterName)
+                .Should().Equal("source", "other");
         }
     }
 
@@ -84,6 +92,17 @@ public class IndyMathCatalogTests : TestBase
     public void IndyMathPairwiseSeries_ExplicitSources_MatchesDirectCall()
     {
         IReadOnlyList<MathResult> viaCatalog = Catalog.Get("MINUS-SERIES", Style.Series)
+            .WithParamValue("other", OtherBars)
+            .FromSource((IEnumerable<IBar>)Bars)
+            .Execute<MathResult>();
+
+        viaCatalog.IsExactly(Bars.Minus(OtherBars));
+    }
+
+    [TestMethod]
+    public void IndyMathPairwiseBuffer_ExplicitSources_MatchesDirectCall()
+    {
+        IReadOnlyList<MathResult> viaCatalog = Catalog.Get("MINUS-SERIES", Style.Buffer)
             .WithParamValue("other", OtherBars)
             .FromSource((IEnumerable<IBar>)Bars)
             .Execute<MathResult>();

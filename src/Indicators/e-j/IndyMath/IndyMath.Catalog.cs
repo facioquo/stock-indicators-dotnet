@@ -220,6 +220,15 @@ public static partial class IndyMath
             .Build();
 
     /// <summary>
+    /// PLUS-SERIES Buffer Listing
+    /// </summary>
+    internal static readonly IndicatorListing PlusOtherBufferListing =
+        new CatalogListingBuilder(PlusOtherCommonListing)
+            .WithStyle(Style.Buffer)
+            .WithMethodName(typeof(IndyMath), "ToPlusList")
+            .Build();
+
+    /// <summary>
     /// MINUS-SERIES Common Base Listing
     /// </summary>
     internal static readonly IndicatorListing MinusOtherCommonListing =
@@ -239,6 +248,15 @@ public static partial class IndyMath
         new CatalogListingBuilder(MinusOtherCommonListing)
             .WithStyle(Style.Series)
             .WithMethodName(typeof(IndyMath), "Minus")
+            .Build();
+
+    /// <summary>
+    /// MINUS-SERIES Buffer Listing
+    /// </summary>
+    internal static readonly IndicatorListing MinusOtherBufferListing =
+        new CatalogListingBuilder(MinusOtherCommonListing)
+            .WithStyle(Style.Buffer)
+            .WithMethodName(typeof(IndyMath), "ToMinusList")
             .Build();
 
     /// <summary>
@@ -264,6 +282,15 @@ public static partial class IndyMath
             .Build();
 
     /// <summary>
+    /// TIMES-SERIES Buffer Listing
+    /// </summary>
+    internal static readonly IndicatorListing TimesOtherBufferListing =
+        new CatalogListingBuilder(TimesOtherCommonListing)
+            .WithStyle(Style.Buffer)
+            .WithMethodName(typeof(IndyMath), "ToTimesList")
+            .Build();
+
+    /// <summary>
     /// DIVIDED-BY-SERIES Common Base Listing
     /// </summary>
     internal static readonly IndicatorListing DividedByOtherCommonListing =
@@ -283,6 +310,15 @@ public static partial class IndyMath
         new CatalogListingBuilder(DividedByOtherCommonListing)
             .WithStyle(Style.Series)
             .WithMethodName(typeof(IndyMath), "DividedBy")
+            .Build();
+
+    /// <summary>
+    /// DIVIDED-BY-SERIES Buffer Listing
+    /// </summary>
+    internal static readonly IndicatorListing DividedByOtherBufferListing =
+        new CatalogListingBuilder(DividedByOtherCommonListing)
+            .WithStyle(Style.Buffer)
+            .WithMethodName(typeof(IndyMath), "ToDividedByList")
             .Build();
 
     /// <summary>
@@ -308,6 +344,15 @@ public static partial class IndyMath
             .Build();
 
     /// <summary>
+    /// MAX-WITH Buffer Listing
+    /// </summary>
+    internal static readonly IndicatorListing MaxWithBufferListing =
+        new CatalogListingBuilder(MaxWithCommonListing)
+            .WithStyle(Style.Buffer)
+            .WithMethodName(typeof(IndyMath), "ToMaxWithList")
+            .Build();
+
+    /// <summary>
     /// MIN-WITH Common Base Listing
     /// </summary>
     internal static readonly IndicatorListing MinWithCommonListing =
@@ -327,6 +372,15 @@ public static partial class IndyMath
         new CatalogListingBuilder(MinWithCommonListing)
             .WithStyle(Style.Series)
             .WithMethodName(typeof(IndyMath), "MinWith")
+            .Build();
+
+    /// <summary>
+    /// MIN-WITH Buffer Listing
+    /// </summary>
+    internal static readonly IndicatorListing MinWithBufferListing =
+        new CatalogListingBuilder(MinWithCommonListing)
+            .WithStyle(Style.Buffer)
+            .WithMethodName(typeof(IndyMath), "ToMinWithList")
             .Build();
 
     /// <summary>

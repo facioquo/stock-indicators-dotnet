@@ -25,13 +25,14 @@ public class CatalogMetricsTests : TestBase
         int streamCount = catalog.Count(static x => x.Style == Style.Stream);
         int bufferCount = catalog.Count(static x => x.Style == Style.Buffer);
 
-        // 12 listings are Series-only: Beta, Correlation, Prs, RenkoAtr, StdDevChannels,
-        // ZigZag, and the six two-series IndyMath operations.
+        // 6 indicators (Beta, Correlation, Prs, RenkoAtr, StdDevChannels, ZigZag) are
+        // Series-only. The six two-series IndyMath operations have Buffer listings
+        // but no Stream listings.
         seriesCount.Should().Be(99);
-        bufferCount.Should().Be(87);
+        bufferCount.Should().Be(93);
         streamCount.Should().Be(87);
 
         int totalCount = seriesCount + streamCount + bufferCount;
-        totalCount.Should().Be(273);
+        totalCount.Should().Be(279);
     }
 }

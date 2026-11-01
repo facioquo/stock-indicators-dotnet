@@ -26,3 +26,14 @@ public interface IRollingMath
     /// </summary>
     int LookbackPeriods { get; }
 }
+
+/// <summary>
+/// Interface for IndyMath calculations between two series.
+/// </summary>
+public interface IPairMath
+{
+    /// <summary>
+    /// Gets the operation applied at each matched timestamp.
+    /// </summary>
+    PairOperation Operation { get; }
+}
