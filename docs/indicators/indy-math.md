@@ -114,7 +114,7 @@ See [Chaining indicators](/guide/chaining) for more.
 
 ## Streaming
 
-The fixed-amount, percent-offset, and rolling-window methods stream.  Each Series method has a buffer-style form named `To{Method}List`, such as `.ToPlusList(amount)` or `.ToRollingMaxList(lookbackPeriods)`.
+The fixed-amount, percent-offset, and rolling-window methods stream.  Each fixed-operand and rolling Series method has a buffer-style form named `To{Method}List`, such as `.ToPlusList(amount)` or `.ToRollingMaxList(lookbackPeriods)`.
 
 Use the buffer-style `List<T>` when you need incremental calculations without a hub:
 
@@ -124,7 +124,7 @@ RollingMaxList rollingMaxList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => rollingMaxList.Add(bar);
 
-// based on `ICollection<MathResult>`; fills as the handler runs
+// based on `IReadOnlyList<MathResult>`; fills as the handler runs
 IReadOnlyList<MathResult> results = rollingMaxList;
 ```
 
