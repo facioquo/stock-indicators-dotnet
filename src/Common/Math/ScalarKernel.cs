@@ -5,13 +5,13 @@ namespace FacioQuo.Stock.Indicators;
 /// <summary>
 /// Validated arithmetic between a value and a fixed operand, shared by every style.
 /// </summary>
-internal readonly struct ScalarKernel
+internal sealed class ScalarKernel
 {
     private readonly ScalarOperation _operation;
     private readonly double _operand;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ScalarKernel"/> struct.
+    /// Initializes a new instance of the <see cref="ScalarKernel"/> class.
     /// </summary>
     /// <param name="operation">Arithmetic to apply.</param>
     /// <param name="operand">Finite operand; non-zero for <see cref="ScalarOperation.DividedBy"/>.</param>
