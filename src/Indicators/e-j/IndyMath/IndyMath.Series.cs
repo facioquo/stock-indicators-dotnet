@@ -1,20 +1,21 @@
 namespace FacioQuo.Stock.Indicators;
 
 /// <summary>
-/// Arithmetic and rolling-window math on chainable indicator results.
+/// IndyMath: arithmetic and rolling-window math on chainable indicator results.
 /// </summary>
 /// <remarks>
 /// <para>
-/// Each method returns a new list of <see cref="TimeValue"/> results, one per source result,
+/// Each method returns a new list of <see cref="MathResult"/> results, one per source result,
 /// so the output chains into any indicator that accepts <see cref="IReusable"/> values.
+/// An incalculable period, such as a warmup period of either input, is <see langword="null"/>.
 /// </para>
 /// <para>
 /// Methods that combine two series require both to hold the same number of results with
 /// identical timestamps at every position; a mismatch throws instead of pairing values
-/// from different periods. <see cref="double.NaN"/> source values propagate to the output.
+/// from different periods.
 /// </para>
 /// </remarks>
-public static class ResultMath
+public static partial class IndyMath
 {
     /// <summary>
     /// Adds the values of two series, period by period.
@@ -24,7 +25,7 @@ public static class ResultMath
     /// <returns>Time series of <c>source + other</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either series is null.</exception>
     /// <exception cref="InvalidBarsException">Thrown when the series lengths or timestamps do not match.</exception>
-    public static IReadOnlyList<TimeValue> Plus(
+    public static IReadOnlyList<MathResult> Plus(
         this IReadOnlyList<IReusable> source,
         IReadOnlyList<IReusable> other)
         => source.Combine(other, static (a, b) => a + b);
@@ -37,13 +38,12 @@ public static class ResultMath
     /// <returns>Time series of <c>source + amount</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when the series is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the amount is not finite.</exception>
-    public static IReadOnlyList<TimeValue> Plus(
+    public static IReadOnlyList<MathResult> Plus(
         this IReadOnlyList<IReusable> source,
         double amount)
     {
         ArgumentNullException.ThrowIfNull(source);
-        ValidateFinite(amount, nameof(amount));
-        return source.Transform(v => v + amount);
+        return source.Transform(new ScalarKernel(ScalarOperation.Plus, amount));
     }
 
     /// <summary>
@@ -56,14 +56,12 @@ public static class ResultMath
     /// <returns>Time series of <c>source × (1 + percentOffset / 100)</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when the series is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the percent offset is not finite.</exception>
-    public static IReadOnlyList<TimeValue> PlusPercent(
+    public static IReadOnlyList<MathResult> PlusPercent(
         this IReadOnlyList<IReusable> source,
         double percentOffset)
     {
         ArgumentNullException.ThrowIfNull(source);
-        ValidateFinite(percentOffset, nameof(percentOffset));
-        double ratio = 1d + (percentOffset / 100d);
-        return source.Transform(v => v * ratio);
+        return source.Transform(new ScalarKernel(ScalarOperation.PlusPercent, percentOffset));
     }
 
     /// <summary>
@@ -74,7 +72,7 @@ public static class ResultMath
     /// <returns>Time series of <c>source − other</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either series is null.</exception>
     /// <exception cref="InvalidBarsException">Thrown when the series lengths or timestamps do not match.</exception>
-    public static IReadOnlyList<TimeValue> Minus(
+    public static IReadOnlyList<MathResult> Minus(
         this IReadOnlyList<IReusable> source,
         IReadOnlyList<IReusable> other)
         => source.Combine(other, static (a, b) => a - b);
@@ -87,13 +85,12 @@ public static class ResultMath
     /// <returns>Time series of <c>source − amount</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when the series is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the amount is not finite.</exception>
-    public static IReadOnlyList<TimeValue> Minus(
+    public static IReadOnlyList<MathResult> Minus(
         this IReadOnlyList<IReusable> source,
         double amount)
     {
         ArgumentNullException.ThrowIfNull(source);
-        ValidateFinite(amount, nameof(amount));
-        return source.Transform(v => v - amount);
+        return source.Transform(new ScalarKernel(ScalarOperation.Minus, amount));
     }
 
     /// <summary>
@@ -104,7 +101,7 @@ public static class ResultMath
     /// <returns>Time series of <c>source × other</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either series is null.</exception>
     /// <exception cref="InvalidBarsException">Thrown when the series lengths or timestamps do not match.</exception>
-    public static IReadOnlyList<TimeValue> Times(
+    public static IReadOnlyList<MathResult> Times(
         this IReadOnlyList<IReusable> source,
         IReadOnlyList<IReusable> other)
         => source.Combine(other, static (a, b) => a * b);
@@ -117,13 +114,12 @@ public static class ResultMath
     /// <returns>Time series of <c>source × factor</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when the series is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the factor is not finite.</exception>
-    public static IReadOnlyList<TimeValue> Times(
+    public static IReadOnlyList<MathResult> Times(
         this IReadOnlyList<IReusable> source,
         double factor)
     {
         ArgumentNullException.ThrowIfNull(source);
-        ValidateFinite(factor, nameof(factor));
-        return source.Transform(v => v * factor);
+        return source.Transform(new ScalarKernel(ScalarOperation.Times, factor));
     }
 
     /// <summary>
@@ -132,11 +128,11 @@ public static class ResultMath
     /// <param name="source">Chainable results (dividends), time sorted.</param>
     /// <param name="other">Chainable results (divisors) with timestamps matching <paramref name="source"/>.</param>
     /// <returns>
-    /// Time series of <c>source ÷ other</c> values; <see cref="double.NaN"/> where the divisor is 0.
+    /// Time series of <c>source ÷ other</c> values; <see langword="null"/> where the divisor is 0.
     /// </returns>
     /// <exception cref="ArgumentNullException">Thrown when either series is null.</exception>
     /// <exception cref="InvalidBarsException">Thrown when the series lengths or timestamps do not match.</exception>
-    public static IReadOnlyList<TimeValue> DividedBy(
+    public static IReadOnlyList<MathResult> DividedBy(
         this IReadOnlyList<IReusable> source,
         IReadOnlyList<IReusable> other)
         => source.Combine(other, static (a, b) => b != 0 ? a / b : double.NaN);
@@ -149,20 +145,12 @@ public static class ResultMath
     /// <returns>Time series of <c>source ÷ divisor</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when the series is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the divisor is 0 or not finite.</exception>
-    public static IReadOnlyList<TimeValue> DividedBy(
+    public static IReadOnlyList<MathResult> DividedBy(
         this IReadOnlyList<IReusable> source,
         double divisor)
     {
         ArgumentNullException.ThrowIfNull(source);
-        ValidateFinite(divisor, nameof(divisor));
-
-        if (divisor == 0)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(divisor), divisor, "The divisor value must not be 0.");
-        }
-
-        return source.Transform(v => v / divisor);
+        return source.Transform(new ScalarKernel(ScalarOperation.DividedBy, divisor));
     }
 
     /// <summary>
@@ -173,7 +161,7 @@ public static class ResultMath
     /// <returns>Time series of the larger value at each period.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either series is null.</exception>
     /// <exception cref="InvalidBarsException">Thrown when the series lengths or timestamps do not match.</exception>
-    public static IReadOnlyList<TimeValue> MaxWith(
+    public static IReadOnlyList<MathResult> MaxWith(
         this IReadOnlyList<IReusable> source,
         IReadOnlyList<IReusable> other)
         => source.Combine(other, Math.Max);
@@ -186,7 +174,7 @@ public static class ResultMath
     /// <returns>Time series of the smaller value at each period.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either series is null.</exception>
     /// <exception cref="InvalidBarsException">Thrown when the series lengths or timestamps do not match.</exception>
-    public static IReadOnlyList<TimeValue> MinWith(
+    public static IReadOnlyList<MathResult> MinWith(
         this IReadOnlyList<IReusable> source,
         IReadOnlyList<IReusable> other)
         => source.Combine(other, Math.Min);
@@ -197,15 +185,18 @@ public static class ResultMath
     /// <param name="source">Chainable results, time sorted.</param>
     /// <param name="lookbackPeriods">Number of periods in the window, including the current one.</param>
     /// <returns>
-    /// Time series of rolling highest values; <see cref="double.NaN"/> for the first
-    /// <c>lookbackPeriods − 1</c> periods and wherever the window holds a NaN value.
+    /// Time series of rolling highest values; <see langword="null"/> for the first
+    /// <c>lookbackPeriods − 1</c> periods and wherever the window holds an incalculable value.
     /// </returns>
     /// <exception cref="ArgumentNullException">Thrown when the series is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the lookback periods are less than 1.</exception>
-    public static IReadOnlyList<TimeValue> RollingMax(
+    public static IReadOnlyList<MathResult> RollingMax(
         this IReadOnlyList<IReusable> source,
         int lookbackPeriods)
-        => source.RollingExtreme(lookbackPeriods, isMax: true);
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        return source.Rolling(new RollingExtremeWindow(lookbackPeriods, isMax: true).Add);
+    }
 
     /// <summary>
     /// Calculates the lowest value over a rolling lookback window.
@@ -213,15 +204,18 @@ public static class ResultMath
     /// <param name="source">Chainable results, time sorted.</param>
     /// <param name="lookbackPeriods">Number of periods in the window, including the current one.</param>
     /// <returns>
-    /// Time series of rolling lowest values; <see cref="double.NaN"/> for the first
-    /// <c>lookbackPeriods − 1</c> periods and wherever the window holds a NaN value.
+    /// Time series of rolling lowest values; <see langword="null"/> for the first
+    /// <c>lookbackPeriods − 1</c> periods and wherever the window holds an incalculable value.
     /// </returns>
     /// <exception cref="ArgumentNullException">Thrown when the series is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the lookback periods are less than 1.</exception>
-    public static IReadOnlyList<TimeValue> RollingMin(
+    public static IReadOnlyList<MathResult> RollingMin(
         this IReadOnlyList<IReusable> source,
         int lookbackPeriods)
-        => source.RollingExtreme(lookbackPeriods, isMax: false);
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        return source.Rolling(new RollingExtremeWindow(lookbackPeriods, isMax: false).Add);
+    }
 
     /// <summary>
     /// Calculates the median value over a rolling lookback window.
@@ -230,8 +224,8 @@ public static class ResultMath
     /// <param name="lookbackPeriods">Number of periods in the window, including the current one.</param>
     /// <returns>
     /// Time series of rolling median values, averaging the two middle values when the window
-    /// is even; <see cref="double.NaN"/> for the first <c>lookbackPeriods − 1</c> periods and
-    /// wherever the window holds a NaN value.
+    /// is even; <see langword="null"/> for the first <c>lookbackPeriods − 1</c> periods and
+    /// wherever the window holds an incalculable value.
     /// </returns>
     /// <remarks>
     /// The window is kept sorted, so each period costs O(log k) comparisons plus an O(k) shift,
@@ -239,76 +233,34 @@ public static class ResultMath
     /// </remarks>
     /// <exception cref="ArgumentNullException">Thrown when the series is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the lookback periods are less than 1.</exception>
-    public static IReadOnlyList<TimeValue> RollingMedian(
+    public static IReadOnlyList<MathResult> RollingMedian(
         this IReadOnlyList<IReusable> source,
         int lookbackPeriods)
     {
         ArgumentNullException.ThrowIfNull(source);
-        ValidateLookback(lookbackPeriods);
-
-        int length = source.Count;
-        List<TimeValue> results = new(length);
-
-        // window values kept in ascending order (NaN sorts first);
-        // holds one extra value between each insert and its paired removal
-        List<double> window = new(Math.Min(lookbackPeriods, length) + 1);
-        int nanCount = 0;
-        int mid = lookbackPeriods / 2;
-        bool isEven = lookbackPeriods % 2 == 0;
-
-        for (int i = 0; i < length; i++)
-        {
-            double value = source[i].Value;
-            Insert(window, value);
-
-            if (double.IsNaN(value))
-            {
-                nanCount++;
-            }
-
-            if (i >= lookbackPeriods)
-            {
-                double outgoing = source[i - lookbackPeriods].Value;
-                window.RemoveAt(window.BinarySearch(outgoing));
-
-                if (double.IsNaN(outgoing))
-                {
-                    nanCount--;
-                }
-            }
-
-            double median = i < lookbackPeriods - 1 || nanCount > 0
-                ? double.NaN
-                : isEven
-                    ? Midpoint(window[mid - 1], window[mid])
-                    : window[mid];
-
-            results.Add(new TimeValue(source[i].Timestamp, median));
-        }
-
-        return results;
+        return source.Rolling(new RollingMedianWindow(lookbackPeriods).Add);
     }
 
     /// <summary>
     /// Applies a single-value operation to every value in a series.
     /// </summary>
     /// <param name="source">Chainable results, time sorted.</param>
-    /// <param name="operation">Operation applied to each value.</param>
+    /// <param name="kernel">Validated operation applied to each value.</param>
     /// <returns>Time series of operation results.</returns>
     /// <exception cref="ArgumentNullException">Thrown when the series is null.</exception>
-    private static List<TimeValue> Transform(
+    private static List<MathResult> Transform(
         this IReadOnlyList<IReusable> source,
-        Func<double, double> operation)
+        ScalarKernel kernel)
     {
         ArgumentNullException.ThrowIfNull(source);
 
         int length = source.Count;
-        List<TimeValue> results = new(length);
+        List<MathResult> results = new(length);
 
         for (int i = 0; i < length; i++)
         {
             IReusable s = source[i];
-            results.Add(new TimeValue(s.Timestamp, operation(s.Value)));
+            results.Add(new MathResult(s.Timestamp, kernel.Apply(s.Value).NaN2Null()));
         }
 
         return results;
@@ -323,7 +275,7 @@ public static class ResultMath
     /// <returns>Time series of operation results.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either series is null.</exception>
     /// <exception cref="InvalidBarsException">Thrown when the series lengths or timestamps do not match.</exception>
-    private static List<TimeValue> Combine(
+    private static List<MathResult> Combine(
         this IReadOnlyList<IReusable> source,
         IReadOnlyList<IReusable> other,
         Func<double, double, double> operation)
@@ -341,7 +293,7 @@ public static class ResultMath
               + "Calculate both series from the same bars, and trim both to the same range before combining.");
         }
 
-        List<TimeValue> results = new(length);
+        List<MathResult> results = new(length);
 
         for (int i = 0; i < length; i++)
         {
@@ -356,136 +308,31 @@ public static class ResultMath
                   + "Calculate both series from the same bars, and trim both to the same range before combining.");
             }
 
-            results.Add(new TimeValue(s.Timestamp, operation(s.Value, o.Value)));
+            results.Add(new MathResult(s.Timestamp, operation(s.Value, o.Value).NaN2Null()));
         }
 
         return results;
     }
 
     /// <summary>
-    /// Calculates a rolling highest or lowest value with a monotonic index deque, in O(n).
+    /// Advances a rolling window over every value in a series.
     /// </summary>
     /// <param name="source">Chainable results, time sorted.</param>
-    /// <param name="lookbackPeriods">Number of periods in the window, including the current one.</param>
-    /// <param name="isMax">Whether to track the highest (true) or lowest (false) value.</param>
-    /// <returns>Time series of rolling extreme values.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when the series is null.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when the lookback periods are less than 1.</exception>
-    private static List<TimeValue> RollingExtreme(
+    /// <param name="advance">Window step that takes the next value and returns the window result.</param>
+    /// <returns>Time series of window results.</returns>
+    private static List<MathResult> Rolling(
         this IReadOnlyList<IReusable> source,
-        int lookbackPeriods,
-        bool isMax)
+        Func<double, double> advance)
     {
-        ArgumentNullException.ThrowIfNull(source);
-        ValidateLookback(lookbackPeriods);
-
         int length = source.Count;
-        List<TimeValue> results = new(length);
-
-        // ring of candidate-extreme indexes, oldest at head; never holds more than one window
-        int capacity = Math.Max(1, Math.Min(lookbackPeriods, length));
-        int[] deque = new int[capacity];
-        int head = 0;
-        int count = 0;
-        int lastNaN = -1;
+        List<MathResult> results = new(length);
 
         for (int i = 0; i < length; i++)
         {
-            double value = source[i].Value;
-
-            if (double.IsNaN(value))
-            {
-                lastNaN = i;
-                count = 0;
-            }
-            else
-            {
-                // evict the expired head first, so the push below always has room
-                if (count > 0 && deque[head] <= i - lookbackPeriods)
-                {
-                    head = (head + 1) % capacity;
-                    count--;
-                }
-
-                while (count > 0)
-                {
-                    double back = source[deque[(head + count - 1) % capacity]].Value;
-
-                    if (isMax ? back > value : back < value)
-                    {
-                        break;
-                    }
-
-                    count--;
-                }
-
-                deque[(head + count) % capacity] = i;
-                count++;
-            }
-
-            double extreme = i < lookbackPeriods - 1 || lastNaN > i - lookbackPeriods
-                ? double.NaN
-                : source[deque[head]].Value;
-
-            results.Add(new TimeValue(source[i].Timestamp, extreme));
+            IReusable s = source[i];
+            results.Add(new MathResult(s.Timestamp, advance(s.Value).NaN2Null()));
         }
 
         return results;
-    }
-
-    /// <summary>
-    /// Averages two values, exactly when their sum is finite and without overflow when it is not.
-    /// </summary>
-    /// <param name="a">First value.</param>
-    /// <param name="b">Second value.</param>
-    /// <returns>The value halfway between <paramref name="a"/> and <paramref name="b"/>.</returns>
-    private static double Midpoint(double a, double b)
-    {
-        double sum = a + b;
-
-        return double.IsInfinity(sum) && double.IsFinite(a) && double.IsFinite(b)
-            ? (a / 2d) + (b / 2d)
-            : sum / 2d;
-    }
-
-    /// <summary>
-    /// Inserts a value into an ascending list, keeping it sorted.
-    /// </summary>
-    /// <param name="sorted">Ascending list of values.</param>
-    /// <param name="value">Value to insert.</param>
-    private static void Insert(List<double> sorted, double value)
-    {
-        int index = sorted.BinarySearch(value);
-        sorted.Insert(index < 0 ? ~index : index, value);
-    }
-
-    /// <summary>
-    /// Validates that a scalar operand is a finite number.
-    /// </summary>
-    /// <param name="value">Scalar operand.</param>
-    /// <param name="paramName">Name of the operand's parameter.</param>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when the value is NaN or infinite.</exception>
-    private static void ValidateFinite(double value, string paramName)
-    {
-        if (!double.IsFinite(value))
-        {
-            throw new ArgumentOutOfRangeException(
-                paramName, value, $"The {paramName} value must be a finite number.");
-        }
-    }
-
-    /// <summary>
-    /// Validates the rolling window size.
-    /// </summary>
-    /// <param name="lookbackPeriods">Number of periods in the window.</param>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when the lookback periods are less than 1.</exception>
-    private static void ValidateLookback(int lookbackPeriods)
-    {
-        if (lookbackPeriods < 1)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(lookbackPeriods), lookbackPeriods,
-                "Lookback periods must be greater than 0.");
-        }
     }
 }

@@ -570,6 +570,21 @@ Parameters:
 Results:
   - Dema : Default : reusable=true : pane=Price
 
+### DIVIDED-BY / Series
+Method: DividedBy
+Parameters:
+  - divisor : Double : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
+
+### DIVIDED-BY-SERIES / Series
+Method: DividedBy
+Parameters:
+  - source : IReadOnlyList<T> where T : IReusable : required
+  - other : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
+
 ### DOJI / Series
 Method: ToDoji
 Parameters:
@@ -1221,6 +1236,14 @@ Parameters:
 Results:
   - Match : Default : reusable=true : pane=(none)
 
+### MAX-WITH / Series
+Method: MaxWith
+Parameters:
+  - source : IReadOnlyList<T> where T : IReusable : required
+  - other : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
 ### MFI / Series
 Method: ToMfi
 Parameters:
@@ -1244,6 +1267,29 @@ Parameters:
 Results:
   - Mfi : Default : reusable=true : pane=Mfi
 Pane: Mfi : range=0..100 : lines=80,20
+
+### MIN-WITH / Series
+Method: MinWith
+Parameters:
+  - source : IReadOnlyList<T> where T : IReusable : required
+  - other : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### MINUS / Series
+Method: Minus
+Parameters:
+  - amount : Double : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### MINUS-SERIES / Series
+Method: Minus
+Parameters:
+  - source : IReadOnlyList<T> where T : IReusable : required
+  - other : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
 
 ### OBV / Series
 Method: ToObv
@@ -1352,6 +1398,28 @@ Results:
   - LowLine : Default : reusable=false : pane=Price
   - HighTrend : Default : reusable=false : pane=(none)
   - LowTrend : Default : reusable=false : pane=(none)
+
+### PLUS / Series
+Method: Plus
+Parameters:
+  - amount : Double : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### PLUS-PERCENT / Series
+Method: PlusPercent
+Parameters:
+  - percentOffset : Double : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### PLUS-SERIES / Series
+Method: Plus
+Parameters:
+  - source : IReadOnlyList<T> where T : IReusable : required
+  - other : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
 
 ### PMO / Series
 Method: ToPmo
@@ -1561,6 +1629,27 @@ Results:
   - RocEma : Default : reusable=false : pane=RocWb
   - UpperBand : Default : reusable=false : pane=RocWb
   - LowerBand : Default : reusable=false : pane=RocWb
+
+### ROLLING-MAX / Series
+Method: RollingMax
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### ROLLING-MEDIAN / Series
+Method: RollingMedian
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### ROLLING-MIN / Series
+Method: RollingMin
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Result : Default : reusable=true : pane=Price
 
 ### ROLLING-PIVOTS / Series
 Method: ToRollingPivots
@@ -2009,6 +2098,21 @@ Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
   - Tema : Default : reusable=true : pane=Price
+
+### TIMES / Series
+Method: Times
+Parameters:
+  - factor : Double : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
+
+### TIMES-SERIES / Series
+Method: Times
+Parameters:
+  - source : IReadOnlyList<T> where T : IReusable : required
+  - other : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
 
 ### TR / Series
 Method: ToTr

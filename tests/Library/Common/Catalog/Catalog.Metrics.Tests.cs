@@ -27,11 +27,11 @@ public class CatalogMetricsTests : TestBase
 
         // 6 indicators (Beta, Correlation, Prs, RenkoAtr, StdDevChannels, ZigZag) are
         // Series-only and account for the 85 vs 79 gap.
-        seriesCount.Should().Be(85);
+        seriesCount.Should().Be(99);
         bufferCount.Should().Be(79);
         streamCount.Should().Be(79);
 
         int totalCount = seriesCount + streamCount + bufferCount;
-        totalCount.Should().Be(243);
+        totalCount.Should().Be(257);
     }
 }

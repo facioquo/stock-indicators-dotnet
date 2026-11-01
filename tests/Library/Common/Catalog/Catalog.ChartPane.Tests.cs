@@ -20,7 +20,8 @@ public class CatalogChartPaneTests : TestBase
     // results whose median lands near price level on the test data without being a price
     private static readonly Dictionary<(string Uiid, string DataName), string> ScaleCoincidences = new() {
         [("CORR", "VarianceB")] = "a variance is in squared price units",
-        [("SLOPE", "Intercept")] = "the regression extrapolated to the first bar of the series, not a price at any bar"
+        [("SLOPE", "Intercept")] = "the regression extrapolated to the first bar of the series, not a price at any bar",
+        [("DIVIDED-BY", "Result")] = "the default divisor of 2 halves the close; a quotient's scale follows its divisor, not price"
     };
 
     [TestMethod]

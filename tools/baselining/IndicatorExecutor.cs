@@ -69,7 +69,7 @@ internal static class IndicatorExecutor
         {
             method = type
                 .GetMethods(BindingFlags.Public | BindingFlags.Static)
-                .FirstOrDefault(m => m.Name == methodName && m.IsGenericMethod && m.GetParameters().Length == expectedParamCount);
+                .FirstOrDefault(m => m.Name == methodName && m.IsGenericMethod && m.GetParameters().Length == expectedParamCount && InputShapeMatches(m, isDualInput));
 
             if (method != null)
             {
@@ -84,7 +84,7 @@ internal static class IndicatorExecutor
             {
                 method = type
                     .GetMethods(BindingFlags.Public | BindingFlags.Static)
-                    .FirstOrDefault(m => m.Name == methodName && !m.IsGenericMethod && m.GetParameters().Length == expectedParamCount);
+                    .FirstOrDefault(m => m.Name == methodName && !m.IsGenericMethod && m.GetParameters().Length == expectedParamCount && InputShapeMatches(m, isDualInput));
 
                 if (method != null)
                 {
@@ -165,6 +165,27 @@ internal static class IndicatorExecutor
         // Use lowercase UIID with hyphen format (e.g., "SMA" -> "sma.standard.json")
         string fileName = $"{listing.Uiid.ToLowerInvariant()}.standard.json";
         return Path.GetFullPath(Path.Combine(resultsDir, fileName));
+    }
+
+    /// <summary>
+    /// Checks that a method's second parameter is a series exactly when the listing is dual-input.
+    /// </summary>
+    /// <remarks>
+    /// Overloads can share a name and parameter count, such as IndyMath <c>Plus(other)</c> and
+    /// <c>Plus(amount)</c>, so the count alone cannot pick the overload a listing describes.
+    /// </remarks>
+    /// <param name="method">Candidate method.</param>
+    /// <param name="isDualInput">Whether the listing declares a second series input.</param>
+    /// <returns><c>true</c> when the method's input shape matches the listing.</returns>
+    private static bool InputShapeMatches(MethodInfo method, bool isDualInput)
+    {
+        ParameterInfo[] methodParams = method.GetParameters();
+
+        bool secondIsSeries = methodParams.Length > 1
+            && methodParams[1].ParameterType.IsGenericType
+            && methodParams[1].ParameterType.GetGenericTypeDefinition() == typeof(IReadOnlyList<>);
+
+        return secondIsSeries == isDualInput;
     }
 
     private static object?[] PrepareParameters(IndicatorListing listing, MethodInfo method, bool isDualInput)
