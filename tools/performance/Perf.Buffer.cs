@@ -45,6 +45,14 @@ public class BufferIndicators
     [Benchmark] public HtTrendlineList HtTrendlineList() => q.ToHtTrendlineList();
     [Benchmark] public HurstList HurstList() => q.ToHurstList(100);
     [Benchmark] public IchimokuList IchimokuList() => q.ToIchimokuList();
+    [Benchmark] public ScalarMathList IndyMathPlusList() => q.ToPlusList(1);
+    [Benchmark] public ScalarMathList IndyMathMinusList() => q.ToMinusList(1);
+    [Benchmark] public ScalarMathList IndyMathTimesList() => q.ToTimesList(2);
+    [Benchmark] public ScalarMathList IndyMathDividedByList() => q.ToDividedByList(2);
+    [Benchmark] public ScalarMathList IndyMathPlusPercentList() => q.ToPlusPercentList(2.5);
+    [Benchmark] public RollingMaxList IndyMathRollingMaxList() => q.ToRollingMaxList(20);
+    [Benchmark] public RollingMinList IndyMathRollingMinList() => q.ToRollingMinList(20);
+    [Benchmark] public RollingMedianList IndyMathRollingMedianList() => q.ToRollingMedianList(20);
     [Benchmark] public KamaList KamaList() => q.ToKamaList(10, 2, 30);
     [Benchmark] public KeltnerList KeltnerList() => q.ToKeltnerList(20, 2, 10);
     [Benchmark] public KvoList KvoList() => q.ToKvoList(34, 55, 13);

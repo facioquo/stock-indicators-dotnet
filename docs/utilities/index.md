@@ -51,7 +51,6 @@ features:
 - [remove warmup periods](/utilities/results#remove-warmup-periods)
 - [condense](/utilities/results#condense)
 - [find by date](/utilities/results#find-by-date)
-- [result math](/utilities/results#result-math)
 - [sort results](/utilities/results#sort-results).
 
 ## [Additional helper utilities](/utilities/helpers)

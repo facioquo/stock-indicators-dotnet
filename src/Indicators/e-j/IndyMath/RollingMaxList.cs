@@ -3,7 +3,7 @@ namespace FacioQuo.Stock.Indicators;
 /// <summary>
 /// Rolling highest value from incremental reusable values.
 /// </summary>
-public class RollingMaxList : BufferList<TimeValue>, IIncrementFromChain
+public class RollingMaxList : BufferList<MathResult>, IIncrementFromChain, IRollingMath
 {
     private readonly RollingExtremeWindow _window;
 
@@ -35,7 +35,7 @@ public class RollingMaxList : BufferList<TimeValue>, IIncrementFromChain
 
     /// <inheritdoc />
     public void Add(DateTime timestamp, double value)
-        => AddInternal(new TimeValue(timestamp, _window.Add(value)));
+        => AddInternal(new MathResult(timestamp, _window.Add(value).NaN2Null()));
 
     /// <summary>
     /// Adds a new reusable value to the list.
@@ -73,7 +73,7 @@ public class RollingMaxList : BufferList<TimeValue>, IIncrementFromChain
     }
 }
 
-public static partial class ResultMath
+public static partial class IndyMath
 {
     /// <summary>
     /// Creates a buffer list for the rolling highest value.

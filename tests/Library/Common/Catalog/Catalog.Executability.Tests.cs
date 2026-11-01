@@ -109,7 +109,10 @@ public class CatalogExecutabilityTests : TestBase
     /// excluded here by name so the count below stays a real assertion.
     /// </remarks>
     private static readonly HashSet<string> TwoSeriesIndicators
-        = new(StringComparer.Ordinal) { "BETA", "CORR", "PRS" };
+        = new(StringComparer.Ordinal) {
+            "BETA", "CORR", "PRS",
+            "DIVIDED-BY-SERIES", "MAX-WITH", "MIN-WITH", "MINUS-SERIES", "PLUS-SERIES", "TIMES-SERIES"
+        };
 
     [TestMethod]
     public void EveryListingExecutes()

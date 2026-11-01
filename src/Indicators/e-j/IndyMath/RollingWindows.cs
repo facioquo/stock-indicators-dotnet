@@ -27,7 +27,7 @@ internal sealed class RollingExtremeWindow
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the lookback periods are less than 1.</exception>
     internal RollingExtremeWindow(int lookbackPeriods, bool isMax)
     {
-        ResultMath.ValidateLookback(lookbackPeriods);
+        IndyMath.Validate(lookbackPeriods);
         _lookbackPeriods = lookbackPeriods;
         _isMax = isMax;
 
@@ -145,7 +145,7 @@ internal sealed class RollingMedianWindow
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the lookback periods are less than 1.</exception>
     internal RollingMedianWindow(int lookbackPeriods)
     {
-        ResultMath.ValidateLookback(lookbackPeriods);
+        IndyMath.Validate(lookbackPeriods);
         _lookbackPeriods = lookbackPeriods;
     }
 

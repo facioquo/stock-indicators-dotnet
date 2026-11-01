@@ -28,6 +28,12 @@ features:
       src: /assets/thumbs/indicators/fisher-transform.png
     link: /indicators/fisher-transform
 
+  - title: IndyMath
+    details: Arithmetic and rolling-window math on indicator results, such as the spread between two moving averages
+    icon:
+      src: /assets/thumbs/_placeholder.svg
+    link: /indicators/indy-math
+
   - title: Heikin-Ashi
     details: Modified candlestick transform of price based on prior period price for smoothing
     icon:

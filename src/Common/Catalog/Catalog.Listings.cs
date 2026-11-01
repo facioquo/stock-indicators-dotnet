@@ -153,6 +153,13 @@ public static partial class Catalog
         _listings.Add(Dema.SeriesListing);
         _listings.Add(Dema.StreamListing);
 
+        // DIVIDED-BY (Divided By Divisor)
+        _listings.Add(IndyMath.DividedByBufferListing);
+        _listings.Add(IndyMath.DividedBySeriesListing);
+
+        // DIVIDED-BY-SERIES (Divided By Series)
+        _listings.Add(IndyMath.DividedByOtherSeriesListing);
+
         // Doji
         _listings.Add(Doji.BufferListing);
         _listings.Add(Doji.SeriesListing);
@@ -268,6 +275,9 @@ public static partial class Catalog
         _listings.Add(Marubozu.SeriesListing);
         _listings.Add(Marubozu.StreamListing);
 
+        // MAX-WITH (Max With Series)
+        _listings.Add(IndyMath.MaxWithSeriesListing);
+
         // MFI (Money Flow Index)
         _listings.Add(Mfi.BufferListing);
         _listings.Add(Mfi.SeriesListing);
@@ -277,6 +287,16 @@ public static partial class Catalog
         _listings.Add(MgDynamic.BufferListing);
         _listings.Add(MgDynamic.SeriesListing);
         _listings.Add(MgDynamic.StreamListing);
+
+        // MINUS (Minus Amount)
+        _listings.Add(IndyMath.MinusBufferListing);
+        _listings.Add(IndyMath.MinusSeriesListing);
+
+        // MINUS-SERIES (Minus Series)
+        _listings.Add(IndyMath.MinusOtherSeriesListing);
+
+        // MIN-WITH (Min With Series)
+        _listings.Add(IndyMath.MinWithSeriesListing);
 
         // OBV (On Balance Volume)
         _listings.Add(Obv.BufferListing);
@@ -297,6 +317,17 @@ public static partial class Catalog
         _listings.Add(Pivots.SeriesListing);
         _listings.Add(Pivots.BufferListing);
         _listings.Add(Pivots.StreamListing);
+
+        // PLUS (Plus Amount)
+        _listings.Add(IndyMath.PlusBufferListing);
+        _listings.Add(IndyMath.PlusSeriesListing);
+
+        // PLUS-PERCENT (Plus Percent)
+        _listings.Add(IndyMath.PlusPercentBufferListing);
+        _listings.Add(IndyMath.PlusPercentSeriesListing);
+
+        // PLUS-SERIES (Plus Series)
+        _listings.Add(IndyMath.PlusOtherSeriesListing);
 
         // PMO (Price Momentum Oscillator)
         _listings.Add(Pmo.BufferListing);
@@ -338,6 +369,18 @@ public static partial class Catalog
         _listings.Add(RollingPivots.BufferListing);
         _listings.Add(RollingPivots.SeriesListing);
         _listings.Add(RollingPivots.StreamListing);
+
+        // ROLLING-MAX (Rolling Max)
+        _listings.Add(IndyMath.RollingMaxBufferListing);
+        _listings.Add(IndyMath.RollingMaxSeriesListing);
+
+        // ROLLING-MEDIAN (Rolling Median)
+        _listings.Add(IndyMath.RollingMedianBufferListing);
+        _listings.Add(IndyMath.RollingMedianSeriesListing);
+
+        // ROLLING-MIN (Rolling Min)
+        _listings.Add(IndyMath.RollingMinBufferListing);
+        _listings.Add(IndyMath.RollingMinSeriesListing);
 
         // RSI (Relative Strength Index)
         _listings.Add(Rsi.BufferListing);
@@ -411,6 +454,13 @@ public static partial class Catalog
         _listings.Add(Tema.BufferListing);
         _listings.Add(Tema.SeriesListing);
         _listings.Add(Tema.StreamListing);
+
+        // TIMES (Times Factor)
+        _listings.Add(IndyMath.TimesBufferListing);
+        _listings.Add(IndyMath.TimesSeriesListing);
+
+        // TIMES-SERIES (Times Series)
+        _listings.Add(IndyMath.TimesOtherSeriesListing);
 
         // TR (True Range)
         _listings.Add(Tr.BufferListing);

@@ -416,6 +416,7 @@ export default defineConfig({
             { text: 'Basic price bar transforms', link: '/indicators/bar-part' },
             { text: 'Ehlers Fisher Transform', link: '/indicators/fisher-transform' },
             { text: 'Heikin Ashi', link: '/indicators/heikin-ashi' },
+            { text: 'IndyMath', link: '/indicators/indy-math' },
             { text: 'Renko Charts', link: '/indicators/renko' },
             { text: 'ZigZag', link: '/indicators/zig-zag' },
           ]
