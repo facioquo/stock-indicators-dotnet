@@ -131,6 +131,18 @@ public abstract class ResultMathBufferListTestBase<TList> : BufferListTestBase, 
     }
 
     [TestMethod]
+    public void Clear_ThenFiniteStart_RestartsWarmup()
+    {
+        // seed with a prefix that ends on a finite value, then replay a finite start,
+        // so any position, NaN marker, or window value Clear() leaves behind shows up
+        TList sut = NewList([.. reusables.Take(100)]);
+        sut.Clear();
+
+        Chain(sut).Add(Bars);
+        sut.IsExactly(Series(Bars));
+    }
+
+    [TestMethod]
     public override void PruneList_OverMaxListSize_AutoAdjustsListAndBuffers()
     {
         const int maxListSize = 100;
@@ -183,16 +195,24 @@ public class ScalarMathBufferListTests : ResultMathBufferListTestBase<ScalarMath
     [TestMethod]
     public void Exceptions_InvalidOperand_ThrowsArgumentOutOfRangeException()
     {
+        // constructors report their own parameter; factories report the Series names
         FluentActions.Invoking(static () => new ScalarMathList(ScalarOperation.DividedBy, 0))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("divisor");
-        FluentActions.Invoking(static () => new ScalarMathList(ScalarOperation.Plus, double.NaN))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("amount");
-        FluentActions.Invoking(static () => new ScalarMathList(ScalarOperation.Times, double.PositiveInfinity))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("factor");
-        FluentActions.Invoking(static () => new ScalarMathList(ScalarOperation.PlusPercent, double.NaN))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("percentOffset");
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("operand");
+        FluentActions.Invoking(static () => new ScalarMathList(ScalarOperation.Plus, double.NaN, Bars))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("operand");
         FluentActions.Invoking(static () => new ScalarMathList((ScalarOperation)99, 1))
             .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("operation");
+
+        FluentActions.Invoking(static () => Bars.ToDividedByList(0))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("divisor");
+        FluentActions.Invoking(static () => Bars.ToPlusList(double.NaN))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("amount");
+        FluentActions.Invoking(static () => Bars.ToMinusList(double.NaN))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("amount");
+        FluentActions.Invoking(static () => Bars.ToTimesList(double.PositiveInfinity))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("factor");
+        FluentActions.Invoking(static () => Bars.ToPlusPercentList(double.NaN))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("percentOffset");
     }
 }
 

@@ -16,12 +16,7 @@ public class ScalarMathList : BufferList<TimeValue>, IIncrementFromChain
     /// Thrown when the operation is undefined, the operand is not finite, or a divisor is 0.
     /// </exception>
     public ScalarMathList(ScalarOperation operation, double operand)
-    {
-        _kernel = new ScalarKernel(operation, operand);
-        Operation = operation;
-        Operand = operand;
-        Name = _kernel.Name;
-    }
+        : this(operation, operand, nameof(operand)) { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ScalarMathList"/> class with initial reusable values.
@@ -33,7 +28,25 @@ public class ScalarMathList : BufferList<TimeValue>, IIncrementFromChain
     /// Thrown when the operation is undefined, the operand is not finite, or a divisor is 0.
     /// </exception>
     public ScalarMathList(ScalarOperation operation, double operand, IReadOnlyList<IReusable> values)
-        : this(operation, operand) => Add(values);
+        : this(operation, operand, nameof(operand)) => Add(values);
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScalarMathList"/> class,
+    /// reporting an invalid operand under the caller's parameter name.
+    /// </summary>
+    /// <param name="operation">Arithmetic to apply to each value.</param>
+    /// <param name="operand">Finite operand; non-zero for <see cref="ScalarOperation.DividedBy"/>.</param>
+    /// <param name="paramName">Caller's parameter name for the operand.</param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when the operation is undefined, the operand is not finite, or a divisor is 0.
+    /// </exception>
+    internal ScalarMathList(ScalarOperation operation, double operand, string paramName)
+    {
+        _kernel = new ScalarKernel(operation, operand, paramName);
+        Operation = operation;
+        Operand = operand;
+        Name = ScalarKernel.FormatName(operation, operand);
+    }
 
     /// <summary>
     /// Gets the arithmetic applied to each value.
@@ -88,7 +101,7 @@ public static partial class ResultMath
     public static ScalarMathList ToPlusList(
         this IReadOnlyList<IReusable> source,
         double amount)
-        => new(ScalarOperation.Plus, amount) { source };
+        => new(ScalarOperation.Plus, amount, nameof(amount)) { source };
 
     /// <summary>
     /// Creates a buffer list that offsets every value by a percentage of itself.
@@ -100,7 +113,7 @@ public static partial class ResultMath
     public static ScalarMathList ToPlusPercentList(
         this IReadOnlyList<IReusable> source,
         double percentOffset)
-        => new(ScalarOperation.PlusPercent, percentOffset) { source };
+        => new(ScalarOperation.PlusPercent, percentOffset, nameof(percentOffset)) { source };
 
     /// <summary>
     /// Creates a buffer list that subtracts a fixed amount from every value.
@@ -112,7 +125,7 @@ public static partial class ResultMath
     public static ScalarMathList ToMinusList(
         this IReadOnlyList<IReusable> source,
         double amount)
-        => new(ScalarOperation.Minus, amount) { source };
+        => new(ScalarOperation.Minus, amount, nameof(amount)) { source };
 
     /// <summary>
     /// Creates a buffer list that multiplies every value by a fixed factor.
@@ -124,7 +137,7 @@ public static partial class ResultMath
     public static ScalarMathList ToTimesList(
         this IReadOnlyList<IReusable> source,
         double factor)
-        => new(ScalarOperation.Times, factor) { source };
+        => new(ScalarOperation.Times, factor, nameof(factor)) { source };
 
     /// <summary>
     /// Creates a buffer list that divides every value by a fixed divisor.
@@ -136,5 +149,5 @@ public static partial class ResultMath
     public static ScalarMathList ToDividedByList(
         this IReadOnlyList<IReusable> source,
         double divisor)
-        => new(ScalarOperation.DividedBy, divisor) { source };
+        => new(ScalarOperation.DividedBy, divisor, nameof(divisor)) { source };
 }

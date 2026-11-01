@@ -15,12 +15,16 @@ internal sealed class ScalarKernel
     /// </summary>
     /// <param name="operation">Arithmetic to apply.</param>
     /// <param name="operand">Finite operand; non-zero for <see cref="ScalarOperation.DividedBy"/>.</param>
+    /// <param name="paramName">
+    /// Caller's parameter name to report for an invalid operand; defaults to the Series
+    /// method's name for the operation, such as <c>amount</c> or <c>divisor</c>.
+    /// </param>
     /// <exception cref="ArgumentOutOfRangeException">
     /// Thrown when the operation is undefined, the operand is not finite, or a divisor is 0.
     /// </exception>
-    internal ScalarKernel(ScalarOperation operation, double operand)
+    internal ScalarKernel(ScalarOperation operation, double operand, string? paramName = null)
     {
-        string paramName = operation switch {
+        string seriesName = operation switch {
             ScalarOperation.Plus or ScalarOperation.Minus => "amount",
             ScalarOperation.Times => "factor",
             ScalarOperation.DividedBy => "divisor",
@@ -28,6 +32,8 @@ internal sealed class ScalarKernel
             _ => throw new ArgumentOutOfRangeException(
                 nameof(operation), operation, "Undefined scalar operation.")
         };
+
+        paramName ??= seriesName;
 
         if (!double.IsFinite(operand))
         {
@@ -38,23 +44,25 @@ internal sealed class ScalarKernel
         if (operation == ScalarOperation.DividedBy && operand == 0)
         {
             throw new ArgumentOutOfRangeException(
-                paramName, operand, "The divisor value must not be 0.");
+                paramName, operand, $"The {paramName} value must not be 0 for division.");
         }
 
         _operation = operation;
         _operand = operation == ScalarOperation.PlusPercent
             ? 1d + (operand / 100d)
             : operand;
-
-        Name = string.Create(
-            CultureInfo.InvariantCulture,
-            $"{operation.ToString().ToUpperInvariant()}({operand})");
     }
 
     /// <summary>
-    /// Gets the display name, such as <c>PLUS(2.5)</c>.
+    /// Formats the display name of a scalar operation, such as <c>PLUS(2.5)</c>.
     /// </summary>
-    internal string Name { get; }
+    /// <param name="operation">Arithmetic applied.</param>
+    /// <param name="operand">Operand, as given.</param>
+    /// <returns>The display name.</returns>
+    internal static string FormatName(ScalarOperation operation, double operand)
+        => string.Create(
+            CultureInfo.InvariantCulture,
+            $"{operation.ToString().ToUpperInvariant()}({operand})");
 
     /// <summary>
     /// Applies the operation to one value.
