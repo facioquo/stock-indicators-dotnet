@@ -95,7 +95,7 @@ public abstract class ResultMathHubTestBase<THub> : StreamHubTestBase, ITestChai
         THub observer = NewHub(barHub);
         barHub.Add(bars);
 
-        int correctionIndex = totalBars - maxCacheSize + retainedOffset;
+        const int correctionIndex = totalBars - maxCacheSize + retainedOffset;
         Bar original = bars[correctionIndex];
         Bar corrected = original with {
             Open = original.Open * 1.05m,
