@@ -41,6 +41,7 @@ public static class ResultMath
         this IReadOnlyList<IReusable> source,
         double amount)
     {
+        ArgumentNullException.ThrowIfNull(source);
         ValidateFinite(amount, nameof(amount));
         return source.Transform(v => v + amount);
     }
@@ -59,6 +60,7 @@ public static class ResultMath
         this IReadOnlyList<IReusable> source,
         double percentOffset)
     {
+        ArgumentNullException.ThrowIfNull(source);
         ValidateFinite(percentOffset, nameof(percentOffset));
         double ratio = 1d + (percentOffset / 100d);
         return source.Transform(v => v * ratio);
@@ -89,6 +91,7 @@ public static class ResultMath
         this IReadOnlyList<IReusable> source,
         double amount)
     {
+        ArgumentNullException.ThrowIfNull(source);
         ValidateFinite(amount, nameof(amount));
         return source.Transform(v => v - amount);
     }
@@ -118,6 +121,7 @@ public static class ResultMath
         this IReadOnlyList<IReusable> source,
         double factor)
     {
+        ArgumentNullException.ThrowIfNull(source);
         ValidateFinite(factor, nameof(factor));
         return source.Transform(v => v * factor);
     }
@@ -149,12 +153,13 @@ public static class ResultMath
         this IReadOnlyList<IReusable> source,
         double divisor)
     {
+        ArgumentNullException.ThrowIfNull(source);
         ValidateFinite(divisor, nameof(divisor));
 
         if (divisor == 0)
         {
             throw new ArgumentOutOfRangeException(
-                nameof(divisor), divisor, "Divisor must not be 0.");
+                nameof(divisor), divisor, "The divisor value must not be 0.");
         }
 
         return source.Transform(v => v / divisor);
@@ -240,8 +245,9 @@ public static class ResultMath
         int length = source.Count;
         List<TimeValue> results = new(length);
 
-        // window values kept in ascending order (NaN sorts first)
-        List<double> window = new(lookbackPeriods);
+        // window values kept in ascending order (NaN sorts first);
+        // holds one extra value between each insert and its paired removal
+        List<double> window = new(Math.Min(lookbackPeriods, length) + 1);
         int nanCount = 0;
         int mid = lookbackPeriods / 2;
         bool isEven = lookbackPeriods % 2 == 0;
@@ -270,7 +276,7 @@ public static class ResultMath
             double median = i < lookbackPeriods - 1 || nanCount > 0
                 ? double.NaN
                 : isEven
-                    ? (window[mid - 1] + window[mid]) / 2d
+                    ? (window[mid - 1] / 2d) + (window[mid] / 2d) // avoids overflow near double.MaxValue
                     : window[mid];
 
             results.Add(new TimeValue(source[i].Timestamp, median));
@@ -327,7 +333,8 @@ public static class ResultMath
         {
             throw new InvalidBarsException(
                 nameof(other), other.Count,
-                $"Series lengths do not match: source has {length} results and other has {other.Count}.");
+                $"Series lengths do not match: source has {length} results and other has {other.Count}.  "
+              + "Calculate both series from the same bars, and trim both to the same range before combining.");
         }
 
         List<TimeValue> results = new(length);
@@ -341,7 +348,8 @@ public static class ResultMath
             {
                 throw new InvalidBarsException(
                     nameof(other), o.Timestamp,
-                    $"Timestamp sequence does not match at index {i}: source has {s.Timestamp:o}.");
+                    $"Timestamp sequence does not match at index {i}: source has {s.Timestamp:o} and other has {o.Timestamp:o}.  "
+                  + "Calculate both series from the same bars, and trim both to the same range before combining.");
             }
 
             results.Add(new TimeValue(s.Timestamp, operation(s.Value, o.Value)));
@@ -370,10 +378,11 @@ public static class ResultMath
         int length = source.Count;
         List<TimeValue> results = new(length);
 
-        // indexes of candidate extremes, oldest at head; each index enters once
-        int[] deque = new int[length];
+        // ring of candidate-extreme indexes, oldest at head; never holds more than one window
+        int capacity = Math.Max(1, Math.Min(lookbackPeriods, length));
+        int[] deque = new int[capacity];
         int head = 0;
-        int tail = 0;
+        int count = 0;
         int lastNaN = -1;
 
         for (int i = 0; i < length; i++)
@@ -383,23 +392,31 @@ public static class ResultMath
             if (double.IsNaN(value))
             {
                 lastNaN = i;
-                head = tail = 0;
+                count = 0;
             }
             else
             {
-                while (tail > head && (isMax
-                    ? source[deque[tail - 1]].Value <= value
-                    : source[deque[tail - 1]].Value >= value))
+                // evict the expired head first, so the push below always has room
+                if (count > 0 && deque[head] <= i - lookbackPeriods)
                 {
-                    tail--;
+                    head = (head + 1) % capacity;
+                    count--;
                 }
 
-                deque[tail++] = i;
-
-                if (deque[head] <= i - lookbackPeriods)
+                while (count > 0)
                 {
-                    head++;
+                    double back = source[deque[(head + count - 1) % capacity]].Value;
+
+                    if (isMax ? back > value : back < value)
+                    {
+                        break;
+                    }
+
+                    count--;
                 }
+
+                deque[(head + count) % capacity] = i;
+                count++;
             }
 
             double extreme = i < lookbackPeriods - 1 || lastNaN > i - lookbackPeriods

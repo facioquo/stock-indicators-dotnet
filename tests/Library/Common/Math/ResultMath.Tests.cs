@@ -1,7 +1,7 @@
 namespace Utilities;
 
 [TestClass]
-public class ResultMaths : TestBase
+public class ResultMaths : TestBaseWithPrecision
 {
     private static readonly DateTime Start = new(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
@@ -37,6 +37,17 @@ public class ResultMaths : TestBase
         Values(a.Minus(2.5)).Should().Equal(7.5, -6.5, double.NaN);
         Values(a.Times(-2)).Should().Equal(-20, 8, double.NaN);
         Values(a.DividedBy(4)).Should().Equal(2.5, -1, double.NaN);
+
+        a.Times(2).Select(static x => x.Timestamp)
+            .Should().Equal(a.Select(static x => x.Timestamp));
+    }
+
+    [TestMethod]
+    public void PairwiseOperations_BarsWithThemselves_ReturnIdentityValues()
+    {
+        Bars.Minus(Bars).Should().OnlyContain(static x => x.Value == 0);
+        Values(Bars.MaxWith(Bars)).Should().Equal(Bars.Select(static x => x.Value));
+        Bars.DividedBy(Bars).Should().OnlyContain(static x => x.Value == 1);
     }
 
     [TestMethod]
@@ -45,12 +56,12 @@ public class ResultMaths : TestBase
         List<TimeValue> a = Series(200, -50);
 
         IReadOnlyList<TimeValue> up = a.PlusPercent(2.5);
-        up[0].Value.Should().BeApproximately(205, 1e-12);
-        up[1].Value.Should().BeApproximately(-51.25, 1e-12);
+        up[0].Value.Should().BeApproximately(205, Money6);
+        up[1].Value.Should().BeApproximately(-51.25, Money6);
 
         IReadOnlyList<TimeValue> down = a.PlusPercent(-10);
-        down[0].Value.Should().BeApproximately(180, 1e-12);
-        down[1].Value.Should().BeApproximately(-45, 1e-12);
+        down[0].Value.Should().BeApproximately(180, Money6);
+        down[1].Value.Should().BeApproximately(-45, Money6);
     }
 
     [TestMethod]
@@ -73,6 +84,33 @@ public class ResultMaths : TestBase
     }
 
     [TestMethod]
+    public void RollingMedian_ExtremeFiniteValues_DoesNotOverflow()
+    {
+        List<TimeValue> a = Series(double.MaxValue, double.MaxValue, -double.MaxValue, double.MaxValue);
+
+        Values(a.RollingMedian(2)).Should().Equal(double.NaN, double.MaxValue, 0, 0);
+    }
+
+    [TestMethod]
+    public void RollingWindows_LookbackAtOrBeyondCount_ReturnWarmupOnly()
+    {
+        List<TimeValue> a = Series(3, 1, 4, 1, 5);
+
+        // lookback equals count: only the final period has a full window
+        Values(a.RollingMax(5)).Should().Equal(double.NaN, double.NaN, double.NaN, double.NaN, 5);
+        Values(a.RollingMin(5)).Should().Equal(double.NaN, double.NaN, double.NaN, double.NaN, 1);
+        Values(a.RollingMedian(5)).Should().Equal(double.NaN, double.NaN, double.NaN, double.NaN, 3);
+
+        // lookback beyond count, including one that must not size buffers from the lookback
+        foreach (int lookback in (int[])[6, int.MaxValue])
+        {
+            a.RollingMax(lookback).Should().OnlyContain(static x => double.IsNaN(x.Value));
+            a.RollingMin(lookback).Should().OnlyContain(static x => double.IsNaN(x.Value));
+            a.RollingMedian(lookback).Should().OnlyContain(static x => double.IsNaN(x.Value));
+        }
+    }
+
+    [TestMethod]
     public void RollingWindows_NaNInWindow_ReturnNaNUntilItExits()
     {
         List<TimeValue> a = Series(1, 2, double.NaN, 4, 5, 6);
@@ -86,9 +124,12 @@ public class ResultMaths : TestBase
     [TestMethod]
     public void RollingWindows_DefaultBars_MatchBruteForce()
     {
-        IReadOnlyList<IReusable> source = Bars.ToSma(5);
+        // SMA warmup NaNs, plus single, consecutive, and trailing NaNs mid-series
+        int[] gaps = [30, 61, 62, 63, 200, 501];
+        List<IReusable> source = [.. Bars.ToSma(5)
+            .Select((x, i) => (IReusable)new TimeValue(x.Timestamp, gaps.Contains(i) ? double.NaN : x.Value))];
 
-        foreach (int lookback in (int[])[1, 2, 7, 20])
+        foreach (int lookback in (int[])[1, 2, 3, 4, 5, 7, 20])
         {
             IReadOnlyList<TimeValue> max = source.RollingMax(lookback);
             IReadOnlyList<TimeValue> min = source.RollingMin(lookback);
@@ -140,7 +181,7 @@ public class ResultMaths : TestBase
     }
 
     [TestMethod]
-    public void PairwiseOperations_EmptySeries_ReturnEmpty()
+    public void AllOperations_EmptySeries_ReturnEmpty()
     {
         List<TimeValue> empty = [];
 
@@ -166,7 +207,8 @@ public class ResultMaths : TestBase
         FluentActions
             .Invoking(() => a.DividedBy(b))
             .Should().ThrowExactly<InvalidBarsException>()
-            .WithMessage("*index 1*");
+            .WithParameterName("other")
+            .WithMessage("*index 1*other has*");
     }
 
     [TestMethod]
@@ -175,9 +217,13 @@ public class ResultMaths : TestBase
         List<TimeValue> a = Series(1);
 
         FluentActions.Invoking(static () => ((IReadOnlyList<IReusable>)null!).Plus(1))
-            .Should().ThrowExactly<ArgumentNullException>();
+            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("source");
+        FluentActions.Invoking(static () => ((IReadOnlyList<IReusable>)null!).DividedBy(double.NaN))
+            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("source");
+        FluentActions.Invoking(() => ((IReadOnlyList<IReusable>)null!).Minus(a))
+            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("source");
         FluentActions.Invoking(() => a.MaxWith(null!))
-            .Should().ThrowExactly<ArgumentNullException>();
+            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("other");
         FluentActions.Invoking(static () => ((IReadOnlyList<IReusable>)null!).RollingMin(2))
             .Should().ThrowExactly<ArgumentNullException>();
         FluentActions.Invoking(static () => ((IReadOnlyList<IReusable>)null!).RollingMedian(2))
@@ -190,15 +236,21 @@ public class ResultMaths : TestBase
         List<TimeValue> a = Series(1);
 
         FluentActions.Invoking(() => a.DividedBy(0))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>();
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("divisor");
+        FluentActions.Invoking(() => a.DividedBy(-0.0))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("divisor");
+        FluentActions.Invoking(() => a.DividedBy(double.NaN))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("divisor");
+        FluentActions.Invoking(() => a.DividedBy(double.PositiveInfinity))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("divisor");
         FluentActions.Invoking(() => a.Plus(double.NaN))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>();
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("amount");
         FluentActions.Invoking(() => a.Minus(double.PositiveInfinity))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>();
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("amount");
         FluentActions.Invoking(() => a.Times(double.NegativeInfinity))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>();
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("factor");
         FluentActions.Invoking(() => a.PlusPercent(double.NaN))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>();
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("percentOffset");
     }
 
     [TestMethod]
@@ -207,10 +259,10 @@ public class ResultMaths : TestBase
         List<TimeValue> a = Series(1);
 
         FluentActions.Invoking(() => a.RollingMax(0))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>();
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("lookbackPeriods");
         FluentActions.Invoking(() => a.RollingMin(-1))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>();
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("lookbackPeriods");
         FluentActions.Invoking(() => a.RollingMedian(0))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>();
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("lookbackPeriods");
     }
 }

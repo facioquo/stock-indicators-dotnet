@@ -71,7 +71,10 @@ IReadOnlyList<SmaResult> smoothed = spread.ToSma(5);
 IReadOnlyList<TimeValue> upper = bars.ToEma(20).PlusPercent(2.5);
 
 // highest close over the last 20 periods
-IReadOnlyList<TimeValue> highest = bars.RollingMax(20);
+IReadOnlyList<TimeValue> highestClose = bars.RollingMax(20);
+
+// highest high over the last 20 periods
+IReadOnlyList<TimeValue> highestHigh = bars.ToBarPart(CandlePart.High).RollingMax(20);
 ```
 
 | Method | Returns |
@@ -85,10 +88,12 @@ IReadOnlyList<TimeValue> highest = bars.RollingMax(20);
 | `.RollingMax(lookbackPeriods)` / `.RollingMin(lookbackPeriods)` | highest or lowest value over a rolling window |
 | `.RollingMedian(lookbackPeriods)` | median over a rolling window, averaging the two middle values when the window is even |
 
-Rolling windows include the current period and return `NaN` for the first `lookbackPeriods − 1` periods. `NaN` values, such as indicator warmup periods, propagate: a pairwise result is `NaN` where either input is, and a rolling result is `NaN` while its window holds one. Fixed amounts, factors, and offsets must be finite numbers.
+A fixed number is always the right-hand operand. For a percent decrease, pass `PlusPercent` a negative offset. Price bars contribute their close; select another part with [`.ToBarPart()`](/indicators/bar-part) first.
+
+Rolling windows include the current period and return `NaN` for the first `lookbackPeriods − 1` periods. `NaN` values, such as indicator warmup periods, propagate: a pairwise result is `NaN` where either input is, and a rolling result is `NaN` while its window holds one. A non-finite fixed amount, factor, or offset, a fixed divisor of 0, or a lookback below 1 throws an `ArgumentOutOfRangeException`; a 0 divisor inside a series yields `NaN` for that period.
 
 ::: warning 🚩 Timestamps must match
-Methods that combine two series require both to hold the same number of results with identical timestamps at every position, which holds for any two indicators calculated from the same bars. A length or timestamp mismatch throws an `InvalidBarsException` rather than pairing values from different periods.
+Methods that combine two series require both to hold the same number of results with identical timestamps at every position, which holds for any two indicators calculated from the same bars. A length or timestamp mismatch throws an `InvalidBarsException` rather than pairing values from different periods. Series with different date ranges are not aligned for you: trim both to the same range first, and remove warmup periods from neither or both.
 :::
 
 ::: info Series only
