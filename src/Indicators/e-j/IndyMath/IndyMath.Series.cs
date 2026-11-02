@@ -53,7 +53,7 @@ public static partial class IndyMath
     /// <param name="percentOffset">
     /// Finite percent offset, where 2.5 adds 2.5% and -2.5 subtracts 2.5%.
     /// </param>
-    /// <returns>Time series of <c>source × (1 + percentOffset / 100)</c> values.</returns>
+    /// <returns>Time series of <c>source + source × percentOffset / 100</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when the series is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the percent offset is not finite.</exception>
     public static IReadOnlyList<MathResult> PlusPercent(
