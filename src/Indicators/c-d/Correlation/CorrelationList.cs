@@ -45,8 +45,7 @@ public class CorrelationList : PairBufferList<CorrResult>, ICorrelation
         ArgumentNullException.ThrowIfNull(sourceA);
         ArgumentNullException.ThrowIfNull(sourceB);
 
-        AddSource(sourceA);
-        AddOther(sourceB);
+        StageBoth(sourceA, sourceB);
     }
 
     /// <inheritdoc />

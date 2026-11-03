@@ -16,6 +16,10 @@ public class PrsList : PairBufferList<PrsResult>, IPrs
     /// </summary>
     public PrsList() => Name = "PRS";
 
+    // initial values of both series, with no PRS% lookback
+    internal PrsList(IReadOnlyList<IReusable> sourceEval, IReadOnlyList<IReusable> sourceBase)
+        : this() => StageBoth(sourceEval, sourceBase);
+
     /// <summary>
     /// Initializes a new instance of the <see cref="PrsList"/> class.
     /// </summary>
@@ -46,8 +50,7 @@ public class PrsList : PairBufferList<PrsResult>, IPrs
         ArgumentNullException.ThrowIfNull(sourceEval);
         ArgumentNullException.ThrowIfNull(sourceBase);
 
-        AddSource(sourceEval);
-        AddOther(sourceBase);
+        StageBoth(sourceEval, sourceBase);
     }
 
     /// <inheritdoc />
@@ -105,10 +108,7 @@ public static partial class Prs
         ArgumentNullException.ThrowIfNull(sourceEval);
         ArgumentNullException.ThrowIfNull(sourceBase);
 
-        PrsList list = new();
-        list.AddSource(sourceEval);
-        list.AddOther(sourceBase);
-        return list;
+        return new(sourceEval, sourceBase);
     }
 
     /// <summary>
