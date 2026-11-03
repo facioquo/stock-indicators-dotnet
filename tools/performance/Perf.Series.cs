@@ -91,6 +91,7 @@ public class SeriesIndicators
     [Benchmark] public void ToTrBatch() => q.ToTr();
     [Benchmark] public void ToTrixBatch() => q.ToTrix(n);
     [Benchmark] public void ToTsiBatch() => q.ToTsi(25, 13, 7);
+    [Benchmark] public void ToTtmSqueezeBatch() => q.ToTtmSqueeze(20, 2, 1.5);
     [Benchmark] public void ToUlcerIndexBatch() => q.ToUlcerIndex(n);
     [Benchmark] public void ToUltimateBatch() => q.ToUltimate(7, 14, 28);
     [Benchmark] public void ToVolatilityStopBatch() => q.ToVolatilityStop(7, 3);

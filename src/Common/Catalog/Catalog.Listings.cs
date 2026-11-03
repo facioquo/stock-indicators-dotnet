@@ -427,6 +427,11 @@ public static partial class Catalog
         _listings.Add(Tsi.BufferListing);
         _listings.Add(Tsi.StreamListing);
 
+        // TTM Squeeze
+        _listings.Add(TtmSqueeze.BufferListing);
+        _listings.Add(TtmSqueeze.SeriesListing);
+        _listings.Add(TtmSqueeze.StreamListing);
+
         // Ulcer Index
         _listings.Add(UlcerIndex.SeriesListing);
         _listings.Add(UlcerIndex.StreamListing);

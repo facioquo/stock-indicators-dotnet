@@ -316,6 +316,7 @@ export default defineConfig({
             { text: 'Stochastic RSI', link: '/indicators/stoch-rsi' },
             { text: 'Triple EMA Oscillator (TRIX)', link: '/indicators/trix' },
             { text: 'True Strength Index', link: '/indicators/tsi' },
+            { text: 'TTM Squeeze', link: '/indicators/ttm-squeeze' },
             { text: 'Ultimate Oscillator', link: '/indicators/ultimate' },
             { text: 'Williams %R', link: '/indicators/williams-r' },
           ]
