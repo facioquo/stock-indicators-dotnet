@@ -27,11 +27,13 @@ public class CorrelationHub
         int lookbackPeriods) : base(provider)
     {
         LookbackPeriods = lookbackPeriods;
-        _dataA = new double[lookbackPeriods];
-        _dataB = new double[lookbackPeriods];
         Name = $"CORR({lookbackPeriods})";
 
+        // before allocating, so an oversized lookback is rejected rather than allocated
         ValidateCacheSize(lookbackPeriods, Name);
+
+        _dataA = new double[lookbackPeriods];
+        _dataB = new double[lookbackPeriods];
 
         // the pairing hub was built for this hub alone
         OwnProvider();

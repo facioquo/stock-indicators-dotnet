@@ -222,6 +222,11 @@ public class CorrelationHubTests : StreamHubTestBase, ITestChainObserver, ITestC
             .Should().ThrowExactly<ArgumentOutOfRangeException>();
         small.HasObservers.Should().BeFalse();
         other.HasObservers.Should().BeFalse();
+
+        // an oversized lookback is rejected by the cache check, not by an allocation failure
+        FluentActions.Invoking(() => other.ToCorrelationHub(small, int.MaxValue))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>();
+        other.HasObservers.Should().BeFalse();
     }
 
     [TestMethod]
