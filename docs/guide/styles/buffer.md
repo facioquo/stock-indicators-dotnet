@@ -147,6 +147,7 @@ void OnSlowReceived(IReusable value) => spread.AddOther(value);
 Two-series buffer lists:
 
 - [IndyMath](/indicators/indy-math#streaming) two-series methods, such as `.ToMinusList(other)`
+- [Correlation coefficient](/indicators/correlation#streaming)
 - [Price Relative Strength (PRS)](/indicators/prs#streaming)
 
 ## Performance characteristics

@@ -66,7 +66,7 @@ This indicator may be generated from any chain-enabled indicator or method.
 // example
 var results = bars
     .Use(CandlePart.HL2)
-    .ToCorrelation(barsMarket.Use(CandlePart.HL2),20);
+    .ToCorrelation(barsMarket.Use(CandlePart.HL2), 20);
 ```
 
 ::: warning 🚩 Matching inputs required
