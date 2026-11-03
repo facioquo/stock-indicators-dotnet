@@ -54,8 +54,7 @@ public class BetaList : PairBufferList<BetaResult>, IBeta
         ArgumentNullException.ThrowIfNull(sourceEval);
         ArgumentNullException.ThrowIfNull(sourceMrkt);
 
-        AddSource(sourceEval);
-        AddOther(sourceMrkt);
+        StageBoth(sourceEval, sourceMrkt);
     }
 
     /// <inheritdoc />
