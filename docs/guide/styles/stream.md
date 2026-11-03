@@ -103,6 +103,7 @@ A value that arrives late, or is revised or removed, on either side is handled b
 Two-series stream hubs:
 
 - [IndyMath](/indicators/indy-math#streaming) two-series methods, such as `.ToMinusHub(other)`
+- [Price Relative Strength (PRS)](/indicators/prs#streaming)
 
 ### State management and rollback
 
