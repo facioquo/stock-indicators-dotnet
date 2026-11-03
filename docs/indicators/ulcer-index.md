@@ -87,7 +87,7 @@ UlcerIndexList ulcerIndexList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => ulcerIndexList.Add(bar);
 
-// based on `ICollection<UlcerIndexResult>`; fills as the handler runs
+// based on `IReadOnlyList<UlcerIndexResult>`; fills as the handler runs
 IReadOnlyList<UlcerIndexResult> results = ulcerIndexList;
 ```
 

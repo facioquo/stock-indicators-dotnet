@@ -89,7 +89,7 @@ AwesomeList awesomeList = new(fastPeriods, slowPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => awesomeList.Add(bar);
 
-// based on `ICollection<AwesomeResult>`; fills as the handler runs
+// based on `IReadOnlyList<AwesomeResult>`; fills as the handler runs
 IReadOnlyList<AwesomeResult> results = awesomeList;
 ```
 

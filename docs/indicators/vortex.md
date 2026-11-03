@@ -72,7 +72,7 @@ VortexList vortexList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => vortexList.Add(bar);
 
-// based on `ICollection<VortexResult>`; fills as the handler runs
+// based on `IReadOnlyList<VortexResult>`; fills as the handler runs
 IReadOnlyList<VortexResult> results = vortexList;
 ```
 

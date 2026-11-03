@@ -76,7 +76,7 @@ DonchianList donchianList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => donchianList.Add(bar);
 
-// based on `ICollection<DonchianResult>`; fills as the handler runs
+// based on `IReadOnlyList<DonchianResult>`; fills as the handler runs
 IReadOnlyList<DonchianResult> results = donchianList;
 ```
 

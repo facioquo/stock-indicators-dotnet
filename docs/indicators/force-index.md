@@ -84,7 +84,7 @@ ForceIndexList forceIndexList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => forceIndexList.Add(bar);
 
-// based on `ICollection<ForceIndexResult>`; fills as the handler runs
+// based on `IReadOnlyList<ForceIndexResult>`; fills as the handler runs
 IReadOnlyList<ForceIndexResult> results = forceIndexList;
 ```
 

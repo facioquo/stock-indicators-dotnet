@@ -91,7 +91,7 @@ DemaList demaList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => demaList.Add(bar);
 
-// based on `ICollection<DemaResult>`; fills as the handler runs
+// based on `IReadOnlyList<DemaResult>`; fills as the handler runs
 IReadOnlyList<DemaResult> results = demaList;
 ```
 

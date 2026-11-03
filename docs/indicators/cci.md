@@ -80,7 +80,7 @@ CciList cciList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => cciList.Add(bar);
 
-// based on `ICollection<CciResult>`; fills as the handler runs
+// based on `IReadOnlyList<CciResult>`; fills as the handler runs
 IReadOnlyList<CciResult> results = cciList;
 ```
 

@@ -88,7 +88,7 @@ AdxList adxList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => adxList.Add(bar);
 
-// based on `ICollection<AdxResult>`; fills as the handler runs
+// based on `IReadOnlyList<AdxResult>`; fills as the handler runs
 IReadOnlyList<AdxResult> results = adxList;
 ```
 

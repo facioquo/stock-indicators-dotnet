@@ -85,7 +85,7 @@ FractalList fractalList = new(windowSpan);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => fractalList.Add(bar);
 
-// based on `ICollection<FractalResult>`; fills as the handler runs
+// based on `IReadOnlyList<FractalResult>`; fills as the handler runs
 IReadOnlyList<FractalResult> results = fractalList;
 ```
 

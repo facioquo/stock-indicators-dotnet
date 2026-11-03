@@ -95,7 +95,7 @@ MamaList mamaList = new(fastLimit, slowLimit);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => mamaList.Add(bar);
 
-// based on `ICollection<MamaResult>`; fills as the handler runs
+// based on `IReadOnlyList<MamaResult>`; fills as the handler runs
 IReadOnlyList<MamaResult> results = mamaList;
 ```
 

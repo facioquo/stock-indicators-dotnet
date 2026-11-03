@@ -97,7 +97,7 @@ DynamicList dynamicList = new(lookbackPeriods, kFactor);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => dynamicList.Add(bar);
 
-// based on `ICollection<DynamicResult>`; fills as the handler runs
+// based on `IReadOnlyList<DynamicResult>`; fills as the handler runs
 IReadOnlyList<DynamicResult> results = dynamicList;
 ```
 

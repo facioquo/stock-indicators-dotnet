@@ -91,7 +91,7 @@ RsiList rsiList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => rsiList.Add(bar);
 
-// based on `ICollection<RsiResult>`; fills as the handler runs
+// based on `IReadOnlyList<RsiResult>`; fills as the handler runs
 IReadOnlyList<RsiResult> results = rsiList;
 ```
 

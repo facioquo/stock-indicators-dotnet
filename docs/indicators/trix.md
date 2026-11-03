@@ -92,7 +92,7 @@ TrixList trixList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => trixList.Add(bar);
 
-// based on `ICollection<TrixResult>`; fills as the handler runs
+// based on `IReadOnlyList<TrixResult>`; fills as the handler runs
 IReadOnlyList<TrixResult> results = trixList;
 ```
 

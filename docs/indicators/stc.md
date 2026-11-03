@@ -93,7 +93,7 @@ StcList stcList = new(cyclePeriods, fastPeriods, slowPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => stcList.Add(bar);
 
-// based on `ICollection<StcResult>`; fills as the handler runs
+// based on `IReadOnlyList<StcResult>`; fills as the handler runs
 IReadOnlyList<StcResult> results = stcList;
 ```
 

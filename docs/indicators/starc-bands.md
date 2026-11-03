@@ -81,7 +81,7 @@ StarcBandsList starcBandsList = new(smaPeriods, multiplier, atrPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => starcBandsList.Add(bar);
 
-// based on `ICollection<StarcBandsResult>`; fills as the handler runs
+// based on `IReadOnlyList<StarcBandsResult>`; fills as the handler runs
 IReadOnlyList<StarcBandsResult> results = starcBandsList;
 ```
 

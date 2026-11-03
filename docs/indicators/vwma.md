@@ -79,7 +79,7 @@ VwmaList vwmaList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => vwmaList.Add(bar);
 
-// based on `ICollection<VwmaResult>`; fills as the handler runs
+// based on `IReadOnlyList<VwmaResult>`; fills as the handler runs
 IReadOnlyList<VwmaResult> results = vwmaList;
 ```
 

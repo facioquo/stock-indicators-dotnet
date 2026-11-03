@@ -73,7 +73,7 @@ TsiList tsiList = new(lookbackPeriods, smoothPeriods, signalPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => tsiList.Add(bar);
 
-// based on `ICollection<TsiResult>`; fills as the handler runs
+// based on `IReadOnlyList<TsiResult>`; fills as the handler runs
 IReadOnlyList<TsiResult> results = tsiList;
 ```
 

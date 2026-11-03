@@ -83,7 +83,7 @@ HeikinAshiList heikinAshiList = new();
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => heikinAshiList.Add(bar);
 
-// based on `ICollection<HeikinAshiResult>`; fills as the handler runs
+// based on `IReadOnlyList<HeikinAshiResult>`; fills as the handler runs
 IReadOnlyList<HeikinAshiResult> results = heikinAshiList;
 ```
 

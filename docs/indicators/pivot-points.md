@@ -111,7 +111,7 @@ PivotPointsList pivotPointsList = new(windowSize, pointType);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => pivotPointsList.Add(bar);
 
-// based on `ICollection<PivotPointsResult>`; fills as the handler runs
+// based on `IReadOnlyList<PivotPointsResult>`; fills as the handler runs
 IReadOnlyList<PivotPointsResult> results = pivotPointsList;
 ```
 

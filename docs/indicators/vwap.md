@@ -85,7 +85,7 @@ VwapList vwapList = new(startDate);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => vwapList.Add(bar);
 
-// based on `ICollection<VwapResult>`; fills as the handler runs
+// based on `IReadOnlyList<VwapResult>`; fills as the handler runs
 IReadOnlyList<VwapResult> results = vwapList;
 ```
 

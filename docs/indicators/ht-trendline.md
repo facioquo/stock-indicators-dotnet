@@ -85,7 +85,7 @@ HtTrendlineList htlList = new();
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => htlList.Add(bar);
 
-// based on `ICollection<HtlResult>`; fills as the handler runs
+// based on `IReadOnlyList<HtlResult>`; fills as the handler runs
 IReadOnlyList<HtlResult> results = htlList;
 ```
 

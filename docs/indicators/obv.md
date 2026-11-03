@@ -77,7 +77,7 @@ ObvList obvList = new();
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => obvList.Add(bar);
 
-// based on `ICollection<ObvResult>`; fills as the handler runs
+// based on `IReadOnlyList<ObvResult>`; fills as the handler runs
 IReadOnlyList<ObvResult> results = obvList;
 ```
 

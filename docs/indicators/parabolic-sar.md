@@ -87,7 +87,7 @@ ParabolicSarList psarList = new(accelerationStep, maxAccelerationFactor);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => psarList.Add(bar);
 
-// based on `ICollection<ParabolicSarResult>`; fills as the handler runs
+// based on `IReadOnlyList<ParabolicSarResult>`; fills as the handler runs
 IReadOnlyList<ParabolicSarResult> results = psarList;
 ```
 

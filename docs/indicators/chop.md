@@ -79,7 +79,7 @@ ChopList chopList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => chopList.Add(bar);
 
-// based on `ICollection<ChopResult>`; fills as the handler runs
+// based on `IReadOnlyList<ChopResult>`; fills as the handler runs
 IReadOnlyList<ChopResult> results = chopList;
 ```
 
