@@ -507,6 +507,32 @@ Results:
   - Correlation : Default : reusable=true : pane=Correlation
   - RSquared : Default : reusable=false : pane=Correlation
 
+### CORR / Buffer
+Method: ToCorrelationList
+Parameters:
+  - sourceA : IReadOnlyList<T> where T : IReusable : required
+  - sourceB : IReadOnlyList<T> where T : IReusable : required
+  - lookbackPeriods : Int32 : required
+Results:
+  - VarianceA : Default : reusable=false : pane=Variance
+  - VarianceB : Default : reusable=false : pane=Variance
+  - Covariance : Default : reusable=false : pane=Variance
+  - Correlation : Default : reusable=true : pane=Correlation
+  - RSquared : Default : reusable=false : pane=Correlation
+
+### CORR / Stream
+Method: ToCorrelationHub
+Parameters:
+  - sourceA : IReadOnlyList<T> where T : IReusable : required
+  - sourceB : IReadOnlyList<T> where T : IReusable : required
+  - lookbackPeriods : Int32 : required
+Results:
+  - VarianceA : Default : reusable=false : pane=Variance
+  - VarianceB : Default : reusable=false : pane=Variance
+  - Covariance : Default : reusable=false : pane=Variance
+  - Correlation : Default : reusable=true : pane=Correlation
+  - RSquared : Default : reusable=false : pane=Correlation
+
 ### CRSI / Series
 Method: ToConnorsRsi
 Parameters:

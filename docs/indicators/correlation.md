@@ -86,4 +86,36 @@ See [Chaining indicators](/guide/chaining) for more.
 
 ## Streaming
 
-Streaming is not supported for this indicator. This indicator requires a second synchronized bar series, which cannot be expressed in the single-series streaming model. Use the Series (batch) implementation with periodic recalculation instead.
+Use the buffer-style `List<T>` when you need incremental calculations without a hub.  Add each series separately as its values arrive; either one may run ahead, and a result is added once both hold the same timestamp:
+
+```csharp
+CorrelationList correlationList = new(lookbackPeriods);
+
+// call from each series' message handler
+void OnAReceived(IReusable value) => correlationList.AddSource(value);
+void OnBReceived(IReusable value) => correlationList.AddOther(value);
+
+// based on `IReadOnlyList<CorrResult>`; fills as the handlers run
+IReadOnlyList<CorrResult> results = correlationList;
+```
+
+A timestamp that only one series holds produces no result, where the Series method throws.  Each series must arrive in strictly increasing order: an older or equal timestamp on a side throws an `InvalidOperationException`.  Each side stages at most `MaxListSize` values, so a side that falls further behind than that loses the pairs the leading side has dropped.
+
+Subscribe to a `BarHub` for each series for advanced streaming scenarios:
+
+```csharp
+BarHub hubA = new();
+BarHub hubB = new();
+CorrelationHub observer = hubA.ToCorrelationHub(hubB, lookbackPeriods);
+
+// call from each series' message handler
+void OnAReceived(IBar bar) => hubA.Add(bar);
+void OnBReceived(IBar bar) => hubB.Add(bar);
+
+// results fill as the handlers run
+IReadOnlyList<CorrResult> results = observer.Results;
+```
+
+A result is added once both providers hold the same timestamp.  A value that arrives late, or is revised or removed, on either side is handled by the usual rebuild.  Timestamps match exactly, and the lookback window spans `N` matched timestamps.  Drive both providers from one thread at a time.
+
+See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.

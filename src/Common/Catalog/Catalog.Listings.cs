@@ -146,7 +146,9 @@ public static partial class Catalog
         _listings.Add(ConnorsRsi.StreamListing);
 
         // Correlation
+        _listings.Add(Correlation.BufferListing);
         _listings.Add(Correlation.SeriesListing);
+        _listings.Add(Correlation.StreamListing);
 
         // DEMA (Double Exponential Moving Average)
         _listings.Add(Dema.BufferListing);
