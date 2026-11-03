@@ -30,12 +30,14 @@ public class BetaHub
     {
         LookbackPeriods = lookbackPeriods;
         Type = type;
-        _evalWindow = new double[lookbackPeriods];
-        _mrktWindow = new double[lookbackPeriods];
         Name = $"BETA({lookbackPeriods},{type.ToString().ToUpperInvariant()})";
 
-        // each window return reads the pair before it
+        // each window return reads the pair before it; checked before allocating,
+        // so an oversized lookback is rejected rather than allocated
         ValidateCacheSize(lookbackPeriods + 1, Name);
+
+        _evalWindow = new double[lookbackPeriods];
+        _mrktWindow = new double[lookbackPeriods];
 
         // the pairing hub was built for this hub alone
         OwnProvider();

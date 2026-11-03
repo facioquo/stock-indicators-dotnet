@@ -247,6 +247,11 @@ public class BetaHubTests : StreamHubTestBase, ITestChainObserver, ITestChainPro
             .Should().ThrowExactly<ArgumentOutOfRangeException>();
         small.HasObservers.Should().BeFalse();
         other.HasObservers.Should().BeFalse();
+
+        // an oversized lookback is rejected by the cache check, not by an allocation failure
+        FluentActions.Invoking(() => other.ToBetaHub(small, int.MaxValue - 1))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>();
+        other.HasObservers.Should().BeFalse();
     }
 
     [TestMethod]
