@@ -215,6 +215,9 @@ public class BetaHubTests : StreamHubTestBase, ITestChainObserver, ITestChainPro
         BarHub mrkt = new();
         BetaHub observer = eval.ToBetaHub(mrkt, LookbackPeriods, Type);
 
+        eval.HasObservers.Should().BeTrue();
+        mrkt.HasObservers.Should().BeTrue();
+
         observer.Unsubscribe();
 
         observer.IsSubscribed.Should().BeFalse();
@@ -236,6 +239,14 @@ public class BetaHubTests : StreamHubTestBase, ITestChainObserver, ITestChainPro
         FluentActions.Invoking(() => barHub.ToBetaHub(barHub, 0))
             .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("lookbackPeriods");
         barHub.HasObservers.Should().BeFalse();
+
+        // so does a cache too small for the lookback window, which only the hub can check
+        BarHub small = new(LookbackPeriods);
+        BarHub other = new();
+        FluentActions.Invoking(() => small.ToBetaHub(other, LookbackPeriods))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>();
+        small.HasObservers.Should().BeFalse();
+        other.HasObservers.Should().BeFalse();
     }
 
     [TestMethod]

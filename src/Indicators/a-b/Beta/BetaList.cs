@@ -115,7 +115,11 @@ public static partial class Beta
     /// <summary>
     /// Creates a buffer list of Beta coefficients of an evaluated series against a market series.
     /// </summary>
-    /// <remarks>A timestamp that only one series holds produces no result, where the Series method throws.</remarks>
+    /// <remarks>
+    /// A timestamp that only one series holds produces no result, where the Series method
+    /// throws. Adding an older or equal timestamp to either side of the returned list throws
+    /// <see cref="InvalidOperationException"/>.
+    /// </remarks>
     /// <param name="sourceEval">Evaluated values, time sorted.</param>
     /// <param name="sourceMrkt">Market values, time sorted.</param>
     /// <param name="lookbackPeriods">Quantity of periods in lookback window.</param>
@@ -128,5 +132,10 @@ public static partial class Beta
         IReadOnlyList<IReusable> sourceMrkt,
         int lookbackPeriods,
         BetaType type = BetaType.Standard)
-        => new(lookbackPeriods, type, sourceEval, sourceMrkt);
+    {
+        ArgumentNullException.ThrowIfNull(sourceEval);
+        ArgumentNullException.ThrowIfNull(sourceMrkt);
+
+        return new(lookbackPeriods, type, sourceEval, sourceMrkt);
+    }
 }

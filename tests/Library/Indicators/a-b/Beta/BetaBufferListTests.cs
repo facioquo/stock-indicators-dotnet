@@ -77,6 +77,29 @@ public class BetaBufferListTests : TestBase
     }
 
     [TestMethod]
+    public void UnmatchedTimestamps_LookbackSpansMatchedPairs()
+    {
+        // each side omits a different timestamp inside one lookback window
+        List<IReusable> valuesA = [.. Eval];
+        List<IReusable> valuesB = [.. Mrkt];
+        valuesA.RemoveAt(100);
+        valuesB.RemoveAt(110);
+
+        BetaList list = valuesA.ToBetaList(valuesB, LookbackPeriods, Type);
+
+        // the Series method needs both timestamps removed from both sides
+        List<IReusable> matchedA = [.. Eval];
+        List<IReusable> matchedB = [.. Mrkt];
+        matchedA.RemoveAt(110);
+        matchedA.RemoveAt(100);
+        matchedB.RemoveAt(110);
+        matchedB.RemoveAt(100);
+
+        list.Should().HaveCount(Eval.Count - 2);
+        list.IsExactly(matchedA.ToBeta(matchedB, LookbackPeriods, Type));
+    }
+
+    [TestMethod]
     public void Clear_ResetsLookbackBuffer()
     {
         BetaList list = Eval.ToBetaList(Mrkt, LookbackPeriods, Type);
@@ -119,6 +142,10 @@ public class BetaBufferListTests : TestBase
         FluentActions.Invoking(static () => Eval.ToBetaList(null!, LookbackPeriods, Type))
             .Should().ThrowExactly<ArgumentNullException>().WithParameterName("sourceMrkt");
         FluentActions.Invoking(static () => ((IReadOnlyList<IReusable>)null!).ToBetaList(Mrkt, LookbackPeriods, Type))
+            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("sourceEval");
+
+        // a null source is reported before an invalid lookback, as the Series method does
+        FluentActions.Invoking(static () => ((IReadOnlyList<IReusable>)null!).ToBetaList(Mrkt, 0))
             .Should().ThrowExactly<ArgumentNullException>().WithParameterName("sourceEval");
     }
 }

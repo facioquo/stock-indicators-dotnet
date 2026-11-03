@@ -22,13 +22,12 @@ public class BetaHub
     /// <param name="provider">Hub that pairs the evaluated and market series.</param>
     /// <param name="lookbackPeriods">Quantity of periods in lookback window.</param>
     /// <param name="type">Type of Beta calculation.</param>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when the lookback periods are less than or equal to 0.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the provider's cache cannot hold the lookback window.</exception>
     internal BetaHub(
         PairHub provider,
         int lookbackPeriods,
         BetaType type) : base(provider)
     {
-        Beta.Validate(lookbackPeriods);
         LookbackPeriods = lookbackPeriods;
         Type = type;
         _evalWindow = new double[lookbackPeriods];
@@ -90,13 +89,20 @@ public static partial class Beta
     /// <summary>
     /// Creates a stream hub of Beta coefficients of an evaluated provider against a market provider.
     /// </summary>
+    /// <remarks>
+    /// A timestamp that only one provider holds produces no result, where the Series method
+    /// throws. Drive both providers from one thread at a time.
+    /// </remarks>
     /// <param name="sourceEval">Evaluated chain provider.</param>
     /// <param name="sourceMrkt">Market chain provider.</param>
     /// <param name="lookbackPeriods">Quantity of periods in lookback window.</param>
     /// <param name="type">Type of Beta calculation. Default is <see cref="BetaType.Standard"/>.</param>
     /// <returns>A stream hub of Beta results.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either provider is null.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when the lookback periods are less than or equal to 0.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when the lookback periods are less than or equal to 0, or exceed what the
+    /// provider's cache can hold.
+    /// </exception>
     public static BetaHub ToBetaHub(
         this IChainProvider<IReusable> sourceEval,
         IChainProvider<IReusable> sourceMrkt,
@@ -106,9 +112,8 @@ public static partial class Beta
         ArgumentNullException.ThrowIfNull(sourceEval);
         ArgumentNullException.ThrowIfNull(sourceMrkt);
 
-        // validate before subscribing, so a rejected hub leaves both providers untouched
         Validate(lookbackPeriods);
 
-        return new(new PairHub(sourceEval, sourceMrkt), lookbackPeriods, type);
+        return PairHub.Build(sourceEval, sourceMrkt, pair => new BetaHub(pair, lookbackPeriods, type));
     }
 }
