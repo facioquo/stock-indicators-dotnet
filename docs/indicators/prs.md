@@ -69,7 +69,7 @@ var results = barsEval
     .ToPrs(barsBase, ..);
 ```
 
-::: warning
+::: warning 🚩 Matching inputs required
 Both `sourceEval` and `sourceBase` arguments must contain the same number of elements and be the results of a chainable indicator or `.Use()` method.
 :::
 
