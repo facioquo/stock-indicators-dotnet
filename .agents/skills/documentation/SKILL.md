@@ -104,7 +104,6 @@ Follow `ema.md` for the exact layout. Show only the styles the indicator impleme
 
 When no streaming style exists, write one paragraph under `## Streaming`: "Streaming is not supported for this indicator." plus one sentence of architectural reason, then "Use the Series (batch) implementation with periodic recalculation instead." Existing reasons:
 
-- Second synchronized series (`beta.md`, `correlation.md`, `prs.md`): "This indicator requires a second synchronized bar series, which cannot be expressed in the single-series streaming model."
 - Lookahead and repaint (`zig-zag.md`): "This indicator requires lookahead to confirm reversal points; output repaints as new data arrives, making incremental results undefined."
 
 When only one variant streams (`renko.md`), show its examples and add a `::: warning 🚩` stating which method does not stream and why. Keep all streaming content under the one `## Streaming` heading.
