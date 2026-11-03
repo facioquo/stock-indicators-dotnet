@@ -37,8 +37,7 @@ public class PairMathList : PairBufferList<MathResult>, IPairMath
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(other);
 
-        AddSource(source);
-        AddOther(other);
+        StageBoth(source, other);
     }
 
     /// <inheritdoc />

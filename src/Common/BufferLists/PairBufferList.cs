@@ -107,6 +107,47 @@ public abstract class PairBufferList<TResult> : BufferList<TResult>, IIncrementF
     /// <param name="pair">Values of both series at a timestamp, in chronological order.</param>
     private protected abstract void AddPair(PairedValue pair);
 
+    /// <summary>
+    /// Stages two whole series in timestamp order.
+    /// </summary>
+    /// <remarks>
+    /// Aligned input pairs as it goes. Staging one side in full first would make each
+    /// trim shift that side's staged values, which is quadratic in the series length.
+    /// </remarks>
+    /// <param name="source">The source series, time sorted.</param>
+    /// <param name="other">The other series, time sorted.</param>
+    /// <exception cref="ArgumentNullException">Thrown when either series holds a null value.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when either series is out of timestamp order.</exception>
+    private protected void StageBoth(IReadOnlyList<IReusable> source, IReadOnlyList<IReusable> other)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(other);
+
+        int s = 0;
+        int o = 0;
+
+        while (s < source.Count || o < other.Count)
+        {
+            IReusable? a = s < source.Count
+                ? source[s] ?? throw new ArgumentNullException(nameof(source))
+                : null;
+            IReusable? b = o < other.Count
+                ? other[o] ?? throw new ArgumentNullException(nameof(other))
+                : null;
+
+            if (b is null || (a is not null && a.Timestamp <= b.Timestamp))
+            {
+                Stage(PairSide.Source, a!.Timestamp, a.Value);
+                s++;
+            }
+            else
+            {
+                Stage(PairSide.Other, b.Timestamp, b.Value);
+                o++;
+            }
+        }
+    }
+
     private void StageAll(PairSide side, IReadOnlyList<IReusable> values)
     {
         ArgumentNullException.ThrowIfNull(values);
