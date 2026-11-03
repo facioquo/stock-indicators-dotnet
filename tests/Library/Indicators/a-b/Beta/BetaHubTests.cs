@@ -67,6 +67,31 @@ public class BetaHubTests : StreamHubTestBase, ITestChainObserver, ITestChainPro
     }
 
     [TestMethod]
+    public void SmallestCache_MatchesSeriesExactly()
+    {
+        // the smallest cache the hub accepts holds the window plus the pair before it
+        const int cacheSize = LookbackPeriods + 1;
+
+        BarHub eval = new(cacheSize);
+        BarHub mrkt = new(cacheSize);
+        BetaHub observer = eval.ToBetaHub(mrkt, LookbackPeriods, Type);
+
+        // in lockstep, so neither side outruns the other's staging limit
+        for (int i = 0; i < 100; i++)
+        {
+            eval.Add(OtherBars[i]);
+            mrkt.Add(Bars[i]);
+        }
+
+        observer.Results.Should().HaveCount(cacheSize);
+        observer.Results.IsExactly(
+            OtherBars.Take(100).ToList().ToBeta(Bars.Take(100).ToList(), LookbackPeriods, Type).TakeLast(cacheSize).ToList());
+
+        eval.EndTransmission();
+        mrkt.EndTransmission();
+    }
+
+    [TestMethod]
     public void ChainObserver_ChainedProvider_MatchesSeriesExactly()
     {
         const int emaPeriods = 10;
@@ -184,10 +209,11 @@ public class BetaHubTests : StreamHubTestBase, ITestChainObserver, ITestChainPro
     [TestMethod]
     public void ZeroValues_MatchesSeriesExactly()
     {
-        // a 0 value makes the next return 0, and a flat market window gives a null Beta
+        // a 0 value on either side makes the next return 0, and a flat market window gives a null Beta
         List<Bar> evalBars = [.. OtherBars];
         List<Bar> mrktBars = [.. Bars];
         evalBars[200] = evalBars[200] with { Close = 0 };
+        mrktBars[250] = mrktBars[250] with { Close = 0 };
         for (int i = 300; i <= 300 + LookbackPeriods; i++)
         {
             mrktBars[i] = mrktBars[i] with { Close = 100m };
@@ -202,6 +228,7 @@ public class BetaHubTests : StreamHubTestBase, ITestChainObserver, ITestChainPro
 
         observer.Results.IsExactly(evalBars.ToBeta(mrktBars, LookbackPeriods, Type));
         observer.Results[201].ReturnsEval.Should().Be(0);
+        observer.Results[251].ReturnsMrkt.Should().Be(0);
         observer.Results[300 + LookbackPeriods].Beta.Should().BeNull();
 
         eval.EndTransmission();
@@ -249,7 +276,7 @@ public class BetaHubTests : StreamHubTestBase, ITestChainObserver, ITestChainPro
         other.HasObservers.Should().BeFalse();
 
         // an oversized lookback is rejected by the cache check, not by an allocation failure
-        FluentActions.Invoking(() => other.ToBetaHub(small, int.MaxValue - 1))
+        FluentActions.Invoking(() => other.ToBetaHub(small, int.MaxValue))
             .Should().ThrowExactly<ArgumentOutOfRangeException>();
         other.HasObservers.Should().BeFalse();
     }

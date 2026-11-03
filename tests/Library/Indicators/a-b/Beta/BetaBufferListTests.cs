@@ -60,10 +60,11 @@ public class BetaBufferListTests : TestBase
     [TestMethod]
     public void ZeroValues_MatchesSeriesExactly()
     {
-        // a 0 value makes the next return 0, and a flat market window gives a null Beta
+        // a 0 value on either side makes the next return 0, and a flat market window gives a null Beta
         List<IReusable> evalValues = [.. Eval];
         List<IReusable> mrktValues = [.. Mrkt];
         evalValues[200] = new TimeValue(evalValues[200].Timestamp, 0);
+        mrktValues[250] = new TimeValue(mrktValues[250].Timestamp, 0);
         for (int i = 300; i <= 300 + LookbackPeriods; i++)
         {
             mrktValues[i] = new TimeValue(mrktValues[i].Timestamp, 100);
@@ -73,6 +74,7 @@ public class BetaBufferListTests : TestBase
 
         list.IsExactly(evalValues.ToBeta(mrktValues, LookbackPeriods, Type));
         list[201].ReturnsEval.Should().Be(0);
+        list[251].ReturnsMrkt.Should().Be(0);
         list[300 + LookbackPeriods].Beta.Should().BeNull();
     }
 
