@@ -89,7 +89,11 @@ public static partial class Prs
     /// <summary>
     /// Creates a buffer list of Price Relative Strength values without <see cref="PrsResult.PrsPercent"/>.
     /// </summary>
-    /// <remarks>A timestamp that only one series holds produces no result, where the Series method throws.</remarks>
+    /// <remarks>
+    /// A timestamp that only one series holds produces no result, where the Series method
+    /// throws. Adding an older or equal timestamp to either side of the returned list throws
+    /// <see cref="InvalidOperationException"/>.
+    /// </remarks>
     /// <param name="sourceEval">Evaluated values, time sorted.</param>
     /// <param name="sourceBase">Base values, time sorted.</param>
     /// <returns>A buffer list of PRS results.</returns>
@@ -110,7 +114,11 @@ public static partial class Prs
     /// <summary>
     /// Creates a buffer list of Price Relative Strength values.
     /// </summary>
-    /// <remarks>A timestamp that only one series holds produces no result, where the Series method throws.</remarks>
+    /// <remarks>
+    /// A timestamp that only one series holds produces no result, where the Series method
+    /// throws. Adding an older or equal timestamp to either side of the returned list throws
+    /// <see cref="InvalidOperationException"/>.
+    /// </remarks>
     /// <param name="sourceEval">Evaluated values, time sorted.</param>
     /// <param name="sourceBase">Base values, time sorted.</param>
     /// <param name="lookbackPeriods">The number of periods for the PRS% lookback calculation.</param>
@@ -121,5 +129,10 @@ public static partial class Prs
         this IReadOnlyList<IReusable> sourceEval,
         IReadOnlyList<IReusable> sourceBase,
         int lookbackPeriods)
-        => new(lookbackPeriods, sourceEval, sourceBase);
+    {
+        ArgumentNullException.ThrowIfNull(sourceEval);
+        ArgumentNullException.ThrowIfNull(sourceBase);
+
+        return new(lookbackPeriods, sourceEval, sourceBase);
+    }
 }

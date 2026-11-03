@@ -18,25 +18,25 @@ public class PrsHub
     /// </summary>
     /// <param name="provider">Hub that pairs the evaluated and base series.</param>
     /// <param name="lookbackPeriods">
-    /// The number of periods for the PRS% lookback calculation, or 0 for no PRS%.
+    /// The number of periods for the PRS% lookback calculation, or 0 for no PRS%;
+    /// the factories validate it.
     /// </param>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when the lookback periods are less than 0.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the provider's cache cannot hold the lookback window.</exception>
     internal PrsHub(
         PairHub provider,
         int lookbackPeriods) : base(provider)
     {
+        LookbackPeriods = lookbackPeriods;
+
         if (lookbackPeriods == 0)
         {
             Name = "PRS";
         }
         else
         {
-            Prs.Validate(lookbackPeriods);
             Name = $"PRS({lookbackPeriods})";
             ValidateCacheSize(lookbackPeriods + 1, Name);
         }
-
-        LookbackPeriods = lookbackPeriods;
 
         // the pairing hub was built for this hub alone
         OwnProvider();
@@ -76,6 +76,10 @@ public static partial class Prs
     /// <summary>
     /// Creates a stream hub of Price Relative Strength values without <see cref="PrsResult.PrsPercent"/>.
     /// </summary>
+    /// <remarks>
+    /// A timestamp that only one provider holds produces no result, where the Series method
+    /// throws. Drive both providers from one thread at a time.
+    /// </remarks>
     /// <param name="sourceEval">Evaluated chain provider.</param>
     /// <param name="sourceBase">Base chain provider.</param>
     /// <returns>A stream hub of PRS results.</returns>
@@ -83,38 +87,38 @@ public static partial class Prs
     public static PrsHub ToPrsHub(
         this IChainProvider<IReusable> sourceEval,
         IChainProvider<IReusable> sourceBase)
-        => sourceEval.ToPrsHub(sourceBase, 0, validate: false);
+    {
+        ArgumentNullException.ThrowIfNull(sourceEval);
+        ArgumentNullException.ThrowIfNull(sourceBase);
+
+        return PairHub.Build(sourceEval, sourceBase, static pair => new PrsHub(pair, 0));
+    }
 
     /// <summary>
     /// Creates a stream hub of Price Relative Strength values.
     /// </summary>
+    /// <remarks>
+    /// A timestamp that only one provider holds produces no result, where the Series method
+    /// throws. Drive both providers from one thread at a time.
+    /// </remarks>
     /// <param name="sourceEval">Evaluated chain provider.</param>
     /// <param name="sourceBase">Base chain provider.</param>
     /// <param name="lookbackPeriods">The number of periods for the PRS% lookback calculation.</param>
     /// <returns>A stream hub of PRS results.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either provider is null.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when the lookback periods are less than or equal to 0.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when the lookback periods are less than or equal to 0, or exceed what the
+    /// provider's cache can hold.
+    /// </exception>
     public static PrsHub ToPrsHub(
         this IChainProvider<IReusable> sourceEval,
         IChainProvider<IReusable> sourceBase,
         int lookbackPeriods)
-        => sourceEval.ToPrsHub(sourceBase, lookbackPeriods, validate: true);
-
-    private static PrsHub ToPrsHub(
-        this IChainProvider<IReusable> sourceEval,
-        IChainProvider<IReusable> sourceBase,
-        int lookbackPeriods,
-        bool validate)
     {
         ArgumentNullException.ThrowIfNull(sourceEval);
         ArgumentNullException.ThrowIfNull(sourceBase);
+        Validate(lookbackPeriods);
 
-        // validate before subscribing, so a rejected hub leaves both providers untouched
-        if (validate)
-        {
-            Validate(lookbackPeriods);
-        }
-
-        return new(new PairHub(sourceEval, sourceBase), lookbackPeriods);
+        return PairHub.Build(sourceEval, sourceBase, pair => new PrsHub(pair, lookbackPeriods));
     }
 }
