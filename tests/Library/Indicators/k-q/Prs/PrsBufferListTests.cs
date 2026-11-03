@@ -50,6 +50,29 @@ public class PrsBufferListTests : TestBase
     }
 
     [TestMethod]
+    public void UnmatchedTimestamps_LookbackSpansMatchedPairs()
+    {
+        // each side omits a different timestamp inside one lookback window
+        List<IReusable> evalValues = [.. Eval];
+        List<IReusable> baseValues = [.. Base];
+        evalValues.RemoveAt(100);
+        baseValues.RemoveAt(110);
+
+        PrsList list = evalValues.ToPrsList(baseValues, LookbackPeriods);
+
+        // the Series method needs both timestamps removed from both sides
+        List<IReusable> evalMatched = [.. Eval];
+        List<IReusable> baseMatched = [.. Base];
+        evalMatched.RemoveAt(110);
+        evalMatched.RemoveAt(100);
+        baseMatched.RemoveAt(110);
+        baseMatched.RemoveAt(100);
+
+        list.Should().HaveCount(Eval.Count - 2);
+        list.IsExactly(evalMatched.ToPrs(baseMatched, LookbackPeriods));
+    }
+
+    [TestMethod]
     public void ZeroValues_MatchesSeriesExactly()
     {
         // a 0 base gives a null PRS; a 0 earlier value on either side gives a null PRS%
@@ -112,6 +135,10 @@ public class PrsBufferListTests : TestBase
         FluentActions.Invoking(static () => Eval.ToPrsList(null!, LookbackPeriods))
             .Should().ThrowExactly<ArgumentNullException>().WithParameterName("sourceBase");
         FluentActions.Invoking(static () => ((IReadOnlyList<IReusable>)null!).ToPrsList(Base))
+            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("sourceEval");
+
+        // a null source is reported before an invalid lookback, as the Series method does
+        FluentActions.Invoking(static () => ((IReadOnlyList<IReusable>)null!).ToPrsList(Base, 0))
             .Should().ThrowExactly<ArgumentNullException>().WithParameterName("sourceEval");
     }
 }

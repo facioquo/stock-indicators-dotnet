@@ -64,6 +64,36 @@ internal sealed class PairHub
         Reinitialize();
     }
 
+    /// <summary>
+    /// Builds a hub that observes a new pairing hub of two providers.
+    /// </summary>
+    /// <remarks>
+    /// When <paramref name="create"/> throws, as a cache-size check can, the pairing hub
+    /// is unsubscribed from both providers before the exception propagates.
+    /// </remarks>
+    /// <typeparam name="THub">Type of the observing hub.</typeparam>
+    /// <param name="source">Provider of the source series.</param>
+    /// <param name="other">Provider of the other series.</param>
+    /// <param name="create">Builds the observing hub from the pairing hub.</param>
+    /// <returns>The observing hub.</returns>
+    internal static THub Build<THub>(
+        IChainProvider<IReusable> source,
+        IChainProvider<IReusable> other,
+        Func<PairHub, THub> create)
+    {
+        PairHub pair = new(source, other);
+
+        try
+        {
+            return create(pair);
+        }
+        catch
+        {
+            pair.Unsubscribe();
+            throw;
+        }
+    }
+
     /// <inheritdoc/>
     public override void OnAdd(IReusable item, bool notify, int? indexHint)
     {
