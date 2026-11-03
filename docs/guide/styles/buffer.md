@@ -128,6 +128,26 @@ void OnBarReceived(Bar bar)
 }
 ```
 
+## Two-series indicators
+
+A two-series buffer list takes each series separately. Add one with `AddSource` and the other with `AddOther` as their values arrive; either one may run ahead, and a result is added once both hold the same timestamp.
+
+```csharp
+PairMathList spread = new(PairOperation.Minus);
+
+// call from each series' message handler
+void OnFastReceived(IReusable value) => spread.AddSource(value);
+void OnSlowReceived(IReusable value) => spread.AddOther(value);
+```
+
+- A timestamp that only one series holds produces no result, where the Series method throws.
+- Each series must arrive in strictly increasing order: an older or equal timestamp on a side throws an `InvalidOperationException`.
+- Each side stages at most `MaxListSize` values, so a side that falls further behind than that loses the pairs the leading side has dropped.
+
+Two-series buffer lists:
+
+- [IndyMath](/indicators/indy-math#streaming) two-series methods, such as `.ToMinusList(other)`
+
 ## Performance characteristics
 
 - **Overhead:** ~10-20% slower than batch style for equivalent datasets
