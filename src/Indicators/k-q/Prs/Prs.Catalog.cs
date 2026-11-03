@@ -34,4 +34,22 @@ public static partial class Prs
             .WithStyle(Style.Series)
             .WithMethodName(typeof(Prs), "ToPrs")
             .Build();
+
+    /// <summary>
+    /// Price Relative Strength Buffer Listing
+    /// </summary>
+    internal static readonly IndicatorListing BufferListing =
+        new CatalogListingBuilder(CommonListing)
+            .WithStyle(Style.Buffer)
+            .WithMethodName(typeof(Prs), "ToPrsList")
+            .Build();
+
+    /// <summary>
+    /// Price Relative Strength Stream Listing
+    /// </summary>
+    internal static readonly IndicatorListing StreamListing =
+        new CatalogListingBuilder(CommonListing)
+            .WithStyle(Style.Stream)
+            .WithMethodName(typeof(Prs), "ToPrsHub")
+            .Build();
 }

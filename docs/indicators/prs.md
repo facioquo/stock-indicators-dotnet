@@ -73,7 +73,7 @@ var results = barsEval
 Both `sourceEval` and `sourceBase` arguments must contain the same number of elements and be the results of a chainable indicator or `.Use()` method.
 :::
 
-Results can be further processed on `Beta` with additional chain-enabled indicators.
+Results can be further processed on `Prs` with additional chain-enabled indicators.
 
 ```csharp
 // example
@@ -86,4 +86,38 @@ See [Chaining indicators](/guide/chaining) for more.
 
 ## Streaming
 
-Streaming is not supported for this indicator. This indicator requires a second synchronized bar series, which cannot be expressed in the single-series streaming model. Use the Series (batch) implementation with periodic recalculation instead.
+Use the buffer-style `List<T>` when you need incremental calculations without a hub.  Add each series separately as its values arrive; either one may run ahead, and a result is added once both hold the same timestamp:
+
+```csharp
+PrsList prsList = new(lookbackPeriods);
+
+// call from each series' message handler
+void OnEvalReceived(IReusable value) => prsList.AddSource(value);
+void OnBaseReceived(IReusable value) => prsList.AddOther(value);
+
+// based on `IReadOnlyList<PrsResult>`; fills as the handlers run
+IReadOnlyList<PrsResult> results = prsList;
+```
+
+A timestamp that only one series holds produces no result, where the Series method throws.  Each series must arrive in strictly increasing order: an older or equal timestamp on a side throws an `InvalidOperationException`.  Each side stages at most `MaxListSize` values, so a side that falls further behind than that loses the pairs the leading side has dropped.
+
+Subscribe to a `BarHub` for each series for advanced streaming scenarios:
+
+```csharp
+BarHub evalHub = new();
+BarHub baseHub = new();
+PrsHub observer = evalHub.ToPrsHub(baseHub, lookbackPeriods);
+
+// call from each series' message handler
+void OnEvalReceived(IBar bar) => evalHub.Add(bar);
+void OnBaseReceived(IBar bar) => baseHub.Add(bar);
+
+// results fill as the handlers run
+IReadOnlyList<PrsResult> results = observer.Results;
+```
+
+A result is added once both providers hold the same timestamp.  A value that arrives late, or is revised or removed, on either side is handled by the usual rebuild.  Timestamps match exactly, and `PrsPercent` looks back `N` matched timestamps.  Drive both providers from one thread at a time.
+
+Omit `lookbackPeriods` (`new PrsList()` or `.ToPrsHub(baseHub)`) to skip `PrsPercent`, as the Series method does.
+
+See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.

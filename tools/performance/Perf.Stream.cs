@@ -105,6 +105,7 @@ public class StreamIndicators
     [Benchmark] public object PivotPointsHub() => barHub.ToPivotPointsHub(BarInterval.Month, PivotPointType.Standard).Results;
     [Benchmark] public object PivotsHub() => barHub.ToPivotsHub(2, 2, 20).Results;
     [Benchmark] public object PmoHub() => barHub.ToPmoHub(35, 20, 10).Results;
+    [Benchmark] public object PrsHub() => barHub.ToPrsHub(barHubOther).Results;
     [Benchmark] public object PvoHub() => barHub.ToPvoHub().Results;
     [Benchmark] public object BarHub() => barHub.ToBarHub().Results;
     [Benchmark] public object BarPartHub() => barHub.ToBarPartHub(CandlePart.OHL3).Results;

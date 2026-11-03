@@ -55,25 +55,15 @@ public static partial class Prs
 
             if (lookbackPeriods > 0 && i > lookbackPeriods - 1)
             {
-                IReusable bo = sourceBase[i - lookbackPeriods];
-                IReusable eo = sourceEval[i - lookbackPeriods];
-
-                if (bo.Value != 0 && eo.Value != 0)
-                {
-                    double? pctB = (b.Value - bo.Value) / bo.Value;
-                    double? pctE = (e.Value - eo.Value) / eo.Value;
-
-                    prsPercent = (pctE - pctB).NaN2Null();
-                }
+                prsPercent = Percent(
+                    e.Value, b.Value,
+                    sourceEval[i - lookbackPeriods].Value,
+                    sourceBase[i - lookbackPeriods].Value);
             }
 
             PrsResult r = new(
                 Timestamp: e.Timestamp,
-
-                Prs: b.Value == 0
-                    ? null
-                    : (e.Value / b.Value).NaN2Null(), // relative strength ratio
-
+                Prs: Ratio(e.Value, b.Value),
                 PrsPercent: prsPercent);
 
             results.Add(r);

@@ -349,7 +349,9 @@ public static partial class Catalog
         _listings.Add(Pmo.StreamListing);
 
         // PRS (Price Relative Strength)
+        _listings.Add(Prs.BufferListing);
         _listings.Add(Prs.SeriesListing);
+        _listings.Add(Prs.StreamListing);
 
         // PVO (Percentage Volume Oscillator)
         _listings.Add(Pvo.BufferListing);
