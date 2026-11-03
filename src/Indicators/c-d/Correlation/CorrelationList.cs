@@ -87,7 +87,11 @@ public static partial class Correlation
     /// <summary>
     /// Creates a buffer list of correlation values between two series.
     /// </summary>
-    /// <remarks>A timestamp that only one series holds produces no result, where the Series method throws.</remarks>
+    /// <remarks>
+    /// A timestamp that only one series holds produces no result, where the Series method
+    /// throws. Adding an older or equal timestamp to either side of the returned list throws
+    /// <see cref="InvalidOperationException"/>.
+    /// </remarks>
     /// <param name="sourceA">Values of series A, time sorted.</param>
     /// <param name="sourceB">Values of series B, time sorted.</param>
     /// <param name="lookbackPeriods">The number of periods to look back for the calculation.</param>
@@ -98,5 +102,10 @@ public static partial class Correlation
         this IReadOnlyList<IReusable> sourceA,
         IReadOnlyList<IReusable> sourceB,
         int lookbackPeriods)
-        => new(lookbackPeriods, sourceA, sourceB);
+    {
+        ArgumentNullException.ThrowIfNull(sourceA);
+        ArgumentNullException.ThrowIfNull(sourceB);
+
+        return new(lookbackPeriods, sourceA, sourceB);
+    }
 }

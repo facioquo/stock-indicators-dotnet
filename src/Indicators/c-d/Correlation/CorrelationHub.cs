@@ -21,12 +21,11 @@ public class CorrelationHub
     /// </summary>
     /// <param name="provider">Hub that pairs series A and B.</param>
     /// <param name="lookbackPeriods">The number of periods to look back for the calculation.</param>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when the lookback periods are less than or equal to 0.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the provider's cache cannot hold the lookback window.</exception>
     internal CorrelationHub(
         PairHub provider,
         int lookbackPeriods) : base(provider)
     {
-        Correlation.Validate(lookbackPeriods);
         LookbackPeriods = lookbackPeriods;
         _dataA = new double[lookbackPeriods];
         _dataB = new double[lookbackPeriods];
@@ -74,12 +73,19 @@ public static partial class Correlation
     /// <summary>
     /// Creates a stream hub of correlation values between two chain providers.
     /// </summary>
+    /// <remarks>
+    /// A timestamp that only one provider holds produces no result, where the Series method
+    /// throws. Drive both providers from one thread at a time.
+    /// </remarks>
     /// <param name="sourceA">Chain provider of series A.</param>
     /// <param name="sourceB">Chain provider of series B.</param>
     /// <param name="lookbackPeriods">The number of periods to look back for the calculation.</param>
     /// <returns>A stream hub of correlation results.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either provider is null.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when the lookback periods are less than or equal to 0.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when the lookback periods are less than or equal to 0, or exceed what the
+    /// provider's cache can hold.
+    /// </exception>
     public static CorrelationHub ToCorrelationHub(
         this IChainProvider<IReusable> sourceA,
         IChainProvider<IReusable> sourceB,
@@ -88,9 +94,8 @@ public static partial class Correlation
         ArgumentNullException.ThrowIfNull(sourceA);
         ArgumentNullException.ThrowIfNull(sourceB);
 
-        // validate before subscribing, so a rejected hub leaves both providers untouched
         Validate(lookbackPeriods);
 
-        return new(new PairHub(sourceA, sourceB), lookbackPeriods);
+        return PairHub.Build(sourceA, sourceB, pair => new CorrelationHub(pair, lookbackPeriods));
     }
 }

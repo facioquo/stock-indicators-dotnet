@@ -190,6 +190,9 @@ public class CorrelationHubTests : StreamHubTestBase, ITestChainObserver, ITestC
         BarHub sourceB = new();
         CorrelationHub observer = sourceA.ToCorrelationHub(sourceB, LookbackPeriods);
 
+        sourceA.HasObservers.Should().BeTrue();
+        sourceB.HasObservers.Should().BeTrue();
+
         observer.Unsubscribe();
 
         observer.IsSubscribed.Should().BeFalse();
@@ -211,6 +214,14 @@ public class CorrelationHubTests : StreamHubTestBase, ITestChainObserver, ITestC
         FluentActions.Invoking(() => barHub.ToCorrelationHub(barHub, 0))
             .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("lookbackPeriods");
         barHub.HasObservers.Should().BeFalse();
+
+        // so does a cache too small for the lookback window, which only the hub can check
+        BarHub small = new(LookbackPeriods - 1);
+        BarHub other = new();
+        FluentActions.Invoking(() => small.ToCorrelationHub(other, LookbackPeriods))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>();
+        small.HasObservers.Should().BeFalse();
+        other.HasObservers.Should().BeFalse();
     }
 
     [TestMethod]

@@ -61,6 +61,29 @@ public class CorrelationBufferListTests : TestBase
     }
 
     [TestMethod]
+    public void UnmatchedTimestamps_LookbackSpansMatchedPairs()
+    {
+        // each side omits a different timestamp inside one lookback window
+        List<IReusable> valuesA = [.. SourceA];
+        List<IReusable> valuesB = [.. SourceB];
+        valuesA.RemoveAt(100);
+        valuesB.RemoveAt(110);
+
+        CorrelationList list = valuesA.ToCorrelationList(valuesB, LookbackPeriods);
+
+        // the Series method needs both timestamps removed from both sides
+        List<IReusable> matchedA = [.. SourceA];
+        List<IReusable> matchedB = [.. SourceB];
+        matchedA.RemoveAt(110);
+        matchedA.RemoveAt(100);
+        matchedB.RemoveAt(110);
+        matchedB.RemoveAt(100);
+
+        list.Should().HaveCount(SourceA.Count - 2);
+        list.IsExactly(matchedA.ToCorrelation(matchedB, LookbackPeriods));
+    }
+
+    [TestMethod]
     public void Clear_ResetsLookbackBuffer()
     {
         CorrelationList list = SourceA.ToCorrelationList(SourceB, LookbackPeriods);
@@ -103,6 +126,10 @@ public class CorrelationBufferListTests : TestBase
         FluentActions.Invoking(static () => SourceA.ToCorrelationList(null!, LookbackPeriods))
             .Should().ThrowExactly<ArgumentNullException>().WithParameterName("sourceB");
         FluentActions.Invoking(static () => ((IReadOnlyList<IReusable>)null!).ToCorrelationList(SourceB, LookbackPeriods))
+            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("sourceA");
+
+        // a null source is reported before an invalid lookback, as the Series method does
+        FluentActions.Invoking(static () => ((IReadOnlyList<IReusable>)null!).ToCorrelationList(SourceB, 0))
             .Should().ThrowExactly<ArgumentNullException>().WithParameterName("sourceA");
     }
 }

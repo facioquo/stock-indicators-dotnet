@@ -209,6 +209,9 @@ public class PrsHubTests : StreamHubTestBase, ITestChainObserver, ITestChainProv
         BarHub baseHub = new();
         PrsHub observer = eval.ToPrsHub(baseHub, LookbackPeriods);
 
+        eval.HasObservers.Should().BeTrue();
+        baseHub.HasObservers.Should().BeTrue();
+
         observer.Unsubscribe();
 
         observer.IsSubscribed.Should().BeFalse();
@@ -232,6 +235,14 @@ public class PrsHubTests : StreamHubTestBase, ITestChainObserver, ITestChainProv
         FluentActions.Invoking(() => barHub.ToPrsHub(barHub, 0))
             .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("lookbackPeriods");
         barHub.HasObservers.Should().BeFalse();
+
+        // so does a cache too small for the lookback window, which only the hub can check
+        BarHub small = new(LookbackPeriods);
+        BarHub other = new();
+        FluentActions.Invoking(() => small.ToPrsHub(other, LookbackPeriods))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>();
+        small.HasObservers.Should().BeFalse();
+        other.HasObservers.Should().BeFalse();
     }
 
     [TestMethod]
