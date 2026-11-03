@@ -243,6 +243,11 @@ public class PrsHubTests : StreamHubTestBase, ITestChainObserver, ITestChainProv
             .Should().ThrowExactly<ArgumentOutOfRangeException>();
         small.HasObservers.Should().BeFalse();
         other.HasObservers.Should().BeFalse();
+
+        // the largest lookback fails the same check rather than overflowing
+        FluentActions.Invoking(() => other.ToPrsHub(small, int.MaxValue))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>();
+        other.HasObservers.Should().BeFalse();
     }
 
     [TestMethod]
