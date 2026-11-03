@@ -35,7 +35,9 @@ public class PrsHub
         else
         {
             Name = $"PRS({lookbackPeriods})";
-            ValidateCacheSize(lookbackPeriods + 1, Name);
+
+            // clamped, so the largest lookback fails the cache check rather than overflowing
+            ValidateCacheSize(lookbackPeriods == int.MaxValue ? int.MaxValue : lookbackPeriods + 1, Name);
         }
 
         // the pairing hub was built for this hub alone
