@@ -59,8 +59,7 @@ public class PairMathList : BufferList<MathResult>, IIncrementFromPair, IPairMat
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(other);
 
-        AddSource(source);
-        AddOther(other);
+        StageBoth(source, other);
     }
 
     /// <inheritdoc />
@@ -129,6 +128,35 @@ public class PairMathList : BufferList<MathResult>, IIncrementFromPair, IPairMat
         _stager.Clear();
         _lastSource = null;
         _lastOther = null;
+    }
+
+    // stages two whole series in timestamp order, so aligned input pairs as it goes
+    // instead of staging one side in full, which would make each trim shift that side
+    private void StageBoth(IReadOnlyList<IReusable> source, IReadOnlyList<IReusable> other)
+    {
+        int s = 0;
+        int o = 0;
+
+        while (s < source.Count || o < other.Count)
+        {
+            IReusable? a = s < source.Count
+                ? source[s] ?? throw new ArgumentNullException(nameof(source))
+                : null;
+            IReusable? b = o < other.Count
+                ? other[o] ?? throw new ArgumentNullException(nameof(other))
+                : null;
+
+            if (b is null || (a is not null && a.Timestamp <= b.Timestamp))
+            {
+                Stage(PairSide.Source, a!.Timestamp, a.Value);
+                s++;
+            }
+            else
+            {
+                Stage(PairSide.Other, b.Timestamp, b.Value);
+                o++;
+            }
+        }
     }
 
     private void StageAll(PairSide side, IReadOnlyList<IReusable> values)
