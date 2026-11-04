@@ -141,6 +141,17 @@ public class CorrelationHubTests : StreamHubTestBase, ITestChainObserver, ITestC
 
         observer.Results.Should().HaveCount(barsCount - 2);
 
+        // until the late bars arrive, the window spans only the matched pairs
+        List<Bar> matchedA = [.. OtherBars];
+        List<Bar> matchedB = [.. Bars];
+        foreach (int index in (int[])[120, 80])
+        {
+            matchedA.RemoveAt(index);
+            matchedB.RemoveAt(index);
+        }
+
+        observer.Results.IsExactly(matchedA.ToCorrelation(matchedB, LookbackPeriods));
+
         sourceA.Add(OtherBars[80]);
         sourceB.Add(Bars[120]);
 
@@ -179,6 +190,29 @@ public class CorrelationHubTests : StreamHubTestBase, ITestChainObserver, ITestC
         observer.Results.IsExactly(barsA.ToCorrelation(Bars, LookbackPeriods));
         observer.Results[200 + LookbackPeriods - 1].Correlation.Should().BeNull();
 
+        sourceA.EndTransmission();
+        sourceB.EndTransmission();
+    }
+
+    [TestMethod]
+    public void ProviderCacheOfLookbackPeriods_MatchesSeriesExactly()
+    {
+        // the smallest cache the hub accepts still holds a full window
+        BarHub sourceA = new(LookbackPeriods);
+        BarHub sourceB = new(LookbackPeriods);
+        CorrelationHub observer = sourceA.ToCorrelationHub(sourceB, LookbackPeriods);
+
+        for (int i = 0; i < barsCount; i++)
+        {
+            sourceA.Add(OtherBars[i]);
+            sourceB.Add(Bars[i]);
+        }
+
+        // the hub keeps its providers' cache size, so it holds the last window of results
+        observer.Results.Should().HaveCount(LookbackPeriods);
+        observer.Results.IsExactly(OtherBars.ToCorrelation(Bars, LookbackPeriods).TakeLast(LookbackPeriods).ToList());
+
+        observer.Unsubscribe();
         sourceA.EndTransmission();
         sourceB.EndTransmission();
     }
