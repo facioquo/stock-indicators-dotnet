@@ -297,6 +297,10 @@ public class PairMathListTests : TestBase
         List<IReusable> withNull = [Source[0], null!];
         FluentActions.Invoking(() => list.AddSource(withNull))
             .Should().ThrowExactly<ArgumentNullException>().WithParameterName("values");
+        FluentActions.Invoking(() => new PairMathList(PairOperation.Plus, withNull, Other))
+            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("source");
+        FluentActions.Invoking(() => new PairMathList(PairOperation.Plus, Source, withNull))
+            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("other");
     }
 
     private static void AssertEveryOperation(Action<PairMathList> feed)
