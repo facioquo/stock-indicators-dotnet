@@ -1,3 +1,5 @@
+using System.Buffers;
+
 namespace FacioQuo.Stock.Indicators;
 
 public static partial class Beta
@@ -122,35 +124,54 @@ public static partial class Beta
         ReadOnlySpan<double> evalWindow,
         BetaType type)
     {
-        // initialize
-        double? beta = null;
-        List<double> dataA = new(mrktWindow.Length);
-        List<double> dataB = new(mrktWindow.Length);
+        // the standard type uses the whole window
+        if (type is BetaType.Standard)
+        {
+            return CalcBeta(mrktWindow, evalWindow);
+        }
 
-        for (int p = 0; p < mrktWindow.Length; p++)
+        // up and down types keep only the periods where the market moved that way
+        int length = mrktWindow.Length;
+        double[] rented = ArrayPool<double>.Shared.Rent(length * 2);
+        Span<double> buffer = rented.AsSpan(0, length * 2);
+        Span<double> dataA = buffer[..length];
+        Span<double> dataB = buffer[length..];
+        int count = 0;
+
+        for (int p = 0; p < length; p++)
         {
             double a = mrktWindow[p];
-            double b = evalWindow[p];
 
-            if (type is BetaType.Standard
-            || (type is BetaType.Down && a < 0)
-            || (type is BetaType.Up && a > 0))
+            if ((type is BetaType.Down && a < 0)
+             || (type is BetaType.Up && a > 0))
             {
-                dataA.Add(a);
-                dataB.Add(b);
+                dataA[count] = a;
+                dataB[count] = evalWindow[p];
+                count++;
             }
         }
 
-        if (dataA.Count == 0)
-        {
-            return beta;
-        }
+        double? beta = count == 0 ? null : CalcBeta(dataA[..count], dataB[..count]);
+
+        ArrayPool<double>.Shared.Return(rented);
+
+        return beta;
+    }
+
+    /// <summary>
+    /// Calculates Beta as the covariance of the returns over the market variance.
+    /// </summary>
+    /// <param name="mrktReturns">Market returns.</param>
+    /// <param name="evalReturns">Evaluated asset returns.</param>
+    /// <returns>Calculated Beta value, or <see langword="null"/> when the market variance is 0.</returns>
+    private static double? CalcBeta(
+        ReadOnlySpan<double> mrktReturns,
+        ReadOnlySpan<double> evalReturns)
+    {
+        double? beta = null;
 
         // calculate correlation, covariance, and variance
-        CorrResult c = Correlation.PeriodCorrelation(
-            default,
-            [.. dataA],
-            [.. dataB]);
+        CorrResult c = Correlation.PeriodCorrelation(default, mrktReturns, evalReturns);
 
         // calculate beta
         if (c.VarianceA != 0)

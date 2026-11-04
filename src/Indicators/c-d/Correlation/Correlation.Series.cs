@@ -81,8 +81,8 @@ public static partial class Correlation
     /// <returns>A <see cref="CorrResult"/> containing the correlation calculation result for the given period.</returns>
     internal static CorrResult PeriodCorrelation(
         DateTime timestamp,
-        double[] dataA,
-        double[] dataB)
+        ReadOnlySpan<double> dataA,
+        ReadOnlySpan<double> dataB)
     {
         int length = dataA.Length;
         double sumA = 0;
