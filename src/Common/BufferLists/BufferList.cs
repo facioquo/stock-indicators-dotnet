@@ -139,6 +139,18 @@ public abstract class BufferList<TResult> : IReadOnlyList<TResult>
     }
 
     /// <summary>
+    /// Gets the number of results pruned from the start of the list since it was created or cleared.
+    /// </summary>
+    private protected int PrunedCount { get; private set; }
+
+    /// <summary>
+    /// Gets the number of results added since the list was created or cleared, including pruned ones.
+    /// Use it instead of <see cref="Count"/> for warmup checks and absolute positions,
+    /// which must not depend on <see cref="MaxListSize"/>.
+    /// </summary>
+    private protected int TotalCount => _internalList.Count + PrunedCount;
+
+    /// <summary>
     /// Removes the oldest results when the list exceeds <see cref="MaxListSize"/>.
     /// Can be overridden in derived classes for custom pruning logic.
     /// </summary>
@@ -152,12 +164,17 @@ public abstract class BufferList<TResult> : IReadOnlyList<TResult>
         }
 
         _internalList.RemoveRange(0, overflow);
+        PrunedCount += overflow;
     }
 
     /* IList<TResult> features (limited set) */
 
     /// <inheritdoc cref="List{TResult}.Clear"/>
-    public virtual void Clear() => _internalList.Clear();
+    public virtual void Clear()
+    {
+        _internalList.Clear();
+        PrunedCount = 0;
+    }
 
     /// <inheritdoc cref="List{TResult}.Contains(TResult)"/>
     public bool Contains(TResult item) => _internalList.Contains(item);

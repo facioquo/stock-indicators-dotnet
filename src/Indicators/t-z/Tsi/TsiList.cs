@@ -172,7 +172,7 @@ public class TsiList : BufferList<TsiResult>, IIncrementFromChain, ITsi
 
         if (SignalPeriods > 1)
         {
-            if (double.IsNaN(_prevSignal) && Count > SignalPeriods && !double.IsNaN(tsi))
+            if (double.IsNaN(_prevSignal) && TotalCount > SignalPeriods && !double.IsNaN(tsi))
             {
                 // Check if we have enough non-NaN TSI values (last signalPeriods values including current)
                 bool hasEnoughValues = _tsiHistory.Count >= SignalPeriods;
@@ -274,8 +274,8 @@ public class TsiList : BufferList<TsiResult>, IIncrementFromChain, ITsi
 
         if (overflow > 0)
         {
-            // Maintain minimum buffer size for calculations
-            int minBufferSize = LookbackPeriods + SmoothPeriods;
+            // keep enough history for each seed: changes, first smoothing, and signal
+            int minBufferSize = LookbackPeriods + SmoothPeriods + SignalPeriods;
             int removable = Math.Min(overflow, Math.Max(0, _changeHistory.Count - minBufferSize));
 
             if (removable > 0)
