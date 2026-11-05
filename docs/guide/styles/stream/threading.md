@@ -8,7 +8,7 @@ description: Feed stream hubs from multi-threaded sources and read their results
 A stream hub accepts changes from one thread at a time. This page covers how to meet that rule when your data source calls back on several threads, and how to read results from other threads. For the basics, start with [Stream hubs](/guide/styles/stream).
 
 ::: warning 🚩 Data corruption risk
-A hub is not safe for concurrent use from multiple threads. Two threads changing the same hub at the same time can corrupt its results without raising an error. Make sure only one thread changes a hub at a time.
+A hub is not safe for concurrent use. If two threads change the same hub at the same time, its results can be corrupted without any error. Every call that changes a hub, not only `Add`, must come from one thread at a time, and reads from other threads need a [snapshot](#reading-results).
 :::
 
 ## The single-writer rule

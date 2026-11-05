@@ -122,7 +122,11 @@ Two-series stream hubs:
 
 ## Live feeds and threads
 
-A hub accepts changes from one thread at a time. If your client delivers messages one after another, as a receive loop does, call `Add` directly from the loop. If its callbacks can run at the same time on different threads, write bars to a feed instead, which applies them to the hub one at a time in arrival order:
+::: warning 🚩 Data corruption risk
+A hub is not safe for concurrent use. If two threads add bars to the same hub at the same time, its results can be corrupted without any error. Add bars from one thread at a time, as shown below; see [Threading and live feeds](/guide/styles/stream/threading) for the full rules.
+:::
+
+If your client delivers messages one after another, as a receive loop does, call `Add` directly from the loop. If its callbacks can run at the same time on different threads, write bars to a feed instead, which applies them to the hub one at a time in arrival order:
 
 ```csharp
 BarHub barHub = new();
