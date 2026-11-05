@@ -115,7 +115,7 @@ BetaList betaList = new(lookbackPeriods, type);
 void OnEvalReceived(IReusable value) => betaList.AddSource(value);
 void OnMarketReceived(IReusable value) => betaList.AddOther(value);
 
-// based on `IReadOnlyList<BetaResult>`; fills as the handlers run
+// the list itself holds the results; fills as the handlers run
 IReadOnlyList<BetaResult> results = betaList;
 ```
 

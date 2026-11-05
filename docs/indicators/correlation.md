@@ -95,7 +95,7 @@ CorrelationList correlationList = new(lookbackPeriods);
 void OnAReceived(IReusable value) => correlationList.AddSource(value);
 void OnBReceived(IReusable value) => correlationList.AddOther(value);
 
-// based on `IReadOnlyList<CorrResult>`; fills as the handlers run
+// the list itself holds the results; fills as the handlers run
 IReadOnlyList<CorrResult> results = correlationList;
 ```
 

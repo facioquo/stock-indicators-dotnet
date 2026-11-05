@@ -94,7 +94,7 @@ AtrList atrList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => atrList.Add(bar);
 
-// based on `ICollection<AtrResult>`; fills as the handler runs
+// the list itself holds the results; fills as the handler runs
 IReadOnlyList<AtrResult> results = atrList;
 ```
 

@@ -90,7 +90,7 @@ SmiList smiList = new(lookbackPeriods, firstSmoothPeriods,
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => smiList.Add(bar);
 
-// based on `ICollection<SmiResult>`; fills as the handler runs
+// the list itself holds the results; fills as the handler runs
 IReadOnlyList<SmiResult> results = smiList;
 ```
 

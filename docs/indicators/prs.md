@@ -95,7 +95,7 @@ PrsList prsList = new(lookbackPeriods);
 void OnEvalReceived(IReusable value) => prsList.AddSource(value);
 void OnBaseReceived(IReusable value) => prsList.AddOther(value);
 
-// based on `IReadOnlyList<PrsResult>`; fills as the handlers run
+// the list itself holds the results; fills as the handlers run
 IReadOnlyList<PrsResult> results = prsList;
 ```
 

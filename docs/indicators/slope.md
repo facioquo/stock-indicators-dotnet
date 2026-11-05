@@ -96,7 +96,7 @@ SlopeList slopeList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => slopeList.Add(bar);
 
-// based on `ICollection<SlopeResult>`; fills as the handler runs
+// the list itself holds the results; fills as the handler runs
 IReadOnlyList<SlopeResult> results = slopeList;
 ```
 
