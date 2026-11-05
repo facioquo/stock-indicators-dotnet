@@ -187,7 +187,7 @@ public class Stackoverflow : TestBase
             HubRef(barHub.ToEmaHub(14)),
 
             // two-series hub whose providers both descend from the same bar hub
-            HubRef(barHub.ToEmaHub(12).ToMinusHub(barHub.ToEmaHub(26))),
+            HubRef(barHub.ToEmaHub(12).Minus(barHub.ToEmaHub(26))),
             HubRef(barHub.ToSmaHub(5).ToBetaHub(barHub, 20, BetaType.All)),
             //HubRef(barHub.ToRenko(2.1m), irregular: true),
             HubRef(barHub.ToBarHub())

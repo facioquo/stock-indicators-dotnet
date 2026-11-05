@@ -79,7 +79,7 @@ public class IndyMathCatalogTests : TestBase
         {
             IndicatorListing listing = Catalog.Get(uiid, Style.Stream);
 
-            AssertListing(listing, uiid, name, Style.Stream, $"To{method}Hub");
+            AssertListing(listing, uiid, name, Style.Stream, method);
             listing.Parameters.Should().ContainSingle()
                 .Which.ParameterName.Should().Be(parameter);
         }
@@ -88,7 +88,7 @@ public class IndyMathCatalogTests : TestBase
         {
             IndicatorListing listing = Catalog.Get(uiid, Style.Stream);
 
-            AssertListing(listing, uiid, name, Style.Stream, $"To{method}Hub");
+            AssertListing(listing, uiid, name, Style.Stream, method);
             listing.Parameters.Select(static p => p.ParameterName)
                 .Should().Equal("source", "other");
         }

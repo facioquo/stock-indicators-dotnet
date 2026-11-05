@@ -73,7 +73,7 @@ public static partial class IndyMath
     /// <exception cref="ArgumentOutOfRangeException">
     /// Thrown when the lookback periods are less than 1 or exceed the provider's cache size.
     /// </exception>
-    public static RollingMaxHub ToRollingMaxHub(
+    public static RollingMaxHub RollingMax(
         this IChainProvider<IReusable> chainProvider,
         int lookbackPeriods)
     {

@@ -58,7 +58,7 @@ public static partial class IndyMath
     /// <param name="other">Chain provider to add.</param>
     /// <returns>A stream hub of <c>source + other</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either provider is null.</exception>
-    public static PairMathHub ToPlusHub(
+    public static PairMathHub Plus(
         this IChainProvider<IReusable> source,
         IChainProvider<IReusable> other)
         => source.ToPairMathHub(other, PairOperation.Plus);
@@ -70,7 +70,7 @@ public static partial class IndyMath
     /// <param name="other">Chain provider to subtract.</param>
     /// <returns>A stream hub of <c>source − other</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either provider is null.</exception>
-    public static PairMathHub ToMinusHub(
+    public static PairMathHub Minus(
         this IChainProvider<IReusable> source,
         IChainProvider<IReusable> other)
         => source.ToPairMathHub(other, PairOperation.Minus);
@@ -82,7 +82,7 @@ public static partial class IndyMath
     /// <param name="other">Chain provider to multiply by.</param>
     /// <returns>A stream hub of <c>source × other</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either provider is null.</exception>
-    public static PairMathHub ToTimesHub(
+    public static PairMathHub Times(
         this IChainProvider<IReusable> source,
         IChainProvider<IReusable> other)
         => source.ToPairMathHub(other, PairOperation.Times);
@@ -94,7 +94,7 @@ public static partial class IndyMath
     /// <param name="other">Chain provider of divisors.</param>
     /// <returns>A stream hub of <c>source ÷ other</c> values; <see langword="null"/> where the divisor is 0.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either provider is null.</exception>
-    public static PairMathHub ToDividedByHub(
+    public static PairMathHub DividedBy(
         this IChainProvider<IReusable> source,
         IChainProvider<IReusable> other)
         => source.ToPairMathHub(other, PairOperation.DividedBy);
@@ -106,7 +106,7 @@ public static partial class IndyMath
     /// <param name="other">Chain provider to compare.</param>
     /// <returns>A stream hub of the larger value at each matched timestamp.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either provider is null.</exception>
-    public static PairMathHub ToMaxWithHub(
+    public static PairMathHub MaxWith(
         this IChainProvider<IReusable> source,
         IChainProvider<IReusable> other)
         => source.ToPairMathHub(other, PairOperation.MaxWith);
@@ -118,7 +118,7 @@ public static partial class IndyMath
     /// <param name="other">Chain provider to compare.</param>
     /// <returns>A stream hub of the smaller value at each matched timestamp.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either provider is null.</exception>
-    public static PairMathHub ToMinWithHub(
+    public static PairMathHub MinWith(
         this IChainProvider<IReusable> source,
         IChainProvider<IReusable> other)
         => source.ToPairMathHub(other, PairOperation.MinWith);

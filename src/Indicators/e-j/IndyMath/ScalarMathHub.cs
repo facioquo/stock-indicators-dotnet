@@ -54,7 +54,7 @@ public static partial class IndyMath
     /// <returns>A hub of <c>source + amount</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="chainProvider"/> is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the amount is not finite.</exception>
-    public static ScalarMathHub ToPlusHub(
+    public static ScalarMathHub Plus(
         this IChainProvider<IReusable> chainProvider,
         double amount)
     {
@@ -70,7 +70,7 @@ public static partial class IndyMath
     /// <returns>A hub of <c>source × (1 + percentOffset / 100)</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="chainProvider"/> is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the percent offset is not finite.</exception>
-    public static ScalarMathHub ToPlusPercentHub(
+    public static ScalarMathHub PlusPercent(
         this IChainProvider<IReusable> chainProvider,
         double percentOffset)
     {
@@ -86,7 +86,7 @@ public static partial class IndyMath
     /// <returns>A hub of <c>source − amount</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="chainProvider"/> is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the amount is not finite.</exception>
-    public static ScalarMathHub ToMinusHub(
+    public static ScalarMathHub Minus(
         this IChainProvider<IReusable> chainProvider,
         double amount)
     {
@@ -102,7 +102,7 @@ public static partial class IndyMath
     /// <returns>A hub of <c>source × factor</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="chainProvider"/> is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the factor is not finite.</exception>
-    public static ScalarMathHub ToTimesHub(
+    public static ScalarMathHub Times(
         this IChainProvider<IReusable> chainProvider,
         double factor)
     {
@@ -118,7 +118,7 @@ public static partial class IndyMath
     /// <returns>A hub of <c>source ÷ divisor</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="chainProvider"/> is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the divisor is 0 or not finite.</exception>
-    public static ScalarMathHub ToDividedByHub(
+    public static ScalarMathHub DividedBy(
         this IChainProvider<IReusable> chainProvider,
         double divisor)
     {

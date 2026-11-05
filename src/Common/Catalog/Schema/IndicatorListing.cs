@@ -107,10 +107,11 @@ public record IndicatorListing
     /// including one built outside the catalog, resolves a method some catalog listing names.
     /// </remarks>
     /// <returns>
-    /// The overloads of <see cref="MethodName"/>; empty when it is unset or no catalog listing names the method.
+    /// The overloads of <see cref="MethodName"/> that return this listing's <see cref="Style"/>;
+    /// empty when it is unset or no catalog listing names the method.
     /// </returns>
     public IReadOnlyList<MethodInfo> GetMethodOverloads()
-        => Array.AsReadOnly(CatalogMethodResolver.GetOverloads(MethodName));
+        => Array.AsReadOnly(CatalogMethodResolver.GetOverloads(MethodName, Style));
 
     /// <summary>
     /// Gets or sets the legend template for the indicator.

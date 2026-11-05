@@ -7,7 +7,7 @@ public class PairMathHubTests : StreamHubTestBase, ITestChainObserver, ITestChai
     private const int SmaPeriods = 5;
 
     private static PairMathHub NewHub(IChainProvider<IReusable> source, IChainProvider<IReusable> other)
-        => source.ToMinusHub(other);
+        => source.Minus(other);
 
     private static IReadOnlyList<MathResult> Series(IReadOnlyList<IReusable> source, IReadOnlyList<IReusable> other)
         => source.Minus(other);
@@ -240,8 +240,8 @@ public class PairMathHubTests : StreamHubTestBase, ITestChainObserver, ITestChai
         BarHub barHub = new();
         MacdHub macd = barHub.ToMacdHub(12, 26, 9);
         PairMathHub myc = macd
-            .ToMinusHub(macd.ToEmaHub(9))
-            .ToPlusHub(barHub.ToSmaHub(9));
+            .Minus(macd.ToEmaHub(9))
+            .Plus(barHub.ToSmaHub(9));
 
         for (int i = 0; i < barsCount; i++)
         {
@@ -276,12 +276,12 @@ public class PairMathHubTests : StreamHubTestBase, ITestChainObserver, ITestChai
 
         BarHub source = new();
         BarHub other = new();
-        PairMathHub plus = source.ToPlusHub(other);
-        PairMathHub minus = source.ToMinusHub(other);
-        PairMathHub times = source.ToTimesHub(other);
-        PairMathHub divided = source.ToDividedByHub(other);
-        PairMathHub max = source.ToMaxWithHub(other);
-        PairMathHub min = source.ToMinWithHub(other);
+        PairMathHub plus = source.Plus(other);
+        PairMathHub minus = source.Minus(other);
+        PairMathHub times = source.Times(other);
+        PairMathHub divided = source.DividedBy(other);
+        PairMathHub max = source.MaxWith(other);
+        PairMathHub min = source.MinWith(other);
 
         source.Add(Bars);
         other.Add(others);
@@ -304,8 +304,8 @@ public class PairMathHubTests : StreamHubTestBase, ITestChainObserver, ITestChai
     public void SameProvider_GivesFlatlineResults()
     {
         BarHub barHub = new();
-        PairMathHub minus = barHub.ToMinusHub(barHub);
-        PairMathHub divided = barHub.ToDividedByHub(barHub);
+        PairMathHub minus = barHub.Minus(barHub);
+        PairMathHub divided = barHub.DividedBy(barHub);
 
         barHub.Add(Bars);
 
@@ -324,7 +324,7 @@ public class PairMathHubTests : StreamHubTestBase, ITestChainObserver, ITestChai
 
         BarHub source = new();
         BarHub other = new();
-        PairMathHub observer = source.ToPlusHub(other);
+        PairMathHub observer = source.Plus(other);
 
         source.Add(Bars);
         other.Add(withGap);
@@ -346,7 +346,7 @@ public class PairMathHubTests : StreamHubTestBase, ITestChainObserver, ITestChai
     {
         BarHub source = new();
         BarHub other = new();
-        PairMathHub observer = source.ToTimesHub(other);
+        PairMathHub observer = source.Times(other);
 
         observer.Unsubscribe();
 

@@ -38,6 +38,19 @@ public class CatalogMethodOverloadsTests
     }
 
     [TestMethod]
+    public void OperatorSharedAcrossStylesResolvesToTheListingStyle()
+    {
+        // IndyMath's Minus names both a Series method and a stream hub method
+        IReadOnlyList<MethodInfo> series = Catalog.Get("MINUS-SERIES", Style.Series)!.GetMethodOverloads();
+        IReadOnlyList<MethodInfo> stream = Catalog.Get("MINUS-SERIES", Style.Stream)!.GetMethodOverloads();
+
+        series.Should().NotBeEmpty()
+            .And.OnlyContain(static m => m.ReturnType == typeof(IReadOnlyList<MathResult>));
+        stream.Should().NotBeEmpty()
+            .And.OnlyContain(static m => typeof(IStreamObservable<MathResult>).IsAssignableFrom(m.ReturnType));
+    }
+
+    [TestMethod]
     public void OverloadsCannotBeModifiedThroughTheResult()
     {
         IReadOnlyList<MethodInfo> overloads = Catalog.Get("EMA", Style.Series)!.GetMethodOverloads();

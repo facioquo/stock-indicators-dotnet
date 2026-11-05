@@ -93,6 +93,64 @@ internal static class CatalogMethodResolver
     }
 
     /// <summary>
+    /// Gets the overloads of a catalog method that produce one indicator style.
+    /// </summary>
+    /// <remarks>
+    /// One name can serve two styles: IndyMath's operators, such as <c>Minus</c>, name
+    /// both a Series method and a stream hub method, told apart by their receiver.
+    /// </remarks>
+    /// <param name="methodName">Method name from a listing.</param>
+    /// <param name="style">Style of the listing.</param>
+    /// <returns>
+    /// The overloads that return the given style; every overload when none does.
+    /// </returns>
+    internal static MethodInfo[] GetOverloads(string? methodName, Style style)
+    {
+        MethodInfo[] overloads = GetOverloads(methodName);
+        MethodInfo[] ofStyle = Array.FindAll(overloads, m => GetStyle(m) == style);
+
+        return ofStyle.Length > 0 ? ofStyle : overloads;
+    }
+
+    /// <summary>
+    /// Gets the indicator style an indicator method returns.
+    /// </summary>
+    /// <param name="method">Indicator method bound to a catalog listing.</param>
+    /// <returns>The style, or <c>null</c> when the return shape is unrecognized.</returns>
+    private static Style? GetStyle(MethodInfo method)
+    {
+        Type returnType = method.ReturnType;
+
+        if (returnType.IsGenericType
+         && returnType.GetGenericTypeDefinition() == typeof(IReadOnlyList<>))
+        {
+            return Style.Series;
+        }
+
+        for (Type? baseType = returnType; baseType is not null; baseType = baseType.BaseType)
+        {
+            if (!baseType.IsGenericType)
+            {
+                continue;
+            }
+
+            Type definition = baseType.GetGenericTypeDefinition();
+
+            if (definition == typeof(BufferList<>))
+            {
+                return Style.Buffer;
+            }
+
+            if (definition == typeof(StreamHub<,>))
+            {
+                return Style.Stream;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
     /// Gets the result record type produced by an indicator method, for any style.
     /// </summary>
     /// <remarks>

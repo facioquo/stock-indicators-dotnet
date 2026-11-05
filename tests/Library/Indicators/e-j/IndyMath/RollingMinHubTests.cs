@@ -8,7 +8,7 @@ public class RollingMinHubTests : StreamHubTestBase, ITestChainObserver, ITestCh
     private const string ExpectedName = "ROLLINGMIN(20)";
 
     private static RollingMinHub NewHub(IChainProvider<IReusable> provider)
-        => provider.ToRollingMinHub(lookbackPeriods);
+        => provider.RollingMin(lookbackPeriods);
 
     private static IReadOnlyList<MathResult> Series(IReadOnlyList<IReusable> source)
         => source.RollingMin(lookbackPeriods);
@@ -247,15 +247,15 @@ public class RollingMinHubTests : StreamHubTestBase, ITestChainObserver, ITestCh
 
     [TestMethod]
     public void Properties_AfterConstruction_ReflectArguments()
-        => new BarHub().ToRollingMinHub(14).LookbackPeriods.Should().Be(14);
+        => new BarHub().RollingMin(14).LookbackPeriods.Should().Be(14);
 
     [TestMethod]
     public void Exceptions_InvalidLookback_ThrowsArgumentOutOfRangeException()
     {
-        FluentActions.Invoking(static () => new BarHub().ToRollingMinHub(0))
+        FluentActions.Invoking(static () => new BarHub().RollingMin(0))
             .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("lookbackPeriods");
-        FluentActions.Invoking(static () => new BarHub(50).ToRollingMinHub(51))
+        FluentActions.Invoking(static () => new BarHub(50).RollingMin(51))
             .Should().ThrowExactly<ArgumentOutOfRangeException>();
-        new BarHub(50).ToRollingMinHub(50).LookbackPeriods.Should().Be(50);
+        new BarHub(50).RollingMin(50).LookbackPeriods.Should().Be(50);
     }
 }

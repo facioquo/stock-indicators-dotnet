@@ -8,7 +8,7 @@ public class RollingMedianHubTests : StreamHubTestBase, ITestChainObserver, ITes
     private const string ExpectedName = "ROLLINGMEDIAN(20)";
 
     private static RollingMedianHub NewHub(IChainProvider<IReusable> provider)
-        => provider.ToRollingMedianHub(lookbackPeriods);
+        => provider.RollingMedian(lookbackPeriods);
 
     private static IReadOnlyList<MathResult> Series(IReadOnlyList<IReusable> source)
         => source.RollingMedian(lookbackPeriods);
@@ -248,18 +248,18 @@ public class RollingMedianHubTests : StreamHubTestBase, ITestChainObserver, ITes
     [TestMethod]
     public void Exceptions_InvalidLookback_ThrowsArgumentOutOfRangeException()
     {
-        FluentActions.Invoking(static () => new BarHub().ToRollingMedianHub(0))
+        FluentActions.Invoking(static () => new BarHub().RollingMedian(0))
             .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("lookbackPeriods");
-        FluentActions.Invoking(static () => new BarHub(50).ToRollingMedianHub(51))
+        FluentActions.Invoking(static () => new BarHub(50).RollingMedian(51))
             .Should().ThrowExactly<ArgumentOutOfRangeException>();
-        new BarHub(50).ToRollingMedianHub(50).LookbackPeriods.Should().Be(50);
+        new BarHub(50).RollingMedian(50).LookbackPeriods.Should().Be(50);
     }
 
     [TestMethod]
     public void OddLookback_StreamedBars_MatchesSeriesExactly()
     {
         BarHub barHub = new();
-        RollingMedianHub hub = barHub.ToRollingMedianHub(7);
+        RollingMedianHub hub = barHub.RollingMedian(7);
 
         barHub.Add(Bars);
 

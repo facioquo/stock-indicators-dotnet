@@ -121,7 +121,7 @@ See [Chaining indicators](/guide/chaining) for more.
 
 ## Streaming
 
-Every method streams.  Each Series method has a buffer-style form named `To{Method}List` and a stream hub form named `To{Method}Hub`, such as `.ToPlusList(amount)` or `.ToRollingMaxHub(lookbackPeriods)`.
+Every method streams.  Each Series method has a buffer-style form named `To{Method}List`, such as `.ToPlusList(amount)`.  The stream hub form keeps the Series name and is chosen by its receiver: called on a hub, `.Minus(other)` or `.RollingMax(lookbackPeriods)` returns a stream hub, so a Series chain such as `bars.ToSma(10).Minus(bars.ToSma(20))` streams as `barHub.ToSmaHub(10).Minus(barHub.ToSmaHub(20))`.
 
 Use the buffer-style `List<T>` when you need incremental calculations without a hub:
 
@@ -139,7 +139,7 @@ Subscribe to a `BarHub` for advanced streaming scenarios:
 
 ```csharp
 BarHub barHub = new();
-RollingMaxHub observer = barHub.ToRollingMaxHub(lookbackPeriods);
+RollingMaxHub observer = barHub.RollingMax(lookbackPeriods);
 
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
@@ -162,15 +162,15 @@ void OnSlowReceived(IReusable value) => spread.AddOther(value);
 
 A timestamp that only one series holds produces no result, where the Series method throws.  Each series must arrive in strictly increasing order: an older or equal timestamp on a side throws an `InvalidOperationException`, whatever `ThrowOnOutOfOrder` is set to.  Each side stages at most `MaxListSize` values, so a side that falls further behind than that loses the pairs the leading side has dropped.
 
-Two-series stream hubs take a second chain provider, such as `.ToMinusHub(other)`, built on `PairMathHub`.  A result is added once both providers hold the same timestamp.  Neither list rule applies to a hub: a value that arrives late, or is revised or removed, on either side is handled by the usual rebuild rather than an exception, and each side stages up to the hub's cache size rather than `MaxListSize`.  This streams the MACD composite from the example above:
+Two-series stream hubs take a second chain provider, such as `.Minus(other)`, built on `PairMathHub`.  A result is added once both providers hold the same timestamp.  Neither list rule applies to a hub: a value that arrives late, or is revised or removed, on either side is handled by the usual rebuild rather than an exception, and each side stages up to the hub's cache size rather than `MaxListSize`.  This streams the MACD composite from the example above:
 
 ```csharp
 BarHub barHub = new();
 MacdHub macd = barHub.ToMacdHub(12, 26, 9);
 
 PairMathHub composite = macd
-    .ToMinusHub(macd.ToEmaHub(9))
-    .ToPlusHub(barHub.ToSmaHub(9));
+    .Minus(macd.ToEmaHub(9))
+    .Plus(barHub.ToSmaHub(9));
 
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => barHub.Add(bar);
