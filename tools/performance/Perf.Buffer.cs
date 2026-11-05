@@ -6,6 +6,7 @@ namespace Performance;
 public class BufferIndicators
 {
     private static readonly IReadOnlyList<Bar> q = Data.GetDefault();
+    private static readonly IReadOnlyList<Bar> o = Data.GetCompare();
     private const int n = 14;
 
     /* Parameter arguments should match the Perf.Series.cs equivalents */
@@ -50,6 +51,12 @@ public class BufferIndicators
     [Benchmark] public ScalarMathList IndyMathTimesList() => q.ToTimesList(2);
     [Benchmark] public ScalarMathList IndyMathDividedByList() => q.ToDividedByList(2);
     [Benchmark] public ScalarMathList IndyMathPlusPercentList() => q.ToPlusPercentList(2.5);
+    [Benchmark] public PairMathList IndyMathPlusSeriesList() => o.ToPlusList(q);
+    [Benchmark] public PairMathList IndyMathMinusSeriesList() => o.ToMinusList(q);
+    [Benchmark] public PairMathList IndyMathTimesSeriesList() => o.ToTimesList(q);
+    [Benchmark] public PairMathList IndyMathDividedBySeriesList() => o.ToDividedByList(q);
+    [Benchmark] public PairMathList IndyMathMaxWithList() => o.ToMaxWithList(q);
+    [Benchmark] public PairMathList IndyMathMinWithList() => o.ToMinWithList(q);
     [Benchmark] public RollingMaxList IndyMathRollingMaxList() => q.ToRollingMaxList(20);
     [Benchmark] public RollingMinList IndyMathRollingMinList() => q.ToRollingMinList(20);
     [Benchmark] public RollingMedianList IndyMathRollingMedianList() => q.ToRollingMedianList(20);

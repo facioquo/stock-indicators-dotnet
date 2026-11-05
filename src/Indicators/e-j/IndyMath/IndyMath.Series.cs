@@ -28,7 +28,7 @@ public static partial class IndyMath
     public static IReadOnlyList<MathResult> Plus(
         this IReadOnlyList<IReusable> source,
         IReadOnlyList<IReusable> other)
-        => source.Combine(other, static (a, b) => a + b);
+        => source.Combine(other, PairOperation.Plus);
 
     /// <summary>
     /// Adds a fixed amount to every value in a series.
@@ -75,7 +75,7 @@ public static partial class IndyMath
     public static IReadOnlyList<MathResult> Minus(
         this IReadOnlyList<IReusable> source,
         IReadOnlyList<IReusable> other)
-        => source.Combine(other, static (a, b) => a - b);
+        => source.Combine(other, PairOperation.Minus);
 
     /// <summary>
     /// Subtracts a fixed amount from every value in a series.
@@ -104,7 +104,7 @@ public static partial class IndyMath
     public static IReadOnlyList<MathResult> Times(
         this IReadOnlyList<IReusable> source,
         IReadOnlyList<IReusable> other)
-        => source.Combine(other, static (a, b) => a * b);
+        => source.Combine(other, PairOperation.Times);
 
     /// <summary>
     /// Multiplies every value in a series by a fixed factor.
@@ -135,7 +135,7 @@ public static partial class IndyMath
     public static IReadOnlyList<MathResult> DividedBy(
         this IReadOnlyList<IReusable> source,
         IReadOnlyList<IReusable> other)
-        => source.Combine(other, static (a, b) => b != 0 ? a / b : double.NaN);
+        => source.Combine(other, PairOperation.DividedBy);
 
     /// <summary>
     /// Divides every value in a series by a fixed divisor.
@@ -164,7 +164,7 @@ public static partial class IndyMath
     public static IReadOnlyList<MathResult> MaxWith(
         this IReadOnlyList<IReusable> source,
         IReadOnlyList<IReusable> other)
-        => source.Combine(other, Math.Max);
+        => source.Combine(other, PairOperation.MaxWith);
 
     /// <summary>
     /// Selects the smaller value of two series, period by period.
@@ -177,7 +177,7 @@ public static partial class IndyMath
     public static IReadOnlyList<MathResult> MinWith(
         this IReadOnlyList<IReusable> source,
         IReadOnlyList<IReusable> other)
-        => source.Combine(other, Math.Min);
+        => source.Combine(other, PairOperation.MinWith);
 
     /// <summary>
     /// Calculates the highest value over a rolling lookback window.
@@ -268,7 +268,7 @@ public static partial class IndyMath
     private static List<MathResult> Combine(
         this IReadOnlyList<IReusable> source,
         IReadOnlyList<IReusable> other,
-        Func<double, double, double> operation)
+        PairOperation operation)
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(other);
@@ -298,7 +298,7 @@ public static partial class IndyMath
                   + "Calculate both series from the same bars, and trim both to the same range before combining.");
             }
 
-            results.Add(new MathResult(s.Timestamp, operation(s.Value, o.Value).NaN2Null()));
+            results.Add(new MathResult(s.Timestamp, PairKernel.Apply(operation, s.Value, o.Value).NaN2Null()));
         }
 
         return results;
