@@ -21,9 +21,6 @@ public class SlopeList : BufferList<SlopeResult>, IIncrementFromChain, ISlope
     private readonly Queue<double> _buffer;
     private readonly int lookbackPeriods;
 
-    // Tracks how many items have been removed from the beginning
-    private int globalIndexOffset;
-
     // Pre-calculated constant for X variance (sequential integers).
     // Formula: n*(n²-1)/12 where n = lookbackPeriods
     private readonly double sumSqXConstant;
@@ -39,7 +36,6 @@ public class SlopeList : BufferList<SlopeResult>, IIncrementFromChain, ISlope
         this.lookbackPeriods = lookbackPeriods;
         LookbackPeriods = lookbackPeriods;
         _buffer = new Queue<double>(lookbackPeriods);
-        globalIndexOffset = 0;
 
         // Pre-calculate constant sumSqX for sequential X values
         // When X values are [x, x+1, ..., x+n-1], avgX = x + (n-1)/2
@@ -77,7 +73,7 @@ public class SlopeList : BufferList<SlopeResult>, IIncrementFromChain, ISlope
         }
 
         // The current global index (0-based, but we use 1-based for X values)
-        int currentIndex = globalIndexOffset + Count;
+        int currentIndex = TotalCount;
 
         // Optimization: Calculate X values mathematically (sequential integers)
         // X values are: (currentIndex - lookbackPeriods + 2) to (currentIndex + 1)
@@ -170,19 +166,6 @@ public class SlopeList : BufferList<SlopeResult>, IIncrementFromChain, ISlope
     {
         base.Clear();
         _buffer.Clear();
-        globalIndexOffset = 0;
-    }
-    /// <summary>
-    /// Overrides list pruning to update the global index offset.
-    /// </summary>
-    protected override void PruneList()
-    {
-        int countBeforePrune = Count;
-        base.PruneList();
-        int countAfterPrune = Count;
-
-        // Update offset by the number of items removed
-        globalIndexOffset += countBeforePrune - countAfterPrune;
     }
 
     /// <summary>
@@ -192,20 +175,22 @@ public class SlopeList : BufferList<SlopeResult>, IIncrementFromChain, ISlope
     /// </summary>
     private void UpdateLineValues()
     {
+        // positions count pruned results, so the window does not depend on MaxListSize
+        int total = TotalCount;
+
         // Only update if we have enough results
-        if (Count < lookbackPeriods)
+        if (total < lookbackPeriods)
         {
             return;
         }
 
         // Get the most recent result (just added) which has the current slope/intercept
-        SlopeResult lastResult = this[Count - 1];
+        SlopeResult lastResult = this[^1];
 
-        // Optimization: Only nullify the one item that just fell out of the window
-        // (when Count > lookbackPeriods, the item at index Count - lookbackPeriods - 1 just left the window)
-        if (Count > lookbackPeriods)
+        // Only nullify the one item that just fell out of the window, if it was not pruned
+        int itemToNullify = total - lookbackPeriods - 1 - PrunedCount;
+        if (itemToNullify >= 0)
         {
-            int itemToNullify = Count - lookbackPeriods - 1;
             SlopeResult existing = this[itemToNullify];
             if (existing.Line is not null)
             {
@@ -214,15 +199,14 @@ public class SlopeList : BufferList<SlopeResult>, IIncrementFromChain, ISlope
             }
         }
 
-        // Update Line values for the last lookbackPeriods results
-        // Using global indices (globalIndex + 1) like the series implementation
-        int startIndex = Count - lookbackPeriods;
+        // Update Line values for the retained results in the last lookbackPeriods,
+        // using global indices (globalIndex + 1) like the series implementation
+        int startIndex = Math.Max(0, total - lookbackPeriods - PrunedCount);
         for (int p = startIndex; p < Count; p++)
         {
             SlopeResult existing = this[p];
 
-            // Calculate Line: y = mx + b, using global index (offset + p + 1)
-            int globalIndex = globalIndexOffset + p;
+            int globalIndex = PrunedCount + p;
             decimal? line = (decimal?)((lastResult.Slope * (globalIndex + 1)) + lastResult.Intercept).NaN2Null();
 
             SlopeResult updated = existing with { Line = line };

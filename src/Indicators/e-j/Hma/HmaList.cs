@@ -67,7 +67,7 @@ public class HmaList : BufferList<HmaResult>, IIncrementFromChain, IHma
 
         // HMA calculation can only start after we have enough periods
         // to calculate both WMA values and then the synthetic buffer
-        if (Count >= shiftQty)
+        if (TotalCount >= shiftQty)
         {
             // calculate WMA(n/2) and WMA(n) for current period
             double? wmaN2 = Wma.ComputeWeightedMovingAverage(bufferN2, wmaN2Periods, divisorN2);

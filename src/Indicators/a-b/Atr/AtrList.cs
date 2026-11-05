@@ -65,7 +65,7 @@ public class AtrList : BufferList<AtrResult>, IIncrementFromBar, IAtr
         double atr;
         double? atrp;
 
-        if (Count >= _lookbackPeriods)
+        if (TotalCount >= _lookbackPeriods)
         {
             if (_previousAtr is null)
             {

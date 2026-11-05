@@ -181,7 +181,7 @@ public class StochList : BufferList<StochResult>, IIncrementFromBar, IStoch
             _rawKBuffer.Update(SmoothPeriods, rawK);
         }
 
-        if (SmoothPeriods > 1 && Count >= SmoothPeriods) // Series: i >= smoothPeriods
+        if (SmoothPeriods > 1 && TotalCount >= SmoothPeriods) // Series: i >= smoothPeriods
         {
             switch (MovingAverageType)
             {
@@ -240,7 +240,7 @@ public class StochList : BufferList<StochResult>, IIncrementFromBar, IStoch
             _smoothKBuffer.Update(SignalPeriods, smoothK);
         }
 
-        if (SignalPeriods > 1 && Count >= SignalPeriods) // Series: i >= signalPeriods
+        if (SignalPeriods > 1 && TotalCount >= SignalPeriods) // Series: i >= signalPeriods
         {
             switch (MovingAverageType)
             {

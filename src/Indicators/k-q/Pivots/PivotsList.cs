@@ -91,7 +91,7 @@ public class PivotsList : BufferList<PivotsResult>, IIncrementFromBar
 
         // Trim buffer if it exceeds maximum needed size
         int maxBufferSize = _leftSpan + _rightSpan + _maxTrendPeriods + 1;
-        while (_barBuffer.Count > maxBufferSize && Count > maxBufferSize)
+        while (_barBuffer.Count > maxBufferSize && TotalCount > maxBufferSize)
         {
             _barBuffer.RemoveAt(0);
         }
@@ -115,9 +115,9 @@ public class PivotsList : BufferList<PivotsResult>, IIncrementFromBar
             return;
         }
 
-        // Compute fractal for bar at position (Count - rightSpan - 1)
-        // This is the bar that now has rightSpan bars after it
-        int fractalCheckIndex = Count - _rightSpan - 1;
+        // Compute fractal for bar at position (TotalCount - rightSpan - 1),
+        // the bar that now has rightSpan bars after it; positions count pruned results
+        int fractalCheckIndex = TotalCount - _rightSpan - 1;
         if (fractalCheckIndex < _leftSpan)
         {
             return;
@@ -153,57 +153,6 @@ public class PivotsList : BufferList<PivotsResult>, IIncrementFromBar
         _lastLowIndex = null;
         _lastLowValue = null;
     }
-    /// <summary>
-    /// Overrides list pruning to reset pivot tracking state when pruning occurs.
-    /// </summary>
-    protected override void PruneList()
-    {
-        int originalCount = Count;
-
-        // Call base implementation to prune the outer result list
-        base.PruneList();
-
-        int pruneCount = originalCount - Count;
-
-        // Adjust pivot tracking indices after pruning
-        if (pruneCount > 0)
-        {
-            // Adjust last high index
-            if (_lastHighIndex != null)
-            {
-                int? adjustedHighIndex = (int)_lastHighIndex - pruneCount;
-
-                // If the last high was pruned away, reset it
-                if (adjustedHighIndex < 0)
-                {
-                    _lastHighIndex = null;
-                    _lastHighValue = null;
-                }
-                else
-                {
-                    _lastHighIndex = adjustedHighIndex;
-                }
-            }
-
-            // Adjust last low index
-            if (_lastLowIndex != null)
-            {
-                int? adjustedLowIndex = (int)_lastLowIndex - pruneCount;
-
-                // If the last low was pruned away, reset it
-                if (adjustedLowIndex < 0)
-                {
-                    _lastLowIndex = null;
-                    _lastLowValue = null;
-                }
-                else
-                {
-                    _lastLowIndex = adjustedLowIndex;
-                }
-            }
-        }
-    }
-
     private void ComputeFractalAndUpdatePivots(int resultIndex, int bufferIndex)
     {
         BarBuffer evalBar = _barBuffer[bufferIndex];
@@ -240,12 +189,14 @@ public class PivotsList : BufferList<PivotsResult>, IIncrementFromBar
         decimal? lowPoint = isLowFractal ? evalLow : null;
 
         // Update the result at resultIndex with fractal points
-        PivotsResult current = this[resultIndex];
-        PivotsResult updated = current with {
-            HighPoint = highPoint,
-            LowPoint = lowPoint
-        };
-        UpdateInternal(resultIndex, updated);
+        int index = RetainedIndex(resultIndex);
+        if (index >= 0)
+        {
+            UpdateInternal(index, this[index] with {
+                HighPoint = highPoint,
+                LowPoint = lowPoint
+            });
+        }
 
         // Reset expired indexes
         if (_lastHighIndex < resultIndex - _maxTrendPeriods)
@@ -270,26 +221,24 @@ public class PivotsList : BufferList<PivotsResult>, IIncrementFromBar
                     : PivotTrend.Lh;
 
                 // Set the line value at the last high index
-                PivotsResult lastHighResult = this[(int)_lastHighIndex];
-                PivotsResult lastHighUpdated = lastHighResult with {
-                    HighLine = _lastHighValue
-                };
-                UpdateInternal((int)_lastHighIndex, lastHighUpdated);
+                index = RetainedIndex((int)_lastHighIndex);
+                if (index >= 0)
+                {
+                    UpdateInternal(index, this[index] with { HighLine = _lastHighValue });
+                }
 
                 decimal? incr = (highPoint - _lastHighValue) / (resultIndex - _lastHighIndex);
 
                 // Repaint trend line from last high + 1 to current high
                 for (int t = (int)_lastHighIndex + 1; t <= resultIndex; t++)
                 {
-                    if (t < Count)
+                    index = RetainedIndex(t);
+                    if (index >= 0)
                     {
-                        PivotsResult existingResult = this[t];
-                        decimal? highLineValue = highPoint + (incr * (t - resultIndex));
-                        PivotsResult repainted = existingResult with {
-                            HighLine = highLineValue,
+                        UpdateInternal(index, this[index] with {
+                            HighLine = highPoint + (incr * (t - resultIndex)),
                             HighTrend = trend
-                        };
-                        UpdateInternal(t, repainted);
+                        });
                     }
                 }
             }
@@ -308,26 +257,24 @@ public class PivotsList : BufferList<PivotsResult>, IIncrementFromBar
                     : PivotTrend.Ll;
 
                 // Set the line value at the last low index
-                PivotsResult lastLowResult = this[(int)_lastLowIndex];
-                PivotsResult lastLowUpdated = lastLowResult with {
-                    LowLine = _lastLowValue
-                };
-                UpdateInternal((int)_lastLowIndex, lastLowUpdated);
+                index = RetainedIndex((int)_lastLowIndex);
+                if (index >= 0)
+                {
+                    UpdateInternal(index, this[index] with { LowLine = _lastLowValue });
+                }
 
                 decimal? incr = (lowPoint - _lastLowValue) / (resultIndex - _lastLowIndex);
 
                 // Repaint trend line from last low + 1 to current low
                 for (int t = (int)_lastLowIndex + 1; t <= resultIndex; t++)
                 {
-                    if (t < Count)
+                    index = RetainedIndex(t);
+                    if (index >= 0)
                     {
-                        PivotsResult existingResult = this[t];
-                        decimal? lowLineValue = lowPoint + (incr * (t - resultIndex));
-                        PivotsResult repainted = existingResult with {
-                            LowLine = lowLineValue,
+                        UpdateInternal(index, this[index] with {
+                            LowLine = lowPoint + (incr * (t - resultIndex)),
                             LowTrend = trend
-                        };
-                        UpdateInternal(t, repainted);
+                        });
                     }
                 }
             }
@@ -335,6 +282,17 @@ public class PivotsList : BufferList<PivotsResult>, IIncrementFromBar
             _lastLowIndex = resultIndex;
             _lastLowValue = lowPoint;
         }
+    }
+
+    /// <summary>
+    /// Converts an absolute position, which counts pruned results, to a list index.
+    /// </summary>
+    /// <param name="position">Absolute position of the result.</param>
+    /// <returns>The list index, or -1 when the result was pruned.</returns>
+    private int RetainedIndex(int position)
+    {
+        int index = position - PrunedCount;
+        return index >= 0 && index < Count ? index : -1;
     }
 
     private sealed record BarBuffer(DateTime Timestamp, decimal High, decimal Low, decimal Close);

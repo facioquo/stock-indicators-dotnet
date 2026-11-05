@@ -157,4 +157,16 @@ public class HtTrendlineBufferListTests : BufferListTestBase, ITestChainBufferLi
         sut.Should().HaveCount(maxListSize);
         sut.IsExactly(finalExpected);
     }
+
+    [TestMethod]
+    public void AddBars_OverStateBufferLimit_MatchesSeries()
+    {
+        // past 1,000 values the list trims its state arrays,
+        // which must still cover the 50-value dominant cycle window (#2443)
+        List<Bar> bars = LongishBars.Take(2500).ToList();
+
+        HtTrendlineList sut = new(bars);
+
+        sut.IsExactly(bars.ToHtTrendline());
+    }
 }
