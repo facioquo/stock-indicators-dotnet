@@ -21,7 +21,13 @@ These calls change a hub, and must come from one thread at a time:
 
 Make them on the root hub, the `BarHub` (or `TradeTickHub`) you add bars to. It passes every change on to the hubs subscribed to it. Calling `Add`, `Remove`, `RemoveAt`, `RemoveRange`, or `Reinitialize` on a subscribed hub, such as an `SmaHub`, throws `InvalidOperationException`.
 
-If your code already calls the hub from a single thread, as a receive loop does, you need no extra synchronization. Otherwise, use a [feed](#feeds) or a [lock](#locking).
+How you meet the rule depends on how bars reach your code:
+
+| Bars arrive | Approach |
+| ----------- | -------- |
+| One at a time, such as from a receive loop | Call `Add` directly; nothing more is needed |
+| From several threads at once | Put a [lock](#locking) around `Add` |
+| From several threads, and writers must not wait while indicators calculate | Write to a [feed](#feeds) |
 
 A two-series hub follows the rule across both of its providers: change both from the same single thread or feed. Providers that descend from one `BarHub` already do.
 
@@ -36,9 +42,40 @@ RsiResult? latest = results.Count > 0 ? results[^1] : null;
 
 `Snapshot()` copies the whole cache, so with a large cache, call it when you need the results rather than on every bar. Reading `Results` on the same thread that adds bars needs no snapshot.
 
+## Locking
+
+A lock is the simplest way to accept bars from several threads. Each writer waits while the hub and its indicators update, and a reader can take the same lock to read `Results` consistently:
+
+```csharp
+BarHub barHub = new();
+SmaHub smaHub = barHub.ToSmaHub(20);
+
+object hubLock = new();
+
+// message callbacks, which can run on several threads
+void OnBarReceived(Bar bar)
+{
+    lock (hubLock)
+    {
+        barHub.Add(bar);
+    }
+}
+
+// a reader on another thread
+SmaResult? ReadLatest()
+{
+    lock (hubLock)
+    {
+        return smaHub.Results.Count > 0 ? smaHub.Results[^1] : null;
+    }
+}
+```
+
+A lock prevents corruption but does not restore arrival order when two callbacks race. A late bar is still placed by its timestamp, so the results stay correct.
+
 ## Feeds
 
-`CreateFeed()` on a root hub returns a `StreamFeed` that queues items from any thread and applies them to the hub one at a time, in arrival order:
+A feed is an optional alternative to a lock. `CreateFeed()` on a root hub returns a `StreamFeed` that queues bars written from any thread and adds them to the hub one at a time, in the order they were queued. A write returns as soon as the bar is queued, so writers don't wait while indicators calculate, and the queue absorbs bursts:
 
 ```csharp
 BarHub barHub = new();
@@ -76,37 +113,6 @@ If the hub throws while applying an item, the feed stops:
 - Inside an `await using` block, the exception from `DisposeAsync` replaces any exception already being thrown. Catch and record the original inside the block if you need both.
 
 A bar the hub refuses with a [`BarRejected` event](/guide/styles/stream/corrections#refused-bars) is not an error and does not stop the feed.
-
-## Locking
-
-A lock also works. It suits code that already runs inside a lock, or that needs to add a bar and read results as one step:
-
-```csharp
-BarHub barHub = new();
-SmaHub smaHub = barHub.ToSmaHub(20);
-
-object hubLock = new();
-
-// feed callbacks, which can run on several threads
-void OnBarReceived(Bar bar)
-{
-    lock (hubLock)
-    {
-        barHub.Add(bar);
-    }
-}
-
-// a reader on another thread
-SmaResult? ReadLatest()
-{
-    lock (hubLock)
-    {
-        return smaHub.Results.Count > 0 ? smaHub.Results[^1] : null;
-    }
-}
-```
-
-A lock prevents corruption but does not restore arrival order when two callbacks race. A late bar is still placed by its timestamp, so the results stay correct.
 
 ## Callbacks
 

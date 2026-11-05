@@ -126,22 +126,19 @@ Two-series stream hubs:
 A hub is not safe for concurrent use. If two threads add bars to the same hub at the same time, its results can be corrupted without any error. Add bars from one thread at a time, as shown below; see [Threading and live feeds](/guide/styles/stream/threading) for the full rules.
 :::
 
-If your client delivers messages one after another, as a receive loop does, call `Add` directly from the loop. If its callbacks can run at the same time on different threads, write bars to a feed instead, which applies them to the hub one at a time in arrival order:
+A client that you read in a loop, such as .NET's `ClientWebSocket`, receives one message at a time, so you can call `Add` directly with nothing more:
 
 ```csharp
-BarHub barHub = new();
-RsiHub rsiHub = barHub.ToRsiHub(14);
-
-await using StreamFeed<IBar> feed = barHub.CreateFeed();
-
-// safe to call from any thread
-async Task OnBarReceived(Bar bar, CancellationToken cancellationToken)
-    => await feed.WriteAsync(bar, cancellationToken);
+// your own loop that reads and parses each message
+await foreach (Bar bar in ReadBarsAsync(socket, cancellationToken))
+{
+    barHub.Add(bar);
+}
 ```
 
-To read results on a different thread from the one adding bars, call `Snapshot()` for a consistent copy, such as `rsiHub.Snapshot()`. For feed options, error handling, and locking, see [Threading and live feeds](/guide/styles/stream/threading).
+You need more only when bars reach the hub from several threads at once, such as a client library that raises message events on different threads, or several connections feeding one hub. In that case, put a lock around `Add`, or write bars to a [feed](/guide/styles/stream/threading#feeds), which queues them and adds them one at a time. To read results on a different thread from the one adding bars, use `Snapshot()`. [Threading and live feeds](/guide/styles/stream/threading) covers each option.
 
-If your feed delivers trade ticks, or smaller bars than you want to analyze, combine them into larger bars with a [streaming aggregator hub](/utilities/bars#streaming-aggregator-hubs) and subscribe your indicator hubs to it.
+If your data source delivers trade ticks, or smaller bars than you want to analyze, combine them into larger bars with a [streaming aggregator hub](/utilities/bars#streaming-aggregator-hubs) and subscribe your indicator hubs to it.
 
 ## Cache size
 
