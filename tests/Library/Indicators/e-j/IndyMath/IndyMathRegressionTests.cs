@@ -132,7 +132,7 @@ public class IndyMathPlusSeriesRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToPlusList(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Two-series stream hubs are tracked in #2417");
+    public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.ToPlusHub(BarHub).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -147,7 +147,7 @@ public class IndyMathMinusSeriesRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToMinusList(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Two-series stream hubs are tracked in #2417");
+    public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.ToMinusHub(BarHub).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -162,7 +162,7 @@ public class IndyMathTimesSeriesRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToTimesList(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Two-series stream hubs are tracked in #2417");
+    public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.ToTimesHub(BarHub).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -177,7 +177,7 @@ public class IndyMathDividedBySeriesRegressionTests : RegressionTestBase<MathRes
     public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToDividedByList(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Two-series stream hubs are tracked in #2417");
+    public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.ToDividedByHub(BarHub).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -192,7 +192,7 @@ public class IndyMathMaxWithRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToMaxWithList(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Two-series stream hubs are tracked in #2417");
+    public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.ToMaxWithHub(BarHub).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -207,5 +207,20 @@ public class IndyMathMinWithRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToMinWithList(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Two-series stream hubs are tracked in #2417");
+    public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.ToMinWithHub(BarHub).Results.IsExactly(Expected);
+}
+
+/// <summary>
+/// Stream source for the second series of the two-series regression tests.
+/// </summary>
+internal static class IndyMathStreamSources
+{
+    internal static BarHub OtherBarHub { get; } = CreateOtherBarHub();
+
+    private static BarHub CreateOtherBarHub()
+    {
+        BarHub hub = new();
+        hub.Add(TestBase.OtherBars);
+        return hub;
+    }
 }

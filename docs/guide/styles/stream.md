@@ -85,6 +85,25 @@ RsiHub rsiOfEma = barHub
 barHub.Add(newBar);
 ```
 
+### Two-series indicators
+
+A two-series hub observes two chain providers, such as two indicators of one `BarHub` or two `BarHub` feeds. A result is added once both providers hold the same timestamp; a timestamp that only one provider holds produces no result, where the Series method throws.
+
+```csharp
+BarHub barHub = new();
+
+// spread between a fast and a slow moving average
+PairMathHub spread = barHub
+    .ToEmaHub(12)
+    .ToMinusHub(barHub.ToEmaHub(26));
+```
+
+A value that arrives late, or is revised or removed, on either side is handled by the usual rebuild. Drive both providers from one thread at a time, as they are when both descend from one `BarHub`.
+
+Two-series stream hubs:
+
+- [IndyMath](/indicators/indy-math#streaming) two-series methods, such as `.ToMinusHub(other)`
+
 ### State management and rollback
 
 Handle late-arriving data and corrections:

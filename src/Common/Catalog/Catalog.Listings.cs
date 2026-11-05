@@ -161,6 +161,7 @@ public static partial class Catalog
         // DIVIDED-BY-SERIES (Divided By Series)
         _listings.Add(IndyMath.DividedByOtherBufferListing);
         _listings.Add(IndyMath.DividedByOtherSeriesListing);
+        _listings.Add(IndyMath.DividedByOtherStreamListing);
 
         // Doji
         _listings.Add(Doji.BufferListing);
@@ -280,6 +281,7 @@ public static partial class Catalog
         // MAX-WITH (Max With Series)
         _listings.Add(IndyMath.MaxWithBufferListing);
         _listings.Add(IndyMath.MaxWithSeriesListing);
+        _listings.Add(IndyMath.MaxWithStreamListing);
 
         // MFI (Money Flow Index)
         _listings.Add(Mfi.BufferListing);
@@ -294,6 +296,7 @@ public static partial class Catalog
         // MIN-WITH (Min With Series)
         _listings.Add(IndyMath.MinWithBufferListing);
         _listings.Add(IndyMath.MinWithSeriesListing);
+        _listings.Add(IndyMath.MinWithStreamListing);
 
         // MINUS (Minus Amount)
         _listings.Add(IndyMath.MinusBufferListing);
@@ -303,6 +306,7 @@ public static partial class Catalog
         // MINUS-SERIES (Minus Series)
         _listings.Add(IndyMath.MinusOtherBufferListing);
         _listings.Add(IndyMath.MinusOtherSeriesListing);
+        _listings.Add(IndyMath.MinusOtherStreamListing);
 
         // OBV (On Balance Volume)
         _listings.Add(Obv.BufferListing);
@@ -337,6 +341,7 @@ public static partial class Catalog
         // PLUS-SERIES (Plus Series)
         _listings.Add(IndyMath.PlusOtherBufferListing);
         _listings.Add(IndyMath.PlusOtherSeriesListing);
+        _listings.Add(IndyMath.PlusOtherStreamListing);
 
         // PMO (Price Momentum Oscillator)
         _listings.Add(Pmo.BufferListing);
@@ -475,6 +480,7 @@ public static partial class Catalog
         // TIMES-SERIES (Times Series)
         _listings.Add(IndyMath.TimesOtherBufferListing);
         _listings.Add(IndyMath.TimesOtherSeriesListing);
+        _listings.Add(IndyMath.TimesOtherStreamListing);
 
         // TR (True Range)
         _listings.Add(Tr.BufferListing);

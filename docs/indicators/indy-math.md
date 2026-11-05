@@ -55,7 +55,7 @@ A fixed number is always the right-hand operand.  An invalid fixed number or loo
 
 Fixed-amount and two-series methods need no warmup.  Rolling windows need at least `N` periods.
 
-`source` and `other` must have the same number of results with identical timestamps at every position, which holds for any two indicators calculated from the same bars.  In the Series methods, a length or timestamp mismatch throws an `InvalidBarsException` rather than pairing values from different periods; the buffer-style list skips the unmatched timestamp instead.  Series with different date ranges are not aligned for you: trim both to the same range first.  See [the Guide](/guide/getting-started#historical-bars) for more information.
+`source` and `other` must have the same number of results with identical timestamps at every position, which holds for any two indicators calculated from the same bars.  In the Series methods, a length or timestamp mismatch throws an `InvalidBarsException` rather than pairing values from different periods; the buffer list and stream hub skip the unmatched timestamp instead.  Series with different date ranges are not aligned for you: trim both to the same range first.  See [the Guide](/guide/getting-started#historical-bars) for more information.
 
 ## Response
 
@@ -121,7 +121,7 @@ See [Chaining indicators](/guide/chaining) for more.
 
 ## Streaming
 
-The fixed-amount, percent-offset, and rolling-window methods stream.  Each fixed-operand and rolling Series method has a buffer-style form named `To{Method}List` and a stream hub form named `To{Method}Hub`, such as `.ToPlusList(amount)` or `.ToRollingMaxHub(lookbackPeriods)`.
+Every method streams.  Each Series method has a buffer-style form named `To{Method}List` and a stream hub form named `To{Method}Hub`, such as `.ToPlusList(amount)` or `.ToRollingMaxHub(lookbackPeriods)`.
 
 Use the buffer-style `List<T>` when you need incremental calculations without a hub:
 
@@ -162,8 +162,23 @@ void OnSlowReceived(IReusable value) => spread.AddOther(value);
 
 A timestamp that only one series holds produces no result, where the Series method throws.  Each series must arrive in strictly increasing order: an older or equal timestamp on a side throws an `InvalidOperationException`, whatever `ThrowOnOutOfOrder` is set to.  Each side stages at most `MaxListSize` values, so a side that falls further behind than that loses the pairs the leading side has dropped.
 
-::: warning 🚩 Two-series methods have no stream hub form
-`.Plus(other)`, `.Minus(other)`, `.Times(other)`, `.DividedBy(other)`, `.MaxWith(other)`, and `.MinWith(other)` have no `To{Method}Hub` form.  Use the buffer-style list, or the Series (batch) implementation with periodic recalculation instead.
-:::
+Two-series stream hubs take a second chain provider, such as `.ToMinusHub(other)`, built on `PairMathHub`.  A result is added once both providers hold the same timestamp.  Neither list rule applies to a hub: a value that arrives late, or is revised or removed, on either side is handled by the usual rebuild rather than an exception, and each side stages up to the hub's cache size rather than `MaxListSize`.  This streams the MACD composite from the example above:
+
+```csharp
+BarHub barHub = new();
+MacdHub macd = barHub.ToMacdHub(12, 26, 9);
+
+PairMathHub composite = macd
+    .ToMinusHub(macd.ToEmaHub(9))
+    .ToPlusHub(barHub.ToSmaHub(9));
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<MathResult> results = composite.Results;
+```
+
+Timestamps match exactly; there is no tolerance for clock skew between the two series.  Drive both providers from one thread at a time, as when both descend from one `BarHub`.
 
 See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.

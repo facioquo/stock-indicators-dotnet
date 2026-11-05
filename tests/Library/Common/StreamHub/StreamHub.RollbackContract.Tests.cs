@@ -195,6 +195,13 @@ public class StreamHubRollbackContractTests : TestBase
             IndicatorParam? listingParam = listParams?
                 .FirstOrDefault(lp => string.Equals(lp.ParameterName, p.Name, StringComparison.OrdinalIgnoreCase));
 
+            // a second series input observes the same bars, as a diamond
+            if (listingParam?.DataType == IndicatorParam.SeriesDataType)
+            {
+                args[i] = source;
+                continue;
+            }
+
             object? rawDefault = listingParam?.DefaultValue;
             if (rawDefault == null)
             {

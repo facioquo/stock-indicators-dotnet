@@ -86,6 +86,12 @@ public class StreamIndicators
     [Benchmark] public object IndyMathRollingMaxHub() => barHub.ToRollingMaxHub(20).Results;
     [Benchmark] public object IndyMathRollingMinHub() => barHub.ToRollingMinHub(20).Results;
     [Benchmark] public object IndyMathRollingMedianHub() => barHub.ToRollingMedianHub(20).Results;
+    [Benchmark] public object IndyMathPlusSeriesHub() => barHubOther.ToPlusHub(barHub).Results;
+    [Benchmark] public object IndyMathMinusSeriesHub() => barHubOther.ToMinusHub(barHub).Results;
+    [Benchmark] public object IndyMathTimesSeriesHub() => barHubOther.ToTimesHub(barHub).Results;
+    [Benchmark] public object IndyMathDividedBySeriesHub() => barHubOther.ToDividedByHub(barHub).Results;
+    [Benchmark] public object IndyMathMaxWithHub() => barHubOther.ToMaxWithHub(barHub).Results;
+    [Benchmark] public object IndyMathMinWithHub() => barHubOther.ToMinWithHub(barHub).Results;
     [Benchmark] public object KamaHub() => barHub.ToKamaHub(10, 2, 30).Results;
     [Benchmark] public object KvoHub() => barHub.ToKvoHub(34, 55, 13).Results;
     [Benchmark] public object KeltnerHub() => barHub.ToKeltnerHub(20, 2, 10).Results;
