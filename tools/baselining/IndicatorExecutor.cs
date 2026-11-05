@@ -100,7 +100,7 @@ internal static class IndicatorExecutor
             {
                 method = type
                     .GetMethods(BindingFlags.Public | BindingFlags.Static)
-                    .FirstOrDefault(m => m.Name == methodName);
+                    .FirstOrDefault(m => m.Name == methodName && ReturnsSeries(m));
 
                 if (method != null)
                 {
@@ -179,6 +179,12 @@ internal static class IndicatorExecutor
     /// <returns><c>true</c> when the method's input shape matches the listing.</returns>
     private static bool InputShapeMatches(MethodInfo method, bool isDualInput)
     {
+        // a stream hub can share the Series name, as IndyMath operators do
+        if (!ReturnsSeries(method))
+        {
+            return false;
+        }
+
         ParameterInfo[] methodParams = method.GetParameters();
 
         bool secondIsSeries = methodParams.Length > 1
@@ -187,6 +193,10 @@ internal static class IndicatorExecutor
 
         return secondIsSeries == isDualInput;
     }
+
+    private static bool ReturnsSeries(MethodInfo method)
+        => method.ReturnType.IsGenericType
+        && method.ReturnType.GetGenericTypeDefinition() == typeof(IReadOnlyList<>);
 
     private static object?[] PrepareParameters(IndicatorListing listing, MethodInfo method, bool isDualInput)
     {

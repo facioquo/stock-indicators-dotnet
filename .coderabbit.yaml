@@ -47,7 +47,7 @@ reviews:
 
     - path: "src/Indicators/**/*.Catalog.cs"
       instructions: |
-        Check that parameters, defaults, constraints, result names, chart panes, and To{Name}, To{Name}List, and To{Name}Hub methods match the implementation. Exactly one result may set isReusable: true when its result type exposes IReusable.Value. Verify the listing is registered and intentional shape changes update the catalog snapshot and metrics tests.
+        Check that parameters, defaults, constraints, result names, chart panes, and To{Name}, To{Name}List, and To{Name}Hub methods match the implementation. IndyMath operators name both the Series and the stream hub method after the operator, such as Minus. Exactly one result may set isReusable: true when its result type exposes IReusable.Value. Verify the listing is registered and intentional shape changes update the catalog snapshot and metrics tests.
 
     - path: "tests/**/*.cs"
       instructions: |

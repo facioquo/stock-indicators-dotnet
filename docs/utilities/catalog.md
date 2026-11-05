@@ -72,7 +72,7 @@ Each `IndicatorListing` describes one indicator-and-style combination. This is t
 | `MethodName`<br>`string?` | Method name, for automation use cases |
 | `LegendTemplate`<br>`string` | Legend template for charting |
 
-`GetMethodOverloads()` returns the public static overloads of `MethodName` as `IReadOnlyList<MethodInfo>`, for a caller that reads their parameters or invokes them directly. The list is empty when `MethodName` is unset or no catalog listing names the method. The methods survive trimming and NativeAOT publishing, so no assembly scan is needed.
+`GetMethodOverloads()` returns the public static overloads of `MethodName` that return the listing's `Style`, as `IReadOnlyList<MethodInfo>`, for a caller that reads their parameters or invokes them directly. One name can serve two styles, such as IndyMath's `Minus`, which names both a Series method and a stream hub method; a listing gets only its own style's overloads, or every overload when none returns its style. The list is empty when `MethodName` is unset or no catalog listing names the method. The methods survive trimming and NativeAOT publishing, so no assembly scan is needed.
 
 `IndicatorParam` (each input parameter):
 

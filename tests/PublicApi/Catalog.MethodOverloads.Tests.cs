@@ -48,6 +48,33 @@ public class CatalogMethodOverloadsTests
             .And.OnlyContain(static m => m.ReturnType == typeof(IReadOnlyList<MathResult>));
         stream.Should().NotBeEmpty()
             .And.OnlyContain(static m => typeof(IStreamObservable<MathResult>).IsAssignableFrom(m.ReturnType));
+
+        // the two-series hub and the fixed-amount hub both survive the filter
+        stream.Select(static m => m.ReturnType).Should().Contain([typeof(PairMathHub), typeof(ScalarMathHub)]);
+    }
+
+    [TestMethod]
+    public void SeriesListingLeavesOutASameNamedHubFactory()
+    {
+        // ToStoch also names a StochHub factory beside its Series overloads
+        Catalog.Get("STOCH", Style.Series)!.GetMethodOverloads()
+            .Should().NotBeEmpty()
+            .And.OnlyContain(static m => m.ReturnType == typeof(IReadOnlyList<StochResult>));
+    }
+
+    [TestMethod]
+    public void BufferListingResolvesOnlyBufferOverloads()
+        => Catalog.Get("EMA", Style.Buffer)!.GetMethodOverloads()
+            .Should().NotBeEmpty()
+            .And.OnlyContain(static m => m.ReturnType == typeof(EmaList));
+
+    [TestMethod]
+    public void ListingWithNoOverloadOfItsStyleGetsEveryOverload()
+    {
+        IndicatorListing series = Catalog.Get("EMA", Style.Series)!;
+        IndicatorListing mislabeled = series with { Style = Style.Stream };
+
+        mislabeled.GetMethodOverloads().Should().Equal(series.GetMethodOverloads());
     }
 
     [TestMethod]
