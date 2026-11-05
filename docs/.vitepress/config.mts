@@ -70,6 +70,47 @@ const siteNav = {
   ]
 }
 
+// Guide sidebar; the stream hub sub-pages are listed only within that section
+function guideSidebar(withStreamPages: boolean): DefaultTheme.SidebarItem[] {
+  return [
+    siteNav,
+    {
+      text: 'Guide',
+      items: [
+        { text: 'Overview', link: '/guide/' },
+        {
+          text: 'Getting started',
+          link: '/guide/getting-started',
+          items: [
+            { text: 'Agent setup', link: '/guide/agent-setup' }
+          ]
+        },
+        {
+          text: 'Indicator styles',
+          items: [
+            { text: 'Styles overview', link: '/guide/styles' },
+            { text: 'Batch (Series)', link: '/guide/styles/batch' },
+            { text: 'Buffer lists', link: '/guide/styles/buffer' },
+            {
+              text: 'Stream hubs',
+              link: '/guide/styles/stream',
+              items: withStreamPages
+                ? [
+                  { text: 'Threading and live feeds', link: '/guide/styles/stream/threading' },
+                  { text: 'Corrections and memory', link: '/guide/styles/stream/corrections' }
+                ]
+                : undefined
+            }]
+        },
+        { text: 'Chaining', link: '/guide/chaining' },
+        { text: 'Custom indicators', link: '/guide/customization' },
+        { text: 'Custom observers', link: '/guide/custom-observers' }
+      ]
+    }
+  ]
+}
+
+
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "stock indicators",
@@ -175,40 +216,9 @@ export default defineConfig({
     ],
 
     sidebar: {
-      '/guide/': [
-        siteNav,
-        {
-          text: 'Guide',
-          items: [
-            { text: 'Overview', link: '/guide/' },
-            {
-              text: 'Getting started',
-              link: '/guide/getting-started',
-              items: [
-                { text: 'Agent setup', link: '/guide/agent-setup' }
-              ]
-            },
-            {
-              text: 'Indicator styles',
-              items: [
-                { text: 'Styles overview', link: '/guide/styles' },
-                { text: 'Batch (Series)', link: '/guide/styles/batch' },
-                { text: 'Buffer lists', link: '/guide/styles/buffer' },
-                {
-                  text: 'Stream hubs',
-                  link: '/guide/styles/stream',
-                  items: [
-                    { text: 'Threading and live feeds', link: '/guide/styles/stream/threading' },
-                    { text: 'Corrections and memory', link: '/guide/styles/stream/corrections' }
-                  ]
-                }]
-            },
-            { text: 'Chaining', link: '/guide/chaining' },
-            { text: 'Custom indicators', link: '/guide/customization' },
-            { text: 'Custom observers', link: '/guide/custom-observers' }
-          ]
-        }
-      ],
+      // listed before '/guide/' so llms.txt includes the stream hub sub-pages
+      '/guide/styles/stream': guideSidebar(true),
+      '/guide/': guideSidebar(false),
       '/utilities': [
         siteNav,
         {
