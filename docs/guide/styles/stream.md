@@ -46,7 +46,7 @@ void OnBarReceived(Bar bar)
 }
 ```
 
-When `Add` returns, every subscribed hub has already calculated its result for the new bar, so you can read `Results` right away. Each hub holds one result per bar. Values are `null` until the indicator has enough bars to warm up; each indicator's page lists its warmup period.
+When `Add` returns, every subscribed hub has already updated, so you can read `Results` right away. Single-input indicator hubs like these hold one result per bar; [two-series hubs](#two-series-indicators), `RenkoHub`, and [aggregator hubs](/utilities/bars#streaming-aggregator-hubs) can hold fewer or more results than bars. Values are `null` until the indicator has enough bars to warm up; each indicator's page lists its warmup period.
 
 ## Prior bars (optional)
 
@@ -136,7 +136,7 @@ await foreach (Bar bar in ReadBarsAsync(socket, cancellationToken))
 }
 ```
 
-You need more only when bars reach the hub from several threads at once, such as a client library that raises message events on different threads, or several connections feeding one hub. In that case, put a lock around `Add`, or write bars to a [feed](/guide/styles/stream/threading#feeds), which queues them and adds them one at a time. To read results on a different thread from the one adding bars, use `Snapshot()`. [Threading and live feeds](/guide/styles/stream/threading) covers each option.
+You need more only when bars reach the hub from several threads at once, such as a client library that raises message events on different threads, or several connections feeding one hub. In that case, put a lock around `Add`, or write bars to a [feed](/guide/styles/stream/threading#feeds), which queues them and adds them one at a time. To read results on a different thread from the one adding bars, use `Snapshot()`, or read under the same lock. [Threading and live feeds](/guide/styles/stream/threading) covers each option.
 
 If your data source delivers trade ticks, or smaller bars than you want to analyze, combine them into larger bars with a [streaming aggregator hub](/utilities/bars#streaming-aggregator-hubs) and subscribe your indicator hubs to it.
 

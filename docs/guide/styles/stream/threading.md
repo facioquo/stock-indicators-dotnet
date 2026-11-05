@@ -8,7 +8,7 @@ description: Feed stream hubs from multi-threaded sources and read their results
 A stream hub accepts changes from one thread at a time. This page covers how to meet that rule when your data source calls back on several threads, and how to read results from other threads. For the basics, start with [Stream hubs](/guide/styles/stream).
 
 ::: warning 🚩 Data corruption risk
-A hub is not safe for concurrent use. If two threads change the same hub at the same time, its results can be corrupted without any error. Every call that changes a hub, not only `Add`, must come from one thread at a time, and reads from other threads need a [snapshot](#reading-results).
+A hub is not safe for concurrent use. If two threads change the same hub at the same time, its results can be corrupted without any error. Every call that changes a hub, not only `Add`, must come from one thread at a time, and reads from other threads need a [snapshot](#reading-results) or the writer's [lock](#locking).
 :::
 
 ## The single-writer rule
@@ -29,11 +29,11 @@ How you meet the rule depends on how bars reach your code:
 | From several threads at once | Put a [lock](#locking) around `Add` |
 | From several threads, and writers must not wait while indicators calculate | Write to a [feed](#feeds) |
 
-A two-series hub follows the rule across both of its providers: change both from the same single thread or feed. Providers that descend from one `BarHub` already do.
+A two-series hub follows the rule across both of its providers. Providers that descend from one `BarHub` already do. For two separate `BarHub` feeds, add bars to both from the same single thread, or under the same lock. Feeds can't do this, because each hub has its own feed, which adds bars on its own task.
 
 ## Reading results
 
-`Results` is a live view of the hub's cache. While another thread is adding bars, reading it can return a result set that is partway through an update. To read on a different thread from the writer, call `Snapshot()`, which returns a consistent copy:
+`Results` is a live view of the hub's cache. While another thread is adding bars, reading it can return a result set that is partway through an update. To read on a different thread from the writer, call `Snapshot()`, which returns a consistent copy, or read `Results` under the writer's [lock](#locking):
 
 ```csharp
 IReadOnlyList<RsiResult> results = rsiHub.Snapshot();

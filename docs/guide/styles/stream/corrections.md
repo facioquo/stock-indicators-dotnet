@@ -67,10 +67,10 @@ Choose a size that covers:
 When a correction or late bar reaches back to the oldest bars the hub still holds, the hub can't see the history it already dropped, so its recalculated results differ from a hub that received the same bars in order:
 
 - **Lookback indicators**, such as SMA, lose their oldest results to `null` because those bars no longer have enough history. For SMA, the remaining values stay exact.
-- **Smoothed indicators**, such as EMA, and Wilder's RSI, ATR, ADX, and SMMA, restart their smoothing from the bars that remain. Their values drift, then gradually converge back to the correct values. RSI, ADX, and SMMA recalculate their starting point on every correction, so once the hub has dropped any bars, even a correction to the newest bar drifts.
+- **Smoothed indicators**, such as EMA, and Wilder's RSI, ATR, ADX, and SMMA, restart their smoothing from the bars that remain. Their values drift, then gradually converge back to the correct values. RSI and ADX restore their exact state for a correction to one of the newest 31 bars. Once the hub has dropped any bars, a correction older than that recalculates their starting point from the bars that remain and drifts, even when it is far from the oldest bar.
 - **Cumulative indicators**, such as OBV and ADL, restart their running total. Every later result carries a permanent offset.
 
-To avoid this, keep the cache larger than the history you may need to correct; for RSI, ADX, and SMMA, that means a cache that never fills. With enough cache, a recalculation matches an in-order hub exactly.
+To avoid this, keep the cache larger than the history you may need to correct; for RSI and ADX corrections older than the newest 31 bars, that means a cache that never fills. With enough cache, a recalculation matches an in-order hub exactly.
 :::
 
 ## Faults
