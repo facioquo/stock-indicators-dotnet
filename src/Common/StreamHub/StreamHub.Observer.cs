@@ -49,6 +49,7 @@ public abstract partial class StreamHub<TIn, TOut> : IStreamObserver<TIn>, IRele
     public void Unsubscribe()
     {
         Detach();
+        ReleaseLinkedProviders();
 
         // an owned provider left with no observers would keep computing every update
         // for nothing; outside the lock so no two hubs' locks are ever held together
@@ -58,6 +59,18 @@ public abstract partial class StreamHub<TIn, TOut> : IStreamObserver<TIn>, IRele
         {
             owned.Unsubscribe();
         }
+    }
+
+    /// <summary>
+    /// Releases subscriptions this hub holds beyond its <see cref="Provider"/>.
+    /// </summary>
+    /// <remarks>
+    /// A hub that observes a second provider overrides this to leave it,
+    /// so unsubscribing the hub stops both inputs.
+    /// </remarks>
+    private protected virtual void ReleaseLinkedProviders()
+    {
+        // no-op by default: most hubs observe only their Provider
     }
 
     /// <summary>
