@@ -40,11 +40,14 @@ const stripComments = (s: string): string => s.replace(/\/\*[\s\S]*?\*\//g, '').
 
 // ---- Series signatures -----------------------------------------------------
 
+// IndyMath Series methods read as arithmetic (`a.Minus(b)`) rather than taking the `To` prefix.
+const INDYMATH_METHODS = ['Plus', 'Minus', 'Times', 'DividedBy', 'PlusPercent', 'MaxWith', 'MinWith', 'RollingMax', 'RollingMin', 'RollingMedian']
+
 interface Param { type: string; name: string; def: string | null }
 const methods = new Map<string, Param[][]>()
 for (const file of walk(join(ROOT, 'src/Indicators'), '.Series.cs')) {
   const src = stripComments(readFileSync(file, 'utf8'))
-  const re = /public static [^\n(=]*?\b(To\w+)(?:<[^>(]*>)?\s*\(\s*this\s+([^,)]+?)\s+(\w+)\s*(?:,([^)]*))?\)/g
+  const re = new RegExp(String.raw`public static [^\n(=]*?\b(To\w+|${INDYMATH_METHODS.join('|')})(?:<[^>(]*>)?\s*\(\s*this\s+([^,)]+?)\s+(\w+)\s*(?:,([^)]*))?\)`, 'g')
   for (const m of src.matchAll(re)) {
     const params = topLevelSplit(m[4] ?? '').flatMap((p) => {
       const pm = /^(.+?)\s+(\w+)\s*(?:=\s*(.+))?$/s.exec(p)
@@ -220,12 +223,29 @@ const OVERVIEW_PAGES = new Set<string>([
   'price-characteristics.md', 'price-transforms.md', 'price-trends.md', 'stop-and-reverse.md', 'volume-based.md',
 ])
 
+// Pages that document several Series methods in one parameter table, by page.
+const PAGE_METHODS = new Map<string, string[]>([
+  ['indy-math.md', INDYMATH_METHODS],
+])
+
+// Series methods a page documents: its listed set, else the first one its samples call.
+function pageMethods(file: string, markdown: string): string[] {
+  const call = seriesCall(markdown)
+  return PAGE_METHODS.get(file) ?? (call ? [call] : [])
+}
+
+test('every listed page method is defined in the source', () => {
+  const missing = [...PAGE_METHODS].flatMap(([file, names]) => names.filter((m) => !methods.has(m)).map((m) => `${file}: ${m}`))
+  expect(missing, missing.join('\n')).toEqual([])
+})
+
 const pages = readdirSync(PAGES).filter((f) => f.endsWith('.md')).sort()
 
 for (const file of pages) {
   const markdown = readFileSync(join(PAGES, file), 'utf8')
-  const method = seriesCall(markdown)
-  const overloads = method ? methods.get(method) : undefined
+  const names = pageMethods(file, markdown).filter((m) => methods.has(m))
+  const method = names.join('/')
+  const overloads = names.length > 0 ? names.flatMap((m) => methods.get(m) ?? []) : undefined
   if (!method || !overloads) continue
 
   test(`${file} matches the source`, () => {
@@ -256,9 +276,11 @@ for (const file of pages) {
       if (!stated && p.def !== null && p.def !== 'null' && p.def !== 'default') {
         problems.push(`${method}.${row.name}: signature default ${p.def} is not stated`)
       }
-      const drift = minimumDrift(method, row, p.type)
-      if (drift && KNOWN_MINIMUM_DRIFT.get(drift.key) !== `${drift.documented}/${drift.catalog}`) {
-        problems.push(`${drift.key}: docs minimum ${drift.documented}, catalog ${drift.catalog}`)
+      for (const name of names) {
+        const drift = minimumDrift(name, row, p.type)
+        if (drift && KNOWN_MINIMUM_DRIFT.get(drift.key) !== `${drift.documented}/${drift.catalog}`) {
+          problems.push(`${drift.key}: docs minimum ${drift.documented}, catalog ${drift.catalog}`)
+        }
       }
     }
 
@@ -291,15 +313,16 @@ test('every known minimum drift still drifts', () => {
   const observed = new Map<string, string>()
   for (const file of pages) {
     const markdown = readFileSync(join(PAGES, file), 'utf8')
-    const method = seriesCall(markdown)
-    const overloads = method ? methods.get(method) : undefined
-    if (!method || !overloads) continue
     const lines = markdown.split('\n')
     const start = lines.findIndex((l) => /^##\s+Parameters\s*$/.test(l))
-    const types = new Map(overloads.flat().map((p) => [p.name, p.type]))
-    for (const row of start < 0 ? [] : tableAfter(lines, start)) {
-      const drift = minimumDrift(method, row, types.get(row.name) ?? '')
-      if (drift) observed.set(drift.key, `${drift.documented}/${drift.catalog}`)
+    for (const method of pageMethods(file, markdown)) {
+      const overloads = methods.get(method)
+      if (!overloads) continue
+      const types = new Map(overloads.flat().map((p) => [p.name, p.type]))
+      for (const row of start < 0 ? [] : tableAfter(lines, start)) {
+        const drift = minimumDrift(method, row, types.get(row.name) ?? '')
+        if (drift) observed.set(drift.key, `${drift.documented}/${drift.catalog}`)
+      }
     }
   }
   const stale = [...KNOWN_MINIMUM_DRIFT]
@@ -310,8 +333,8 @@ test('every known minimum drift still drifts', () => {
 
 test('every indicator page names a Series method the source defines', () => {
   const uncovered = pages.filter((file) => {
-    const method = seriesCall(readFileSync(join(PAGES, file), 'utf8'))
-    return OVERVIEW_PAGES.has(file) ? false : !method || !methods.has(method)
+    const names = pageMethods(file, readFileSync(join(PAGES, file), 'utf8'))
+    return OVERVIEW_PAGES.has(file) ? false : names.length === 0 || !names.every((m) => methods.has(m))
   })
   expect(uncovered, `no checked Series method: ${uncovered.join(', ')}`).toEqual([])
 })

@@ -31,7 +31,7 @@ All indicators MUST be mathematically correct, deterministic, and reproducible a
 
 `docs/indicators/*.md` SHOULD link to creator's original publication and reputable secondary sources.
 
-**NaN handling**: Use non-nullable `double` with IEEE 754 NaN propagation. See [src/AGENTS.md](../src/AGENTS.md) NaN handling policy section for implementation guidelines.
+**NaN handling**: Calculate with non-nullable `double` and IEEE 754 NaN propagation, then return `null` for an incalculable result value; only the chainable `Value` property returns NaN. See [src/AGENTS.md](../src/AGENTS.md) NaN handling policy section for implementation guidelines.
 
 **Reputation criteria** ([#1024](https://github.com/facioquo/stock-indicators-dotnet/discussions/1024)):
 

@@ -33,7 +33,11 @@ public class CatalogMetadataTests : TestBase
             listing.Style.Should().BeDefined();
             listing.Category.Should().BeDefined();
             listing.MethodName.Should().NotBeNullOrWhiteSpace($"indicator {listing.Uiid} should have a method name for automation");
-            listing.MethodName.Should().StartWith("To");
+
+            if (!IsIndyMathOperator(listing))
+            {
+                listing.MethodName.Should().StartWith("To");
+            }
 
             if (listing.Parameters != null)
             {
@@ -70,7 +74,7 @@ public class CatalogMetadataTests : TestBase
         IReadOnlyList<IndicatorListing> catalog = Catalog.Listings;
         List<IndicatorListing> entriesWithMethods = catalog.Where(static l => !string.IsNullOrWhiteSpace(l.MethodName)).ToList();
         entriesWithMethods.Should().NotBeEmpty();
-        foreach (IndicatorListing listing in entriesWithMethods)
+        foreach (IndicatorListing listing in entriesWithMethods.Where(static l => !IsIndyMathOperator(l)))
         {
             listing.MethodName.Should().StartWith("To");
             string cleanUiid = listing.Uiid.Replace("-", "", StringComparison.OrdinalIgnoreCase).Replace("_", "", StringComparison.OrdinalIgnoreCase);
@@ -134,4 +138,17 @@ public class CatalogMetadataTests : TestBase
             }
         }
     }
+
+    /// <summary>
+    /// Determines whether a listing binds a fluent IndyMath operator such as <c>Plus</c>.
+    /// </summary>
+    /// <remarks>
+    /// IndyMath Series methods read as arithmetic (<c>a.Minus(b).Plus(c)</c>) rather than
+    /// taking the <c>To</c> prefix, so the prefix rule exempts them.
+    /// </remarks>
+    /// <param name="listing">Catalog listing to check.</param>
+    /// <returns><c>true</c> for an IndyMath Series operator.</returns>
+    private static bool IsIndyMathOperator(IndicatorListing listing)
+        => listing.Style == Style.Series
+        && CatalogReflection.GetOverloads(listing).Any(static m => m.DeclaringType == typeof(IndyMath));
 }
