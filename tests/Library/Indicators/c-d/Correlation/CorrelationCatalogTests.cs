@@ -50,4 +50,47 @@ public class CorrelationCatalogTests : TestBase
         rsquaredResult4?.DisplayName.Should().Be("R-squared");
         rsquaredResult4.IsReusable.Should().Be(false);
     }
+
+    [TestMethod]
+    public void CorrelationBuffer_InCatalog_ReturnsAllVariants()
+        => AssertStyleListing(Correlation.BufferListing, Style.Buffer, "ToCorrelationList");
+
+    [TestMethod]
+    public void CorrelationStream_InCatalog_ReturnsAllVariants()
+        => AssertStyleListing(Correlation.StreamListing, Style.Stream, "ToCorrelationHub");
+
+    [TestMethod]
+    public void CorrelationBufferAndStream_ExplicitSources_MatchSeries()
+    {
+        IReadOnlyList<CorrResult> expected = OtherBars.ToCorrelation(Bars, 20);
+
+        foreach (Style style in (Style[])[Style.Buffer, Style.Stream])
+        {
+            Catalog.Get("CORR", style)
+                .WithParams(new Dictionary<string, object> {
+                    ["sourceA"] = OtherBars,
+                    ["sourceB"] = Bars
+                })
+                .FromSource((IEnumerable<IBar>)Bars)
+                .Execute<CorrResult>()
+                .IsExactly(expected);
+        }
+    }
+
+    private static void AssertStyleListing(IndicatorListing listing, Style style, string methodName)
+    {
+        listing.Should().NotBeNull();
+        listing.Name.Should().Be("Correlation");
+        listing.Uiid.Should().Be("CORR");
+        listing.Style.Should().Be(style);
+        listing.Category.Should().Be(Category.Oscillator);
+        listing.MethodName.Should().Be(methodName);
+
+        listing.Parameters.Select(static p => p.ParameterName)
+            .Should().Equal("sourceA", "sourceB", "lookbackPeriods");
+        listing.Results.Select(static r => r.DataName)
+            .Should().Equal(
+                nameof(CorrResult.VarianceA), nameof(CorrResult.VarianceB), nameof(CorrResult.Covariance),
+                nameof(CorrResult.Correlation), nameof(CorrResult.RSquared));
+    }
 }

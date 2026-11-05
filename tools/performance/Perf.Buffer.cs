@@ -28,6 +28,7 @@ public class BufferIndicators
     [Benchmark] public CmfList CmfList() => q.ToCmfList(n);
     [Benchmark] public CmoList CmoList() => q.ToCmoList(n);
     [Benchmark] public ConnorsRsiList ConnorsRsiList() => q.ToConnorsRsiList(3, 2, 100);
+    [Benchmark] public CorrelationList CorrelationList() => q.ToCorrelationList(o, 20);
     [Benchmark] public DemaList DemaList() => q.ToDemaList(n);
     [Benchmark] public DojiList DojiList() => q.ToDojiList();
     [Benchmark] public DonchianList DonchianList() => q.ToDonchianList(20);

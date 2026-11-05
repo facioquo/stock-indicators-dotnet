@@ -60,6 +60,7 @@ public class StreamIndicators
     [Benchmark] public object CmfHub() => barHub.ToCmfHub(n).Results;
     [Benchmark] public object CmoHub() => barHub.ToCmoHub(n).Results;
     [Benchmark] public object ConnorsRsiHub() => barHub.ToConnorsRsiHub(3, 2, 100).Results;
+    [Benchmark] public object CorrelationHub() => barHub.ToCorrelationHub(barHubOther, 20).Results;
     [Benchmark] public object DemaHub() => barHub.ToDemaHub(n).Results;
     [Benchmark] public object DojiHub() => barHub.ToDojiHub().Results;
     [Benchmark] public object DonchianHub() => barHub.ToDonchianHub(20).Results;

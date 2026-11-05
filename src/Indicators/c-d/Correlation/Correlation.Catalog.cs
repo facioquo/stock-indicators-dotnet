@@ -28,4 +28,22 @@ public static partial class Correlation
             .WithStyle(Style.Series)
             .WithMethodName(typeof(Correlation), "ToCorrelation")
             .Build();
+
+    /// <summary>
+    /// Correlation Buffer Listing
+    /// </summary>
+    internal static readonly IndicatorListing BufferListing =
+        new CatalogListingBuilder(CommonListing)
+            .WithStyle(Style.Buffer)
+            .WithMethodName(typeof(Correlation), "ToCorrelationList")
+            .Build();
+
+    /// <summary>
+    /// Correlation Stream Listing
+    /// </summary>
+    internal static readonly IndicatorListing StreamListing =
+        new CatalogListingBuilder(CommonListing)
+            .WithStyle(Style.Stream)
+            .WithMethodName(typeof(Correlation), "ToCorrelationHub")
+            .Build();
 }
