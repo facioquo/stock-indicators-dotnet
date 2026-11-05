@@ -74,6 +74,7 @@ public class BufferIndicators
     [Benchmark] public PivotsList PivotsList() => q.ToPivotsList(2, 2, 20);
     [Benchmark] public PmoList PmoList() => q.ToPmoList(35, 20, 10);
     [Benchmark] public BarPartList BarPartList() => q.ToBarPartList(CandlePart.OHL3);
+    [Benchmark] public PrsList PrsList() => q.ToPrsList(o);
     [Benchmark] public PvoList PvoList() => q.ToPvoList();
     [Benchmark] public RenkoList RenkoList() => q.ToRenkoList(2.5m);
     [Benchmark] public RocList RocList() => q.ToRocList(20);
