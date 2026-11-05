@@ -12,7 +12,7 @@ public class IndyMathPlusRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToPlusList(1).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
+    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.ToPlusHub(1).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -27,7 +27,7 @@ public class IndyMathMinusRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToMinusList(1).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
+    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.ToMinusHub(1).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -42,7 +42,7 @@ public class IndyMathTimesRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToTimesList(2).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
+    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.ToTimesHub(2).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -57,7 +57,7 @@ public class IndyMathDividedByRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToDividedByList(2).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
+    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.ToDividedByHub(2).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -72,7 +72,7 @@ public class IndyMathPlusPercentRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToPlusPercentList(2.5).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
+    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.ToPlusPercentHub(2.5).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -87,7 +87,7 @@ public class IndyMathRollingMaxRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToRollingMaxList(20).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
+    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.ToRollingMaxHub(20).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -102,7 +102,7 @@ public class IndyMathRollingMinRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToRollingMinList(20).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
+    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.ToRollingMinHub(20).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -117,7 +117,7 @@ public class IndyMathRollingMedianRegressionTests : RegressionTestBase<MathResul
     public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToRollingMedianList(20).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
+    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.ToRollingMedianHub(20).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]

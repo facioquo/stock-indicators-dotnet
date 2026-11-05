@@ -33,6 +33,15 @@ public static partial class IndyMath
             .Build();
 
     /// <summary>
+    /// PLUS Stream Listing
+    /// </summary>
+    internal static readonly IndicatorListing PlusStreamListing =
+        new CatalogListingBuilder(PlusCommonListing)
+            .WithStyle(Style.Stream)
+            .WithMethodName(typeof(IndyMath), "ToPlusHub")
+            .Build();
+
+    /// <summary>
     /// MINUS Common Base Listing
     /// </summary>
     internal static readonly IndicatorListing MinusCommonListing =
@@ -60,6 +69,15 @@ public static partial class IndyMath
         new CatalogListingBuilder(MinusCommonListing)
             .WithStyle(Style.Buffer)
             .WithMethodName(typeof(IndyMath), "ToMinusList")
+            .Build();
+
+    /// <summary>
+    /// MINUS Stream Listing
+    /// </summary>
+    internal static readonly IndicatorListing MinusStreamListing =
+        new CatalogListingBuilder(MinusCommonListing)
+            .WithStyle(Style.Stream)
+            .WithMethodName(typeof(IndyMath), "ToMinusHub")
             .Build();
 
     /// <summary>
@@ -93,6 +111,15 @@ public static partial class IndyMath
             .Build();
 
     /// <summary>
+    /// TIMES Stream Listing
+    /// </summary>
+    internal static readonly IndicatorListing TimesStreamListing =
+        new CatalogListingBuilder(TimesCommonListing)
+            .WithStyle(Style.Stream)
+            .WithMethodName(typeof(IndyMath), "ToTimesHub")
+            .Build();
+
+    /// <summary>
     /// DIVIDED-BY Common Base Listing
     /// </summary>
     internal static readonly IndicatorListing DividedByCommonListing =
@@ -123,6 +150,15 @@ public static partial class IndyMath
             .Build();
 
     /// <summary>
+    /// DIVIDED-BY Stream Listing
+    /// </summary>
+    internal static readonly IndicatorListing DividedByStreamListing =
+        new CatalogListingBuilder(DividedByCommonListing)
+            .WithStyle(Style.Stream)
+            .WithMethodName(typeof(IndyMath), "ToDividedByHub")
+            .Build();
+
+    /// <summary>
     /// PLUS-PERCENT Common Base Listing
     /// </summary>
     internal static readonly IndicatorListing PlusPercentCommonListing =
@@ -150,6 +186,15 @@ public static partial class IndyMath
         new CatalogListingBuilder(PlusPercentCommonListing)
             .WithStyle(Style.Buffer)
             .WithMethodName(typeof(IndyMath), "ToPlusPercentList")
+            .Build();
+
+    /// <summary>
+    /// PLUS-PERCENT Stream Listing
+    /// </summary>
+    internal static readonly IndicatorListing PlusPercentStreamListing =
+        new CatalogListingBuilder(PlusPercentCommonListing)
+            .WithStyle(Style.Stream)
+            .WithMethodName(typeof(IndyMath), "ToPlusPercentHub")
             .Build();
 
     /// <summary>
@@ -315,6 +360,15 @@ public static partial class IndyMath
             .Build();
 
     /// <summary>
+    /// ROLLING-MAX Stream Listing
+    /// </summary>
+    internal static readonly IndicatorListing RollingMaxStreamListing =
+        new CatalogListingBuilder(RollingMaxCommonListing)
+            .WithStyle(Style.Stream)
+            .WithMethodName(typeof(IndyMath), "ToRollingMaxHub")
+            .Build();
+
+    /// <summary>
     /// ROLLING-MIN Common Base Listing
     /// </summary>
     internal static readonly IndicatorListing RollingMinCommonListing =
@@ -345,6 +399,15 @@ public static partial class IndyMath
             .Build();
 
     /// <summary>
+    /// ROLLING-MIN Stream Listing
+    /// </summary>
+    internal static readonly IndicatorListing RollingMinStreamListing =
+        new CatalogListingBuilder(RollingMinCommonListing)
+            .WithStyle(Style.Stream)
+            .WithMethodName(typeof(IndyMath), "ToRollingMinHub")
+            .Build();
+
+    /// <summary>
     /// ROLLING-MEDIAN Common Base Listing
     /// </summary>
     internal static readonly IndicatorListing RollingMedianCommonListing =
@@ -372,5 +435,14 @@ public static partial class IndyMath
         new CatalogListingBuilder(RollingMedianCommonListing)
             .WithStyle(Style.Buffer)
             .WithMethodName(typeof(IndyMath), "ToRollingMedianList")
+            .Build();
+
+    /// <summary>
+    /// ROLLING-MEDIAN Stream Listing
+    /// </summary>
+    internal static readonly IndicatorListing RollingMedianStreamListing =
+        new CatalogListingBuilder(RollingMedianCommonListing)
+            .WithStyle(Style.Stream)
+            .WithMethodName(typeof(IndyMath), "ToRollingMedianHub")
             .Build();
 }

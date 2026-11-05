@@ -584,6 +584,13 @@ Parameters:
 Results:
   - Result : Default : reusable=true : pane=IndyMath
 
+### DIVIDED-BY / Stream
+Method: ToDividedByHub
+Parameters:
+  - divisor : Double : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
+
 ### DIVIDED-BY-SERIES / Series
 Method: DividedBy
 Parameters:
@@ -1297,6 +1304,13 @@ Parameters:
 Results:
   - Result : Default : reusable=true : pane=Price
 
+### MINUS / Stream
+Method: ToMinusHub
+Parameters:
+  - amount : Double : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
 ### MINUS-SERIES / Series
 Method: Minus
 Parameters:
@@ -1427,6 +1441,13 @@ Parameters:
 Results:
   - Result : Default : reusable=true : pane=Price
 
+### PLUS / Stream
+Method: ToPlusHub
+Parameters:
+  - amount : Double : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
 ### PLUS-PERCENT / Series
 Method: PlusPercent
 Parameters:
@@ -1436,6 +1457,13 @@ Results:
 
 ### PLUS-PERCENT / Buffer
 Method: ToPlusPercentList
+Parameters:
+  - percentOffset : Double : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### PLUS-PERCENT / Stream
+Method: ToPlusPercentHub
 Parameters:
   - percentOffset : Double : required
 Results:
@@ -1672,6 +1700,13 @@ Parameters:
 Results:
   - Result : Default : reusable=true : pane=Price
 
+### ROLLING-MAX / Stream
+Method: ToRollingMaxHub
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
 ### ROLLING-MEDIAN / Series
 Method: RollingMedian
 Parameters:
@@ -1686,6 +1721,13 @@ Parameters:
 Results:
   - Result : Default : reusable=true : pane=Price
 
+### ROLLING-MEDIAN / Stream
+Method: ToRollingMedianHub
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
 ### ROLLING-MIN / Series
 Method: RollingMin
 Parameters:
@@ -1695,6 +1737,13 @@ Results:
 
 ### ROLLING-MIN / Buffer
 Method: ToRollingMinList
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### ROLLING-MIN / Stream
+Method: ToRollingMinHub
 Parameters:
   - lookbackPeriods : Int32 : required
 Results:
@@ -2157,6 +2206,13 @@ Results:
 
 ### TIMES / Buffer
 Method: ToTimesList
+Parameters:
+  - factor : Double : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
+
+### TIMES / Stream
+Method: ToTimesHub
 Parameters:
   - factor : Double : required
 Results:

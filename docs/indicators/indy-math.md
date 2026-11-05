@@ -121,7 +121,7 @@ See [Chaining indicators](/guide/chaining) for more.
 
 ## Streaming
 
-The fixed-amount, percent-offset, and rolling-window methods stream.  Each fixed-operand and rolling Series method has a buffer-style form named `To{Method}List`, such as `.ToPlusList(amount)` or `.ToRollingMaxList(lookbackPeriods)`.
+The fixed-amount, percent-offset, and rolling-window methods stream.  Each fixed-operand and rolling Series method has a buffer-style form named `To{Method}List` and a stream hub form named `To{Method}Hub`, such as `.ToPlusList(amount)` or `.ToRollingMaxHub(lookbackPeriods)`.
 
 Use the buffer-style `List<T>` when you need incremental calculations without a hub:
 
@@ -135,10 +135,23 @@ void OnBarReceived(IBar bar) => rollingMaxList.Add(bar);
 IReadOnlyList<MathResult> results = rollingMaxList;
 ```
 
-Fixed-operand math uses one list type for every operation: `new ScalarMathList(ScalarOperation.PlusPercent, 2.5)`.
+Subscribe to a `BarHub` for advanced streaming scenarios:
+
+```csharp
+BarHub barHub = new();
+RollingMaxHub observer = barHub.ToRollingMaxHub(lookbackPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<MathResult> results = observer.Results;
+```
+
+Fixed-operand math uses one list type and one hub type for every operation: `new ScalarMathList(ScalarOperation.PlusPercent, 2.5)` and `ScalarMathHub`.
 
 ::: warning 🚩 Two-series methods do not stream
 `.Plus(other)`, `.Minus(other)`, `.Times(other)`, `.DividedBy(other)`, `.MaxWith(other)`, and `.MinWith(other)` require a second synchronized series, which cannot be expressed in the single-series streaming model.  Use the Series (batch) implementation with periodic recalculation instead.
 :::
 
-See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.
