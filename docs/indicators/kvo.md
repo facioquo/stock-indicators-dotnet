@@ -87,7 +87,7 @@ KvoList kvoList = new(34, 55, 13);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => kvoList.Add(bar);
 
-// based on `IReadOnlyList<KvoResult>`; fills as the handler runs
+// the list itself holds the results; fills as the handler runs
 IReadOnlyList<KvoResult> results = kvoList;
 ```
 

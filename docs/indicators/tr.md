@@ -73,7 +73,7 @@ TrList trList = new();
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => trList.Add(bar);
 
-// based on `IReadOnlyList<TrResult>`; fills as the handler runs
+// the list itself holds the results; fills as the handler runs
 IReadOnlyList<TrResult> results = trList;
 ```
 

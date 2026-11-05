@@ -84,7 +84,7 @@ ChandelierList chandelierList = new(lookbackPeriods, multiplier, type);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => chandelierList.Add(bar);
 
-// based on `IReadOnlyList<ChandelierResult>`; fills as the handler runs
+// the list itself holds the results; fills as the handler runs
 IReadOnlyList<ChandelierResult> results = chandelierList;
 ```
 

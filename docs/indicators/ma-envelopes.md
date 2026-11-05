@@ -111,7 +111,7 @@ MaEnvelopesList maEnvList = new(lookbackPeriods, percentOffset, movingAverageTyp
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => maEnvList.Add(bar);
 
-// based on `IReadOnlyList<MaEnvelopeResult>`; fills as the handler runs
+// the list itself holds the results; fills as the handler runs
 IReadOnlyList<MaEnvelopeResult> results = maEnvList;
 ```
 

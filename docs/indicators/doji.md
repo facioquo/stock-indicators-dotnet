@@ -61,7 +61,7 @@ DojiList dojiList = new(maxPriceChangePercent);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => dojiList.Add(bar);
 
-// based on `IReadOnlyList<CandleResult>`; fills as the handler runs
+// the list itself holds the results; fills as the handler runs
 IReadOnlyList<CandleResult> results = dojiList;
 ```
 

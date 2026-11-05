@@ -94,7 +94,7 @@ HurstList hurstList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => hurstList.Add(bar);
 
-// based on `IReadOnlyList<HurstResult>`; fills as the handler runs
+// the list itself holds the results; fills as the handler runs
 IReadOnlyList<HurstResult> results = hurstList;
 ```
 

@@ -94,7 +94,7 @@ StdDevList stdDevList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => stdDevList.Add(bar);
 
-// based on `IReadOnlyList<StdDevResult>`; fills as the handler runs
+// the list itself holds the results; fills as the handler runs
 IReadOnlyList<StdDevResult> results = stdDevList;
 ```
 

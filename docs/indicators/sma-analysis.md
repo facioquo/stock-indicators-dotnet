@@ -94,7 +94,7 @@ SmaAnalysisList smaAnalysisList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnValueReceived(IReusable value) => smaAnalysisList.Add(value);
 
-// based on `IReadOnlyList<SmaAnalysisResult>`; fills as the handler runs
+// the list itself holds the results; fills as the handler runs
 IReadOnlyList<SmaAnalysisResult> results = smaAnalysisList;
 ```
 

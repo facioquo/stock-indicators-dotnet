@@ -131,7 +131,7 @@ RollingMaxList rollingMaxList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => rollingMaxList.Add(bar);
 
-// based on `IReadOnlyList<MathResult>`; fills as the handler runs
+// the list itself holds the results; fills as the handler runs
 IReadOnlyList<MathResult> results = rollingMaxList;
 ```
 

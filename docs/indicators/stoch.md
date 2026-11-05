@@ -107,7 +107,7 @@ StochList stochList = new(lookbackPeriods, signalPeriods, smoothPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => stochList.Add(bar);
 
-// based on `IReadOnlyList<StochResult>`; fills as the handler runs
+// the list itself holds the results; fills as the handler runs
 IReadOnlyList<StochResult> results = stochList;
 ```
 

@@ -89,7 +89,7 @@ AlmaList almaList = new(lookbackPeriods, offset, sigma);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => almaList.Add(bar);
 
-// based on `IReadOnlyList<AlmaResult>`; fills as the handler runs
+// the list itself holds the results; fills as the handler runs
 IReadOnlyList<AlmaResult> results = almaList;
 ```
 

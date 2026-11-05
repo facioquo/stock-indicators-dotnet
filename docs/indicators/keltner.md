@@ -90,7 +90,7 @@ KeltnerList keltnerList = new(emaPeriods, multiplier, atrPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => keltnerList.Add(bar);
 
-// based on `IReadOnlyList<KeltnerResult>`; fills as the handler runs
+// the list itself holds the results; fills as the handler runs
 IReadOnlyList<KeltnerResult> results = keltnerList;
 ```
 

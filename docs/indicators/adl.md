@@ -78,7 +78,7 @@ AdlList adlList = new();
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => adlList.Add(bar);
 
-// based on `IReadOnlyList<AdlResult>`; fills as the handler runs
+// the list itself holds the results; fills as the handler runs
 IReadOnlyList<AdlResult> results = adlList;
 ```
 
