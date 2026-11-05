@@ -29,7 +29,7 @@ Extend this pattern for a new quantizer instead of writing bespoke bucketing.
 
 ## Two-series pairing
 
-`PairHub` (`StreamHub/PairHub.cs`) streams two chain providers as one `PairedValue` series. `PairStager` (`Pairing/PairStager.cs`) is its matching kernel, kept free of hub state so a two-series buffer list can use it without a hub.
+`PairHub` (`StreamHub/PairHub.cs`) streams two chain providers as one `PairedValue` series. `PairStager` (`Pairing/PairStager.cs`) is its matching kernel, kept free of hub state so `PairBufferList<TResult>` (`BufferLists/PairBufferList.cs`) can use it without a hub. A two-series buffer list derives from that base and adds one result per matched pair in `AddPair`.
 
 - Pairs match on timestamp only. A timestamp that only one side holds produces no result, never a pair with a neighbor; a late value for it re-pairs through the usual rebuild.
 - Matching is exact. Tolerance for clock skew between the two sides (proposed in #1733) is deliberately out of scope.
