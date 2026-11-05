@@ -144,6 +144,23 @@ public class ChopHubTests : StreamHubTestBase, ITestBarObserver, ITestChainProvi
     }
 
     [TestMethod]
+    public void LongHistory_MatchesSeriesExactly()
+    {
+        // the window sum must round as the Series does, newest value first,
+        // with no running-sum drift (#2446)
+        BarHub barHub = new();
+        ChopHub observer = barHub.ToChopHub(14);
+
+        barHub.Add(LongishBars);
+
+        observer.Results.IsExactly(LongishBars.ToChop(14));
+
+        // cleanup
+        observer.Unsubscribe();
+        barHub.EndTransmission();
+    }
+
+    [TestMethod]
     public override void ToStringOverride_ReturnsExpectedName()
     {
         BarHub barHub = new();

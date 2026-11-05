@@ -8,8 +8,7 @@ public class ChopHub
 {
     private CircularDoubleBuffer _trueHighBuffer;
     private CircularDoubleBuffer _trueLowBuffer;
-    private readonly Queue<double> _trueRangeBuffer;
-    private double _sumTrueRange;
+    private CircularDoubleBuffer _trueRangeBuffer;
 
     internal ChopHub(
         IBarProvider<IBar> provider,
@@ -19,8 +18,7 @@ public class ChopHub
         LookbackPeriods = lookbackPeriods;
         _trueHighBuffer = new CircularDoubleBuffer(lookbackPeriods);
         _trueLowBuffer = new CircularDoubleBuffer(lookbackPeriods);
-        _trueRangeBuffer = new Queue<double>(lookbackPeriods);
-        _sumTrueRange = 0;
+        _trueRangeBuffer = new CircularDoubleBuffer(lookbackPeriods);
         Name = $"CHOP({lookbackPeriods})";
 
         // Validate cache size for warmup requirements
@@ -53,16 +51,7 @@ public class ChopHub
 
         _trueHighBuffer.Add(trueHigh);
         _trueLowBuffer.Add(trueLow);
-
-        double? dequeuedTR = _trueRangeBuffer.UpdateWithDequeue(LookbackPeriods, trueRange);
-        if (dequeuedTR.HasValue)
-        {
-            _sumTrueRange = _sumTrueRange - dequeuedTR.Value + trueRange;
-        }
-        else
-        {
-            _sumTrueRange += trueRange;
-        }
+        _trueRangeBuffer.Add(trueRange);
 
         if (i >= LookbackPeriods)
         {
@@ -72,7 +61,9 @@ public class ChopHub
 
             if (range != 0)
             {
-                chop = 100 * (Math.Log(_sumTrueRange / range) / Math.Log(LookbackPeriods));
+                // summed newest first, as the Series does, so results round the same
+                double sumTrueRange = _trueRangeBuffer.SumNewestFirst();
+                chop = 100 * (Math.Log(sumTrueRange / range) / Math.Log(LookbackPeriods));
             }
         }
 
@@ -92,7 +83,6 @@ public class ChopHub
         _trueHighBuffer.Clear();
         _trueLowBuffer.Clear();
         _trueRangeBuffer.Clear();
-        _sumTrueRange = 0;
 
         if (restoreIndex < 0)
         {
@@ -112,8 +102,7 @@ public class ChopHub
 
             _trueHighBuffer.Add(trueHigh);
             _trueLowBuffer.Add(trueLow);
-            _trueRangeBuffer.Enqueue(trueRange);
-            _sumTrueRange += trueRange;
+            _trueRangeBuffer.Add(trueRange);
         }
     }
 }
