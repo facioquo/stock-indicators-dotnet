@@ -24,6 +24,15 @@ public static partial class IndyMath
             .Build();
 
     /// <summary>
+    /// PLUS Buffer Listing
+    /// </summary>
+    internal static readonly IndicatorListing PlusBufferListing =
+        new CatalogListingBuilder(PlusCommonListing)
+            .WithStyle(Style.Buffer)
+            .WithMethodName(typeof(IndyMath), "ToPlusList")
+            .Build();
+
+    /// <summary>
     /// MINUS Common Base Listing
     /// </summary>
     internal static readonly IndicatorListing MinusCommonListing =
@@ -42,6 +51,15 @@ public static partial class IndyMath
         new CatalogListingBuilder(MinusCommonListing)
             .WithStyle(Style.Series)
             .WithMethodName(typeof(IndyMath), "Minus")
+            .Build();
+
+    /// <summary>
+    /// MINUS Buffer Listing
+    /// </summary>
+    internal static readonly IndicatorListing MinusBufferListing =
+        new CatalogListingBuilder(MinusCommonListing)
+            .WithStyle(Style.Buffer)
+            .WithMethodName(typeof(IndyMath), "ToMinusList")
             .Build();
 
     /// <summary>
@@ -66,6 +84,15 @@ public static partial class IndyMath
             .Build();
 
     /// <summary>
+    /// TIMES Buffer Listing
+    /// </summary>
+    internal static readonly IndicatorListing TimesBufferListing =
+        new CatalogListingBuilder(TimesCommonListing)
+            .WithStyle(Style.Buffer)
+            .WithMethodName(typeof(IndyMath), "ToTimesList")
+            .Build();
+
+    /// <summary>
     /// DIVIDED-BY Common Base Listing
     /// </summary>
     internal static readonly IndicatorListing DividedByCommonListing =
@@ -87,6 +114,15 @@ public static partial class IndyMath
             .Build();
 
     /// <summary>
+    /// DIVIDED-BY Buffer Listing
+    /// </summary>
+    internal static readonly IndicatorListing DividedByBufferListing =
+        new CatalogListingBuilder(DividedByCommonListing)
+            .WithStyle(Style.Buffer)
+            .WithMethodName(typeof(IndyMath), "ToDividedByList")
+            .Build();
+
+    /// <summary>
     /// PLUS-PERCENT Common Base Listing
     /// </summary>
     internal static readonly IndicatorListing PlusPercentCommonListing =
@@ -105,6 +141,15 @@ public static partial class IndyMath
         new CatalogListingBuilder(PlusPercentCommonListing)
             .WithStyle(Style.Series)
             .WithMethodName(typeof(IndyMath), "PlusPercent")
+            .Build();
+
+    /// <summary>
+    /// PLUS-PERCENT Buffer Listing
+    /// </summary>
+    internal static readonly IndicatorListing PlusPercentBufferListing =
+        new CatalogListingBuilder(PlusPercentCommonListing)
+            .WithStyle(Style.Buffer)
+            .WithMethodName(typeof(IndyMath), "ToPlusPercentList")
             .Build();
 
     /// <summary>
@@ -261,6 +306,15 @@ public static partial class IndyMath
             .Build();
 
     /// <summary>
+    /// ROLLING-MAX Buffer Listing
+    /// </summary>
+    internal static readonly IndicatorListing RollingMaxBufferListing =
+        new CatalogListingBuilder(RollingMaxCommonListing)
+            .WithStyle(Style.Buffer)
+            .WithMethodName(typeof(IndyMath), "ToRollingMaxList")
+            .Build();
+
+    /// <summary>
     /// ROLLING-MIN Common Base Listing
     /// </summary>
     internal static readonly IndicatorListing RollingMinCommonListing =
@@ -282,6 +336,15 @@ public static partial class IndyMath
             .Build();
 
     /// <summary>
+    /// ROLLING-MIN Buffer Listing
+    /// </summary>
+    internal static readonly IndicatorListing RollingMinBufferListing =
+        new CatalogListingBuilder(RollingMinCommonListing)
+            .WithStyle(Style.Buffer)
+            .WithMethodName(typeof(IndyMath), "ToRollingMinList")
+            .Build();
+
+    /// <summary>
     /// ROLLING-MEDIAN Common Base Listing
     /// </summary>
     internal static readonly IndicatorListing RollingMedianCommonListing =
@@ -300,5 +363,14 @@ public static partial class IndyMath
         new CatalogListingBuilder(RollingMedianCommonListing)
             .WithStyle(Style.Series)
             .WithMethodName(typeof(IndyMath), "RollingMedian")
+            .Build();
+
+    /// <summary>
+    /// ROLLING-MEDIAN Buffer Listing
+    /// </summary>
+    internal static readonly IndicatorListing RollingMedianBufferListing =
+        new CatalogListingBuilder(RollingMedianCommonListing)
+            .WithStyle(Style.Buffer)
+            .WithMethodName(typeof(IndyMath), "ToRollingMedianList")
             .Build();
 }

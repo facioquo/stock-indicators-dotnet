@@ -577,6 +577,13 @@ Parameters:
 Results:
   - Result : Default : reusable=true : pane=IndyMath
 
+### DIVIDED-BY / Buffer
+Method: ToDividedByList
+Parameters:
+  - divisor : Double : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
+
 ### DIVIDED-BY-SERIES / Series
 Method: DividedBy
 Parameters:
@@ -1283,6 +1290,13 @@ Parameters:
 Results:
   - Result : Default : reusable=true : pane=Price
 
+### MINUS / Buffer
+Method: ToMinusList
+Parameters:
+  - amount : Double : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
 ### MINUS-SERIES / Series
 Method: Minus
 Parameters:
@@ -1406,8 +1420,22 @@ Parameters:
 Results:
   - Result : Default : reusable=true : pane=Price
 
+### PLUS / Buffer
+Method: ToPlusList
+Parameters:
+  - amount : Double : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
 ### PLUS-PERCENT / Series
 Method: PlusPercent
+Parameters:
+  - percentOffset : Double : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### PLUS-PERCENT / Buffer
+Method: ToPlusPercentList
 Parameters:
   - percentOffset : Double : required
 Results:
@@ -1637,6 +1665,13 @@ Parameters:
 Results:
   - Result : Default : reusable=true : pane=Price
 
+### ROLLING-MAX / Buffer
+Method: ToRollingMaxList
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
 ### ROLLING-MEDIAN / Series
 Method: RollingMedian
 Parameters:
@@ -1644,8 +1679,22 @@ Parameters:
 Results:
   - Result : Default : reusable=true : pane=Price
 
+### ROLLING-MEDIAN / Buffer
+Method: ToRollingMedianList
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
 ### ROLLING-MIN / Series
 Method: RollingMin
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### ROLLING-MIN / Buffer
+Method: ToRollingMinList
 Parameters:
   - lookbackPeriods : Int32 : required
 Results:
@@ -2101,6 +2150,13 @@ Results:
 
 ### TIMES / Series
 Method: Times
+Parameters:
+  - factor : Double : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
+
+### TIMES / Buffer
+Method: ToTimesList
 Parameters:
   - factor : Double : required
 Results:

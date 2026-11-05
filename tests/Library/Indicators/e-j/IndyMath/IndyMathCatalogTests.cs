@@ -55,6 +55,19 @@ public class IndyMathCatalogTests : TestBase
     }
 
     [TestMethod]
+    public void IndyMathBuffer_InCatalog_ReturnsAllVariants()
+    {
+        foreach ((string uiid, string name, string method, string parameter) in SingleSeries)
+        {
+            IndicatorListing listing = Catalog.Get(uiid, Style.Buffer);
+
+            AssertListing(listing, uiid, name, Style.Buffer, $"To{method}List");
+            listing.Parameters.Should().ContainSingle()
+                .Which.ParameterName.Should().Be(parameter);
+        }
+    }
+
+    [TestMethod]
     public void IndyMathPairwiseSeries_ExplicitSources_MatchesDirectCall()
     {
         IReadOnlyList<MathResult> viaCatalog = Catalog.Get("MINUS-SERIES", Style.Series)

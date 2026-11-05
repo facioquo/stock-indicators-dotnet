@@ -154,6 +154,7 @@ public static partial class Catalog
         _listings.Add(Dema.StreamListing);
 
         // DIVIDED-BY (Divided By Divisor)
+        _listings.Add(IndyMath.DividedByBufferListing);
         _listings.Add(IndyMath.DividedBySeriesListing);
 
         // DIVIDED-BY-SERIES (Divided By Series)
@@ -291,6 +292,7 @@ public static partial class Catalog
         _listings.Add(IndyMath.MinWithSeriesListing);
 
         // MINUS (Minus Amount)
+        _listings.Add(IndyMath.MinusBufferListing);
         _listings.Add(IndyMath.MinusSeriesListing);
 
         // MINUS-SERIES (Minus Series)
@@ -317,9 +319,11 @@ public static partial class Catalog
         _listings.Add(Pivots.StreamListing);
 
         // PLUS (Plus Amount)
+        _listings.Add(IndyMath.PlusBufferListing);
         _listings.Add(IndyMath.PlusSeriesListing);
 
         // PLUS-PERCENT (Plus Percent)
+        _listings.Add(IndyMath.PlusPercentBufferListing);
         _listings.Add(IndyMath.PlusPercentSeriesListing);
 
         // PLUS-SERIES (Plus Series)
@@ -362,12 +366,15 @@ public static partial class Catalog
         _listings.Add(RocWb.BufferListing);
 
         // ROLLING-MAX (Rolling Max)
+        _listings.Add(IndyMath.RollingMaxBufferListing);
         _listings.Add(IndyMath.RollingMaxSeriesListing);
 
         // ROLLING-MEDIAN (Rolling Median)
+        _listings.Add(IndyMath.RollingMedianBufferListing);
         _listings.Add(IndyMath.RollingMedianSeriesListing);
 
         // ROLLING-MIN (Rolling Min)
+        _listings.Add(IndyMath.RollingMinBufferListing);
         _listings.Add(IndyMath.RollingMinSeriesListing);
 
         // Rolling Pivot Points
@@ -449,6 +456,7 @@ public static partial class Catalog
         _listings.Add(Tema.StreamListing);
 
         // TIMES (Times Factor)
+        _listings.Add(IndyMath.TimesBufferListing);
         _listings.Add(IndyMath.TimesSeriesListing);
 
         // TIMES-SERIES (Times Series)

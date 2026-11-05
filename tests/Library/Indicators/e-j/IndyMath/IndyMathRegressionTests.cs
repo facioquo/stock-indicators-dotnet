@@ -9,7 +9,7 @@ public class IndyMathPlusRegressionTests : RegressionTestBase<MathResult>
     public override void Series_AgainstBaseline_MatchesExactly() => Bars.Plus(1).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
+    public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToPlusList(1).IsExactly(Expected);
 
     [TestMethod]
     public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
@@ -24,7 +24,7 @@ public class IndyMathMinusRegressionTests : RegressionTestBase<MathResult>
     public override void Series_AgainstBaseline_MatchesExactly() => Bars.Minus(1).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
+    public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToMinusList(1).IsExactly(Expected);
 
     [TestMethod]
     public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
@@ -39,7 +39,7 @@ public class IndyMathTimesRegressionTests : RegressionTestBase<MathResult>
     public override void Series_AgainstBaseline_MatchesExactly() => Bars.Times(2).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
+    public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToTimesList(2).IsExactly(Expected);
 
     [TestMethod]
     public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
@@ -54,7 +54,7 @@ public class IndyMathDividedByRegressionTests : RegressionTestBase<MathResult>
     public override void Series_AgainstBaseline_MatchesExactly() => Bars.DividedBy(2).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
+    public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToDividedByList(2).IsExactly(Expected);
 
     [TestMethod]
     public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
@@ -69,7 +69,7 @@ public class IndyMathPlusPercentRegressionTests : RegressionTestBase<MathResult>
     public override void Series_AgainstBaseline_MatchesExactly() => Bars.PlusPercent(2.5).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
+    public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToPlusPercentList(2.5).IsExactly(Expected);
 
     [TestMethod]
     public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
@@ -84,7 +84,7 @@ public class IndyMathRollingMaxRegressionTests : RegressionTestBase<MathResult>
     public override void Series_AgainstBaseline_MatchesExactly() => Bars.RollingMax(20).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
+    public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToRollingMaxList(20).IsExactly(Expected);
 
     [TestMethod]
     public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
@@ -99,7 +99,7 @@ public class IndyMathRollingMinRegressionTests : RegressionTestBase<MathResult>
     public override void Series_AgainstBaseline_MatchesExactly() => Bars.RollingMin(20).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
+    public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToRollingMinList(20).IsExactly(Expected);
 
     [TestMethod]
     public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
@@ -114,7 +114,7 @@ public class IndyMathRollingMedianRegressionTests : RegressionTestBase<MathResul
     public override void Series_AgainstBaseline_MatchesExactly() => Bars.RollingMedian(20).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
+    public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToRollingMedianList(20).IsExactly(Expected);
 
     [TestMethod]
     public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
