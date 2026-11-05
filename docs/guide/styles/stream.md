@@ -154,6 +154,10 @@ The event fires while the hub holds its lock, so keep handlers fast and non-thro
 
 ## Thread safety
 
+::: warning 🚩 Data corruption risk
+Internal thread-safety protects cache integrity during rebuilds (e.g., out-of-order data reconciliation). However, a hub instance is not safe for concurrent external use from multiple threads. Callers must ensure only one thread accesses a given instance at a time.
+:::
+
 Stream hubs follow a **single-writer** model. Internal locking protects cache *integrity* during the rebuild and rollback that out-of-order data triggers — but it does **not** make concurrent mutation safe. Two threads calling mutating methods at the same time can still interleave incorrectly.
 
 - **Internal locking** guards the cache so a rebuild never exposes a half-updated state to readers.
@@ -227,10 +231,6 @@ Task consumer = Task.Run(() =>
     }
 });
 ```
-
-::: warning 🚩 Data corruption risk
-Internal thread-safety protects cache integrity during rebuilds (e.g., out-of-order data reconciliation). However, a hub instance is not safe for concurrent external use from multiple threads. Callers must ensure only one thread accesses a given instance at a time.
-:::
 
 ## Advanced patterns
 
