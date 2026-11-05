@@ -48,24 +48,24 @@ void OnBarReceived(Bar bar)
 
 When `Add` returns, every subscribed hub has already calculated its result for the new bar, so you can read `Results` right away. Each hub holds one result per bar. Values are `null` until the indicator has enough bars to warm up; each indicator's page lists its warmup period.
 
-## Start from history
+## Prior bars (optional)
 
-Indicators need prior bars before they produce values. Load your history before going live, so results are ready from the first live bar:
+A hub works from its first bar, with no history required; its values are simply `null` until the warmup period has passed. If you already have earlier bars, you can add them before live bars arrive, so values are available sooner:
 
 ```csharp
 BarHub barHub = new();
 
-// add historical bars in one call
+// optional: add earlier bars, in one call or one at a time
 barHub.Add(historicalBars);
 
-// a hub created after the bars are loaded calculates over them at once
+// a hub created after bars are added calculates over them at once
 RsiHub rsiHub = barHub.ToRsiHub(14);
 
-// then add live bars as they arrive
+// add live bars as they arrive
 barHub.Add(liveBar);
 ```
 
-You can subscribe hubs before or after loading history; either way, they end up with the same results.
+Adding a collection gives the same results as adding its bars one at a time, and you can subscribe hubs before or after adding them.
 
 ## Update the current bar
 
@@ -166,6 +166,8 @@ A stopped hub keeps its `Results`, which you can still read.
 
 ```csharp
 BarHub barHub = new();
+
+// optional: earlier bars, so the 200-period EMA has values sooner
 barHub.Add(historicalBars);
 
 EmaHub fastEma = barHub.ToEmaHub(50);
