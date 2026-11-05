@@ -194,7 +194,14 @@ export default defineConfig({
                 { text: 'Styles overview', link: '/guide/styles' },
                 { text: 'Batch (Series)', link: '/guide/styles/batch' },
                 { text: 'Buffer lists', link: '/guide/styles/buffer' },
-                { text: 'Stream hubs', link: '/guide/styles/stream' }]
+                {
+                  text: 'Stream hubs',
+                  link: '/guide/styles/stream',
+                  items: [
+                    { text: 'Threading and live feeds', link: '/guide/styles/stream/threading' },
+                    { text: 'Corrections and memory', link: '/guide/styles/stream/corrections' }
+                  ]
+                }]
             },
             { text: 'Chaining', link: '/guide/chaining' },
             { text: 'Custom indicators', link: '/guide/customization' },
