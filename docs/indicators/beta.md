@@ -106,4 +106,36 @@ See [Chaining indicators](/guide/chaining) for more.
 
 ## Streaming
 
-Streaming is not supported for this indicator. This indicator requires a second synchronized bar series, which cannot be expressed in the single-series streaming model. Use the Series (batch) implementation with periodic recalculation instead.
+Use the buffer-style `List<T>` when you need incremental calculations without a hub.  Add each series separately as its values arrive; either one may run ahead, and a result is added once both hold the same timestamp:
+
+```csharp
+BetaList betaList = new(lookbackPeriods, type);
+
+// call from each series' message handler
+void OnEvalReceived(IReusable value) => betaList.AddSource(value);
+void OnMarketReceived(IReusable value) => betaList.AddOther(value);
+
+// based on `IReadOnlyList<BetaResult>`; fills as the handlers run
+IReadOnlyList<BetaResult> results = betaList;
+```
+
+A timestamp that only one series holds produces no result, where the Series method throws.  Each series must arrive in strictly increasing order: an older or equal timestamp on a side throws an `InvalidOperationException`.  Each side stages at most `MaxListSize` values, so a side that falls further behind than that loses the pairs the leading side has dropped.
+
+Subscribe to a `BarHub` for each series for advanced streaming scenarios:
+
+```csharp
+BarHub evalHub = new();
+BarHub marketHub = new();
+BetaHub observer = evalHub.ToBetaHub(marketHub, lookbackPeriods, type);
+
+// call from each series' message handler
+void OnEvalReceived(IBar bar) => evalHub.Add(bar);
+void OnMarketReceived(IBar bar) => marketHub.Add(bar);
+
+// results fill as the handlers run
+IReadOnlyList<BetaResult> results = observer.Results;
+```
+
+A result is added once both providers hold the same timestamp.  A value that arrives late, or is revised or removed, on either side is handled by the usual rebuild.  Timestamps match exactly: each return is measured from the previous matched timestamp, and the lookback window spans `N` matched returns.  Drive both providers from one thread at a time.
+
+See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.

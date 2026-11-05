@@ -25,13 +25,13 @@ public class CatalogMetricsTests : TestBase
         int streamCount = catalog.Count(static x => x.Style == Style.Stream);
         int bufferCount = catalog.Count(static x => x.Style == Style.Buffer);
 
-        // 4 indicators (Beta, RenkoAtr, StdDevChannels, ZigZag) are
-        // Series-only and account for the 99 vs 95 gap.
+        // 3 indicators (RenkoAtr, StdDevChannels, ZigZag) are
+        // Series-only and account for the 99 vs 96 gap.
         seriesCount.Should().Be(99);
-        bufferCount.Should().Be(95);
-        streamCount.Should().Be(95);
+        bufferCount.Should().Be(96);
+        streamCount.Should().Be(96);
 
         int totalCount = seriesCount + streamCount + bufferCount;
-        totalCount.Should().Be(289);
+        totalCount.Should().Be(291);
     }
 }

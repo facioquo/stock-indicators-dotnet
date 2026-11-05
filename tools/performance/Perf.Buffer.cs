@@ -19,6 +19,8 @@ public class BufferIndicators
     [Benchmark] public AtrList AtrList() => q.ToAtrList(n);
     [Benchmark] public AtrStopList AtrStopList() => q.ToAtrStopList();
     [Benchmark] public AwesomeList AwesomeList() => q.ToAwesomeList();
+    [Benchmark] public BetaList BetaAllList() => q.ToBetaList(o, 20, BetaType.All);
+    [Benchmark] public BetaList BetaList() => q.ToBetaList(o, 20, BetaType.Standard);
     [Benchmark] public BollingerBandsList BollingerBandsList() => q.ToBollingerBandsList(20, 2);
     [Benchmark] public BopList BopList() => q.ToBopList(n);
     [Benchmark] public CciList CciList() => q.ToCciList(n);

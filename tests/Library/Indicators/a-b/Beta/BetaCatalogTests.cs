@@ -58,4 +58,49 @@ public class BetaCatalogTests : TestBase
         returnsmrktResult6?.DisplayName.Should().Be("Returns Mrkt");
         returnsmrktResult6.IsReusable.Should().Be(false);
     }
+
+    [TestMethod]
+    public void BetaBuffer_InCatalog_ReturnsAllVariants()
+        => AssertStyleListing(Beta.BufferListing, Style.Buffer, "ToBetaList");
+
+    [TestMethod]
+    public void BetaStream_InCatalog_ReturnsAllVariants()
+        => AssertStyleListing(Beta.StreamListing, Style.Stream, "ToBetaHub");
+
+    [TestMethod]
+    public void BetaBufferAndStream_ExplicitSources_MatchSeries()
+    {
+        IReadOnlyList<BetaResult> expected = OtherBars.ToBeta(Bars, 50, BetaType.All);
+
+        foreach (Style style in (Style[])[Style.Buffer, Style.Stream])
+        {
+            Catalog.Get("BETA", style)
+                .WithParams(new Dictionary<string, object> {
+                    ["sourceEval"] = OtherBars,
+                    ["sourceMrkt"] = Bars,
+                    ["type"] = BetaType.All
+                })
+                .FromSource((IEnumerable<IBar>)Bars)
+                .Execute<BetaResult>()
+                .IsExactly(expected);
+        }
+    }
+
+    private static void AssertStyleListing(IndicatorListing listing, Style style, string methodName)
+    {
+        listing.Should().NotBeNull();
+        listing.Name.Should().Be("Beta");
+        listing.Uiid.Should().Be("BETA");
+        listing.Style.Should().Be(style);
+        listing.Category.Should().Be(Category.PriceCharacteristic);
+        listing.MethodName.Should().Be(methodName);
+
+        listing.Parameters.Select(static p => p.ParameterName)
+            .Should().Equal("sourceEval", "sourceMrkt", "lookbackPeriods", "type");
+        listing.Results.Select(static r => r.DataName)
+            .Should().Equal(
+                nameof(BetaResult.Beta), nameof(BetaResult.BetaUp), nameof(BetaResult.BetaDown),
+                nameof(BetaResult.Ratio), nameof(BetaResult.Convexity),
+                nameof(BetaResult.ReturnsEval), nameof(BetaResult.ReturnsMrkt));
+    }
 }

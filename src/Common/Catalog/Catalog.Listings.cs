@@ -98,7 +98,9 @@ public static partial class Catalog
         _listings.Add(Awesome.StreamListing);
 
         // Beta
+        _listings.Add(Beta.BufferListing);
         _listings.Add(Beta.SeriesListing);
+        _listings.Add(Beta.StreamListing);
 
         // Bollinger Bands
         _listings.Add(BollingerBands.BufferListing);

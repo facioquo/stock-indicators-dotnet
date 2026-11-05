@@ -323,6 +323,38 @@ Results:
   - ReturnsEval : Default : reusable=false : pane=Returns
   - ReturnsMrkt : Default : reusable=false : pane=Returns
 
+### BETA / Buffer
+Method: ToBetaList
+Parameters:
+  - sourceEval : IReadOnlyList<T> where T : IReusable : required
+  - sourceMrkt : IReadOnlyList<T> where T : IReusable : required
+  - lookbackPeriods : Int32 : required
+  - type : enum : optional
+Results:
+  - Beta : Default : reusable=true : pane=Beta
+  - BetaUp : Default : reusable=false : pane=Beta
+  - BetaDown : Default : reusable=false : pane=Beta
+  - Ratio : Default : reusable=false : pane=Ratio
+  - Convexity : Default : reusable=false : pane=Convexity
+  - ReturnsEval : Default : reusable=false : pane=Returns
+  - ReturnsMrkt : Default : reusable=false : pane=Returns
+
+### BETA / Stream
+Method: ToBetaHub
+Parameters:
+  - sourceEval : IReadOnlyList<T> where T : IReusable : required
+  - sourceMrkt : IReadOnlyList<T> where T : IReusable : required
+  - lookbackPeriods : Int32 : required
+  - type : enum : optional
+Results:
+  - Beta : Default : reusable=true : pane=Beta
+  - BetaUp : Default : reusable=false : pane=Beta
+  - BetaDown : Default : reusable=false : pane=Beta
+  - Ratio : Default : reusable=false : pane=Ratio
+  - Convexity : Default : reusable=false : pane=Convexity
+  - ReturnsEval : Default : reusable=false : pane=Returns
+  - ReturnsMrkt : Default : reusable=false : pane=Returns
+
 ### BOP / Series
 Method: ToBop
 Parameters:

@@ -51,6 +51,8 @@ public class StreamIndicators
     [Benchmark] public object AtrHub() => barHub.ToAtrHub(n).Results;
     [Benchmark] public object AtrStopHub() => barHub.ToAtrStopHub().Results;
     [Benchmark] public object AwesomeHub() => barHub.ToAwesomeHub().Results;
+    [Benchmark] public object BetaAllHub() => barHub.ToBetaHub(barHubOther, 20, BetaType.All).Results;
+    [Benchmark] public object BetaHub() => barHub.ToBetaHub(barHubOther, 20, BetaType.Standard).Results;
     [Benchmark] public object BollingerBandsHub() => barHub.ToBollingerBandsHub(20, 2).Results;
     [Benchmark] public object BopHub() => barHub.ToBopHub(n).Results;
     [Benchmark] public object CciHub() => barHub.ToCciHub(n).Results;
