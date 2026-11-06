@@ -11,7 +11,7 @@ IndyMath combines or transforms chainable indicator results — any series of `I
 ```csharp
 // C# usage syntax (two series)
 IReadOnlyList<MathResult> results =
-  source.Plus(other);       // also .Minus, .Times, .DividedBy, .MaxWith, .MinWith
+  basisSource.Plus(otherSource);  // also .Minus, .Times, .DividedBy, .MaxWith, .MinWith
 
 // with a fixed amount
 IReadOnlyList<MathResult> results =
@@ -28,12 +28,12 @@ IReadOnlyList<MathResult> results =
 
 | method | returns |
 | ------ | ------- |
-| `.Plus(other)` / `.Plus(amount)` | sum of two series, or the series plus a fixed amount |
+| `.Plus(otherSource)` / `.Plus(amount)` | sum of two series, or the series plus a fixed amount |
 | `.PlusPercent(percentOffset)` | each value offset by a percent of itself |
-| `.Minus(other)` / `.Minus(amount)` | difference of two series, or the series minus a fixed amount |
-| `.Times(other)` / `.Times(factor)` | product of two series, or the series times a fixed factor |
-| `.DividedBy(other)` / `.DividedBy(divisor)` | quotient of two series, or the series over a fixed divisor |
-| `.MaxWith(other)` / `.MinWith(other)` | larger or smaller of two series at each period |
+| `.Minus(otherSource)` / `.Minus(amount)` | difference of two series, or the series minus a fixed amount |
+| `.Times(otherSource)` / `.Times(factor)` | product of two series, or the series times a fixed factor |
+| `.DividedBy(otherSource)` / `.DividedBy(divisor)` | quotient of two series, or the series over a fixed divisor |
+| `.MaxWith(otherSource)` / `.MinWith(otherSource)` | larger or smaller of two series at each period |
 | `.RollingMax(lookbackPeriods)` / `.RollingMin(lookbackPeriods)` | highest or lowest value over a rolling window |
 | `.RollingMedian(lookbackPeriods)` | median over a rolling window, averaging the two middle values when the window is even; its cost grows with the window, O(n·k) |
 
@@ -41,8 +41,9 @@ IReadOnlyList<MathResult> results =
 
 | param | description |
 | ----- | ----------- |
-| `source`<br>_`IReadOnlyList<IReusable>`_ | Source series, such as an indicator's results or price bars.  Price bars contribute their close; select another part with [`.ToBarPart()`](/indicators/bar-part) first. |
-| `other`<br>_`IReadOnlyList<IReusable>`_ | Second series, with the same length and timestamps as `source`. |
+| `basisSource`<br>_`IReadOnlyList<IReusable>`_ | Two-series methods: the left-hand series, such as an indicator's results or price bars.  Price bars contribute their close; select another part with [`.ToBarPart()`](/indicators/bar-part) first. |
+| `otherSource`<br>_`IReadOnlyList<IReusable>`_ | Two-series methods: the right-hand series, with the same length and timestamps as `basisSource`. |
+| `source`<br>_`IReadOnlyList<IReusable>`_ | Fixed-amount and rolling-window methods: the series to transform, such as an indicator's results or price bars. |
 | `amount`<br>_`double`_ | Fixed amount to add or subtract.  Must be a finite number. |
 | `factor`<br>_`double`_ | Fixed multiplier.  Must be a finite number. |
 | `divisor`<br>_`double`_ | Fixed divisor.  Must be a finite number other than 0. |
@@ -55,7 +56,7 @@ A fixed number is always the right-hand operand.  An invalid fixed number or loo
 
 Fixed-amount and two-series methods need no warmup.  Rolling windows need at least `N` periods.
 
-`source` and `other` must have the same number of results with identical timestamps at every position, which holds for any two indicators calculated from the same bars.  In the Series methods, a length or timestamp mismatch throws an `InvalidBarsException` rather than pairing values from different periods; the buffer list and stream hub skip the unmatched timestamp instead.  Series with different date ranges are not aligned for you: trim both to the same range first.  See [the Guide](/guide/getting-started#historical-bars) for more information.
+`basisSource` and `otherSource` must have the same number of results with identical timestamps at every position, which holds for any two indicators calculated from the same bars.  In the Series methods, a length or timestamp mismatch throws an `InvalidBarsException` rather than pairing values from different periods; the buffer list and stream hub skip the unmatched timestamp instead.  Series with different date ranges are not aligned for you: trim both to the same range first.  See [the Guide](/guide/getting-started#historical-bars) for more information.
 
 ## Response
 
@@ -121,7 +122,7 @@ See [Chaining indicators](/guide/chaining) for more.
 
 ## Streaming
 
-Every method streams.  Each Series method has a buffer-style form named `To{Method}List`, such as `.ToPlusList(amount)`.  The stream hub form keeps the Series name and is chosen by its receiver: called on a hub, `.Minus(other)` or `.RollingMax(lookbackPeriods)` returns a stream hub, so a Series chain such as `bars.ToSma(10).Minus(bars.ToSma(20))` streams as `barHub.ToSmaHub(10).Minus(barHub.ToSmaHub(20))`.
+Every method streams.  Each Series method has a buffer-style form named `To{Method}List`, such as `.ToPlusList(amount)`.  The stream hub form keeps the Series name and is chosen by its receiver: called on a hub, `.Minus(otherSource)` or `.RollingMax(lookbackPeriods)` returns a stream hub, so a Series chain such as `bars.ToSma(10).Minus(bars.ToSma(20))` streams as `barHub.ToSmaHub(10).Minus(barHub.ToSmaHub(20))`.
 
 Use the buffer-style `List<T>` when you need incremental calculations without a hub:
 
@@ -150,7 +151,7 @@ IReadOnlyList<MathResult> results = observer.Results;
 
 Fixed-operand math uses one list type and one hub type for every operation: `new ScalarMathList(ScalarOperation.PlusPercent, 2.5)` and `ScalarMathHub`.
 
-Two-series methods have a buffer-style form too, such as `.ToMinusList(other)`, built on `PairMathList`.  Add each series separately as its values arrive; either one may run ahead, and a result is added once both hold the same timestamp:
+Two-series methods have a buffer-style form too, such as `.ToMinusList(otherSource)`, built on `PairMathList`.  Add each series separately as its values arrive; either one may run ahead, and a result is added once both hold the same timestamp:
 
 ```csharp
 PairMathList spread = new(PairOperation.Minus);
@@ -162,7 +163,7 @@ void OnSlowReceived(IReusable value) => spread.AddOther(value);
 
 A timestamp that only one series holds produces no result, where the Series method throws.  Each series must arrive in strictly increasing order: an older or equal timestamp on a side throws an `InvalidOperationException`, whatever `ThrowOnOutOfOrder` is set to.  Each side stages at most `MaxListSize` values, so a side that falls further behind than that loses the pairs the leading side has dropped.
 
-Two-series stream hubs take a second chain provider, such as `.Minus(other)`, built on `PairMathHub`.  A result is added once both providers hold the same timestamp.  Neither list rule applies to a hub: a value that arrives late, or is revised or removed, on either side is handled by the usual rebuild rather than an exception, and each side stages up to the hub's cache size rather than `MaxListSize`.  This streams the MACD composite from the example above:
+Two-series stream hubs take a second chain provider, such as `.Minus(otherSource)`, built on `PairMathHub`.  A result is added once both providers hold the same timestamp.  Neither list rule applies to a hub: a value that arrives late, or is revised or removed, on either side is handled by the usual rebuild rather than an exception, and each side stages up to the hub's cache size rather than `MaxListSize`.  This streams the MACD composite from the example above:
 
 ```csharp
 BarHub barHub = new();

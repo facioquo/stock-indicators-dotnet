@@ -361,9 +361,9 @@ public class PairMathHubTests : StreamHubTestBase, ITestChainObserver, ITestChai
         BarHub barHub = new();
 
         FluentActions.Invoking(() => NewHub(null!, barHub))
-            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("source");
+            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("basisSource");
         FluentActions.Invoking(() => NewHub(barHub, null!))
-            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("other");
+            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("otherSource");
     }
 
     [TestMethod]

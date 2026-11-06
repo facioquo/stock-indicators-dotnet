@@ -20,15 +20,15 @@ public static partial class IndyMath
     /// <summary>
     /// Adds the values of two series, period by period.
     /// </summary>
-    /// <param name="source">Chainable results, time sorted.</param>
-    /// <param name="other">Chainable results with timestamps matching <paramref name="source"/>.</param>
-    /// <returns>Time series of <c>source + other</c> values.</returns>
+    /// <param name="basisSource">Chainable results, time sorted.</param>
+    /// <param name="otherSource">Chainable results with timestamps matching <paramref name="basisSource"/>.</param>
+    /// <returns>Time series of <c>basisSource + otherSource</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either series is null.</exception>
     /// <exception cref="InvalidBarsException">Thrown when the series lengths or timestamps do not match.</exception>
     public static IReadOnlyList<MathResult> Plus(
-        this IReadOnlyList<IReusable> source,
-        IReadOnlyList<IReusable> other)
-        => source.Combine(other, PairOperation.Plus);
+        this IReadOnlyList<IReusable> basisSource,
+        IReadOnlyList<IReusable> otherSource)
+        => basisSource.Combine(otherSource, PairOperation.Plus);
 
     /// <summary>
     /// Adds a fixed amount to every value in a series.
@@ -67,15 +67,15 @@ public static partial class IndyMath
     /// <summary>
     /// Subtracts the values of a second series from a first series, period by period.
     /// </summary>
-    /// <param name="source">Chainable results, time sorted.</param>
-    /// <param name="other">Chainable results with timestamps matching <paramref name="source"/>.</param>
-    /// <returns>Time series of <c>source − other</c> values.</returns>
+    /// <param name="basisSource">Chainable results, time sorted.</param>
+    /// <param name="otherSource">Chainable results with timestamps matching <paramref name="basisSource"/>.</param>
+    /// <returns>Time series of <c>basisSource − otherSource</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either series is null.</exception>
     /// <exception cref="InvalidBarsException">Thrown when the series lengths or timestamps do not match.</exception>
     public static IReadOnlyList<MathResult> Minus(
-        this IReadOnlyList<IReusable> source,
-        IReadOnlyList<IReusable> other)
-        => source.Combine(other, PairOperation.Minus);
+        this IReadOnlyList<IReusable> basisSource,
+        IReadOnlyList<IReusable> otherSource)
+        => basisSource.Combine(otherSource, PairOperation.Minus);
 
     /// <summary>
     /// Subtracts a fixed amount from every value in a series.
@@ -96,15 +96,15 @@ public static partial class IndyMath
     /// <summary>
     /// Multiplies the values of two series, period by period.
     /// </summary>
-    /// <param name="source">Chainable results, time sorted.</param>
-    /// <param name="other">Chainable results with timestamps matching <paramref name="source"/>.</param>
-    /// <returns>Time series of <c>source × other</c> values.</returns>
+    /// <param name="basisSource">Chainable results, time sorted.</param>
+    /// <param name="otherSource">Chainable results with timestamps matching <paramref name="basisSource"/>.</param>
+    /// <returns>Time series of <c>basisSource × otherSource</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either series is null.</exception>
     /// <exception cref="InvalidBarsException">Thrown when the series lengths or timestamps do not match.</exception>
     public static IReadOnlyList<MathResult> Times(
-        this IReadOnlyList<IReusable> source,
-        IReadOnlyList<IReusable> other)
-        => source.Combine(other, PairOperation.Times);
+        this IReadOnlyList<IReusable> basisSource,
+        IReadOnlyList<IReusable> otherSource)
+        => basisSource.Combine(otherSource, PairOperation.Times);
 
     /// <summary>
     /// Multiplies every value in a series by a fixed factor.
@@ -125,17 +125,17 @@ public static partial class IndyMath
     /// <summary>
     /// Divides the values of a first series by a second series, period by period.
     /// </summary>
-    /// <param name="source">Chainable results (dividends), time sorted.</param>
-    /// <param name="other">Chainable results (divisors) with timestamps matching <paramref name="source"/>.</param>
+    /// <param name="basisSource">Chainable results (dividends), time sorted.</param>
+    /// <param name="otherSource">Chainable results (divisors) with timestamps matching <paramref name="basisSource"/>.</param>
     /// <returns>
-    /// Time series of <c>source ÷ other</c> values; <see langword="null"/> where the divisor is 0.
+    /// Time series of <c>basisSource ÷ otherSource</c> values; <see langword="null"/> where the divisor is 0.
     /// </returns>
     /// <exception cref="ArgumentNullException">Thrown when either series is null.</exception>
     /// <exception cref="InvalidBarsException">Thrown when the series lengths or timestamps do not match.</exception>
     public static IReadOnlyList<MathResult> DividedBy(
-        this IReadOnlyList<IReusable> source,
-        IReadOnlyList<IReusable> other)
-        => source.Combine(other, PairOperation.DividedBy);
+        this IReadOnlyList<IReusable> basisSource,
+        IReadOnlyList<IReusable> otherSource)
+        => basisSource.Combine(otherSource, PairOperation.DividedBy);
 
     /// <summary>
     /// Divides every value in a series by a fixed divisor.
@@ -156,28 +156,28 @@ public static partial class IndyMath
     /// <summary>
     /// Selects the larger value of two series, period by period.
     /// </summary>
-    /// <param name="source">Chainable results, time sorted.</param>
-    /// <param name="other">Chainable results with timestamps matching <paramref name="source"/>.</param>
+    /// <param name="basisSource">Chainable results, time sorted.</param>
+    /// <param name="otherSource">Chainable results with timestamps matching <paramref name="basisSource"/>.</param>
     /// <returns>Time series of the larger value at each period.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either series is null.</exception>
     /// <exception cref="InvalidBarsException">Thrown when the series lengths or timestamps do not match.</exception>
     public static IReadOnlyList<MathResult> MaxWith(
-        this IReadOnlyList<IReusable> source,
-        IReadOnlyList<IReusable> other)
-        => source.Combine(other, PairOperation.MaxWith);
+        this IReadOnlyList<IReusable> basisSource,
+        IReadOnlyList<IReusable> otherSource)
+        => basisSource.Combine(otherSource, PairOperation.MaxWith);
 
     /// <summary>
     /// Selects the smaller value of two series, period by period.
     /// </summary>
-    /// <param name="source">Chainable results, time sorted.</param>
-    /// <param name="other">Chainable results with timestamps matching <paramref name="source"/>.</param>
+    /// <param name="basisSource">Chainable results, time sorted.</param>
+    /// <param name="otherSource">Chainable results with timestamps matching <paramref name="basisSource"/>.</param>
     /// <returns>Time series of the smaller value at each period.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either series is null.</exception>
     /// <exception cref="InvalidBarsException">Thrown when the series lengths or timestamps do not match.</exception>
     public static IReadOnlyList<MathResult> MinWith(
-        this IReadOnlyList<IReusable> source,
-        IReadOnlyList<IReusable> other)
-        => source.Combine(other, PairOperation.MinWith);
+        this IReadOnlyList<IReusable> basisSource,
+        IReadOnlyList<IReusable> otherSource)
+        => basisSource.Combine(otherSource, PairOperation.MinWith);
 
     /// <summary>
     /// Calculates the highest value over a rolling lookback window.
@@ -259,27 +259,27 @@ public static partial class IndyMath
     /// <summary>
     /// Applies a two-value operation to two timestamp-matched series.
     /// </summary>
-    /// <param name="source">Chainable results, time sorted.</param>
-    /// <param name="other">Chainable results with timestamps matching <paramref name="source"/>.</param>
+    /// <param name="basisSource">Chainable results, time sorted.</param>
+    /// <param name="otherSource">Chainable results with timestamps matching <paramref name="basisSource"/>.</param>
     /// <param name="operation">Operation applied to each pair of values.</param>
     /// <returns>Time series of operation results.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either series is null.</exception>
     /// <exception cref="InvalidBarsException">Thrown when the series lengths or timestamps do not match.</exception>
     private static List<MathResult> Combine(
-        this IReadOnlyList<IReusable> source,
-        IReadOnlyList<IReusable> other,
+        this IReadOnlyList<IReusable> basisSource,
+        IReadOnlyList<IReusable> otherSource,
         PairOperation operation)
     {
-        ArgumentNullException.ThrowIfNull(source);
-        ArgumentNullException.ThrowIfNull(other);
+        ArgumentNullException.ThrowIfNull(basisSource);
+        ArgumentNullException.ThrowIfNull(otherSource);
 
-        int length = source.Count;
+        int length = basisSource.Count;
 
-        if (other.Count != length)
+        if (otherSource.Count != length)
         {
             throw new InvalidBarsException(
-                nameof(other), other.Count,
-                $"Series lengths do not match: source has {length} results and other has {other.Count}.  "
+                nameof(otherSource), otherSource.Count,
+                $"Series lengths do not match: basisSource has {length} results and otherSource has {otherSource.Count}.  "
               + "Calculate both series from the same bars, and trim both to the same range before combining.");
         }
 
@@ -287,14 +287,14 @@ public static partial class IndyMath
 
         for (int i = 0; i < length; i++)
         {
-            IReusable s = source[i];
-            IReusable o = other[i];
+            IReusable s = basisSource[i];
+            IReusable o = otherSource[i];
 
             if (s.Timestamp != o.Timestamp)
             {
                 throw new InvalidBarsException(
-                    nameof(other), o.Timestamp,
-                    $"Timestamp sequence does not match at index {i}: source has {s.Timestamp:o} and other has {o.Timestamp:o}.  "
+                    nameof(otherSource), o.Timestamp,
+                    $"Timestamp sequence does not match at index {i}: basisSource has {s.Timestamp:o} and otherSource has {o.Timestamp:o}.  "
                   + "Calculate both series from the same bars, and trim both to the same range before combining.");
             }
 

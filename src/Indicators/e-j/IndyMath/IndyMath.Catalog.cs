@@ -205,8 +205,8 @@ public static partial class IndyMath
             .WithName("Plus Series")
             .WithId("PLUS-SERIES")
             .WithCategory(Category.PriceTransform)
-            .AddSeriesParameter("source", "Source")
-            .AddSeriesParameter("other", "Other")
+            .AddSeriesParameter("basisSource", "Basis Source")
+            .AddSeriesParameter("otherSource", "Other Source")
             .AddResult(nameof(MathResult.Result), "Plus Series", "IndyMath", ResultType.Default, isReusable: true)
             .Build();
 
@@ -245,8 +245,8 @@ public static partial class IndyMath
             .WithName("Minus Series")
             .WithId("MINUS-SERIES")
             .WithCategory(Category.PriceTransform)
-            .AddSeriesParameter("source", "Source")
-            .AddSeriesParameter("other", "Other")
+            .AddSeriesParameter("basisSource", "Basis Source")
+            .AddSeriesParameter("otherSource", "Other Source")
             .AddResult(nameof(MathResult.Result), "Minus Series", "IndyMath", ResultType.Default, isReusable: true)
             .Build();
 
@@ -285,8 +285,8 @@ public static partial class IndyMath
             .WithName("Times Series")
             .WithId("TIMES-SERIES")
             .WithCategory(Category.PriceTransform)
-            .AddSeriesParameter("source", "Source")
-            .AddSeriesParameter("other", "Other")
+            .AddSeriesParameter("basisSource", "Basis Source")
+            .AddSeriesParameter("otherSource", "Other Source")
             .AddResult(nameof(MathResult.Result), "Times Series", "IndyMath", ResultType.Default, isReusable: true)
             .Build();
 
@@ -325,8 +325,8 @@ public static partial class IndyMath
             .WithName("Divided By Series")
             .WithId("DIVIDED-BY-SERIES")
             .WithCategory(Category.PriceTransform)
-            .AddSeriesParameter("source", "Source")
-            .AddSeriesParameter("other", "Other")
+            .AddSeriesParameter("basisSource", "Basis Source")
+            .AddSeriesParameter("otherSource", "Other Source")
             .AddResult(nameof(MathResult.Result), "Divided By Series", "IndyMath", ResultType.Default, isReusable: true)
             .Build();
 
@@ -365,8 +365,8 @@ public static partial class IndyMath
             .WithName("Max With Series")
             .WithId("MAX-WITH")
             .WithCategory(Category.PriceTransform)
-            .AddSeriesParameter("source", "Source")
-            .AddSeriesParameter("other", "Other")
+            .AddSeriesParameter("basisSource", "Basis Source")
+            .AddSeriesParameter("otherSource", "Other Source")
             .AddResult(nameof(MathResult.Result), "Max With Series", IndicatorResult.PricePane, ResultType.Default, isReusable: true)
             .Build();
 
@@ -405,8 +405,8 @@ public static partial class IndyMath
             .WithName("Min With Series")
             .WithId("MIN-WITH")
             .WithCategory(Category.PriceTransform)
-            .AddSeriesParameter("source", "Source")
-            .AddSeriesParameter("other", "Other")
+            .AddSeriesParameter("basisSource", "Basis Source")
+            .AddSeriesParameter("otherSource", "Other Source")
             .AddResult(nameof(MathResult.Result), "Min With Series", IndicatorResult.PricePane, ResultType.Default, isReusable: true)
             .Build();
 

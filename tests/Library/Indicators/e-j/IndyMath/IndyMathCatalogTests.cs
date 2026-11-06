@@ -46,7 +46,7 @@ public class IndyMathCatalogTests : TestBase
 
             AssertListing(listing, uiid, name, Style.Series, method);
             listing.Parameters.Select(static p => p.ParameterName)
-                .Should().Equal("source", "other");
+                .Should().Equal("basisSource", "otherSource");
         }
     }
 
@@ -68,7 +68,7 @@ public class IndyMathCatalogTests : TestBase
 
             AssertListing(listing, uiid, name, Style.Buffer, $"To{method}List");
             listing.Parameters.Select(static p => p.ParameterName)
-                .Should().Equal("source", "other");
+                .Should().Equal("basisSource", "otherSource");
         }
     }
 
@@ -90,7 +90,7 @@ public class IndyMathCatalogTests : TestBase
 
             AssertListing(listing, uiid, name, Style.Stream, method);
             listing.Parameters.Select(static p => p.ParameterName)
-                .Should().Equal("source", "other");
+                .Should().Equal("basisSource", "otherSource");
         }
     }
 
@@ -98,7 +98,7 @@ public class IndyMathCatalogTests : TestBase
     public void IndyMathPairwiseSeries_ExplicitSources_MatchesDirectCall()
     {
         IReadOnlyList<MathResult> viaCatalog = Catalog.Get("MINUS-SERIES", Style.Series)
-            .WithParamValue("other", OtherBars)
+            .WithParamValue("otherSource", OtherBars)
             .FromSource((IEnumerable<IBar>)Bars)
             .Execute<MathResult>();
 
@@ -109,7 +109,7 @@ public class IndyMathCatalogTests : TestBase
     public void IndyMathPairwiseBuffer_ExplicitSources_MatchesDirectCall()
     {
         IReadOnlyList<MathResult> viaCatalog = Catalog.Get("MINUS-SERIES", Style.Buffer)
-            .WithParamValue("other", OtherBars)
+            .WithParamValue("otherSource", OtherBars)
             .FromSource((IEnumerable<IBar>)Bars)
             .Execute<MathResult>();
 
@@ -120,7 +120,7 @@ public class IndyMathCatalogTests : TestBase
     public void IndyMathPairwiseStream_ExplicitSources_MatchesDirectCall()
     {
         IReadOnlyList<MathResult> viaCatalog = Catalog.Get("MINUS-SERIES", Style.Stream)
-            .WithParamValue("other", OtherBars)
+            .WithParamValue("otherSource", OtherBars)
             .FromSource((IEnumerable<IBar>)Bars)
             .Execute<MathResult>();
 
@@ -133,11 +133,11 @@ public class IndyMathCatalogTests : TestBase
         IReadOnlyList<IReusable> sma = OtherBars.ToSma(10);
 
         FluentActions.Invoking(() => Catalog.Get("MINUS-SERIES", Style.Stream)
-                .WithParamValue("other", sma)
+                .WithParamValue("otherSource", sma)
                 .FromSource((IEnumerable<IBar>)Bars)
                 .Execute<MathResult>())
             .Should().Throw<ArgumentException>()
-            .WithMessage("*'other'*needs bars*")
+            .WithMessage("*'otherSource'*needs bars*")
             .And.ParamName.Should().Be("parameters");
     }
 
