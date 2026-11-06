@@ -115,7 +115,7 @@ public class PairBufferListPairingTests : TestBase
         IReadOnlyList<IReusable> early = Other.Take(400).ToList();
 
         FluentActions.Invoking(() => late.ToCorrelation(early, LookbackPeriods))
-            .Should().Throw<Exception>();
+            .Should().ThrowExactly<InvalidBarsException>();
 
         CorrelationList overlap = new(LookbackPeriods, late, early);
         overlap.Should().HaveCount(300);

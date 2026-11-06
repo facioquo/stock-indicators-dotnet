@@ -133,7 +133,7 @@ See [Chaining indicators](/guide/chaining) for more.
 
 Every method streams through a stream hub, which keeps the Series name and is chosen by its receiver: called on a hub, `.Minus(otherSource)` or `.RollingMax(lookbackPeriods)` returns a stream hub, so a Series chain such as `bars.ToSma(10).Minus(bars.ToSma(20))` streams as `barHub.ToSmaHub(10).Minus(barHub.ToSmaHub(20))`.
 
-The rolling-window methods also have a buffer-style form, `.ToRollingMaxList(lookbackPeriods)`, `.ToRollingMinList(lookbackPeriods)`, and `.ToRollingMedianList(lookbackPeriods)`, for incremental calculations without a hub.  Fixed-amount and two-series math has no buffer list: apply it to the values you hold with ordinary arithmetic.
+The rolling-window methods also have a buffer-style form, `.ToRollingMaxList(lookbackPeriods)`, `.ToRollingMinList(lookbackPeriods)`, and `.ToRollingMedianList(lookbackPeriods)`, for incremental calculations without a hub.  Fixed-amount and two-series math has no buffer list.  Plain `double` arithmetic on the values you hold gives `NaN` or infinity where these methods give `null`, such as for a warmup value or a zero divisor, and does not pair two series by timestamp; use the Series method or a stream hub to match these results.
 
 ```csharp
 RollingMaxList rollingMaxList = new(lookbackPeriods);
@@ -158,7 +158,7 @@ void OnBarReceived(IBar bar) => barHub.Add(bar);
 IReadOnlyList<MathResult> results = observer.Results;
 ```
 
-Fixed-operand math uses one hub type for every operation, `ScalarMathHub`.
+Fixed-operand math uses one hub type for every operation, `ScalarMathHub`, such as `barHub.Plus(1)`.
 
 Two-series stream hubs take a second chain provider, such as `.Minus(otherSource)`, built on `PairMathHub`.  A result is added once both providers hold the same timestamp.  A timestamp that only one provider holds produces no result, where the Series method throws.  A value that arrives late, or is revised or removed, on either side is handled by the usual rebuild, and each side stages up to the hub's cache size.  This streams the MACD composite from the example above:
 
