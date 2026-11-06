@@ -11,11 +11,13 @@ IndyMath combines or transforms chainable indicator results — any series of `I
 ```csharp
 // C# usage syntax (two series)
 IReadOnlyList<MathResult> results =
-  basisSource.Plus(otherSource);  // also .Minus, .Times, .DividedBy, .MaxWith, .MinWith
+  basisSource.Plus(otherSource);
+  // also .Minus, .Times, .DividedBy, .MaxWith, .MinWith
 
 // with a fixed amount
 IReadOnlyList<MathResult> results =
-  source.Plus(amount);      // also .Minus(amount), .Times(factor), .DividedBy(divisor)
+  source.Plus(amount);
+  // also .Minus(amount), .Times(factor), .DividedBy(divisor)
 
 // with a percent offset
 IReadOnlyList<MathResult> results =
@@ -23,7 +25,8 @@ IReadOnlyList<MathResult> results =
 
 // over a rolling window
 IReadOnlyList<MathResult> results =
-  source.RollingMax(lookbackPeriods);  // also .RollingMin, .RollingMedian
+  source.RollingMax(lookbackPeriods);
+  // also .RollingMin, .RollingMedian
 ```
 
 | method | returns |
