@@ -91,14 +91,20 @@ This indicator may be generated from any chain-enabled indicator or method.
 
 ```csharp
 // spread between a fast and a slow moving average
-IReadOnlyList<MathResult> spread = bars.ToSma(10).Minus(bars.ToSma(20));
+IReadOnlyList<MathResult> spread = bars
+    .ToSma(10)
+    .Minus(bars.ToSma(20));
 
 // MACD less its own 9-period EMA, plus a 9-period SMA of price
 IReadOnlyList<MacdResult> macd = bars.ToMacd(12, 26, 9);
-IReadOnlyList<MathResult> composite = macd.Minus(macd.ToEma(9)).Plus(bars.ToSma(9));
+IReadOnlyList<MathResult> composite = macd
+    .Minus(macd.ToEma(9))
+    .Plus(bars.ToSma(9));
 
 // highest high over the last 20 periods
-IReadOnlyList<MathResult> highestHigh = bars.ToBarPart(CandlePart.High).RollingMax(20);
+IReadOnlyList<MathResult> highestHigh = bars
+    .ToBarPart(CandlePart.High)
+    .RollingMax(20);
 ```
 
 Results can be further processed on `Result` with additional chain-enabled indicators.
