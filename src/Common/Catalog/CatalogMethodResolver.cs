@@ -97,8 +97,7 @@ internal static class CatalogMethodResolver
     /// </summary>
     /// <remarks>
     /// One name can serve two styles: IndyMath's operators, such as <c>Minus</c>, name
-    /// both a Series method and a stream hub method, told apart by their receiver, and
-    /// <c>ToStoch</c> also names a hub factory beside its Series overloads.
+    /// both a Series method and a stream hub method, told apart by their receiver.
     /// </remarks>
     /// <param name="methodName">Method name from a listing.</param>
     /// <param name="style">Style of the listing.</param>

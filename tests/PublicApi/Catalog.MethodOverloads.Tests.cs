@@ -53,13 +53,6 @@ public class CatalogMethodOverloadsTests
         stream.Select(static m => m.ReturnType).Should().Contain([typeof(PairMathHub), typeof(ScalarMathHub)]);
     }
 
-    // ToStoch also names a StochHub factory beside its Series overloads
-    [TestMethod]
-    public void SeriesListingLeavesOutASameNamedHubFactory()
-        => Catalog.Get("STOCH", Style.Series)!.GetMethodOverloads()
-            .Should().NotBeEmpty()
-            .And.OnlyContain(static m => m.ReturnType == typeof(IReadOnlyList<StochResult>));
-
     [TestMethod]
     public void BufferListingResolvesOnlyBufferOverloads()
         => Catalog.Get("EMA", Style.Buffer)!.GetMethodOverloads()
