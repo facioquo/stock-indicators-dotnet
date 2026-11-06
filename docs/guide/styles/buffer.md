@@ -107,11 +107,11 @@ void OnBarReceived(Bar bar)
 A two-series buffer list takes each series separately. Add one with `AddSource` and the other with `AddOther` as their values arrive; either one may run ahead, and a result is added once both hold the same timestamp.
 
 ```csharp
-PairMathList spread = new(PairOperation.Minus);
+CorrelationList correlation = new(20);
 
 // call from each series' message handler
-void OnFastReceived(IReusable value) => spread.AddSource(value);
-void OnSlowReceived(IReusable value) => spread.AddOther(value);
+void OnStockReceived(IReusable value) => correlation.AddSource(value);
+void OnIndexReceived(IReusable value) => correlation.AddOther(value);
 ```
 
 - A timestamp that only one series holds produces no result, where the Series method throws.
@@ -120,7 +120,6 @@ void OnSlowReceived(IReusable value) => spread.AddOther(value);
 
 Two-series buffer lists:
 
-- [IndyMath](/indicators/indy-math#streaming) two-series methods, such as `.ToMinusList(otherSource)`
 - [Beta coefficient (β)](/indicators/beta#streaming)
 - [Correlation coefficient](/indicators/correlation#streaming)
 - [Price Relative Strength (PRS)](/indicators/prs#streaming)

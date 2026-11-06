@@ -161,62 +161,6 @@ public abstract class IndyMathBufferListTestBase<TList> : BufferListTestBase, IT
 }
 
 [TestClass]
-public class ScalarMathBufferListTests : IndyMathBufferListTestBase<ScalarMathList>
-{
-    protected override ScalarMathList NewList() => new(ScalarOperation.PlusPercent, -2.5);
-
-    protected override ScalarMathList NewList(IReadOnlyList<IReusable> values)
-        => new(ScalarOperation.PlusPercent, -2.5, values);
-
-    protected override IReadOnlyList<MathResult> Series(IReadOnlyList<IReusable> source)
-        => source.PlusPercent(-2.5);
-
-    [TestMethod]
-    public void EveryOperation_DefaultBars_MatchesSeriesExactly()
-    {
-        Bars.ToPlusList(2.5).IsExactly(Bars.Plus(2.5));
-        Bars.ToMinusList(2.5).IsExactly(Bars.Minus(2.5));
-        Bars.ToTimesList(-3).IsExactly(Bars.Times(-3));
-        Bars.ToDividedByList(7).IsExactly(Bars.DividedBy(7));
-        Bars.ToPlusPercentList(2.5).IsExactly(Bars.PlusPercent(2.5));
-    }
-
-    [TestMethod]
-    public void Properties_AfterConstruction_ReflectArguments()
-    {
-        ScalarMathList sut = Bars.ToDividedByList(4);
-
-        sut.Operation.Should().Be(ScalarOperation.DividedBy);
-        sut.Operand.Should().Be(4);
-        sut.Name.Should().Be("DIVIDEDBY(4)");
-        new ScalarMathList(ScalarOperation.PlusPercent, 2.5).ToString().Should().Be("PLUSPERCENT(2.5)");
-    }
-
-    [TestMethod]
-    public void Exceptions_InvalidOperand_ThrowsArgumentOutOfRangeException()
-    {
-        // constructors report their own parameter; factories report the Series names
-        FluentActions.Invoking(static () => new ScalarMathList(ScalarOperation.DividedBy, 0))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("operand");
-        FluentActions.Invoking(static () => new ScalarMathList(ScalarOperation.Plus, double.NaN, Bars))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("operand");
-        FluentActions.Invoking(static () => new ScalarMathList((ScalarOperation)99, 1))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("operation");
-
-        FluentActions.Invoking(static () => Bars.ToDividedByList(0))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("divisor");
-        FluentActions.Invoking(static () => Bars.ToPlusList(double.NaN))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("amount");
-        FluentActions.Invoking(static () => Bars.ToMinusList(double.NaN))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("amount");
-        FluentActions.Invoking(static () => Bars.ToTimesList(double.PositiveInfinity))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("factor");
-        FluentActions.Invoking(static () => Bars.ToPlusPercentList(double.NaN))
-            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("percentOffset");
-    }
-}
-
-[TestClass]
 public class RollingMaxBufferListTests : IndyMathBufferListTestBase<RollingMaxList>
 {
     private const int lookbackPeriods = 20;

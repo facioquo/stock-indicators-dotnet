@@ -9,7 +9,7 @@ public class IndyMathPlusRegressionTests : RegressionTestBase<MathResult>
     public override void Series_AgainstBaseline_MatchesExactly() => Bars.Plus(1).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToPlusList(1).IsExactly(Expected);
+    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Fixed-operand and two-series math have no buffer list");
 
     [TestMethod]
     public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.Plus(1).Results.IsExactly(Expected);
@@ -24,7 +24,7 @@ public class IndyMathMinusRegressionTests : RegressionTestBase<MathResult>
     public override void Series_AgainstBaseline_MatchesExactly() => Bars.Minus(1).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToMinusList(1).IsExactly(Expected);
+    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Fixed-operand and two-series math have no buffer list");
 
     [TestMethod]
     public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.Minus(1).Results.IsExactly(Expected);
@@ -39,7 +39,7 @@ public class IndyMathTimesRegressionTests : RegressionTestBase<MathResult>
     public override void Series_AgainstBaseline_MatchesExactly() => Bars.Times(2).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToTimesList(2).IsExactly(Expected);
+    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Fixed-operand and two-series math have no buffer list");
 
     [TestMethod]
     public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.Times(2).Results.IsExactly(Expected);
@@ -54,7 +54,7 @@ public class IndyMathDividedByRegressionTests : RegressionTestBase<MathResult>
     public override void Series_AgainstBaseline_MatchesExactly() => Bars.DividedBy(2).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToDividedByList(2).IsExactly(Expected);
+    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Fixed-operand and two-series math have no buffer list");
 
     [TestMethod]
     public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.DividedBy(2).Results.IsExactly(Expected);
@@ -69,7 +69,7 @@ public class IndyMathPlusPercentRegressionTests : RegressionTestBase<MathResult>
     public override void Series_AgainstBaseline_MatchesExactly() => Bars.PlusPercent(2.5).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToPlusPercentList(2.5).IsExactly(Expected);
+    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Fixed-operand and two-series math have no buffer list");
 
     [TestMethod]
     public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.PlusPercent(2.5).Results.IsExactly(Expected);
@@ -129,7 +129,7 @@ public class IndyMathPlusSeriesRegressionTests : RegressionTestBase<MathResult>
     public override void Series_AgainstBaseline_MatchesExactly() => OtherBars.Plus(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToPlusList(Bars).IsExactly(Expected);
+    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Fixed-operand and two-series math have no buffer list");
 
     [TestMethod]
     public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.Plus(BarHub).Results.IsExactly(Expected);
@@ -144,7 +144,7 @@ public class IndyMathMinusSeriesRegressionTests : RegressionTestBase<MathResult>
     public override void Series_AgainstBaseline_MatchesExactly() => OtherBars.Minus(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToMinusList(Bars).IsExactly(Expected);
+    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Fixed-operand and two-series math have no buffer list");
 
     [TestMethod]
     public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.Minus(BarHub).Results.IsExactly(Expected);
@@ -159,7 +159,7 @@ public class IndyMathTimesSeriesRegressionTests : RegressionTestBase<MathResult>
     public override void Series_AgainstBaseline_MatchesExactly() => OtherBars.Times(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToTimesList(Bars).IsExactly(Expected);
+    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Fixed-operand and two-series math have no buffer list");
 
     [TestMethod]
     public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.Times(BarHub).Results.IsExactly(Expected);
@@ -174,7 +174,7 @@ public class IndyMathDividedBySeriesRegressionTests : RegressionTestBase<MathRes
     public override void Series_AgainstBaseline_MatchesExactly() => OtherBars.DividedBy(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToDividedByList(Bars).IsExactly(Expected);
+    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Fixed-operand and two-series math have no buffer list");
 
     [TestMethod]
     public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.DividedBy(BarHub).Results.IsExactly(Expected);
@@ -189,7 +189,7 @@ public class IndyMathMaxWithRegressionTests : RegressionTestBase<MathResult>
     public override void Series_AgainstBaseline_MatchesExactly() => OtherBars.MaxWith(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToMaxWithList(Bars).IsExactly(Expected);
+    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Fixed-operand and two-series math have no buffer list");
 
     [TestMethod]
     public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.MaxWith(BarHub).Results.IsExactly(Expected);
@@ -204,7 +204,7 @@ public class IndyMathMinWithRegressionTests : RegressionTestBase<MathResult>
     public override void Series_AgainstBaseline_MatchesExactly() => OtherBars.MinWith(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToMinWithList(Bars).IsExactly(Expected);
+    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Fixed-operand and two-series math have no buffer list");
 
     [TestMethod]
     public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.MinWith(BarHub).Results.IsExactly(Expected);
