@@ -59,7 +59,7 @@ A fixed number is always the right-hand operand.  An invalid fixed number or loo
 
 Fixed-amount and two-series methods need no warmup.  Rolling windows need at least `N` periods.
 
-`basisSource` and `otherSource` must have the same number of results with identical timestamps at every position, which holds for any two indicators calculated from the same bars.  In the Series methods, a length or timestamp mismatch throws an `InvalidBarsException` rather than pairing values from different periods; the buffer list and stream hub skip the unmatched timestamp instead.  Series with different date ranges are not aligned for you: trim both to the same range first.  See [the Guide](/guide/getting-started#historical-bars) for more information.
+`basisSource` and `otherSource` must have the same number of results with identical timestamps at every position, which holds for any two indicators calculated from the same bars.  In the Series methods, a length or timestamp mismatch throws an `InvalidBarsException` rather than pairing values from different periods; the stream hub skips the unmatched timestamp instead.  Series with different date ranges are not aligned for you: trim both to the same range first.  See [the Guide](/guide/getting-started#historical-bars) for more information.
 
 ## Response
 
@@ -131,9 +131,9 @@ See [Chaining indicators](/guide/chaining) for more.
 
 ## Streaming
 
-Every method streams.  Each Series method has a buffer-style form named `To{Method}List`, such as `.ToPlusList(amount)`.  The stream hub form keeps the Series name and is chosen by its receiver: called on a hub, `.Minus(otherSource)` or `.RollingMax(lookbackPeriods)` returns a stream hub, so a Series chain such as `bars.ToSma(10).Minus(bars.ToSma(20))` streams as `barHub.ToSmaHub(10).Minus(barHub.ToSmaHub(20))`.
+Every method streams through a stream hub, which keeps the Series name and is chosen by its receiver: called on a hub, `.Minus(otherSource)` or `.RollingMax(lookbackPeriods)` returns a stream hub, so a Series chain such as `bars.ToSma(10).Minus(bars.ToSma(20))` streams as `barHub.ToSmaHub(10).Minus(barHub.ToSmaHub(20))`.
 
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
+The rolling-window methods also have a buffer-style form, `.ToRollingMaxList(lookbackPeriods)`, `.ToRollingMinList(lookbackPeriods)`, and `.ToRollingMedianList(lookbackPeriods)`, for incremental calculations without a hub.  Fixed-amount and two-series math has no buffer list.  Plain `double` arithmetic on the values you hold gives `NaN` or infinity where these methods give `null`, such as for a warmup value or a zero divisor, and does not pair two series by timestamp; use the Series method or a stream hub to match these results.
 
 ```csharp
 RollingMaxList rollingMaxList = new(lookbackPeriods);
@@ -158,21 +158,9 @@ void OnBarReceived(IBar bar) => barHub.Add(bar);
 IReadOnlyList<MathResult> results = observer.Results;
 ```
 
-Fixed-operand math uses one list type and one hub type for every operation: `new ScalarMathList(ScalarOperation.PlusPercent, 2.5)` and `ScalarMathHub`.
+Fixed-operand math uses one hub type for every operation, `ScalarMathHub`, such as `barHub.Plus(1)`.
 
-Two-series methods have a buffer-style form too, such as `.ToMinusList(otherSource)`, built on `PairMathList`.  Add each series separately as its values arrive; either one may run ahead, and a result is added once both hold the same timestamp:
-
-```csharp
-PairMathList spread = new(PairOperation.Minus);
-
-// call from each series' message handler
-void OnFastReceived(IReusable value) => spread.AddSource(value);
-void OnSlowReceived(IReusable value) => spread.AddOther(value);
-```
-
-A timestamp that only one series holds produces no result, where the Series method throws.  Each series must arrive in strictly increasing order: an older or equal timestamp on a side throws an `InvalidOperationException`, whatever `ThrowOnOutOfOrder` is set to.  Each side stages at most `MaxListSize` values, so a side that falls further behind than that loses the pairs the leading side has dropped.
-
-Two-series stream hubs take a second chain provider, such as `.Minus(otherSource)`, built on `PairMathHub`.  A result is added once both providers hold the same timestamp.  Neither list rule applies to a hub: a value that arrives late, or is revised or removed, on either side is handled by the usual rebuild rather than an exception, and each side stages up to the hub's cache size rather than `MaxListSize`.  This streams the MACD composite from the example above:
+Two-series stream hubs take a second chain provider, such as `.Minus(otherSource)`, built on `PairMathHub`.  A result is added once both providers hold the same timestamp.  A timestamp that only one provider holds produces no result, where the Series method throws.  A value that arrives late, or is revised or removed, on either side is handled by the usual rebuild, and each side stages up to the hub's cache size.  This streams the MACD composite from the example above:
 
 ```csharp
 BarHub barHub = new();

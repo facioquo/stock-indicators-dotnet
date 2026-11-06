@@ -24,15 +24,6 @@ public static partial class IndyMath
             .Build();
 
     /// <summary>
-    /// PLUS Buffer Listing
-    /// </summary>
-    internal static readonly IndicatorListing PlusBufferListing =
-        new CatalogListingBuilder(PlusCommonListing)
-            .WithStyle(Style.Buffer)
-            .WithMethodName(typeof(IndyMath), "ToPlusList")
-            .Build();
-
-    /// <summary>
     /// PLUS Stream Listing
     /// </summary>
     internal static readonly IndicatorListing PlusStreamListing =
@@ -60,15 +51,6 @@ public static partial class IndyMath
         new CatalogListingBuilder(MinusCommonListing)
             .WithStyle(Style.Series)
             .WithMethodName(typeof(IndyMath), "Minus")
-            .Build();
-
-    /// <summary>
-    /// MINUS Buffer Listing
-    /// </summary>
-    internal static readonly IndicatorListing MinusBufferListing =
-        new CatalogListingBuilder(MinusCommonListing)
-            .WithStyle(Style.Buffer)
-            .WithMethodName(typeof(IndyMath), "ToMinusList")
             .Build();
 
     /// <summary>
@@ -102,15 +84,6 @@ public static partial class IndyMath
             .Build();
 
     /// <summary>
-    /// TIMES Buffer Listing
-    /// </summary>
-    internal static readonly IndicatorListing TimesBufferListing =
-        new CatalogListingBuilder(TimesCommonListing)
-            .WithStyle(Style.Buffer)
-            .WithMethodName(typeof(IndyMath), "ToTimesList")
-            .Build();
-
-    /// <summary>
     /// TIMES Stream Listing
     /// </summary>
     internal static readonly IndicatorListing TimesStreamListing =
@@ -141,15 +114,6 @@ public static partial class IndyMath
             .Build();
 
     /// <summary>
-    /// DIVIDED-BY Buffer Listing
-    /// </summary>
-    internal static readonly IndicatorListing DividedByBufferListing =
-        new CatalogListingBuilder(DividedByCommonListing)
-            .WithStyle(Style.Buffer)
-            .WithMethodName(typeof(IndyMath), "ToDividedByList")
-            .Build();
-
-    /// <summary>
     /// DIVIDED-BY Stream Listing
     /// </summary>
     internal static readonly IndicatorListing DividedByStreamListing =
@@ -177,15 +141,6 @@ public static partial class IndyMath
         new CatalogListingBuilder(PlusPercentCommonListing)
             .WithStyle(Style.Series)
             .WithMethodName(typeof(IndyMath), "PlusPercent")
-            .Build();
-
-    /// <summary>
-    /// PLUS-PERCENT Buffer Listing
-    /// </summary>
-    internal static readonly IndicatorListing PlusPercentBufferListing =
-        new CatalogListingBuilder(PlusPercentCommonListing)
-            .WithStyle(Style.Buffer)
-            .WithMethodName(typeof(IndyMath), "ToPlusPercentList")
             .Build();
 
     /// <summary>
@@ -220,15 +175,6 @@ public static partial class IndyMath
             .Build();
 
     /// <summary>
-    /// PLUS-SERIES Buffer Listing
-    /// </summary>
-    internal static readonly IndicatorListing PlusOtherBufferListing =
-        new CatalogListingBuilder(PlusOtherCommonListing)
-            .WithStyle(Style.Buffer)
-            .WithMethodName(typeof(IndyMath), "ToPlusList")
-            .Build();
-
-    /// <summary>
     /// PLUS-SERIES Stream Listing
     /// </summary>
     internal static readonly IndicatorListing PlusOtherStreamListing =
@@ -257,15 +203,6 @@ public static partial class IndyMath
         new CatalogListingBuilder(MinusOtherCommonListing)
             .WithStyle(Style.Series)
             .WithMethodName(typeof(IndyMath), "Minus")
-            .Build();
-
-    /// <summary>
-    /// MINUS-SERIES Buffer Listing
-    /// </summary>
-    internal static readonly IndicatorListing MinusOtherBufferListing =
-        new CatalogListingBuilder(MinusOtherCommonListing)
-            .WithStyle(Style.Buffer)
-            .WithMethodName(typeof(IndyMath), "ToMinusList")
             .Build();
 
     /// <summary>
@@ -300,15 +237,6 @@ public static partial class IndyMath
             .Build();
 
     /// <summary>
-    /// TIMES-SERIES Buffer Listing
-    /// </summary>
-    internal static readonly IndicatorListing TimesOtherBufferListing =
-        new CatalogListingBuilder(TimesOtherCommonListing)
-            .WithStyle(Style.Buffer)
-            .WithMethodName(typeof(IndyMath), "ToTimesList")
-            .Build();
-
-    /// <summary>
     /// TIMES-SERIES Stream Listing
     /// </summary>
     internal static readonly IndicatorListing TimesOtherStreamListing =
@@ -337,15 +265,6 @@ public static partial class IndyMath
         new CatalogListingBuilder(DividedByOtherCommonListing)
             .WithStyle(Style.Series)
             .WithMethodName(typeof(IndyMath), "DividedBy")
-            .Build();
-
-    /// <summary>
-    /// DIVIDED-BY-SERIES Buffer Listing
-    /// </summary>
-    internal static readonly IndicatorListing DividedByOtherBufferListing =
-        new CatalogListingBuilder(DividedByOtherCommonListing)
-            .WithStyle(Style.Buffer)
-            .WithMethodName(typeof(IndyMath), "ToDividedByList")
             .Build();
 
     /// <summary>
@@ -380,15 +299,6 @@ public static partial class IndyMath
             .Build();
 
     /// <summary>
-    /// MAX-WITH Buffer Listing
-    /// </summary>
-    internal static readonly IndicatorListing MaxWithBufferListing =
-        new CatalogListingBuilder(MaxWithCommonListing)
-            .WithStyle(Style.Buffer)
-            .WithMethodName(typeof(IndyMath), "ToMaxWithList")
-            .Build();
-
-    /// <summary>
     /// MAX-WITH Stream Listing
     /// </summary>
     internal static readonly IndicatorListing MaxWithStreamListing =
@@ -417,15 +327,6 @@ public static partial class IndyMath
         new CatalogListingBuilder(MinWithCommonListing)
             .WithStyle(Style.Series)
             .WithMethodName(typeof(IndyMath), "MinWith")
-            .Build();
-
-    /// <summary>
-    /// MIN-WITH Buffer Listing
-    /// </summary>
-    internal static readonly IndicatorListing MinWithBufferListing =
-        new CatalogListingBuilder(MinWithCommonListing)
-            .WithStyle(Style.Buffer)
-            .WithMethodName(typeof(IndyMath), "ToMinWithList")
             .Build();
 
     /// <summary>

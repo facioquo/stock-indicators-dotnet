@@ -167,9 +167,9 @@ public class CatalogExecutabilityTests : TestBase
 
         // guard the exclusion list itself: if the executor gains multi-series support,
         // this count changes and the exclusion should be revisited rather than kept
-        // (BETA, CORR, PRS, and the six IndyMath IDs have all three styles)
+        // (BETA, CORR, and PRS have all three styles; the six IndyMath IDs have no buffer list)
         executable.Should().HaveCount(
-            Catalog.Get().Count - 27,
+            Catalog.Get().Count - 21,
             "exactly the known two-series listings are excluded");
     }
 }

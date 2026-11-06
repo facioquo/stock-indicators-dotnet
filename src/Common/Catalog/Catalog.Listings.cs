@@ -158,12 +158,10 @@ public static partial class Catalog
         _listings.Add(Dema.StreamListing);
 
         // DIVIDED-BY (Divided By Divisor)
-        _listings.Add(IndyMath.DividedByBufferListing);
         _listings.Add(IndyMath.DividedBySeriesListing);
         _listings.Add(IndyMath.DividedByStreamListing);
 
         // DIVIDED-BY-SERIES (Divided By Series)
-        _listings.Add(IndyMath.DividedByOtherBufferListing);
         _listings.Add(IndyMath.DividedByOtherSeriesListing);
         _listings.Add(IndyMath.DividedByOtherStreamListing);
 
@@ -283,7 +281,6 @@ public static partial class Catalog
         _listings.Add(Marubozu.StreamListing);
 
         // MAX-WITH (Max With Series)
-        _listings.Add(IndyMath.MaxWithBufferListing);
         _listings.Add(IndyMath.MaxWithSeriesListing);
         _listings.Add(IndyMath.MaxWithStreamListing);
 
@@ -298,17 +295,14 @@ public static partial class Catalog
         _listings.Add(MgDynamic.StreamListing);
 
         // MIN-WITH (Min With Series)
-        _listings.Add(IndyMath.MinWithBufferListing);
         _listings.Add(IndyMath.MinWithSeriesListing);
         _listings.Add(IndyMath.MinWithStreamListing);
 
         // MINUS (Minus Amount)
-        _listings.Add(IndyMath.MinusBufferListing);
         _listings.Add(IndyMath.MinusSeriesListing);
         _listings.Add(IndyMath.MinusStreamListing);
 
         // MINUS-SERIES (Minus Series)
-        _listings.Add(IndyMath.MinusOtherBufferListing);
         _listings.Add(IndyMath.MinusOtherSeriesListing);
         _listings.Add(IndyMath.MinusOtherStreamListing);
 
@@ -333,17 +327,14 @@ public static partial class Catalog
         _listings.Add(Pivots.StreamListing);
 
         // PLUS (Plus Amount)
-        _listings.Add(IndyMath.PlusBufferListing);
         _listings.Add(IndyMath.PlusSeriesListing);
         _listings.Add(IndyMath.PlusStreamListing);
 
         // PLUS-PERCENT (Plus Percent)
-        _listings.Add(IndyMath.PlusPercentBufferListing);
         _listings.Add(IndyMath.PlusPercentSeriesListing);
         _listings.Add(IndyMath.PlusPercentStreamListing);
 
         // PLUS-SERIES (Plus Series)
-        _listings.Add(IndyMath.PlusOtherBufferListing);
         _listings.Add(IndyMath.PlusOtherSeriesListing);
         _listings.Add(IndyMath.PlusOtherStreamListing);
 
@@ -479,12 +470,10 @@ public static partial class Catalog
         _listings.Add(Tema.StreamListing);
 
         // TIMES (Times Factor)
-        _listings.Add(IndyMath.TimesBufferListing);
         _listings.Add(IndyMath.TimesSeriesListing);
         _listings.Add(IndyMath.TimesStreamListing);
 
         // TIMES-SERIES (Times Series)
-        _listings.Add(IndyMath.TimesOtherBufferListing);
         _listings.Add(IndyMath.TimesOtherSeriesListing);
         _listings.Add(IndyMath.TimesOtherStreamListing);
 

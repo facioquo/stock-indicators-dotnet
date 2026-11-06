@@ -2,7 +2,7 @@ namespace BufferLists;
 
 /// <summary>
 /// Series-parity tests for <see cref="PrsList"/>. The pairing rules are covered once,
-/// through <see cref="PairMathList"/>, in <see cref="PairMathListTests"/>.
+/// through <see cref="CorrelationList"/>, in <see cref="PairBufferListPairingTests"/>.
 /// </summary>
 [TestClass]
 public class PrsBufferListTests : TestBase

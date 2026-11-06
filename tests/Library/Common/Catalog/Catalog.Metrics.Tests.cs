@@ -26,12 +26,13 @@ public class CatalogMetricsTests : TestBase
         int bufferCount = catalog.Count(static x => x.Style == Style.Buffer);
 
         // 3 indicators (RenkoAtr, StdDevChannels, ZigZag) are
-        // Series-only and account for the 99 vs 96 gap.
+        // Series-only and account for the 99 vs 96 gap; the 11
+        // fixed-amount and two-series IndyMath IDs have no buffer list.
         seriesCount.Should().Be(99);
-        bufferCount.Should().Be(96);
+        bufferCount.Should().Be(85);
         streamCount.Should().Be(96);
 
         int totalCount = seriesCount + streamCount + bufferCount;
-        totalCount.Should().Be(291);
+        totalCount.Should().Be(280);
     }
 }

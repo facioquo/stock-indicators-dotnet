@@ -51,10 +51,16 @@ public class IndyMathCatalogTests : TestBase
     }
 
     [TestMethod]
-    public void IndyMathBuffer_InCatalog_ReturnsAllVariants()
+    public void IndyMathBuffer_InCatalog_OnlyRollingWindows()
     {
         foreach ((string uiid, string name, string method, string parameter) in SingleSeries)
         {
+            if (!method.StartsWith("Rolling", StringComparison.Ordinal))
+            {
+                Catalog.Get(uiid, Style.Buffer).Should().BeNull($"{uiid} has no buffer list");
+                continue;
+            }
+
             IndicatorListing listing = Catalog.Get(uiid, Style.Buffer);
 
             AssertListing(listing, uiid, name, Style.Buffer, $"To{method}List");
@@ -62,13 +68,9 @@ public class IndyMathCatalogTests : TestBase
                 .Which.ParameterName.Should().Be(parameter);
         }
 
-        foreach ((string uiid, string name, string method) in Pairwise)
+        foreach ((string uiid, _, _) in Pairwise)
         {
-            IndicatorListing listing = Catalog.Get(uiid, Style.Buffer);
-
-            AssertListing(listing, uiid, name, Style.Buffer, $"To{method}List");
-            listing.Parameters.Select(static p => p.ParameterName)
-                .Should().Equal("basisSource", "otherSource");
+            Catalog.Get(uiid, Style.Buffer).Should().BeNull($"{uiid} has no buffer list");
         }
     }
 
@@ -98,17 +100,6 @@ public class IndyMathCatalogTests : TestBase
     public void IndyMathPairwiseSeries_ExplicitSources_MatchesDirectCall()
     {
         IReadOnlyList<MathResult> viaCatalog = Catalog.Get("MINUS-SERIES", Style.Series)
-            .WithParamValue("otherSource", OtherBars)
-            .FromSource((IEnumerable<IBar>)Bars)
-            .Execute<MathResult>();
-
-        viaCatalog.IsExactly(Bars.Minus(OtherBars));
-    }
-
-    [TestMethod]
-    public void IndyMathPairwiseBuffer_ExplicitSources_MatchesDirectCall()
-    {
-        IReadOnlyList<MathResult> viaCatalog = Catalog.Get("MINUS-SERIES", Style.Buffer)
             .WithParamValue("otherSource", OtherBars)
             .FromSource((IEnumerable<IBar>)Bars)
             .Execute<MathResult>();
