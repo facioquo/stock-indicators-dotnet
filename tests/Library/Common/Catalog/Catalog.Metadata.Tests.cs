@@ -143,12 +143,12 @@ public class CatalogMetadataTests : TestBase
     /// Determines whether a listing binds a fluent IndyMath operator such as <c>Plus</c>.
     /// </summary>
     /// <remarks>
-    /// IndyMath Series methods read as arithmetic (<c>a.Minus(b).Plus(c)</c>) rather than
-    /// taking the <c>To</c> prefix, so the prefix rule exempts them.
+    /// IndyMath Series and stream hub methods read as arithmetic (<c>a.Minus(b).Plus(c)</c>)
+    /// rather than taking the <c>To</c> prefix, so the prefix rule exempts them.
     /// </remarks>
     /// <param name="listing">Catalog listing to check.</param>
-    /// <returns><c>true</c> for an IndyMath Series operator.</returns>
+    /// <returns><c>true</c> for an IndyMath Series or stream hub operator.</returns>
     private static bool IsIndyMathOperator(IndicatorListing listing)
-        => listing.Style == Style.Series
+        => listing.Style is Style.Series or Style.Stream
         && CatalogReflection.GetOverloads(listing).Any(static m => m.DeclaringType == typeof(IndyMath));
 }

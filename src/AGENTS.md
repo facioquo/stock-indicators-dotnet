@@ -41,7 +41,7 @@ Mirror `Indicators/e-j/Ema/EmaResult.cs`: a `[Serializable] public record` with 
 
 ## Per-indicator facade class
 
-`public static partial class {Name}` is the indicator's facade, not its Series implementation. Its partial files hold every style's entry point (`To{Name}`, `To{Name}List`, `To{Name}Hub`), the shared utilities, and the catalog listings.
+`public static partial class {Name}` is the indicator's facade, not its Series implementation. Its partial files hold every style's entry point (`To{Name}`, `To{Name}List`, `To{Name}Hub`), the shared utilities, and the catalog listings. IndyMath operators are the exception: the Series method and the stream hub method share the operator name, such as `Minus`, and the receiver picks the style.
 
 - Style-specific types carry a suffix: `{Name}Hub`, `{Name}List`, `{Name}Result`, and the `I{Name}` parameter interface.
 - Never give the facade a style suffix; an `EmaSeries` class would hold `ToEmaList` and `ToEmaHub`.

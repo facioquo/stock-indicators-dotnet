@@ -205,7 +205,7 @@ public class StochHubTests : StreamHubTestBase, ITestBarObserver
 
         // setup bar provider hub and observer BEFORE adding data
         BarHub barHub = new();
-        StochHub observer = barHub.ToStoch(
+        StochHub observer = barHub.ToStochHub(
             lookbackPeriods, signalPeriods, smoothPeriods,
             kFactor, dFactor, movingAverageType);
 
@@ -262,7 +262,7 @@ public class StochHubTests : StreamHubTestBase, ITestBarObserver
         const MaType movingAverageType = MaType.SMMA;
 
         BarHub barHub = new();
-        StochHub observer = barHub.ToStoch(
+        StochHub observer = barHub.ToStochHub(
             lookbackPeriods, signalPeriods, smoothPeriods,
             kFactor, dFactor, movingAverageType);
 

@@ -59,7 +59,7 @@ public class EmaHub
 }
 ```
 
-- The constructor is `internal`; the public entry point is a `To{Name}Hub(this IChainProvider<IReusable> …)` or `(this IBarProvider<IBar> …)` extension in the indicator's static partial class.
+- The constructor is `internal`; the public entry point is a `To{Name}Hub(this IChainProvider<IReusable> …)` or `(this IBarProvider<IBar> …)` extension in the indicator's static partial class. IndyMath hubs are the exception: they reuse the Series operator name, such as `Minus(this IChainProvider<IReusable> …)`.
 - Initialize every field `ToIndicator` reads before calling `Reinitialize()`, and call it last: it replays the provider's existing history through `ToIndicator`.
 - Set `Name` in the constructor; the base `ToString()` returns it and the hub test asserts it.
 - Call `ValidateCacheSize(warmupPeriods, Name)` with the indicator's warmup length so a too-small `MaxCacheSize` fails at construction.

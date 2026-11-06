@@ -108,14 +108,14 @@ BarHub barHub = new();
 // spread between a fast and a slow moving average
 PairMathHub spread = barHub
     .ToEmaHub(12)
-    .ToMinusHub(barHub.ToEmaHub(26));
+    .Minus(barHub.ToEmaHub(26));
 ```
 
 A result is added once both providers hold the same timestamp. A timestamp that only one provider holds produces no result, where the Series method throws. Late, revised, or removed values on either side are recalculated like any other correction.
 
 Two-series stream hubs:
 
-- [IndyMath](/indicators/indy-math#streaming) two-series methods, such as `.ToMinusHub(other)`
+- [IndyMath](/indicators/indy-math#streaming) two-series methods, such as `.Minus(otherSource)`
 - [Beta coefficient (β)](/indicators/beta#streaming)
 - [Correlation coefficient](/indicators/correlation#streaming)
 - [Price Relative Strength (PRS)](/indicators/prs#streaming)

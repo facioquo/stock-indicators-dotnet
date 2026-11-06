@@ -8,7 +8,7 @@ public class RollingMaxHubTests : StreamHubTestBase, ITestChainObserver, ITestCh
     private const string ExpectedName = "ROLLINGMAX(20)";
 
     private static RollingMaxHub NewHub(IChainProvider<IReusable> provider)
-        => provider.ToRollingMaxHub(lookbackPeriods);
+        => provider.RollingMax(lookbackPeriods);
 
     private static IReadOnlyList<MathResult> Series(IReadOnlyList<IReusable> source)
         => source.RollingMax(lookbackPeriods);
@@ -248,12 +248,12 @@ public class RollingMaxHubTests : StreamHubTestBase, ITestChainObserver, ITestCh
     [TestMethod]
     public void Exceptions_InvalidLookback_ThrowsArgumentOutOfRangeException()
     {
-        FluentActions.Invoking(static () => new BarHub().ToRollingMaxHub(0))
+        FluentActions.Invoking(static () => new BarHub().RollingMax(0))
             .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("lookbackPeriods");
 
         // the window must fit in the provider's cache, and may fill it exactly
-        FluentActions.Invoking(static () => new BarHub(50).ToRollingMaxHub(51))
+        FluentActions.Invoking(static () => new BarHub(50).RollingMax(51))
             .Should().ThrowExactly<ArgumentOutOfRangeException>();
-        new BarHub(50).ToRollingMaxHub(50).LookbackPeriods.Should().Be(50);
+        new BarHub(50).RollingMax(50).LookbackPeriods.Should().Be(50);
     }
 }

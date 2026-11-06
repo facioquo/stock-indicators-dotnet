@@ -54,82 +54,82 @@ public static partial class IndyMath
     /// <summary>
     /// Creates a stream hub that adds the values of two chain providers at each matched timestamp.
     /// </summary>
-    /// <param name="source">Source chain provider.</param>
-    /// <param name="other">Chain provider to add.</param>
-    /// <returns>A stream hub of <c>source + other</c> values.</returns>
+    /// <param name="basisSource">Basis chain provider.</param>
+    /// <param name="otherSource">Chain provider to add.</param>
+    /// <returns>A stream hub of <c>basisSource + otherSource</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either provider is null.</exception>
-    public static PairMathHub ToPlusHub(
-        this IChainProvider<IReusable> source,
-        IChainProvider<IReusable> other)
-        => source.ToPairMathHub(other, PairOperation.Plus);
+    public static PairMathHub Plus(
+        this IChainProvider<IReusable> basisSource,
+        IChainProvider<IReusable> otherSource)
+        => basisSource.ToPairMathHub(otherSource, PairOperation.Plus);
 
     /// <summary>
     /// Creates a stream hub that subtracts the values of another chain provider at each matched timestamp.
     /// </summary>
-    /// <param name="source">Source chain provider.</param>
-    /// <param name="other">Chain provider to subtract.</param>
-    /// <returns>A stream hub of <c>source − other</c> values.</returns>
+    /// <param name="basisSource">Basis chain provider.</param>
+    /// <param name="otherSource">Chain provider to subtract.</param>
+    /// <returns>A stream hub of <c>basisSource − otherSource</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either provider is null.</exception>
-    public static PairMathHub ToMinusHub(
-        this IChainProvider<IReusable> source,
-        IChainProvider<IReusable> other)
-        => source.ToPairMathHub(other, PairOperation.Minus);
+    public static PairMathHub Minus(
+        this IChainProvider<IReusable> basisSource,
+        IChainProvider<IReusable> otherSource)
+        => basisSource.ToPairMathHub(otherSource, PairOperation.Minus);
 
     /// <summary>
     /// Creates a stream hub that multiplies the values of two chain providers at each matched timestamp.
     /// </summary>
-    /// <param name="source">Source chain provider.</param>
-    /// <param name="other">Chain provider to multiply by.</param>
-    /// <returns>A stream hub of <c>source × other</c> values.</returns>
+    /// <param name="basisSource">Basis chain provider.</param>
+    /// <param name="otherSource">Chain provider to multiply by.</param>
+    /// <returns>A stream hub of <c>basisSource × otherSource</c> values.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either provider is null.</exception>
-    public static PairMathHub ToTimesHub(
-        this IChainProvider<IReusable> source,
-        IChainProvider<IReusable> other)
-        => source.ToPairMathHub(other, PairOperation.Times);
+    public static PairMathHub Times(
+        this IChainProvider<IReusable> basisSource,
+        IChainProvider<IReusable> otherSource)
+        => basisSource.ToPairMathHub(otherSource, PairOperation.Times);
 
     /// <summary>
     /// Creates a stream hub that divides by the values of another chain provider at each matched timestamp.
     /// </summary>
-    /// <param name="source">Source chain provider.</param>
-    /// <param name="other">Chain provider of divisors.</param>
-    /// <returns>A stream hub of <c>source ÷ other</c> values; <see langword="null"/> where the divisor is 0.</returns>
+    /// <param name="basisSource">Basis chain provider.</param>
+    /// <param name="otherSource">Chain provider of divisors.</param>
+    /// <returns>A stream hub of <c>basisSource ÷ otherSource</c> values; <see langword="null"/> where the divisor is 0.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either provider is null.</exception>
-    public static PairMathHub ToDividedByHub(
-        this IChainProvider<IReusable> source,
-        IChainProvider<IReusable> other)
-        => source.ToPairMathHub(other, PairOperation.DividedBy);
+    public static PairMathHub DividedBy(
+        this IChainProvider<IReusable> basisSource,
+        IChainProvider<IReusable> otherSource)
+        => basisSource.ToPairMathHub(otherSource, PairOperation.DividedBy);
 
     /// <summary>
     /// Creates a stream hub that selects the larger value of two chain providers at each matched timestamp.
     /// </summary>
-    /// <param name="source">Source chain provider.</param>
-    /// <param name="other">Chain provider to compare.</param>
+    /// <param name="basisSource">Basis chain provider.</param>
+    /// <param name="otherSource">Chain provider to compare.</param>
     /// <returns>A stream hub of the larger value at each matched timestamp.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either provider is null.</exception>
-    public static PairMathHub ToMaxWithHub(
-        this IChainProvider<IReusable> source,
-        IChainProvider<IReusable> other)
-        => source.ToPairMathHub(other, PairOperation.MaxWith);
+    public static PairMathHub MaxWith(
+        this IChainProvider<IReusable> basisSource,
+        IChainProvider<IReusable> otherSource)
+        => basisSource.ToPairMathHub(otherSource, PairOperation.MaxWith);
 
     /// <summary>
     /// Creates a stream hub that selects the smaller value of two chain providers at each matched timestamp.
     /// </summary>
-    /// <param name="source">Source chain provider.</param>
-    /// <param name="other">Chain provider to compare.</param>
+    /// <param name="basisSource">Basis chain provider.</param>
+    /// <param name="otherSource">Chain provider to compare.</param>
     /// <returns>A stream hub of the smaller value at each matched timestamp.</returns>
     /// <exception cref="ArgumentNullException">Thrown when either provider is null.</exception>
-    public static PairMathHub ToMinWithHub(
-        this IChainProvider<IReusable> source,
-        IChainProvider<IReusable> other)
-        => source.ToPairMathHub(other, PairOperation.MinWith);
+    public static PairMathHub MinWith(
+        this IChainProvider<IReusable> basisSource,
+        IChainProvider<IReusable> otherSource)
+        => basisSource.ToPairMathHub(otherSource, PairOperation.MinWith);
 
     private static PairMathHub ToPairMathHub(
-        this IChainProvider<IReusable> source,
-        IChainProvider<IReusable> other,
+        this IChainProvider<IReusable> basisSource,
+        IChainProvider<IReusable> otherSource,
         PairOperation operation)
     {
-        ArgumentNullException.ThrowIfNull(source);
-        ArgumentNullException.ThrowIfNull(other);
-        return new(new PairHub(source, other), operation);
+        ArgumentNullException.ThrowIfNull(basisSource);
+        ArgumentNullException.ThrowIfNull(otherSource);
+        return new(new PairHub(basisSource, otherSource), operation);
     }
 }

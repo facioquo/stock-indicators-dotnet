@@ -408,7 +408,7 @@ public static partial class Stoch
     /// <returns>A Stochastic Oscillator hub.</returns>
     /// <exception cref="ArgumentNullException">Thrown when the bar provider is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when parameters are invalid.</exception>
-    public static StochHub ToStoch(
+    public static StochHub ToStochHub(
         this IStreamObservable<IBar> barProvider,
         int lookbackPeriods,
         int signalPeriods,

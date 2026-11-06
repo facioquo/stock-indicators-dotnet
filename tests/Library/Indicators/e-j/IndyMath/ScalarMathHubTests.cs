@@ -6,7 +6,7 @@ public class ScalarMathHubTests : StreamHubTestBase, ITestChainObserver, ITestCh
     private const string ExpectedName = "PLUSPERCENT(-2.5)";
 
     private static ScalarMathHub NewHub(IChainProvider<IReusable> provider)
-        => provider.ToPlusPercentHub(-2.5);
+        => provider.PlusPercent(-2.5);
 
     private static IReadOnlyList<MathResult> Series(IReadOnlyList<IReusable> source)
         => source.PlusPercent(-2.5);
@@ -247,10 +247,10 @@ public class ScalarMathHubTests : StreamHubTestBase, ITestChainObserver, ITestCh
     public void EveryOperation_StreamedBars_MatchesSeriesExactly()
     {
         BarHub barHub = new();
-        ScalarMathHub plus = barHub.ToPlusHub(2.5);
-        ScalarMathHub minus = barHub.ToMinusHub(2.5);
-        ScalarMathHub times = barHub.ToTimesHub(-3);
-        ScalarMathHub divided = barHub.ToDividedByHub(7);
+        ScalarMathHub plus = barHub.Plus(2.5);
+        ScalarMathHub minus = barHub.Minus(2.5);
+        ScalarMathHub times = barHub.Times(-3);
+        ScalarMathHub divided = barHub.DividedBy(7);
 
         barHub.Add(Bars);
 
@@ -270,13 +270,13 @@ public class ScalarMathHubTests : StreamHubTestBase, ITestChainObserver, ITestCh
     {
         BarHub barHub = new();
 
-        FluentActions.Invoking(() => barHub.ToDividedByHub(0))
+        FluentActions.Invoking(() => barHub.DividedBy(0))
             .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("divisor");
-        FluentActions.Invoking(() => barHub.ToPlusHub(double.NaN))
+        FluentActions.Invoking(() => barHub.Plus(double.NaN))
             .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("amount");
-        FluentActions.Invoking(() => barHub.ToTimesHub(double.NaN))
+        FluentActions.Invoking(() => barHub.Times(double.NaN))
             .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("factor");
-        FluentActions.Invoking(() => barHub.ToPlusPercentHub(double.NaN))
+        FluentActions.Invoking(() => barHub.PlusPercent(double.NaN))
             .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("percentOffset");
     }
 }

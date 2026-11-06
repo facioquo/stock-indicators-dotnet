@@ -93,12 +93,28 @@ internal static class CatalogMethodResolver
     }
 
     /// <summary>
-    /// Gets the result record type produced by an indicator method, for any style.
+    /// Gets the overloads of a catalog method that produce one indicator style.
     /// </summary>
     /// <remarks>
-    /// Walks base types rather than interfaces: a trimmed app keeps every base type of a
-    /// type it keeps, but not necessarily the interface list reflection would enumerate.
+    /// One name can serve two styles: IndyMath's operators, such as <c>Minus</c>, name
+    /// both a Series method and a stream hub method, told apart by their receiver.
     /// </remarks>
+    /// <param name="methodName">Method name from a listing.</param>
+    /// <param name="style">Style of the listing.</param>
+    /// <returns>
+    /// The overloads that return the given style; every overload when none does.
+    /// </returns>
+    internal static MethodInfo[] GetOverloads(string? methodName, Style style)
+    {
+        MethodInfo[] overloads = GetOverloads(methodName);
+        MethodInfo[] ofStyle = Array.FindAll(overloads, m => GetStyle(m) == style);
+
+        return ofStyle.Length > 0 ? ofStyle : overloads;
+    }
+
+    /// <summary>
+    /// Gets the result record type produced by an indicator method, for any style.
+    /// </summary>
     /// <param name="method">Indicator method bound to a catalog listing.</param>
     /// <returns>
     /// Result record type — <c>EmaResult</c> for all three of
@@ -106,14 +122,37 @@ internal static class CatalogMethodResolver
     /// and <c>EmaHub</c> (Stream) — or <c>null</c> when it cannot be determined.
     /// </returns>
     internal static Type? GetResultType(MethodInfo method)
+        => Classify(method)?.ResultType;
+
+    /// <summary>
+    /// Gets the indicator style an indicator method returns.
+    /// </summary>
+    /// <param name="method">Indicator method bound to a catalog listing.</param>
+    /// <returns>The style, or <c>null</c> when the return shape is unrecognized.</returns>
+    private static Style? GetStyle(MethodInfo method)
+        => Classify(method)?.Style;
+
+    /// <summary>
+    /// Matches an indicator method's return type to one of the three style shapes.
+    /// </summary>
+    /// <remarks>
+    /// Walks base types rather than interfaces: a trimmed app keeps every base type of a
+    /// type it keeps, but not necessarily the interface list reflection would enumerate.
+    /// </remarks>
+    /// <param name="method">Indicator method bound to a catalog listing.</param>
+    /// <returns>
+    /// The style and its result record type: <c>IReadOnlyList&lt;TResult&gt;</c> for
+    /// Series, <c>BufferList&lt;TResult&gt;</c> for Buffer, and <c>StreamHub&lt;TIn, TOut&gt;</c>
+    /// for Stream; <c>null</c> when the return type matches none of them.
+    /// </returns>
+    private static (Style Style, Type ResultType)? Classify(MethodInfo method)
     {
         Type returnType = method.ReturnType;
 
-        // Series: IReadOnlyList<TResult>
         if (returnType.IsGenericType
          && returnType.GetGenericTypeDefinition() == typeof(IReadOnlyList<>))
         {
-            return returnType.GetGenericArguments()[0];
+            return (Style.Series, returnType.GetGenericArguments()[0]);
         }
 
         for (Type? baseType = returnType; baseType is not null; baseType = baseType.BaseType)
@@ -125,16 +164,14 @@ internal static class CatalogMethodResolver
 
             Type definition = baseType.GetGenericTypeDefinition();
 
-            // Buffer: BufferList<TResult>
             if (definition == typeof(BufferList<>))
             {
-                return baseType.GetGenericArguments()[0];
+                return (Style.Buffer, baseType.GetGenericArguments()[0]);
             }
 
-            // Stream: StreamHub<TIn, TOut>
             if (definition == typeof(StreamHub<,>))
             {
-                return baseType.GetGenericArguments()[1];
+                return (Style.Stream, baseType.GetGenericArguments()[1]);
             }
         }
 

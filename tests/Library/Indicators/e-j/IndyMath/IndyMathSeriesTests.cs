@@ -295,8 +295,8 @@ public class IndyMathSeriesTests : StaticSeriesTestBase
         FluentActions
             .Invoking(() => a.DividedBy(b))
             .Should().ThrowExactly<InvalidBarsException>()
-            .WithParameterName("other")
-            .WithMessage("*index 1*other has*");
+            .WithParameterName("otherSource")
+            .WithMessage("*index 1*otherSource has*");
     }
 
     [TestMethod]
@@ -309,9 +309,9 @@ public class IndyMathSeriesTests : StaticSeriesTestBase
         FluentActions.Invoking(static () => ((IReadOnlyList<IReusable>)null!).DividedBy(double.NaN))
             .Should().ThrowExactly<ArgumentNullException>().WithParameterName("source");
         FluentActions.Invoking(() => ((IReadOnlyList<IReusable>)null!).Minus(a))
-            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("source");
+            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("basisSource");
         FluentActions.Invoking(() => a.MaxWith(null!))
-            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("other");
+            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("otherSource");
         FluentActions.Invoking(static () => ((IReadOnlyList<IReusable>)null!).RollingMin(2))
             .Should().ThrowExactly<ArgumentNullException>();
         FluentActions.Invoking(static () => ((IReadOnlyList<IReusable>)null!).RollingMedian(2))

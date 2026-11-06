@@ -289,9 +289,9 @@ public class PairMathListTests : TestBase
         FluentActions.Invoking(() => list.Add(Source[0], null!))
             .Should().ThrowExactly<ArgumentNullException>();
         FluentActions.Invoking(static () => Source.ToPlusList((IReadOnlyList<IReusable>)null!))
-            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("other");
+            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("otherSource");
         FluentActions.Invoking(static () => ((IReadOnlyList<IReusable>)null!).ToPlusList(Other))
-            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("source");
+            .Should().ThrowExactly<ArgumentNullException>().WithParameterName("basisSource");
 
         // a null element in a batch is reported, not dereferenced
         List<IReusable> withNull = [Source[0], null!];

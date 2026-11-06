@@ -12,7 +12,7 @@ public class IndyMathPlusRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToPlusList(1).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.ToPlusHub(1).Results.IsExactly(Expected);
+    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.Plus(1).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -27,7 +27,7 @@ public class IndyMathMinusRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToMinusList(1).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.ToMinusHub(1).Results.IsExactly(Expected);
+    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.Minus(1).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -42,7 +42,7 @@ public class IndyMathTimesRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToTimesList(2).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.ToTimesHub(2).Results.IsExactly(Expected);
+    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.Times(2).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -57,7 +57,7 @@ public class IndyMathDividedByRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToDividedByList(2).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.ToDividedByHub(2).Results.IsExactly(Expected);
+    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.DividedBy(2).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -72,7 +72,7 @@ public class IndyMathPlusPercentRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToPlusPercentList(2.5).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.ToPlusPercentHub(2.5).Results.IsExactly(Expected);
+    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.PlusPercent(2.5).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -87,7 +87,7 @@ public class IndyMathRollingMaxRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToRollingMaxList(20).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.ToRollingMaxHub(20).Results.IsExactly(Expected);
+    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.RollingMax(20).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -102,7 +102,7 @@ public class IndyMathRollingMinRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToRollingMinList(20).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.ToRollingMinHub(20).Results.IsExactly(Expected);
+    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.RollingMin(20).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -117,7 +117,7 @@ public class IndyMathRollingMedianRegressionTests : RegressionTestBase<MathResul
     public override void Buffer_AgainstBaseline_MatchesExactly() => Bars.ToRollingMedianList(20).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.ToRollingMedianHub(20).Results.IsExactly(Expected);
+    public override void Stream_AgainstBaseline_MatchesExactly() => BarHub.RollingMedian(20).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -132,7 +132,7 @@ public class IndyMathPlusSeriesRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToPlusList(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.ToPlusHub(BarHub).Results.IsExactly(Expected);
+    public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.Plus(BarHub).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -147,7 +147,7 @@ public class IndyMathMinusSeriesRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToMinusList(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.ToMinusHub(BarHub).Results.IsExactly(Expected);
+    public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.Minus(BarHub).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -162,7 +162,7 @@ public class IndyMathTimesSeriesRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToTimesList(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.ToTimesHub(BarHub).Results.IsExactly(Expected);
+    public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.Times(BarHub).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -177,7 +177,7 @@ public class IndyMathDividedBySeriesRegressionTests : RegressionTestBase<MathRes
     public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToDividedByList(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.ToDividedByHub(BarHub).Results.IsExactly(Expected);
+    public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.DividedBy(BarHub).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -192,7 +192,7 @@ public class IndyMathMaxWithRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToMaxWithList(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.ToMaxWithHub(BarHub).Results.IsExactly(Expected);
+    public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.MaxWith(BarHub).Results.IsExactly(Expected);
 }
 
 [TestClass, TestCategory("Regression")]
@@ -207,7 +207,7 @@ public class IndyMathMinWithRegressionTests : RegressionTestBase<MathResult>
     public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToMinWithList(Bars).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.ToMinWithHub(BarHub).Results.IsExactly(Expected);
+    public override void Stream_AgainstBaseline_MatchesExactly() => IndyMathStreamSources.OtherBarHub.MinWith(BarHub).Results.IsExactly(Expected);
 }
 
 /// <summary>
