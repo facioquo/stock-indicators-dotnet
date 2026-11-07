@@ -114,6 +114,15 @@ return customResults.ToSortedList();
 Built-in indicators preserve the chronological order of the input bars, so their results are already sorted. Reach for `.ToSortedList()` only in custom implementations or after merging or re-timestamping results. For raw price data, see [Sort bars](/utilities/bars#sort-bars).
 :::
 
+## Serialize to JSON
+
+`IndicatorJsonContext` is a source-generated System.Text.Json context for every Series result list, so trimmed and NativeAOT apps can serialize results without reflection.
+
+```csharp
+string json = JsonSerializer.Serialize(
+    bars.ToEma(20), IndicatorJsonContext.Default.IReadOnlyListEmaResult);
+```
+
 ## See also
 
 - [Bar utilities](/utilities/bars) — prepare and transform price bars
