@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace FacioQuo.Stock.Indicators;
 
 /// <summary>
@@ -104,4 +106,6 @@ namespace FacioQuo.Stock.Indicators;
 [JsonSerializable(typeof(IReadOnlyList<WilliamsResult>))]
 [JsonSerializable(typeof(IReadOnlyList<WmaResult>))]
 [JsonSerializable(typeof(IReadOnlyList<ZigZagResult>))]
+// the generator emits ~15k lines of metadata into this class; the tests exercise what callers use
+[ExcludeFromCodeCoverage]
 public sealed partial class IndicatorJsonContext : JsonSerializerContext;
