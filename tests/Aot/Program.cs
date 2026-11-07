@@ -1,3 +1,4 @@
+using System.Text.Json;
 using FacioQuo.Stock.Indicators;
 
 // Runs every catalog listing and prints one line per outcome. A NativeAOT publish must
@@ -64,6 +65,10 @@ Require("omitted/ALMA", () => Catalog.Get("ALMA", Style.Series)!
     .WithoutParam("sigma")
     .FromSource(source)
     .Execute<object>());
+
+// Results serialize through generated metadata, so the trimmed binary writes the same JSON
+string emaJson = JsonSerializer.Serialize(bars.ToEma(20), IndicatorJsonContext.Default.IReadOnlyListEmaResult);
+Console.WriteLine($"json/EMA {emaJson.Length} {emaJson[^60..]}");
 
 return failures;
 
