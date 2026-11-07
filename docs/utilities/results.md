@@ -116,19 +116,12 @@ Built-in indicators preserve the chronological order of the input bars, so their
 
 ## Serialize to JSON
 
-`IndicatorJsonContext` is a source-generated System.Text.Json context that covers every result list a Series method returns, so a trimmed or NativeAOT app serializes results without reflection. Pass the property named for the result list to the serializer; the output matches reflection-based serialization with default options.
+`IndicatorJsonContext` is a source-generated System.Text.Json context for every Series result list, so trimmed and NativeAOT apps can serialize results without reflection.
 
 ```csharp
-IReadOnlyList<EmaResult> results = bars.ToEma(20);
-
 string json = JsonSerializer.Serialize(
-    results, IndicatorJsonContext.Default.IReadOnlyListEmaResult);
-
-IReadOnlyList<EmaResult> restored = JsonSerializer.Deserialize(
-    json, IndicatorJsonContext.Default.IReadOnlyListEmaResult)!;
+    bars.ToEma(20), IndicatorJsonContext.Default.IReadOnlyListEmaResult);
 ```
-
-For other settings, such as camel-case names, construct the context with your own options: `new IndicatorJsonContext(new JsonSerializerOptions(JsonSerializerDefaults.Web))`. To combine it with your app's own context, add `IndicatorJsonContext.Default` to your options' `TypeInfoResolverChain`. A chainable result's `Value` is not written, as with reflection.
 
 ## See also
 
