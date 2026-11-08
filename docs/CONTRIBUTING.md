@@ -63,6 +63,15 @@ dotnet restore        # restore NuGet packages
 - We expect all unit tests to execute successfully and all Errors and Warning resolved before you submit your code.
 - Failed builds or unit testing will block acceptance of your Pull Request when submitting changes.
 
+### Codacy
+
+Codacy runs static analysis and coverage checks on every pull request, configured by `.codacy.yml`. CI uploads the unit-test coverage. To see findings before you push, set up Codacy's agent tooling in your user environment. Nothing in this repository installs it:
+
+- **Claude Code**: install the [Codacy Skills](https://docs.codacy.com/codacy-skills/) plugin and the CLIs it uses, then sign in with `codacy login`.
+- **Other agents**: add the [Codacy MCP server](https://github.com/codacy/codacy-mcp-server) to your own MCP configuration, with an account token in `CODACY_ACCOUNT_TOKEN`.
+
+Create tokens under Codacy → My account → Access management. Never commit one.
+
 ### Regression baseline testing
 
 Regression baselines detect unintended behavioral changes in indicators. Each baseline is a JSON file with expected outputs for standard test data.
