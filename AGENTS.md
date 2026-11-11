@@ -2,7 +2,7 @@
 
 This repository is the production source for the [FacioQuo.Stock.Indicators](https://www.nuget.org/packages/FacioQuo.Stock.Indicators) NuGet package: financial market technical analysis indicators built for accuracy, performance, and ergonomics.
 
-- Multi-targets `net11.0`, `net10.0`, `net9.0`, and `net8.0`, with analyzers enforcing strict code quality.
+- Multi-targets `net11.0` and `net10.0`, with analyzers enforcing strict code quality.
 - Every indicator ships in up to three styles: Series (batch), BufferList (incremental), and StreamHub (real-time).
 - The `docs/` folder is the source for [dotnet.stockindicators.dev](https://dotnet.stockindicators.dev).
 

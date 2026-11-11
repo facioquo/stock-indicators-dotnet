@@ -130,7 +130,7 @@ Two-series buffer lists:
 A buffer list is not safe for concurrent use. If two threads add bars to the same list at the same time, its results can be corrupted without any error. Add bars and read results from one thread at a time.
 :::
 
-A client that you read in a loop receives one message at a time, so you can call `Add` directly from the loop. This example reads server-sent events with `SseParser` from `System.Net.ServerSentEvents`, which ships with .NET 10; .NET 8 and 9 need the `System.Net.ServerSentEvents` NuGet package:
+A client that you read in a loop receives one message at a time, so you can call `Add` directly from the loop. This example reads server-sent events with `SseParser` from `System.Net.ServerSentEvents`, which ships with .NET 10 and later:
 
 ```csharp
 using System.Net.ServerSentEvents;
