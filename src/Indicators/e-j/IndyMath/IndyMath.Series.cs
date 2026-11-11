@@ -283,7 +283,7 @@ public static partial class IndyMath
               + "Calculate both series from the same bars, and trim both to the same range before combining.");
         }
 
-        List<MathResult> results = new(length);
+        List<MathResult> results = [with(length)];
 
         for (int i = 0; i < length; i++)
         {
@@ -315,7 +315,7 @@ public static partial class IndyMath
         Func<double, double> map)
     {
         int length = source.Count;
-        List<MathResult> results = new(length);
+        List<MathResult> results = [with(length)];
 
         for (int i = 0; i < length; i++)
         {

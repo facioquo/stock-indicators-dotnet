@@ -100,7 +100,7 @@ public static class CustomIndicator
 
         // initialize
         int length = source.Count;
-        List<CustomReusable> results = new(length);
+        List<CustomReusable> results = [with(length)];
 
         // roll through source values
         for (int i = 0; i < length; i++)

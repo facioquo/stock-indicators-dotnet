@@ -41,7 +41,7 @@ public static partial class StarcBands
 
         // initialize
         int length = bars.Count;
-        List<StarcBandsResult> results = new(length);
+        List<StarcBandsResult> results = [with(length)];
         List<AtrResult> atrResults = bars.CalcAtr(atrPeriods);
         IReadOnlyList<SmaResult> smaResults = bars.ToSma(smaPeriods);
 

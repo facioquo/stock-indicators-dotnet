@@ -26,7 +26,7 @@ public static partial class Correlation
 
         // initialize
         int length = sourceA.Count;
-        List<CorrResult> results = new(length);
+        List<CorrResult> results = [with(length)];
 
         // roll through source values
         for (int i = 0; i < length; i++)

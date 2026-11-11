@@ -25,7 +25,7 @@ public static partial class MgDynamic
 
         // initialize
         int length = source.Count;
-        List<DynamicResult> results = new(length);
+        List<DynamicResult> results = [with(length)];
 
         // skip first period
         if (length > 0)

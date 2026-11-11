@@ -28,7 +28,7 @@ public static partial class Beta
 
         // initialize
         int length = sourceEval.Count;
-        List<BetaResult> results = new(length);
+        List<BetaResult> results = [with(length)];
 
         // convert bars to returns
         double[] evalReturns = new double[length];

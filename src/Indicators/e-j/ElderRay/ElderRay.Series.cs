@@ -35,7 +35,7 @@ public static partial class ElderRay
 
         // initialize
         int length = bars.Count;
-        List<ElderRayResult> results = new(length);
+        List<ElderRayResult> results = [with(length)];
 
         // EMA
         IReadOnlyList<EmaResult> emaResults

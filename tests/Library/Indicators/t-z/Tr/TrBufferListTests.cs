@@ -9,7 +9,7 @@ public class TrBufferListTests : BufferListTestBase, ITestBarBufferList
     [TestMethod]
     public void AddBar_IncrementsResults()
     {
-        TrList sut = new();
+        TrList sut = [];
 
         foreach (Bar bar in Bars)
         {
@@ -32,7 +32,7 @@ public class TrBufferListTests : BufferListTestBase, ITestBarBufferList
     [TestMethod]
     public void BarsCtor_OnInstantiation_IncrementsResults()
     {
-        TrList sut = new(Bars);
+        TrList sut = [with(Bars)];
 
         sut.Should().HaveCount(Bars.Count);
         sut.IsExactly(series);
@@ -46,7 +46,7 @@ public class TrBufferListTests : BufferListTestBase, ITestBarBufferList
         List<Bar> firstHalf = Bars.Take(splitPoint).ToList();
         List<Bar> secondHalf = Bars.Skip(splitPoint).ToList();
 
-        TrList sut = new(firstHalf);
+        TrList sut = [with(firstHalf)];
 
         foreach (Bar bar in secondHalf)
         {
@@ -62,7 +62,7 @@ public class TrBufferListTests : BufferListTestBase, ITestBarBufferList
     {
         List<Bar> subset = Bars.Take(80).ToList();
 
-        TrList sut = new(subset);
+        TrList sut = [with(subset)];
 
         sut.Should().HaveCount(subset.Count);
 

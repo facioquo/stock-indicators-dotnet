@@ -29,8 +29,8 @@ internal enum PairSide
 /// </remarks>
 internal sealed class PairStager
 {
-    private readonly PruningList<TimeValue> _source = new();
-    private readonly PruningList<TimeValue> _other = new();
+    private readonly PruningList<TimeValue> _source = [];
+    private readonly PruningList<TimeValue> _other = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PairStager"/> class.

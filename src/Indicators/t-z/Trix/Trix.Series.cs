@@ -22,7 +22,7 @@ public static partial class Trix
 
         // initialize
         int length = source.Count;
-        List<TrixResult> results = new(length);
+        List<TrixResult> results = [with(length)];
 
         double k = 2d / (lookbackPeriods + 1);
         double lastEma1 = double.NaN;

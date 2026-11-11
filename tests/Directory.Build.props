@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
+    <!-- Use the latest C# language version on every target framework, as the library does -->
+    <LangVersion>latest</LangVersion>
+
     <!-- Enable .NET analyzers during build for test projects so CLI shows same diagnostics as IDE -->
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
 

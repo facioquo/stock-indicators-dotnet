@@ -22,7 +22,7 @@ public static partial class Tema
 
         // initialize
         int length = source.Count;
-        List<TemaResult> results = new(length);
+        List<TemaResult> results = [with(length)];
 
         double k = 2d / (lookbackPeriods + 1);
         double lastEma1 = double.NaN;

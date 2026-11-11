@@ -7,8 +7,8 @@ namespace FacioQuo.Stock.Indicators;
 /// through the <see cref="Listings"/> property. This class is static and cannot be instantiated.</remarks>
 public static partial class Catalog
 {
-    private static readonly List<IndicatorListing> _listings = new();
-    private static readonly object _lock = new();
+    private static readonly List<IndicatorListing> _listings = [];
+    private static readonly Lock _lock = new();
     private static bool _initialized;
 
     /// <summary>

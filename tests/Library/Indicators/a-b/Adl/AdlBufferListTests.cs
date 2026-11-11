@@ -32,7 +32,7 @@ public class AdlBufferListTests : BufferListTestBase, ITestBarBufferList
     [TestMethod]
     public void BarsCtor_OnInstantiation_IncrementsResults()
     {
-        AdlList sut = new(Bars);
+        AdlList sut = [with(Bars)];
 
         sut.Should().HaveCount(Bars.Count);
         sut.IsExactly(series);
@@ -46,7 +46,7 @@ public class AdlBufferListTests : BufferListTestBase, ITestBarBufferList
         List<Bar> firstHalf = Bars.Take(splitPoint).ToList();
         List<Bar> secondHalf = Bars.Skip(splitPoint).ToList();
 
-        AdlList sut = new(firstHalf);
+        AdlList sut = [with(firstHalf)];
 
         foreach (Bar bar in secondHalf)
         {
@@ -63,7 +63,7 @@ public class AdlBufferListTests : BufferListTestBase, ITestBarBufferList
         List<Bar> subset = Bars.Take(80).ToList();
         IReadOnlyList<AdlResult> expected = subset.ToAdl();
 
-        AdlList sut = new(subset);
+        AdlList sut = [with(subset)];
 
         sut.Should().HaveCount(subset.Count);
         sut.IsExactly(expected);

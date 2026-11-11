@@ -137,7 +137,7 @@ internal static class Program
         int failureCount = 0;
         int skippedCount = 0;
         List<string> failures = [];
-        object lockObj = new();
+        Lock lockObj = new();
 
         Parallel.ForEach(seriesIndicators, listing => {
             try

@@ -22,12 +22,12 @@ CI builds `src/Indicators.csproj` and `tests/Library/Tests.Indicators.csproj` wi
 Run the fixers:
 
 ```bash
-dotnet tool run roslynator fix --properties TargetFramework=net11.0 --severity-level hidden --verbosity normal
+dotnet tool run roslynator fix --msbuild-path "$(dirname "$(readlink -f "$(command -v dotnet)")")/sdk/$(dotnet --version)" --properties TargetFramework=net11.0 --severity-level hidden --ignore-compiler-errors --verbosity normal
 dotnet format --severity info --no-restore
 echo y | npx markdownlint-cli2 --fix
 ```
 
-VS Code task: `Lint: All (fix)` (it builds first). The Roslynator CLI comes from `dotnet-tools.json`; run `dotnet tool restore` first if `roslynator` is not found.
+VS Code task: `Lint: All (fix)` (it builds first). The Roslynator CLI comes from `dotnet-tools.json`; run `dotnet tool restore` first if `roslynator` is not found. Roslynator CLI 1.0.1 needs `--msbuild-path` to find the .NET 11 SDK, and its compiler predates C# 15, so it skips compiler diagnostics; the build reports those.
 
 ### Step 3: Build
 
@@ -54,7 +54,7 @@ When a public API or indicator behavior changes:
 Run the read-only checks CI runs, and confirm each exits clean:
 
 ```bash
-dotnet tool run roslynator analyze --properties TargetFramework=net11.0 --severity-level hidden --verbosity normal
+dotnet tool run roslynator analyze --msbuild-path "$(dirname "$(readlink -f "$(command -v dotnet)")")/sdk/$(dotnet --version)" --properties TargetFramework=net11.0 --severity-level hidden --ignore-compiler-diagnostics --verbosity normal
 dotnet format --verify-no-changes --severity info --no-restore
 echo y | npx markdownlint-cli2
 ```

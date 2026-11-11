@@ -33,7 +33,7 @@ public static partial class Bars
         ArgumentNullException.ThrowIfNull(bars);
 
         int length = bars.Count;
-        List<BarD> result = new(length);
+        List<BarD> result = [with(length)];
 
         for (int i = 0; i < length; i++)
         {

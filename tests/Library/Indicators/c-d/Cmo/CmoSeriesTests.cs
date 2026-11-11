@@ -123,7 +123,7 @@ public class CmoSeriesTests : StaticSeriesTestBase
         // entire post-warmup window since sH + sL == 0 (no movement,
         // so neither gains nor losses accumulate).
         DateTime t0 = new(2025, 1, 1);
-        List<Bar> flat = new(30);
+        List<Bar> flat = [with(30)];
         for (int i = 0; i < 30; i++)
         {
             flat.Add(new Bar(
@@ -157,7 +157,7 @@ public class CmoSeriesTests : StaticSeriesTestBase
         // (sH grows, sL stays 0). Validates that an in-window zero-change
         // tick is treated as a non-issue rather than producing NaN or null.
         DateTime t0 = new(2025, 1, 1);
-        List<Bar> series = new(34);
+        List<Bar> series = [with(34)];
         for (int i = 0; i < 20; i++)
         {
             series.Add(new Bar(

@@ -96,7 +96,7 @@ public class Stackoverflow : TestBase
         BarHub barHub = new();
 
         // setup: subscribe a large chain depth
-        List<(string label, IReadOnlyList<ISeries> sut, bool irregular)> subscribers = new(chainDepth + 2);
+        List<(string label, IReadOnlyList<ISeries> sut, bool irregular)> subscribers = [with(chainDepth + 2)];
 
         SmaHub init = barHub.ToSmaHub(1);
         SmaHub sma = init.ToSmaHub(2);

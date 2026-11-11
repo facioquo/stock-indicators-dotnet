@@ -23,7 +23,7 @@ public static partial class ChaikinOsc
 
         // initialize
         int length = bars.Count;
-        List<ChaikinOscResult> results = new(length);
+        List<ChaikinOscResult> results = [with(length)];
 
         // money flow
         IReadOnlyList<AdlResult> adlResults = bars.ToAdl();

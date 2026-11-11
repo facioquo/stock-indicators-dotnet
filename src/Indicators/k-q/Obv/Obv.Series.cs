@@ -26,7 +26,7 @@ public static partial class Obv
     {
         // initialize
         int length = bars.Count;
-        List<ObvResult> results = new(length);
+        List<ObvResult> results = [with(length)];
 
         double prevClose = double.NaN;
 

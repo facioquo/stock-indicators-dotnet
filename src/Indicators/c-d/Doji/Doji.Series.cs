@@ -27,7 +27,7 @@ public static partial class Doji
 
         // initialize
         int length = bars.Count;
-        List<CandleResult> results = new(length);
+        List<CandleResult> results = [with(length)];
 
         maxPriceChangePercent /= 100;
 

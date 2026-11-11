@@ -11,7 +11,7 @@ public class DojiBufferListTests : BufferListTestBase, ITestBarBufferList
     [TestMethod]
     public void AddBar_IncrementsResults()
     {
-        DojiList sut = new(maxPriceChangePercent);
+        DojiList sut = [with(maxPriceChangePercent)];
 
         foreach (Bar bar in Bars)
         {

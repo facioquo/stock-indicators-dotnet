@@ -197,7 +197,7 @@ public class PairBufferListPairingTests : TestBase
     [TestMethod]
     public void PairedAdd_OutOfOrderOther_LeavesListUnchanged()
     {
-        CorrelationList list = new(LookbackPeriods);
+        CorrelationList list = [with(LookbackPeriods)];
         list.Add(Source[0], Other[0]);
         list.Add(Source[1], Other[1]);
 

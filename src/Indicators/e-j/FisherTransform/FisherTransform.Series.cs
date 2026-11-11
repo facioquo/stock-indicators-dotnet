@@ -29,7 +29,7 @@ public static partial class FisherTransform
         int length = values.Count;
         double[] pr = new double[length]; // median price
         double[] xv = new double[length]; // price transform "value"
-        List<FisherTransformResult> results = new(length);
+        List<FisherTransformResult> results = [with(length)];
 
         // roll through source values
         for (int i = 0; i < length; i++)

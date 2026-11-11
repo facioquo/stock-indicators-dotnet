@@ -50,12 +50,14 @@ jobs:
 
       - name: Run Roslynator analysis
         # note: this is faster than format check
-        # Roslynator CLI 1.0.1 does not find the .NET 11 SDK on its own
+        # Roslynator CLI 1.0.1 does not find the .NET 11 SDK on its own, and its
+        # compiler predates C# 15; the build step reports compiler errors
         run: >
           dotnet tool run roslynator analyze src/Indicators.csproj
           --msbuild-path "$DOTNET_ROOT/sdk/$(dotnet --version)"
           --properties TargetFramework=net11.0
           --severity-level hidden
+          --ignore-compiler-diagnostics
           --verbosity normal
 
       - name: Lint markdown
@@ -195,12 +197,14 @@ jobs:
           --property:ContinuousIntegrationBuild=true
 
       - name: Run Roslynator analysis
-        # Roslynator CLI 1.0.1 does not find the .NET 11 SDK on its own
+        # Roslynator CLI 1.0.1 does not find the .NET 11 SDK on its own, and its
+        # compiler predates C# 15; the build step reports compiler errors
         run: >
           dotnet tool run roslynator analyze
           --msbuild-path "$DOTNET_ROOT/sdk/$(dotnet --version)"
           --properties TargetFramework=net11.0
           --severity-level hidden
+          --ignore-compiler-diagnostics
           --verbosity normal
 
       - name: Check .NET code formatting

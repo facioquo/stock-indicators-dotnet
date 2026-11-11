@@ -43,7 +43,7 @@ public static partial class Alligator
 
         // initialize
         int length = values.Count;
-        List<AlligatorResult> results = new(length);
+        List<AlligatorResult> results = [with(length)];
 
         // roll through source values
         for (int i = 0; i < length; i++)

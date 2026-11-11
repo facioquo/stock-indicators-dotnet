@@ -11,7 +11,7 @@ public class DonchianBufferListTests : BufferListTestBase, ITestBarBufferList
     [TestMethod]
     public void AddBar_IncrementsResults()
     {
-        DonchianList sut = new(lookbackPeriods);
+        DonchianList sut = [with(lookbackPeriods)];
 
         foreach (Bar bar in Bars)
         {

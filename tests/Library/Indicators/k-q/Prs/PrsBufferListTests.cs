@@ -30,7 +30,7 @@ public class PrsBufferListTests : TestBase
     [TestMethod]
     public void Interleaved_MatchesSeriesExactly()
     {
-        PrsList list = new(LookbackPeriods);
+        PrsList list = [with(LookbackPeriods)];
 
         for (int i = 0; i < Eval.Count; i++)
         {

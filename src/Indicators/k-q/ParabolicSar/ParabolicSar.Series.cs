@@ -68,7 +68,7 @@ public static partial class ParabolicSar
 
         // initialize
         int length = bars.Count;
-        List<ParabolicSarResult> results = new(length);
+        List<ParabolicSarResult> results = [with(length)];
 
         if (length == 0)
         {

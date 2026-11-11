@@ -163,7 +163,7 @@ public class StcBufferListTests : BufferListTestBase, ITestChainBufferList
     {
         // Clear must reset the warmup index and the MACD and raw-K windows
         IReadOnlyList<StcResult> expected = Bars.ToStc(3, 5, 10);
-        StcList sut = new(3, 5, 10);
+        StcList sut = [with(3, 5, 10)];
 
         sut.Add(reusables.Take(80).ToList());
         sut.Clear();

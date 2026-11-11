@@ -8,7 +8,6 @@
     <AssemblyName>Test.DataGenerator</AssemblyName>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <LangVersion>latest</LangVersion>
 
     <!-- MSTEST0001 is for test assemblies; this isn't a test project -->
     <NoWarn>$(NoWarn);MSTEST0001</NoWarn>

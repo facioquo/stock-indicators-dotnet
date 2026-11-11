@@ -124,7 +124,7 @@ public static partial class Pivots
         // TODO: this may need to be re-writes (with) for streaming
         // or even here, since it still may be better than 2 full passes
 
-        List<PivotsResult> results = new(length);
+        List<PivotsResult> results = [with(length)];
 
         for (int i = 0; i < length; i++)
         {

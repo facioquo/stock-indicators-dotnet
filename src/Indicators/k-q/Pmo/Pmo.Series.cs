@@ -26,7 +26,7 @@ public static partial class Pmo
 
         // initialize
         int length = source.Count;
-        List<PmoResult> results = new(length);
+        List<PmoResult> results = [with(length)];
         double smoothingConstant1 = 2d / smoothPeriods;
         double smoothingConstant2 = 2d / timePeriods;
         double smoothingConstant3 = 2d / (signalPeriods + 1);

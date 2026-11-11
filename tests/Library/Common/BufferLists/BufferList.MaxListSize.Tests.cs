@@ -64,8 +64,8 @@ public class BufferListMaxListSize : TestBase
         object list = ListingExecutor.Execute<object>(Bars, listing, SeriesArgs(listing));
         Type type = list.GetType();
 
-        type.GetMethod("Clear", Type.EmptyTypes)!.Invoke(list, null);
-        type.GetProperty("MaxListSize")!.SetValue(list, maxListSize);
+        type.GetMethod("Clear", Type.EmptyTypes).Invoke(list, null);
+        type.GetProperty("MaxListSize").SetValue(list, maxListSize);
 
         MethodInfo addBars = FindAdd(type, typeof(IReadOnlyList<IBar>));
         MethodInfo addChain = FindAdd(type, typeof(IReadOnlyList<IReusable>));
@@ -84,7 +84,7 @@ public class BufferListMaxListSize : TestBase
         }
         else
         {
-            addChain!.Invoke(list, [Bars.Cast<IReusable>().ToList()]);
+            addChain.Invoke(list, [Bars.Cast<IReusable>().ToList()]);
         }
 
         return [.. ((IEnumerable)list).Cast<object>()];
@@ -95,7 +95,7 @@ public class BufferListMaxListSize : TestBase
 
     private static Dictionary<string, object> SeriesArgs(IndicatorListing listing)
     {
-        Dictionary<string, object> args = new(StringComparer.Ordinal);
+        Dictionary<string, object> args = [with(StringComparer.Ordinal)];
 
         foreach (IndicatorParam param in (listing.Parameters ?? [])
             .Where(static p => p.DataType == IndicatorParam.SeriesDataType))

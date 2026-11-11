@@ -27,7 +27,7 @@ public static partial class Mama
 
         // initialize
         int length = values.Count;
-        List<MamaResult> results = new(length);
+        List<MamaResult> results = [with(length)];
 
         double prevMama = double.NaN;
         double prevFama = double.NaN;

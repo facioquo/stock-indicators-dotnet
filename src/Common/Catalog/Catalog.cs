@@ -338,7 +338,7 @@ public static partial class Catalog
             return parameters;
         }
 
-        Dictionary<string, object> converted = new();
+        Dictionary<string, object> converted = [];
         foreach (KeyValuePair<string, object> kvp in parameters)
         {
             object? value = kvp.Value is JsonElement jsonElement

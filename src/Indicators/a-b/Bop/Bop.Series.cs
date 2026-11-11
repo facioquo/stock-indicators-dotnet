@@ -33,7 +33,7 @@ public static partial class Bop
 
         // initialize
         int length = bars.Count;
-        List<BopResult> results = new(length);
+        List<BopResult> results = [with(length)];
 
         double[] raw = bars
             .Select(static x => x.High - x.Low != 0 ?

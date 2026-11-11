@@ -62,7 +62,7 @@ public class CatalogParameterRangeTests : TestBase
     public void NumericBounds_MatchArgumentValidation()
     {
         List<string> failures = [];
-        HashSet<string> crossSeen = new(StringComparer.Ordinal);
+        HashSet<string> crossSeen = [with(StringComparer.Ordinal)];
         HashSet<Style> stylesProbed = [];
 
         foreach (IndicatorListing listing in Catalog.Get())

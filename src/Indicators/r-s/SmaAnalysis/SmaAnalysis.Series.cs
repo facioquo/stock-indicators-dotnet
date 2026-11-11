@@ -21,7 +21,7 @@ public static partial class SmaAnalysis
 
         // initialize
         int length = source.Count;
-        List<SmaAnalysisResult> results = new(length);
+        List<SmaAnalysisResult> results = [with(length)];
         Queue<double> buffer = new(lookbackPeriods);
 
         // roll through source values
