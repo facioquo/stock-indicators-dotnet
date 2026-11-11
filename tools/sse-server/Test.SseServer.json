@@ -1,5 +1,5 @@
 {
-  "openapi": "3.1.1",
+  "openapi": "3.2.0",
   "info": {
     "title": "SSE Bar Server",
     "description": "Server-Sent Events (SSE) endpoint for streaming bar data with configurable delivery rate and time intervals.",

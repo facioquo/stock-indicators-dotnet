@@ -32,7 +32,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: "10.x"
+          dotnet-version: "11.x"
           dotnet-quality: "ga"
           cache: true
           cache-dependency-path: "**/packages.lock.json"
@@ -50,9 +50,11 @@ jobs:
 
       - name: Run Roslynator analysis
         # note: this is faster than format check
+        # Roslynator CLI 1.0.1 does not find the .NET 11 SDK on its own
         run: >
           dotnet tool run roslynator analyze src/Indicators.csproj
-          --properties TargetFramework=net10.0
+          --msbuild-path "$DOTNET_ROOT/sdk/$(dotnet --version)"
+          --properties TargetFramework=net11.0
           --severity-level hidden
           --verbosity normal
 
@@ -86,7 +88,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: "10.x"
+          dotnet-version: "11.x"
           dotnet-quality: "ga"
           cache: true
           cache-dependency-path: "**/packages.lock.json"
@@ -94,7 +96,7 @@ jobs:
       - name: Test indicators
         run: >
           dotnet test tests/Library/Tests.Indicators.csproj
-          --framework net10.0
+          --framework net11.0
           --configuration Release
           --settings tests/tests.unit.runsettings
           --timeout 10m
@@ -144,7 +146,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: "10.x"
+          dotnet-version: "11.x"
           dotnet-quality: "ga"
 
       - name: Install NativeAOT prerequisites
@@ -177,7 +179,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: "10.x"
+          dotnet-version: "11.x"
           dotnet-quality: "ga"
           cache: true
           cache-dependency-path: "**/packages.lock.json"
@@ -193,9 +195,11 @@ jobs:
           --property:ContinuousIntegrationBuild=true
 
       - name: Run Roslynator analysis
+        # Roslynator CLI 1.0.1 does not find the .NET 11 SDK on its own
         run: >
           dotnet tool run roslynator analyze
-          --properties TargetFramework=net10.0
+          --msbuild-path "$DOTNET_ROOT/sdk/$(dotnet --version)"
+          --properties TargetFramework=net11.0
           --severity-level hidden
           --verbosity normal
 
@@ -220,7 +224,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: "10.x"
+          dotnet-version: "11.x"
           dotnet-quality: "ga"
           cache: true
           cache-dependency-path: "**/packages.lock.json"
@@ -228,7 +232,7 @@ jobs:
       - name: Test regression baselines
         run: >
           dotnet test tests/Library/Tests.Indicators.csproj
-          --framework net10.0
+          --framework net11.0
           --configuration Release
           --settings tests/tests.regression.runsettings
           --timeout 15m

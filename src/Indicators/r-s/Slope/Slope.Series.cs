@@ -110,7 +110,7 @@ public static partial class Slope
             SlopeResult d = results[p];
 
             results[p] = d with {
-                Line = (decimal?)((last.Slope * (p + 1)) + last.Intercept).NaN2Null()
+                Line = DeMath.ToDecimal(((last.Slope * (p + 1)) + last.Intercept).NaN2Null())
             };
         }
 

@@ -8,7 +8,7 @@ description: Paste one prompt into a coding agent and watch it run Stock Indicat
 The first run needs:
 
 - **An agent that can run code**, such as Claude Code, Codex, or GitHub Copilot's coding agent. A chat without code execution can describe the library but cannot run it, and will tell you so.
-- **The .NET 10 SDK**, which the reference apps target. A cloud sandbox installs it on its own; on your machine, the agent asks before installing it. The library itself also runs on .NET 8 and 9.
+- **The .NET 10 SDK**, which the reference apps target. A cloud sandbox installs it on its own; on your machine, the agent asks before installing it. The library itself also runs on .NET 8, 9, and 11.
 - **Optional:** a free [Alpaca](https://alpaca.markets/) API key in `ALPACA_KEY` and `ALPACA_SECRET`, for US stocks. Crypto markets need no key.
 
 Paste this prompt into that agent:

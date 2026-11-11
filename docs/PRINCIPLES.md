@@ -6,7 +6,7 @@ Six core principles govern engineering decisions ([Discussion #648](https://gith
 
 ### 1. Mathematical precision (NON‑NEGOTIABLE)
 
-All indicators MUST be mathematically correct, deterministic, and reproducible across net8.0, net9.0, net10.0.
+All indicators MUST be mathematically correct, deterministic, and reproducible across net8.0, net9.0, net10.0, and net11.0.
 
 **Rules:**
 

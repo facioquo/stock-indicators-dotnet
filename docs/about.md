@@ -80,8 +80,9 @@ If you find this library useful, consider:
 
 ### Target frameworks
 
-The library targets actively supported Microsoft .NET platforms:
+The library targets these Microsoft .NET platforms:
 
+- .NET 11.0
 - .NET 10.0
 - .NET 9.0
 - .NET 8.0

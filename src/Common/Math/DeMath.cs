@@ -24,6 +24,21 @@ internal static class DeMath
     private const double HalfPi = Math.PI / 2d;
     private const double Pi = Math.PI;
 
+    private const int MaxDecimalScale = 28;
+
+    private static readonly double[] DoublePowersOf10 =
+    [
+        1E0, 1E1, 1E2, 1E3, 1E4, 1E5, 1E6, 1E7, 1E8, 1E9,
+        1E10, 1E11, 1E12, 1E13, 1E14, 1E15, 1E16, 1E17, 1E18, 1E19,
+        1E20, 1E21, 1E22, 1E23, 1E24, 1E25, 1E26, 1E27, 1E28
+    ];
+
+    private static readonly decimal[] DecimalPowersOf10 =
+    [
+        1m, 1E1m, 1E2m, 1E3m, 1E4m, 1E5m, 1E6m, 1E7m,
+        1E8m, 1E9m, 1E10m, 1E11m, 1E12m, 1E13m, 1E14m
+    ];
+
     private static readonly double[] AtanTable =
     [
         0.78539816339744827900,
@@ -359,6 +374,98 @@ internal static class DeMath
         // Preserve signed-zero for (±0, +0) by returning `y` (will be +0.0 or -0.0)
         return y;
     }
+
+    /// <summary>
+    /// Converts a double to a decimal rounded to 15 significant digits,
+    /// with trailing zeros removed.
+    /// </summary>
+    /// <remarks>
+    /// .NET 11 changed the built-in conversion to keep the exact binary value,
+    /// so <c>(decimal)210.059</c> became <c>210.05899999999999749888957012</c>.
+    /// This ports the earlier runtime algorithm so every target framework
+    /// returns the same decimal results.
+    /// </remarks>
+    /// <param name="value">Input value.</param>
+    /// <returns>Decimal value with at most 15 significant digits.</returns>
+    /// <exception cref="OverflowException">
+    /// <paramref name="value"/> is NaN, infinite, or outside the decimal range.
+    /// </exception>
+    internal static decimal ToDecimal(double value)
+    {
+        int exp = (int)((BitConverter.DoubleToInt64Bits(value) >> 52) & 0x7FF) - 1022;
+
+        // magnitudes below 2^-94 round to zero even at the maximum scale
+        if (exp < -94)
+        {
+            return 0m;
+        }
+
+        if (exp > 96)
+        {
+            throw new OverflowException("Value was either too large or too small for a Decimal.");
+        }
+
+        bool isNegative = value < 0d;
+        double dbl = isNegative ? -value : value;
+
+        // highest power of 10 the value can hold: exp * log10(2), as 16.16 fixed point
+        int power = 14 - ((exp * 19728) >> 16);
+
+        if (power >= 0)
+        {
+            if (power > MaxDecimalScale)
+            {
+                power = MaxDecimalScale;
+            }
+
+            dbl *= DoublePowersOf10[power];
+        }
+        else if (power != -1 || dbl >= 1E15)
+        {
+            dbl /= DoublePowersOf10[-power];
+        }
+        else
+        {
+            power = 0;
+        }
+
+        if (dbl < 1E14 && power < MaxDecimalScale)
+        {
+            dbl *= 10d;
+            power++;
+        }
+
+        ulong mantissa = (ulong)Math.Round(dbl, MidpointRounding.ToEven);
+
+        if (mantissa == 0)
+        {
+            return 0m;
+        }
+
+        if (power < 0)
+        {
+            decimal scaled = mantissa * DecimalPowersOf10[-power];
+            return isNegative ? -scaled : scaled;
+        }
+
+        while (power > 0 && mantissa % 10 == 0)
+        {
+            mantissa /= 10;
+            power--;
+        }
+
+        return new decimal(
+            unchecked((int)(uint)mantissa),
+            unchecked((int)(uint)(mantissa >> 32)),
+            0,
+            isNegative,
+            (byte)power);
+    }
+
+    /// <inheritdoc cref="ToDecimal(double)"/>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static decimal? ToDecimal(double? value)
+        => value.HasValue ? ToDecimal(value.GetValueOrDefault()) : null;
 
     // CORDIC core assumes input is finite and |x| <= 1.
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

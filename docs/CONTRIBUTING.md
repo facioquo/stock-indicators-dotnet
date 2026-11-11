@@ -48,7 +48,7 @@ Use the [Discussions](https://github.com/facioquo/stock-indicators-dotnet/discus
 
 The recommended setup uses VS Code with the dev container (automated) or the **Setup: Dev tools** VS Code task to check for prerequisites.  For manual setup, run these commands once after cloning:
 
-Install the .NET 10 SDK for local development. The library targets .NET 8, 9, and 10, but the test project defaults to .NET 10; the CI matrix also runs the unit tests on other supported .NET framwork versions. You do not need the .NET 8 or 9 SDKs for the normal local test workflow.
+Install the .NET 11 SDK for local development. The library targets .NET 8, 9, 10, and 11, but the test project defaults to .NET 11; the CI matrix also runs the unit tests on .NET 8 and 10. You do not need the older SDKs for the normal local test workflow.
 
 ```bash
 dotnet tool restore   # install .NET CLI tools

@@ -24,7 +24,7 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: "10.x"
+          dotnet-version: "11.x"
           dotnet-quality: "ga"
           cache: true
           cache-dependency-path: "**/packages.lock.json"

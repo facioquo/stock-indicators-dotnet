@@ -1,7 +1,7 @@
 {
   "version": 2,
   "dependencies": {
-    "net10.0": {
+    "net11.0": {
       "Alpaca.Markets": {
         "type": "Direct",
         "requested": "[8.0.1, )",

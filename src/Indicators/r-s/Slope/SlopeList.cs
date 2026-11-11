@@ -207,7 +207,7 @@ public class SlopeList : BufferList<SlopeResult>, IIncrementFromChain, ISlope
             SlopeResult existing = this[p];
 
             int globalIndex = PrunedCount + p;
-            decimal? line = (decimal?)((lastResult.Slope * (globalIndex + 1)) + lastResult.Intercept).NaN2Null();
+            decimal? line = DeMath.ToDecimal(((lastResult.Slope * (globalIndex + 1)) + lastResult.Intercept).NaN2Null());
 
             SlopeResult updated = existing with { Line = line };
             UpdateInternal(p, updated);
