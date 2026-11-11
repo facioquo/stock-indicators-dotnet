@@ -1,6 +1,6 @@
 ---
 name: code-completion
-description: Quality gates for finishing work in this repository — dead-code cleanup, Roslynator and dotnet format fixes, markdownlint, build, unit tests, documentation, and Obsolete migration shims — with the VS Code task behind each gate and the files that define the commands CI runs. Use before reporting any implementation, bug fix, or refactor as done, before committing, and when a CI quick-check, lint, or build step fails.
+description: Quality gates for finishing work in this repository — dead-code cleanup, analyzer and dotnet format fixes, markdownlint, build, unit tests, documentation, and Obsolete migration shims — with the VS Code task behind each gate and the files that define the commands CI runs. Use before reporting any implementation, bug fix, or refactor as done, before committing, and when a CI quick-check, lint, or build step fails.
 ---
 
 # Code completion
@@ -22,12 +22,11 @@ CI builds `src/Indicators.csproj` and `tests/Library/Tests.Indicators.csproj` wi
 Run the fixers:
 
 ```bash
-dotnet tool run roslynator fix --msbuild-path "$(dirname "$(readlink -f "$(command -v dotnet)")")/sdk/$(dotnet --version)" --properties TargetFramework=net11.0 --severity-level hidden --ignore-compiler-errors --verbosity normal
 dotnet format --severity info --no-restore
 echo y | npx markdownlint-cli2 --fix
 ```
 
-VS Code task: `Lint: All (fix)` (it builds first). The Roslynator CLI comes from `dotnet-tools.json`; run `dotnet tool restore` first if `roslynator` is not found. Roslynator CLI 1.0.1 needs `--msbuild-path` to find the .NET 11 SDK, and its compiler predates C# 15, so it skips compiler diagnostics; the build reports those.
+VS Code task: `Lint: All (fix)` (it builds first). `dotnet format` applies the code fixes for every analyzer rule, Roslynator's included: `.editorconfig` raises enabled Roslynator rules to warnings, so the build and `dotnet format` both report them.
 
 ### Step 3: Build
 
@@ -35,7 +34,7 @@ VS Code task: `Lint: All (fix)` (it builds first). The Roslynator CLI comes from
 dotnet build "Stock.Indicators.sln" -v minimal --nologo
 ```
 
-VS Code task: `Build: .NET Solution (incremental)`. Zero warnings and zero errors.
+VS Code task: `Build: .NET Solution (incremental)`. Zero warnings and zero errors; CI builds with `-warnAsError`.
 
 ### Step 4: Run unit tests
 
@@ -54,12 +53,11 @@ When a public API or indicator behavior changes:
 Run the read-only checks CI runs, and confirm each exits clean:
 
 ```bash
-dotnet tool run roslynator analyze --msbuild-path "$(dirname "$(readlink -f "$(command -v dotnet)")")/sdk/$(dotnet --version)" --properties TargetFramework=net11.0 --severity-level hidden --ignore-compiler-diagnostics --verbosity normal
 dotnet format --verify-no-changes --severity info --no-restore
 echo y | npx markdownlint-cli2
 ```
 
-VS Code task: `Verify: Quick checks (build + lint + unit test)` covers build, Roslynator, markdownlint, and unit tests; it does not run `dotnet format --verify-no-changes` (`Lint: .NET format` does). When a `{Name}Hub.cs` or its test changed, also run `bash tools/scripts/audit-streamhub.sh`, which CI runs in the quick check.
+VS Code task: `Verify: Quick checks (build + lint + unit test)` covers build, `dotnet format --verify-no-changes`, markdownlint, and unit tests. When a `{Name}Hub.cs` or its test changed, also run `bash tools/scripts/audit-streamhub.sh`, which CI runs in the quick check.
 
 ## Migration shims
 

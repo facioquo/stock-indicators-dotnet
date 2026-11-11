@@ -55,7 +55,7 @@ dotnet format --severity info --no-restore
 npx markdownlint-cli2 --fix
 ```
 
-The code-completion skill holds the full quality-gate sequence, Roslynator commands, and VS Code task names.
+The code-completion skill holds the full quality-gate sequence, its commands, and VS Code task names.
 
 ## Skills
 

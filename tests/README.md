@@ -36,4 +36,4 @@ Benchmarks live in `tools/performance`, not in this folder. See the [benchmarkin
 
 ## Code analysis
 
-Roslynator and the .NET analyzers run against rules in the root `.editorconfig`. Run them with the `Lint: .NET Roslynator (analyze)` and `Lint: .NET Roslynator (fix)` VS Code tasks; the [code-completion skill](../.agents/skills/code-completion/SKILL.md) lists the equivalent CLI commands.
+Roslynator and the .NET analyzers run in every build against rules in the root `.editorconfig`, which reports enabled Roslynator rules as warnings. Check them with the `Lint: .NET format` VS Code task and fix them with `Lint: .NET format (fix)`; the [code-completion skill](../.agents/skills/code-completion/SKILL.md) lists the equivalent CLI commands.

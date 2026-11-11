@@ -144,6 +144,9 @@ dotnet_diagnostic.IDE0306.severity = none        # Use collection expression for
 
 dotnet_diagnostic.IDE0330.severity = warning     # Prefer 'System.Threading.Lock'
 
+# Roslynator analyzers: report every enabled rule as a build warning, so builds with -warnAsError enforce them
+dotnet_analyzer_diagnostic.category-roslynator.severity = warning
+
 # Roslynator analyzer suppressions
 dotnet_diagnostic.IDE0008.severity = suggestion  # Use explicit type
 dotnet_diagnostic.IDE0010.severity = none        # Add missing cases (can be verbose)
