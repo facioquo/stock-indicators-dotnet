@@ -1,0 +1,47 @@
+name: Submit dependencies
+
+# Sends the NuGet dependency graph to GitHub. It replaces GitHub's automatic
+# dependency submission, which restores with the runner's LTS SDK and cannot
+# restore net11.0 projects.
+
+on:
+  push:
+    branches:
+      - "main"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  submit-nuget:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write # required by the dependency submission API
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: "11.x"
+          dotnet-quality: "ga"
+
+      - name: Restore projects
+        run: |
+          dotnet restore Stock.Indicators.sln
+          dotnet restore docs/examples/Examples.sln
+
+      - name: Submit dependencies
+        uses: actions/component-detection-dependency-submission-action@98beaea5a1227f3db476e4c9ca959a0cacd7ac4f
+        with:
+          detectorsCategories: NuGet
