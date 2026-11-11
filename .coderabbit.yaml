@@ -75,7 +75,7 @@ reviews:
 
     - path: "**/*.{csproj,props,targets,sln,slnx}"
       instructions: |
-        Check target-framework and central package consistency, analyzer enforcement, trimming and AOT compatibility, project references, and NuGet packaging metadata. The library must continue to target net10.0, net9.0, and net8.0 with warnings treated as errors in CI.
+        Check target-framework and central package consistency, analyzer enforcement, trimming and AOT compatibility, project references, and NuGet packaging metadata. The library must continue to target net11.0, net10.0, net9.0, and net8.0 with warnings treated as errors in CI.
 
   tools:
     actionlint:

@@ -448,10 +448,15 @@ internal static class DeMath
             return isNegative ? -scaled : scaled;
         }
 
-        while (power > 0 && mantissa % 10 == 0)
+        // the runtime strips at most 14 trailing zeros, so a mantissa
+        // that rounds up to 1E15 keeps one zero, as it did before .NET 11
+        int maxStrip = Math.Min(power, 14);
+
+        while (maxStrip > 0 && mantissa % 10 == 0)
         {
             mantissa /= 10;
             power--;
+            maxStrip--;
         }
 
         return new decimal(

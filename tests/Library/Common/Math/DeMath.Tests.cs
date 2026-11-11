@@ -100,6 +100,25 @@ public class DeMaths : TestBase
             actual.Should().Be(expected);
             actual.Scale.Should().Be(expected.Scale);
         }
+
+        // carries to 1E15, 15-digit midpoints, exponent boundaries, and the decimal maximum
+        double[] edges =
+        [
+            9.999999999999999E-14, 0.09999999999999999, 0.9999999999999999,
+            9.999999999999999E-28, 99999999999999.99, 999999999999999.9,
+            0.1234567890123455, 1.000000000000005, 2.5, 1234567890123.455,
+            1E-28, 5E-29, 1.0000000000000001E-28, 7.9E28, 7.92E28,
+            -9.999999999999999E-14, -7.9E28, double.Epsilon
+        ];
+
+        foreach (double value in edges)
+        {
+            decimal expected = (decimal)value;
+            decimal actual = DeMath.ToDecimal(value);
+
+            actual.Should().Be(expected, $"converting {value:R}");
+            actual.Scale.Should().Be(expected.Scale, $"scale of {value:R}");
+        }
     }
 #endif
 }
