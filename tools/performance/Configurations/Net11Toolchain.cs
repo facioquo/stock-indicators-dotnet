@@ -10,7 +10,7 @@ namespace Performance;
 /// <summary>
 /// Builds and runs benchmarks as <c>net11.0</c> child processes. BenchmarkDotNet 0.15.8
 /// has no .NET 11 runtime moniker, so its SDK validator throws on a .NET 11 host; this
-/// toolchain reuses the standard project toolchain and skips that one validator.
+/// toolchain reuses the standard project toolchain and skips all of its validation.
 /// Remove it once a stable BenchmarkDotNet release recognizes .NET 11.
 /// </summary>
 internal sealed class Net11Toolchain : IToolchain
