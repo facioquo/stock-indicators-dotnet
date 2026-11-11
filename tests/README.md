@@ -11,7 +11,7 @@ The projects run on [Microsoft.Testing.Platform](https://learn.microsoft.com/dot
 | `PublicApi/Tests.PublicApi.csproj` | End-to-end tests of the public API surface | `dotnet test tests/PublicApi/Tests.PublicApi.csproj` | `Test: Integration` |
 | `Integration/Tests.Integration.csproj` | Tests against live external services, including the SSE thread-safety suite | `dotnet test tests/Integration/Tests.Integration.csproj` | `Test: Integration` |
 
-The library test project targets .NET 11 by default, so the local unit and regression commands run on .NET 11. The CI matrix also runs them on .NET 10 and .NET 8.
+The library test project targets .NET 11 by default, so the local unit and regression commands run on .NET 11. The CI matrix also runs them on .NET 10.
 
 `Test: All (library)` runs unit, regression, and integration tests in sequence. In an IDE, [select a `.runsettings` file](https://learn.microsoft.com/en-us/visualstudio/test/configure-unit-tests-by-using-a-dot-runsettings-file#manually-select-the-run-settings-file) such as `tests/tests.unit.runsettings` to keep test runs to unit tests.
 

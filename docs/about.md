@@ -85,7 +85,11 @@ The library targets these Microsoft .NET platforms:
 - .NET 11.0
 - .NET 10.0
 
-Version 3.1 dropped .NET 8.0 and .NET 9.0, which reached end of support on November 10, 2026. Apps on those versions can stay on the last 3.0.x release.
+Version 3.1 dropped .NET 8.0 and .NET 9.0, which reached end of support on November 10, 2026. A .NET 8 or 9 project that references a floating or ranged version resolves 3.1 and fails restore with `NU1202`, so pin it to the 3.0 line instead:
+
+```xml
+<PackageReference Include="FacioQuo.Stock.Indicators" Version="[3.0.0,3.1.0)" />
+```
 
 The compiled library is [Common Language Specification (CLS) compliant](https://docs.microsoft.com/en-us/dotnet/standard/common-type-system) and can be used in other .NET languages.
 
