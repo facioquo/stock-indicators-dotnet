@@ -44,7 +44,6 @@
         "contentHash": "lVqovhCt3HlZe7ONG5ydaj6BYwYI004gldVfMMkJl/lR5ueeCtWNpW4nejOX75sPmzm8vXCxB69GqwHaYCnyUQ=="
       }
     },
-    "net10.0/linux-x64": {},
     "net11.0": {
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
@@ -88,7 +87,6 @@
         "contentHash": "lVqovhCt3HlZe7ONG5ydaj6BYwYI004gldVfMMkJl/lR5ueeCtWNpW4nejOX75sPmzm8vXCxB69GqwHaYCnyUQ=="
       }
     },
-    "net11.0/linux-x64": {},
     "net8.0": {
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
@@ -132,7 +130,6 @@
         "contentHash": "lVqovhCt3HlZe7ONG5ydaj6BYwYI004gldVfMMkJl/lR5ueeCtWNpW4nejOX75sPmzm8vXCxB69GqwHaYCnyUQ=="
       }
     },
-    "net8.0/linux-x64": {},
     "net9.0": {
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
@@ -175,7 +172,6 @@
         "resolved": "10.0.14",
         "contentHash": "lVqovhCt3HlZe7ONG5ydaj6BYwYI004gldVfMMkJl/lR5ueeCtWNpW4nejOX75sPmzm8vXCxB69GqwHaYCnyUQ=="
       }
-    },
-    "net9.0/linux-x64": {}
+    }
   }
 }
