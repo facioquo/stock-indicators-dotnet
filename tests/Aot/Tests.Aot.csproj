@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- Not in Stock.Indicators.sln, so the gate build, Roslynator, and dotnet format skip it;
+  <!-- Not in Stock.Indicators.sln, so the gate build and dotnet format skip it;
        only the native-aot CI job builds it -->
 
   <PropertyGroup>

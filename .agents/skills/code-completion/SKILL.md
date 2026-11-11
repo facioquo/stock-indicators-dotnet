@@ -26,15 +26,15 @@ dotnet format --severity info --no-restore
 echo y | npx markdownlint-cli2 --fix
 ```
 
-VS Code task: `Lint: All (fix)` (it builds first). `dotnet format` applies the code fixes for every analyzer rule, Roslynator's included: `.editorconfig` raises enabled Roslynator rules to warnings, so the build and `dotnet format` both report them.
+VS Code task: `Lint: All (fix)` (it builds first). `dotnet format` applies the available code fixes for analyzer rules, Roslynator's included. `.editorconfig` raises enabled Roslynator rules to warnings, so a finding with no code fix is left for you; the Step 3 build reports it.
 
 ### Step 3: Build
 
 ```bash
-dotnet build "Stock.Indicators.sln" -v minimal --nologo
+dotnet build "Stock.Indicators.sln" -v minimal --nologo -warnAsError
 ```
 
-VS Code task: `Build: .NET Solution (incremental)`. Zero warnings and zero errors; CI builds with `-warnAsError`.
+VS Code task: `Build: .NET Solution (incremental)`. Zero warnings and zero errors, as CI requires.
 
 ### Step 4: Run unit tests
 
