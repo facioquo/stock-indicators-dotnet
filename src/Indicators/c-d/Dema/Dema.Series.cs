@@ -23,7 +23,7 @@ public static partial class Dema
 
         // initialize
         int length = source.Count;
-        List<DemaResult> results = new(length);
+        List<DemaResult> results = [with(length)];
 
         double k = 2d / (lookbackPeriods + 1);
         double lastEma1 = double.NaN;

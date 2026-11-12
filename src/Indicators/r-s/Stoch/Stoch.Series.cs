@@ -118,7 +118,7 @@ public static partial class Stoch
 
         // initialize
         int length = bars.Count;
-        List<StochResult> results = new(length);
+        List<StochResult> results = [with(length)];
 
         double[] o = new double[length]; // %K oscillator (initial)
         double[] k = new double[length]; // %K oscillator (final)

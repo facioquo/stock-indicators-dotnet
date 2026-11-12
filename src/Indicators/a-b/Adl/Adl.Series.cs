@@ -17,7 +17,7 @@ public static partial class Adl
 
         // initialize
         int length = source.Count;
-        List<AdlResult> results = new(length);
+        List<AdlResult> results = [with(length)];
 
         // roll through source values
         for (int i = 0; i < length; i++)

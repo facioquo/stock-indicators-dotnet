@@ -42,7 +42,7 @@ public class PivotsList : BufferList<PivotsResult>, IIncrementFromBar
         _endType = endType;
 
         // Buffer needs to hold enough bars to compute fractals and track trends
-        _barBuffer = new List<BarBuffer>(leftSpan + rightSpan + maxTrendPeriods + 1);
+        _barBuffer = [with(leftSpan + rightSpan + maxTrendPeriods + 1)];
 
         Name = $"PIVOTS({leftSpan}, {rightSpan}, {maxTrendPeriods}, {endType})";
     }

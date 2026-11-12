@@ -27,7 +27,7 @@ public static partial class Macd
 
         // initialize
         int length = source.Count;
-        List<MacdResult> results = new(length);
+        List<MacdResult> results = [with(length)];
 
         double lastEmaFast = double.NaN;
         double lastEmaSlow = double.NaN;

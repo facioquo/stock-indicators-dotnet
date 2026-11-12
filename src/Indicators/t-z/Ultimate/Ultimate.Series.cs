@@ -42,7 +42,7 @@ public static partial class Ultimate
 
         // initialize
         int length = bars.Count;
-        List<UltimateResult> results = new(length);
+        List<UltimateResult> results = [with(length)];
         double[] bp = new double[length]; // buying pressure
         double[] tr = new double[length]; // true range
 

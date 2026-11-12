@@ -16,7 +16,7 @@ public class StdDevBufferListTests : BufferListTestBase, ITestChainBufferList
     [TestMethod]
     public void AddDateAndValue_IncrementsResults()
     {
-        StdDevList sut = new(lookbackPeriods);
+        StdDevList sut = [with(lookbackPeriods)];
 
         foreach (IReusable item in reusables)
         {
@@ -30,7 +30,7 @@ public class StdDevBufferListTests : BufferListTestBase, ITestChainBufferList
     [TestMethod]
     public void AddReusableItem_IncrementsResults()
     {
-        StdDevList sut = new(lookbackPeriods);
+        StdDevList sut = [with(lookbackPeriods)];
 
         foreach (IReusable item in reusables)
         {
@@ -53,7 +53,7 @@ public class StdDevBufferListTests : BufferListTestBase, ITestChainBufferList
     [TestMethod]
     public void AddBar_IncrementsResults()
     {
-        StdDevList sut = new(lookbackPeriods);
+        StdDevList sut = [with(lookbackPeriods)];
 
         foreach (Bar bar in Bars)
         {

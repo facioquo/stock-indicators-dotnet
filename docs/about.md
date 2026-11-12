@@ -84,8 +84,6 @@ The library targets these Microsoft .NET platforms:
 
 - .NET 11.0
 - .NET 10.0
-- .NET 9.0
-- .NET 8.0
 
 The compiled library is [Common Language Specification (CLS) compliant](https://docs.microsoft.com/en-us/dotnet/standard/common-type-system) and can be used in other .NET languages.
 

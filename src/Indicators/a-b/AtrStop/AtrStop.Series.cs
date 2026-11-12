@@ -33,7 +33,7 @@ public static partial class AtrStop
 
         // initialize
         int length = bars.Count;
-        List<AtrStopResult> results = new(length);
+        List<AtrStopResult> results = [with(length)];
         List<AtrResult> atrResults = bars.CalcAtr(lookbackPeriods);
 
         // prevailing direction and bands

@@ -4,11 +4,12 @@ This folder holds the library source. Load the matching skill from the root AGEN
 
 ## Technical constraints
 
-- **Targets** — net11.0, net10.0, net9.0, and net8.0 must all build. Indicator unit tests run on net11.0 by default; the CI matrix also runs them on net10.0 and net8.0.
+- **Targets** — net11.0 and net10.0 must both build. Indicator unit tests run on net11.0 by default; the CI matrix also runs them on net10.0.
 - **Complexity** — single-pass O(n) unless mathematically impossible.
 - **Warmup** — the count of null warmup results is deterministic; when it is not obvious from the parameters, expose it as a static `WarmupPeriod(...)` helper in `{Name}.Utilities.cs`, as `Hma` and `StochRsi` do.
 - **Precision** — use `double` for speed; escalate to `decimal` only when rounding affects financial correctness.
 - **Allocation** — the result list plus minimal working buffers only.
+- **Collections** — create them with collection expressions: `[]` when empty, `[with(...)]` to pass a capacity, comparer, or source (`List<SmaResult> results = [with(length)];`). Lock objects are `System.Threading.Lock`.
 - **Thread safety** — Series calculations are stateless; each hub and list isolates its own state.
 - **Compatibility** — removing a public member or changing a default is a breaking, MAJOR-version change. A rename keeps the old name as an `[Obsolete]` shim in `Obsolete/` until the next major version.
 

@@ -7,7 +7,7 @@ public class HubCollectionTests : TestBase
     public void HubCollection_Ctor_Defaults()
     {
         // arrange - empty collection
-        HubCollection emptyHubs = new();
+        HubCollection emptyHubs = [];
 
         // assert
         emptyHubs.Should().NotBeNull();
@@ -61,7 +61,7 @@ public class HubCollectionTests : TestBase
         ];
 
         // act
-        HubCollection hubs = new(hubEnumerable);
+        HubCollection hubs = [with(hubEnumerable)];
 
         // assert - verify hub references are the same (not copied)
         hubs.Should().HaveCount(2);
@@ -83,7 +83,7 @@ public class HubCollectionTests : TestBase
         ];
 
         // act
-        HubCollection hubs = new(hubList);
+        HubCollection hubs = [with(hubList)];
 
         // assert - verify hub references are the same (not copied)
         hubs.Should().HaveCount(2);

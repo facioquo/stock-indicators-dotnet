@@ -23,7 +23,7 @@ public static partial class Epma
 
         // initialize
         int length = source.Count;
-        List<EpmaResult> results = new(length);
+        List<EpmaResult> results = [with(length)];
 
         IReadOnlyList<SlopeResult> slope
             = source.ToSlope(lookbackPeriods);

@@ -80,7 +80,7 @@ public static partial class Ichimoku
 
         // initialize
         int length = bars.Count;
-        List<IchimokuResult> results = new(length);
+        List<IchimokuResult> results = [with(length)];
 
         int senkouStartPeriod = Math.Max(
             2 * senkouOffset,

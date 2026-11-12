@@ -26,7 +26,7 @@ public static partial class RollingPivots
 
         // initialize
         int length = bars.Count;
-        List<RollingPivotsResult> results = new(length);
+        List<RollingPivotsResult> results = [with(length)];
 
         // roll through source values
         for (int i = 0; i < length; i++)

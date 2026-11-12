@@ -344,35 +344,11 @@
       "problemMatcher": "$msCompile"
     },
     {
-      "label": "Lint: .NET Roslynator (analyze)",
-      "detail": "Verify code formatting and style with Roslynator",
-      "type": "shell",
-      "command": "dotnet tool run roslynator analyze --properties TargetFramework=net11.0 --severity-level hidden --verbosity normal",
-      "dependsOn": "Install: .NET tools",
-      "dependsOrder": "sequence",
-      "group": "test",
-      "problemMatcher": "$msCompile",
-      "presentation": {
-        "clear": true,
-        "revealProblems": "onProblem"
-      }
-    },
-    {
-      "label": "Lint: .NET Roslynator (fix)",
-      "detail": "Fix code formatting and style with Roslynator",
-      "type": "shell",
-      "command": "dotnet tool run roslynator fix --properties TargetFramework=net11.0 --severity-level hidden --verbosity normal",
-      "dependsOn": "Install: .NET tools",
-      "dependsOrder": "sequence",
-      "group": "test",
-      "problemMatcher": "$msCompile"
-    },
-    {
       "label": "Lint: .NET code",
-      "detail": "Run Roslynator analysis only (fast for dev loop)",
+      "detail": "Verify .NET code style and analyzer rules (fast for dev loop)",
       "dependsOn": [
         "Build: .NET Solution (incremental)",
-        "Lint: .NET Roslynator (analyze)"
+        "Lint: .NET format"
       ],
       "dependsOrder": "sequence",
       "group": "test",
@@ -380,9 +356,9 @@
     },
     {
       "label": "Lint: .NET code (fix)",
-      "detail": "Auto-fix .NET code issues with Roslynator (fast for dev loop)",
+      "detail": "Auto-fix .NET code style and analyzer issues (fast for dev loop)",
       "dependsOn": [
-        "Lint: .NET Roslynator (fix)"
+        "Lint: .NET format (fix)"
       ],
       "dependsOrder": "sequence",
       "group": "none",
@@ -405,7 +381,7 @@
     },
     {
       "label": "Lint: .NET code & markdown files",
-      "detail": "Run Roslynator analysis and markdown lint (fast for dev loop)",
+      "detail": "Run .NET code and markdown lint (fast for dev loop)",
       "dependsOn": [
         "Build: .NET Solution (incremental)",
         "Lint: Markdown",
@@ -420,7 +396,7 @@
     },
     {
       "label": "Lint: .NET code & markdown files (fix)",
-      "detail": "Auto-fix code and markdown issues with Roslynator (fast for dev loop)",
+      "detail": "Auto-fix .NET code and markdown issues (fast for dev loop)",
       "dependsOn": [
         "Lint: Markdown (fix)",
         "Lint: .NET code (fix)"
@@ -433,11 +409,10 @@
     },
     {
       "label": "Lint: All",
-      "detail": "Run complete linting (Roslynator + dotnet format + markdown)",
+      "detail": "Run complete linting (dotnet format + markdown)",
       "dependsOn": [
         "Build: .NET Solution (incremental)",
         "Lint: Markdown",
-        "Lint: .NET Roslynator (analyze)",
         "Lint: .NET format"
       ],
       "dependsOrder": "sequence",
@@ -453,7 +428,6 @@
       "dependsOn": [
         "Build: .NET Solution (incremental)",
         "Lint: Markdown (fix)",
-        "Lint: .NET Roslynator (fix)",
         "Lint: .NET format (fix)"
       ],
       "dependsOrder": "sequence",

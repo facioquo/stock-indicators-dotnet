@@ -21,7 +21,7 @@ public class WilliamsRBufferListTests : BufferListTestBase, ITestBarBufferList
     [TestMethod]
     public void AddBar_IncrementsResults()
     {
-        WilliamsRList sut = new(lookbackPeriods);
+        WilliamsRList sut = [with(lookbackPeriods)];
 
         foreach (Bar bar in Bars)
         {
@@ -85,7 +85,7 @@ public class WilliamsRBufferListTests : BufferListTestBase, ITestBarBufferList
     public void IncrementalConsistency_VersusBatch_MatchesExactly()
     {
         // Test that incremental addition produces same sut as batch
-        WilliamsRList incremental = new(lookbackPeriods);
+        WilliamsRList incremental = [with(lookbackPeriods)];
         WilliamsRList batch = new(lookbackPeriods) { Bars };
 
         foreach (Bar bar in Bars)
@@ -109,7 +109,7 @@ public class WilliamsRBufferListTests : BufferListTestBase, ITestBarBufferList
     public void BoundaryConditions_WithMinimalData_ReturnsExpectedResult()
     {
         // Test with minimal data
-        WilliamsRList sut = new(5);
+        WilliamsRList sut = [with(5)];
         List<Bar> minimal = Bars.Take(5).ToList();
 
         foreach (Bar bar in minimal)

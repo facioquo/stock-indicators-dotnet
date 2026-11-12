@@ -114,7 +114,7 @@ public class ListingExecutionBuilder
         }
 
         // an omission reverses an earlier value, so the last call wins
-        Dictionary<string, object> newOverrides = new(_parameterOverrides);
+        Dictionary<string, object> newOverrides = [with(_parameterOverrides)];
         newOverrides.Remove(parameterName);
 
         HashSet<string> newOmitted = new(_omittedParameters, StringComparer.Ordinal) {
@@ -138,7 +138,7 @@ public class ListingExecutionBuilder
     {
         ArgumentNullException.ThrowIfNull(parameters);
 
-        Dictionary<string, object> newOverrides = new(_parameterOverrides);
+        Dictionary<string, object> newOverrides = [with(_parameterOverrides)];
         HashSet<string> newOmitted = new(_omittedParameters, StringComparer.Ordinal);
 
         foreach (KeyValuePair<string, object> kvp in parameters)

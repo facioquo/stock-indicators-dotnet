@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
+    <!-- Use the latest C# language version on every target framework, as the library does -->
+    <LangVersion>latest</LangVersion>
+
     <!-- Additional warnings suppression specific to tool projects -->
     <!-- CA1303: Do not pass literals as localized parameters (tests use hardcoded strings) -->
     <!-- CA1707: Identifiers should not contain underscores (allow underscores in test method names, see tests/AGENTS.md) -->

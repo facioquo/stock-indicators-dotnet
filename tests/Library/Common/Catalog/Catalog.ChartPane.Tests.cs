@@ -154,9 +154,9 @@ public class CatalogChartPaneTests : TestBase
         builder = builder.FromSource((IEnumerable<IBar>)Bars);
 
         return (IList)typeof(ListingExecutionBuilder)
-            .GetMethod(nameof(ListingExecutionBuilder.Execute))!
+            .GetMethod(nameof(ListingExecutionBuilder.Execute))
             .MakeGenericMethod(resultType)
-            .Invoke(builder, null)!;
+            .Invoke(builder, null);
     }
 
     private static bool IsNumeric(Type type)

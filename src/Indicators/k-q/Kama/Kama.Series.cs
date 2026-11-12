@@ -27,7 +27,7 @@ public static partial class Kama
 
         // initialize
         int length = source.Count;
-        List<KamaResult> results = new(length);
+        List<KamaResult> results = [with(length)];
 
         double scFast = 2d / (fastPeriods + 1);
         double scSlow = 2d / (slowPeriods + 1);

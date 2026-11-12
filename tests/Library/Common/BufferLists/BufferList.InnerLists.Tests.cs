@@ -120,7 +120,7 @@ public class BufferListInnerListsTests : TestBase
                     f => f.Name,
                     f => f.Value is System.Collections.ICollection c
                         ? c.Count
-                        : (int)f.Value!.GetType().GetProperty("Count")!.GetValue(f.Value)!);
+                        : (int)f.Value.GetType().GetProperty("Count").GetValue(f.Value));
 
             counts.Keys.Should().BeEquivalentTo(floors.Keys, $"{path} inner lists");
 

@@ -16,7 +16,7 @@ public class FisherTransformBufferListTests : BufferListTestBase, ITestChainBuff
     [TestMethod]
     public void AddBar_IncrementsResults()
     {
-        FisherTransformList sut = new(lookbackPeriods);
+        FisherTransformList sut = [with(lookbackPeriods)];
 
         foreach (Bar q in Bars) { sut.Add(q); }
 
@@ -87,7 +87,7 @@ public class FisherTransformBufferListTests : BufferListTestBase, ITestChainBuff
     [TestMethod]
     public void AddDateAndValue_IncrementsResults()
     {
-        FisherTransformList sut = new(lookbackPeriods);
+        FisherTransformList sut = [with(lookbackPeriods)];
 
         foreach (IReusable item in reusables)
         {
@@ -105,7 +105,7 @@ public class FisherTransformBufferListTests : BufferListTestBase, ITestChainBuff
     [TestMethod]
     public void AddReusableItem_IncrementsResults()
     {
-        FisherTransformList sut = new(lookbackPeriods);
+        FisherTransformList sut = [with(lookbackPeriods)];
 
         foreach (IReusable item in reusables)
         {

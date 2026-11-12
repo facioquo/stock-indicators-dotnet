@@ -108,7 +108,7 @@ internal static class SnapshotCodec
             throw new InvalidDataException($"Rollback entry count {count} is out of range.");
         }
 
-        List<(DateTime Timestamp, TState State)> entries = new(count);
+        List<(DateTime Timestamp, TState State)> entries = [with(count)];
 
         for (int i = 0; i < count; i++)
         {

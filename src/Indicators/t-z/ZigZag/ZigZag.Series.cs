@@ -24,7 +24,7 @@ public static partial class ZigZag
 
         // initialize
         int length = bars.Count;
-        List<ZigZagResult> results = new(length);
+        List<ZigZagResult> results = [with(length)];
 
         if (length == 0)
         {

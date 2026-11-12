@@ -50,7 +50,7 @@ public class Concurrency : TestBase
         // mid-cache (rollback) or at the tail.
         barHub.Add(bars[0]);
 
-        object gate = new();
+        Lock gate = new();
         Thread[] producers = new Thread[producerCount];
         for (int t = 0; t < producerCount; t++)
         {
@@ -248,7 +248,7 @@ public class Concurrency : TestBase
         // seed the global-minimum bar first (see the convergence test for why)
         barHub.Add(bars[0]);
 
-        object gate = new();
+        Lock gate = new();
 
         // feed everything except one index, from 4 strided producers
         Thread[] producers = new Thread[4];

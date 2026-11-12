@@ -14,7 +14,7 @@ public class HtTrendlineBufferListTests : BufferListTestBase, ITestChainBufferLi
     [TestMethod]
     public void AddBar_IncrementsResults()
     {
-        HtTrendlineList sut = new();
+        HtTrendlineList sut = [];
 
         foreach (Bar bar in Bars)
         {
@@ -37,7 +37,7 @@ public class HtTrendlineBufferListTests : BufferListTestBase, ITestChainBufferLi
     [TestMethod]
     public void BarsCtor_OnInstantiation_IncrementsResults()
     {
-        HtTrendlineList sut = new(Bars);
+        HtTrendlineList sut = [with(Bars)];
 
         sut.Should().HaveCount(Bars.Count);
         sut.IsExactly(series);
@@ -46,7 +46,7 @@ public class HtTrendlineBufferListTests : BufferListTestBase, ITestChainBufferLi
     [TestMethod]
     public void AddReusableItem_IncrementsResults()
     {
-        HtTrendlineList sut = new();
+        HtTrendlineList sut = [];
 
         foreach (IReusable item in reusables)
         {
@@ -69,7 +69,7 @@ public class HtTrendlineBufferListTests : BufferListTestBase, ITestChainBufferLi
     [TestMethod]
     public void AddDateAndValue_IncrementsResults()
     {
-        HtTrendlineList sut = new();
+        HtTrendlineList sut = [];
 
         foreach (IReusable item in reusables)
         {
@@ -86,7 +86,7 @@ public class HtTrendlineBufferListTests : BufferListTestBase, ITestChainBufferLi
         List<Bar> subset = Bars.Take(80).ToList();
         IReadOnlyList<HtlResult> expected = subset.ToHtTrendline();
 
-        HtTrendlineList sut = new(subset);
+        HtTrendlineList sut = [with(subset)];
 
         sut.Should().HaveCount(subset.Count);
         sut.IsExactly(expected);
@@ -165,7 +165,7 @@ public class HtTrendlineBufferListTests : BufferListTestBase, ITestChainBufferLi
         // which must still cover the 50-value dominant cycle window (#2443)
         List<Bar> bars = LongishBars.Take(2500).ToList();
 
-        HtTrendlineList sut = new(bars);
+        HtTrendlineList sut = [with(bars)];
 
         sut.IsExactly(bars.ToHtTrendline());
     }

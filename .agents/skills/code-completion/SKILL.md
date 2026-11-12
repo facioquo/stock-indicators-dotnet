@@ -1,6 +1,6 @@
 ---
 name: code-completion
-description: Quality gates for finishing work in this repository — dead-code cleanup, Roslynator and dotnet format fixes, markdownlint, build, unit tests, documentation, and Obsolete migration shims — with the VS Code task behind each gate and the files that define the commands CI runs. Use before reporting any implementation, bug fix, or refactor as done, before committing, and when a CI quick-check, lint, or build step fails.
+description: Quality gates for finishing work in this repository — dead-code cleanup, analyzer and dotnet format fixes, markdownlint, build, unit tests, documentation, and Obsolete migration shims — with the VS Code task behind each gate and the files that define the commands CI runs. Use before reporting any implementation, bug fix, or refactor as done, before committing, and when a CI quick-check, lint, or build step fails.
 ---
 
 # Code completion
@@ -22,20 +22,19 @@ CI builds `src/Indicators.csproj` and `tests/Library/Tests.Indicators.csproj` wi
 Run the fixers:
 
 ```bash
-dotnet tool run roslynator fix --properties TargetFramework=net11.0 --severity-level hidden --verbosity normal
 dotnet format --severity info --no-restore
 echo y | npx markdownlint-cli2 --fix
 ```
 
-VS Code task: `Lint: All (fix)` (it builds first). The Roslynator CLI comes from `dotnet-tools.json`; run `dotnet tool restore` first if `roslynator` is not found.
+VS Code task: `Lint: All (fix)` (it builds first). `dotnet format` applies the available code fixes for analyzer rules, Roslynator's included. `.editorconfig` raises enabled Roslynator rules to warnings, so a finding with no code fix is left for you; the Step 3 build reports it.
 
 ### Step 3: Build
 
 ```bash
-dotnet build "Stock.Indicators.sln" -v minimal --nologo
+dotnet build "Stock.Indicators.sln" -v minimal --nologo -warnAsError
 ```
 
-VS Code task: `Build: .NET Solution (incremental)`. Zero warnings and zero errors.
+VS Code task: `Build: .NET Solution (incremental)`. Zero warnings and zero errors, as CI requires.
 
 ### Step 4: Run unit tests
 
@@ -54,12 +53,11 @@ When a public API or indicator behavior changes:
 Run the read-only checks CI runs, and confirm each exits clean:
 
 ```bash
-dotnet tool run roslynator analyze --properties TargetFramework=net11.0 --severity-level hidden --verbosity normal
 dotnet format --verify-no-changes --severity info --no-restore
 echo y | npx markdownlint-cli2
 ```
 
-VS Code task: `Verify: Quick checks (build + lint + unit test)` covers build, Roslynator, markdownlint, and unit tests; it does not run `dotnet format --verify-no-changes` (`Lint: .NET format` does). When a `{Name}Hub.cs` or its test changed, also run `bash tools/scripts/audit-streamhub.sh`, which CI runs in the quick check.
+VS Code task: `Verify: Quick checks (build + lint + unit test)` covers build, `dotnet format --verify-no-changes`, markdownlint, and unit tests. When a `{Name}Hub.cs` or its test changed, also run `bash tools/scripts/audit-streamhub.sh`, which CI runs in the quick check.
 
 ## Migration shims
 

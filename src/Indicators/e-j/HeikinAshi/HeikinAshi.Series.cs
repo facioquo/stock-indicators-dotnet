@@ -18,7 +18,7 @@ public static partial class HeikinAshi
 
         // initialize
         int length = bars.Count;
-        List<HeikinAshiResult> results = new(length);
+        List<HeikinAshiResult> results = [with(length)];
 
         decimal prevOpen = decimal.MinValue;
         decimal prevClose = decimal.MinValue;

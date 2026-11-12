@@ -11,7 +11,7 @@ public class VortexBufferListTests : BufferListTestBase, ITestBarBufferList
     [TestMethod]
     public void AddBar_IncrementsResults()
     {
-        VortexList sut = new(lookbackPeriods);
+        VortexList sut = [with(lookbackPeriods)];
 
         foreach (Bar bar in Bars)
         {

@@ -24,7 +24,7 @@ namespace FacioQuo.Stock.Indicators;
 public abstract class BufferList<TResult> : IReadOnlyList<TResult>
     where TResult : ISeries
 {
-    private readonly PruningList<TResult> _internalList = new();
+    private readonly PruningList<TResult> _internalList = [];
 
     /// <summary>
     /// Gets the result at the specified index.

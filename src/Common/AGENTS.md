@@ -43,7 +43,7 @@ Extend this pattern for a new quantizer instead of writing bespoke bucketing.
 
 ## Thread safety
 
-`StreamHub<TIn, TOut>` (`StreamHub/StreamHub.cs`) holds the private `CacheLock` monitor for every cache mutation.
+`StreamHub<TIn, TOut>` (`StreamHub/StreamHub.cs`) holds the private `CacheLock` lock (a `System.Threading.Lock`) for every cache mutation.
 
 - Rebuild, `RemoveAt`, and provider-prune handling notify observers inside `CacheLock`, so nothing is added between a cache change and its notification. Never release the lock before notifying.
 - While `Rebuild` replays provider items, `_isRebuilding` forces `Act.Add` in `AppendCache` instead of a recursive rebuild; observer cascading still happens. Never bypass the flag.

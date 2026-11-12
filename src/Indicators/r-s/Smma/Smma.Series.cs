@@ -23,7 +23,7 @@ public static partial class Smma
 
         // initialize
         int length = source.Count;
-        List<SmmaResult> results = new(length);
+        List<SmmaResult> results = [with(length)];
         double prevSmma = double.NaN;
 
         // roll through source values

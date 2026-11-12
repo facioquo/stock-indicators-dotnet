@@ -24,7 +24,7 @@ internal sealed class PairHub
     private readonly IChainProvider<IReusable> _other;
     private readonly OtherObserver _otherObserver;
     private readonly PairStager _stager;
-    private readonly object _otherLock = new();
+    private readonly Lock _otherLock = new();
     private IDisposable? _otherSubscription;
 
     /// <summary>

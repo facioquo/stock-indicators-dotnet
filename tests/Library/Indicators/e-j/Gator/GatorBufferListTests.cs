@@ -37,7 +37,7 @@ public class GatorBufferListTests : BufferListTestBase, ITestChainBufferList
     [TestMethod]
     public void BarsCtor_OnInstantiation_IncrementsResults()
     {
-        GatorList sut = new(Bars);
+        GatorList sut = [with(Bars)];
 
         sut.Should().HaveCount(Bars.Count);
         sut.IsExactly(series);
@@ -86,7 +86,7 @@ public class GatorBufferListTests : BufferListTestBase, ITestChainBufferList
         List<Bar> subset = Bars.Take(80).ToList();
         IReadOnlyList<GatorResult> expected = subset.ToGator();
 
-        GatorList sut = new(subset);
+        GatorList sut = [with(subset)];
 
         sut.Should().HaveCount(subset.Count);
         sut.IsExactly(expected);

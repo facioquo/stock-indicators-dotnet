@@ -35,7 +35,7 @@ public static partial class Prs
 
         // initialize
         int length = sourceEval.Count;
-        List<PrsResult> results = new(length);
+        List<PrsResult> results = [with(length)];
 
         // roll through source values
         for (int i = 0; i < length; i++)

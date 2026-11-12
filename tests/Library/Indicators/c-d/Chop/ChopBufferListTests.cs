@@ -11,7 +11,7 @@ public class ChopBufferListTests : BufferListTestBase, ITestBarBufferList
     [TestMethod]
     public void AddBar_IncrementsResults()
     {
-        ChopList sut = new(lookbackPeriods);
+        ChopList sut = [with(lookbackPeriods)];
 
         foreach (Bar bar in Bars)
         {

@@ -15,7 +15,7 @@ public abstract partial class StreamHub<TIn, TOut> : IStreamObservable<TOut>
     /// while invoking an observer callback — so callbacks can re-enter
     /// Subscribe/Unsubscribe without deadlocking.
     /// </summary>
-    private readonly object _observersLock = new();
+    private readonly Lock _observersLock = new();
 
     /// <summary>
     /// Cached point-in-time copy of <see cref="_observers"/>, rebuilt lazily by

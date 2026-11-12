@@ -50,7 +50,7 @@ A lock is the simplest way to accept bars from several threads. Each writer wait
 BarHub barHub = new();
 SmaHub smaHub = barHub.ToSmaHub(20);
 
-object hubLock = new();
+Lock hubLock = new();
 
 // message callbacks, which can run on several threads
 void OnBarReceived(Bar bar)

@@ -11,7 +11,7 @@ public class ElderRayBufferListTests : BufferListTestBase, ITestBarBufferList
     [TestMethod]
     public void AddBar_IncrementsResults()
     {
-        ElderRayList sut = new(lookbackPeriods);
+        ElderRayList sut = [with(lookbackPeriods)];
 
         foreach (Bar q in Bars) { sut.Add(q); }
 

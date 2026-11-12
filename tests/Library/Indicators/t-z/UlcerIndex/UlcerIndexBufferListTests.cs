@@ -16,7 +16,7 @@ public class UlcerIndexBufferListTests : BufferListTestBase, ITestChainBufferLis
     [TestMethod]
     public void AddDateAndValue_IncrementsResults()
     {
-        UlcerIndexList sut = new(lookbackPeriods);
+        UlcerIndexList sut = [with(lookbackPeriods)];
 
         foreach (IReusable item in reusables)
         {
@@ -30,7 +30,7 @@ public class UlcerIndexBufferListTests : BufferListTestBase, ITestChainBufferLis
     [TestMethod]
     public void AddReusableItem_IncrementsResults()
     {
-        UlcerIndexList sut = new(lookbackPeriods);
+        UlcerIndexList sut = [with(lookbackPeriods)];
 
         foreach (IReusable item in reusables)
         {
@@ -53,7 +53,7 @@ public class UlcerIndexBufferListTests : BufferListTestBase, ITestChainBufferLis
     [TestMethod]
     public void AddBar_IncrementsResults()
     {
-        UlcerIndexList sut = new(lookbackPeriods);
+        UlcerIndexList sut = [with(lookbackPeriods)];
 
         foreach (Bar bar in Bars)
         {

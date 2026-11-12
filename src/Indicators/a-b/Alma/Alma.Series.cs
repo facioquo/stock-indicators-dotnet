@@ -26,7 +26,7 @@ public static partial class Alma
 
         // initialize
         int length = source.Count;
-        List<AlmaResult> results = new(length);
+        List<AlmaResult> results = [with(length)];
 
         // determine price weight constants
         double m = offset * (lookbackPeriods - 1);

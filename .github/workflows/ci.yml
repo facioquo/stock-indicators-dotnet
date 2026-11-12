@@ -37,26 +37,12 @@ jobs:
           cache: true
           cache-dependency-path: "**/packages.lock.json"
 
-      - name: Install .NET tools
-        run: dotnet tool restore
-
       - name: Build core project
-        # note: Roslynator cannot use cached bin/obj
         run: >
           dotnet build src/Indicators.csproj
           --configuration Release
           --property:ContinuousIntegrationBuild=true
           -warnAsError
-
-      - name: Run Roslynator analysis
-        # note: this is faster than format check
-        # Roslynator CLI 1.0.1 does not find the .NET 11 SDK on its own
-        run: >
-          dotnet tool run roslynator analyze src/Indicators.csproj
-          --msbuild-path "$DOTNET_ROOT/sdk/$(dotnet --version)"
-          --properties TargetFramework=net11.0
-          --severity-level hidden
-          --verbosity normal
 
       - name: Lint markdown
         run: echo y | npx markdownlint-cli2
@@ -184,24 +170,12 @@ jobs:
           cache: true
           cache-dependency-path: "**/packages.lock.json"
 
-      - name: Install .NET tools
-        run: dotnet tool restore
-
       - name: Build solution
-        # note: Roslynator cannot use cached bin/obj
         run: >
           dotnet build
           --configuration Release
           --property:ContinuousIntegrationBuild=true
-
-      - name: Run Roslynator analysis
-        # Roslynator CLI 1.0.1 does not find the .NET 11 SDK on its own
-        run: >
-          dotnet tool run roslynator analyze
-          --msbuild-path "$DOTNET_ROOT/sdk/$(dotnet --version)"
-          --properties TargetFramework=net11.0
-          --severity-level hidden
-          --verbosity normal
+          -warnAsError
 
       - name: Check .NET code formatting
         run: dotnet format --verify-no-changes --severity info --no-restore

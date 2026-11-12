@@ -23,7 +23,7 @@ public static partial class Slope
 
         // initialize
         int length = source.Count;
-        List<SlopeResult> results = new(length);
+        List<SlopeResult> results = [with(length)];
 
         // roll through source values
         for (int i = 0; i < length; i++)

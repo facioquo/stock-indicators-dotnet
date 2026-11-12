@@ -27,7 +27,7 @@ public abstract partial class StreamHub<TIn, TOut> : IStreamObserver<TIn>, IRele
     /// <summary>
     /// Lock object to ensure thread safety during unsubscription.
     /// </summary>
-    private readonly object _unsubscribeLock = new();
+    private readonly Lock _unsubscribeLock = new();
 
     /// <summary>
     /// Set when this hub built its own provider, so no caller holds a reference to it.

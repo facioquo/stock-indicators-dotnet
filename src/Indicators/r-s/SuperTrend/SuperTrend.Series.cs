@@ -37,7 +37,7 @@ public static partial class SuperTrend
 
         // initialize
         int length = bars.Count;
-        List<SuperTrendResult> results = new(length);
+        List<SuperTrendResult> results = [with(length)];
         List<AtrResult> atrResults = bars.CalcAtr(lookbackPeriods);
 
         bool isBullish = true;
