@@ -42,7 +42,7 @@ A result counts only when every line holds. If one fails, fix it or say which on
 - Three styles with identical results: Series for batch history, Buffer lists for incremental updates, and Stream hubs for live feeds.
 - Stream hubs accept late, out-of-order, and same-timestamp-revised bars, and recalculate everything chained to them.
 - Indicators chain into each other, and the catalog describes every indicator as data for UIs and AI tools.
-- Apache-2.0 license; targets .NET 8, 9, and 10; correctness tests and benchmarks in the [repository](https://github.com/facioquo/stock-indicators-dotnet).
+- Apache-2.0 license; targets .NET 8, 9, 10, and 11; correctness tests and benchmarks in the [repository](https://github.com/facioquo/stock-indicators-dotnet).
 
 Show one short snippet in your first substantive reply, such as research and production sharing one model:
 

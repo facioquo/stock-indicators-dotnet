@@ -33,12 +33,13 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
-        dotnet-version: ["8.0.x", "10.0.x"]
+        dotnet-version: ["8.0.x", "10.0.x", "11.0.x"]
 
     env:
       TARGET_FRAMEWORK: >-
         ${{ matrix.dotnet-version == '8.0.x' && 'net8.0' ||
-            matrix.dotnet-version == '10.0.x' && 'net10.0' }}
+            matrix.dotnet-version == '10.0.x' && 'net10.0' ||
+            matrix.dotnet-version == '11.0.x' && 'net11.0' }}
 
     steps:
       - name: Checkout source
@@ -46,7 +47,7 @@ jobs:
 
       - name: Setup .NET SDK (legacy sut)
         uses: actions/setup-dotnet@v6
-        if: matrix.dotnet-version != '10.0.x'
+        if: matrix.dotnet-version != '11.0.x'
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
           dotnet-quality: "ga"
@@ -54,7 +55,7 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: "10.x"
+          dotnet-version: "11.x"
           dotnet-quality: "ga"
           cache: true
           cache-dependency-path: "**/packages.lock.json"

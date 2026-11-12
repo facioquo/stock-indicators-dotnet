@@ -121,7 +121,7 @@ See [Chaining indicators](/guide/chaining) for more.
 
 ## Optimized for modern .NET frameworks
 
-The library directly targets all actively [supported .NET versions](https://dotnet.microsoft.com/platform/support/policy) (10.0, 9.0, and 8.0) for peak performance. It's [CLS compliant](https://learn.microsoft.com/dotnet/standard/common-type-system), so it works well beyond C#, in other languages and platforms that interoperate with .NET.
+The library directly targets all actively [supported .NET versions](https://dotnet.microsoft.com/platform/support/policy) (11.0, 10.0, 9.0, and 8.0) for peak performance. It's [CLS compliant](https://learn.microsoft.com/dotnet/standard/common-type-system), so it works well beyond C#, in other languages and platforms that interoperate with .NET.
 
 ## Community and support
 

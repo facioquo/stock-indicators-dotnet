@@ -115,7 +115,7 @@ public class CatalogMetadataTests : TestBase
     public void EachCatalogEntryParametersShouldBeValidForAutomation()
     {
         IReadOnlyList<IndicatorListing> catalog = Catalog.Listings;
-        List<IndicatorListing> entriesWithParameters = catalog.Where(l => l.Parameters?.Any() == true).ToList();
+        List<IndicatorListing> entriesWithParameters = catalog.Where(l => l.Parameters?.Count > 0).ToList();
         entriesWithParameters.Should().NotBeEmpty();
         foreach (IndicatorListing listing in entriesWithParameters)
         {
