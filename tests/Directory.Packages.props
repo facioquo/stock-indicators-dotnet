@@ -17,8 +17,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <PackageVersion Include="Alpaca.Markets" Version="8.0.1" />
-    <!-- FluentAssertions pinned to v7.x to avoid licensing changes in v8+ -->
-    <PackageVersion Include="FluentAssertions" Version="7.2.2" />
+    <PackageVersion Include="AwesomeAssertions" Version="9.6.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.UserSecrets" Version="11.0.0" />
     <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.12.0" />
     <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.5.2" />

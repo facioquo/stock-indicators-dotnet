@@ -407,7 +407,7 @@ public class TradeTickAggregatorHubTests : StreamHubTestBase, ITestBarObserver, 
         // Rollback: remove a historical tick (simulate deletion)
         DateTime removeTimestamp = ticks[20].Timestamp;
         int removeIdx = provider.Cache.IndexGte(removeTimestamp);
-        removeIdx.Should().BeGreaterOrEqualTo(0, "tick[20] should be in cache");
+        removeIdx.Should().BeGreaterThanOrEqualTo(0, "tick[20] should be in cache");
         provider.RemoveAt(removeIdx);
 
         IReadOnlyList<IBar> afterRemoval = aggregator.Results.ToList();

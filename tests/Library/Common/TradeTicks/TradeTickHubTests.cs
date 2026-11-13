@@ -225,7 +225,7 @@ public class TradeTickHubTests : StreamHubTestBase, ITestTradeTickObserver
         hub.Rebuild(DateTime.Parse("2023-11-09 10:01", invariantCulture));
 
         // Provider-backed hub should rebuild normally
-        hub.Cache.Should().HaveCountGreaterOrEqualTo(2);
+        hub.Cache.Should().HaveCountGreaterThanOrEqualTo(2);
 
         hub.Unsubscribe();
         provider.EndTransmission();

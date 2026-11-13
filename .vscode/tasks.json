@@ -169,14 +169,14 @@
       "label": "Check: .NET packages",
       "detail": "List outdated NuGet packages in the root solution using dotnet-outdated",
       "type": "shell",
-      "command": "dotnet tool run dotnet-outdated --exclude FluentAssertions && dotnet tool run dotnet-outdated --exclude FacioQuo.Stock.Indicators docs/examples",
+      "command": "dotnet tool run dotnet-outdated && dotnet tool run dotnet-outdated --exclude FacioQuo.Stock.Indicators docs/examples",
       "dependsOn": "Install: .NET tools"
     },
     {
       "label": "Install: .NET packages",
       "detail": "Restore NuGet packages for solution",
       "type": "shell",
-      "command": "dotnet restore && dotnet restore docs/examples && dotnet tool run dotnet-outdated --exclude FluentAssertions",
+      "command": "dotnet restore && dotnet restore docs/examples && dotnet tool run dotnet-outdated",
       "dependsOn": "Install: .NET tools",
       "problemMatcher": "$msCompile"
     },
@@ -184,7 +184,7 @@
       "label": "Update: .NET packages",
       "detail": "Upgrade outdated NuGet packages in the root solution using dotnet-outdated",
       "type": "shell",
-      "command": "dotnet tool run dotnet-outdated --upgrade --exclude FluentAssertions && dotnet tool run dotnet-outdated --upgrade --exclude FacioQuo.Stock.Indicators docs/examples",
+      "command": "dotnet tool run dotnet-outdated --upgrade && dotnet tool run dotnet-outdated --upgrade --exclude FacioQuo.Stock.Indicators docs/examples",
       "dependsOn": "Install: .NET tools"
     },
     {
