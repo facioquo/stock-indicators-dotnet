@@ -120,8 +120,7 @@ The site renders charts with the `@facioquo/indy-charts` package from GitHub Pac
 # one-time: grant your gh CLI token read:packages access
 gh auth refresh --scopes read:packages
 
-# write the registry and token to your user-level ~/.npmrc
-pnpm config set @facioquo:registry https://npm.pkg.github.com
+# write the token to your user-level ~/.npmrc
 pnpm config set "//npm.pkg.github.com/:_authToken" "$(gh auth token)"
 ```
 
