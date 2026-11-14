@@ -25,6 +25,8 @@ Agents are the primary contributors; humans set direction, make architectural de
 
 [PRINCIPLES.md](docs/PRINCIPLES.md) holds the six project principles and their rationale; this file holds the operating rules.
 
+During discovery and planning, read this repository's [Discussions](https://github.com/facioquo/stock-indicators-dotnet/discussions) alongside the roadmap, Issues, and other sources: they hold indicator requests, ideas, and concepts the roadmap does not carry yet, or carries with less detail. Read them only; the community and maintainers post there, not agents.
+
 ## Repository layout
 
 ```plaintext
