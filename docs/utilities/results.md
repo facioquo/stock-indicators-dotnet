@@ -126,8 +126,6 @@ string json = JsonSerializer.Serialize(
     bars.ToEma(20), IndicatorJsonContext.Default.IReadOnlyListEmaResult);
 ```
 
-Serialized bars carry `Timestamp` only; the obsolete `Date` alias is neither written nor read.
-
 ## See also
 
 - [Bar utilities](/utilities/bars) — prepare and transform price bars
