@@ -3,8 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 namespace FacioQuo.Stock.Indicators;
 
 /// <summary>
-/// Build-time System.Text.Json metadata for every indicator result list a Series method returns,
-/// so trimmed and Native AOT apps serialize results without reflection.
+/// Build-time System.Text.Json metadata for bar lists and every indicator result list a Series
+/// method returns, so trimmed and Native AOT apps read bars and write results without reflection.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -29,6 +29,7 @@ namespace FacioQuo.Stock.Indicators;
 [JsonSerializable(typeof(IReadOnlyList<AtrResult>))]
 [JsonSerializable(typeof(IReadOnlyList<AtrStopResult>))]
 [JsonSerializable(typeof(IReadOnlyList<AwesomeResult>))]
+[JsonSerializable(typeof(IReadOnlyList<Bar>))]
 [JsonSerializable(typeof(IReadOnlyList<BetaResult>))]
 [JsonSerializable(typeof(IReadOnlyList<BollingerBandsResult>))]
 [JsonSerializable(typeof(IReadOnlyList<BopResult>))]
