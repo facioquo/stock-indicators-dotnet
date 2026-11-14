@@ -116,9 +116,12 @@ Built-in indicators preserve the chronological order of the input bars, so their
 
 ## Serialize to JSON
 
-`IndicatorJsonContext` is a source-generated System.Text.Json context for every Series result list, so trimmed and NativeAOT apps can serialize results without reflection.
+`IndicatorJsonContext` is a source-generated System.Text.Json context for bar lists and every Series result list, so trimmed and NativeAOT apps can read bars and serialize results without reflection.
 
 ```csharp
+IReadOnlyList<Bar> bars = JsonSerializer.Deserialize(
+    barsJson, IndicatorJsonContext.Default.IReadOnlyListBar)!;
+
 string json = JsonSerializer.Serialize(
     bars.ToEma(20), IndicatorJsonContext.Default.IReadOnlyListEmaResult);
 ```

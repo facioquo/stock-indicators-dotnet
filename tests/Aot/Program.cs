@@ -70,6 +70,18 @@ Require("omitted/ALMA", () => Catalog.Get("ALMA", Style.Series)!
 string emaJson = JsonSerializer.Serialize(bars.ToEma(20), IndicatorJsonContext.Default.IReadOnlyListEmaResult);
 Console.WriteLine($"json/EMA {emaJson.Length} {emaJson[^60..]}");
 
+// Bars round-trip through generated metadata, without the obsolete Date alias
+string barsJson = JsonSerializer.Serialize(bars, IndicatorJsonContext.Default.IReadOnlyListBar);
+IReadOnlyList<Bar> parsed = JsonSerializer.Deserialize(barsJson, IndicatorJsonContext.Default.IReadOnlyListBar)!;
+bool barsMatch = parsed.SequenceEqual(bars) && !barsJson.Contains("\"Date\"", StringComparison.Ordinal);
+
+if (!barsMatch)
+{
+    failures++;
+}
+
+Console.WriteLine($"json/Bar {barsJson.Length} {(barsMatch ? "ok" : "MISMATCH")}");
+
 return failures;
 
 // a case that must execute; a regression rejects it under both runtimes, so the diff alone misses it
