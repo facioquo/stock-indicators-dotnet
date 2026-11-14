@@ -8,10 +8,11 @@ This site is built with [VitePress](https://vitepress.dev) and deployed to Cloud
 
 The site renders charts via [`@facioquo/indy-charts`](https://github.com/facioquo/stock-charts) from GitHub Packages, which needs an authenticated install.
 
-To enable `pnpm install` or `pnpm add` you'll need to extend the scopes of your local GitHub CLI (`gh`) auth token with `gh auth refresh --scopes read:packages`, confirm with `gh auth status`, then store it in your user-level `~/.npmrc` (not in the project `.npmrc`, which only maps the `@facioquo` scope to GitHub Packages), which is read at a trusted level where variable expansion is not restricted.
+To enable `pnpm install` or `pnpm add` you'll need to extend the scopes of your local GitHub CLI (`gh`) auth token with `gh auth refresh --scopes read:packages`, confirm with `gh auth status`, then store in your user level `~/.npmrc` (not in the project `.npmrc`), which is read at a trusted level where variable expansion is not restricted.
 
 ```bash
 # Write to your user-level ~/.npmrc (not the project .npmrc)
+pnpm config set @facioquo:registry https://npm.pkg.github.com
 pnpm config set "//npm.pkg.github.com/:_authToken" "$(gh auth token)"
 ```
 
