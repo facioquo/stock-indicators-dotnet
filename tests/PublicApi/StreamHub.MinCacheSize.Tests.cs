@@ -57,7 +57,7 @@ public class MinCacheSizeTests : TestBase
         smaHub50.Unsubscribe();
 
         // Assert
-        barHub.MinCacheSize.Should().BeLessOrEqualTo(initialMinCacheSize, "MinCacheSize should be re-evaluated after unsubscribe");
+        barHub.MinCacheSize.Should().BeLessThanOrEqualTo(initialMinCacheSize, "MinCacheSize should be re-evaluated after unsubscribe");
         barHub.MinCacheSize.Should().Be(smaHub20.MinCacheSize, "MinCacheSize should match remaining subscriber");
     }
 
@@ -204,8 +204,8 @@ public class MinCacheSizeTests : TestBase
         emaHub.MinCacheSize.Should().BeGreaterThan(0, "EmaHub should have MinCacheSize propagated to it");
 
         // Verify propagation through the chain
-        barHub.MinCacheSize.Should().BeGreaterOrEqualTo(smaHub.MinCacheSize, "BarHub should track SmaHub requirement");
-        smaHub.MinCacheSize.Should().BeGreaterOrEqualTo(emaHub.MinCacheSize, "SmaHub should track EmaHub requirement");
-        barHub.MinCacheSize.Should().BeGreaterOrEqualTo(emaHub.MinCacheSize, "BarHub should track EmaHub requirement through chain");
+        barHub.MinCacheSize.Should().BeGreaterThanOrEqualTo(smaHub.MinCacheSize, "BarHub should track SmaHub requirement");
+        smaHub.MinCacheSize.Should().BeGreaterThanOrEqualTo(emaHub.MinCacheSize, "SmaHub should track EmaHub requirement");
+        barHub.MinCacheSize.Should().BeGreaterThanOrEqualTo(emaHub.MinCacheSize, "BarHub should track EmaHub requirement through chain");
     }
 }
