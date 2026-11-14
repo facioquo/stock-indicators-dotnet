@@ -9,7 +9,7 @@ public static partial class Roc
         new CatalogListingBuilder()
             .WithName("Rate of Change")
             .WithId("ROC")
-            .WithCategory(Category.Oscillator)
+            .WithCategory(Category.PriceCharacteristic)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", description: "Number of periods for the ROC calculation", isRequired: false, defaultValue: 14, minimum: 1, maximum: 250)
             .AddResult(nameof(RocResult.Roc), "ROC", "Roc", ResultType.Default, isReusable: true)
             .Build();

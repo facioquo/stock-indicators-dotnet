@@ -49,7 +49,7 @@ public class BollingerBandsCatalogTests : TestBase
         percentbResult3.IsReusable.Should().Be(true);
         IndicatorResult zscoreResult4 = listing.Results.SingleOrDefault(static r => r.DataName == "ZScore");
         zscoreResult4.Should().NotBeNull();
-        zscoreResult4?.DisplayName.Should().Be("Z-score");
+        zscoreResult4?.DisplayName.Should().Be("Z-Score");
         zscoreResult4.IsReusable.Should().Be(false);
         IndicatorResult widthResult5 = listing.Results.SingleOrDefault(static r => r.DataName == "Width");
         widthResult5.Should().NotBeNull();

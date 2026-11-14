@@ -35,15 +35,15 @@ public class SmaAnalysisCatalogTests : TestBase
         smaResult.IsReusable.Should().Be(true);
         IndicatorResult madResult1 = listing.Results.SingleOrDefault(static r => r.DataName == "Mad");
         madResult1.Should().NotBeNull();
-        madResult1?.DisplayName.Should().Be("Mean absolute deviation");
+        madResult1?.DisplayName.Should().Be("Mean Absolute Deviation");
         madResult1.IsReusable.Should().Be(false);
         IndicatorResult mseResult2 = listing.Results.SingleOrDefault(static r => r.DataName == "Mse");
         mseResult2.Should().NotBeNull();
-        mseResult2?.DisplayName.Should().Be("Mean square error");
+        mseResult2?.DisplayName.Should().Be("Mean Square Error");
         mseResult2.IsReusable.Should().Be(false);
         IndicatorResult mapeResult3 = listing.Results.SingleOrDefault(static r => r.DataName == "Mape");
         mapeResult3.Should().NotBeNull();
-        mapeResult3?.DisplayName.Should().Be("Mean absolute percentage error");
+        mapeResult3?.DisplayName.Should().Be("Mean Absolute Percentage Error");
         mapeResult3.IsReusable.Should().Be(false);
     }
 
@@ -76,15 +76,15 @@ public class SmaAnalysisCatalogTests : TestBase
         smaResult.IsReusable.Should().Be(true);
         IndicatorResult madResult1 = listing.Results.SingleOrDefault(static r => r.DataName == "Mad");
         madResult1.Should().NotBeNull();
-        madResult1!.DisplayName.Should().Be("Mean absolute deviation");
+        madResult1!.DisplayName.Should().Be("Mean Absolute Deviation");
         madResult1.IsReusable.Should().Be(false);
         IndicatorResult mseResult2 = listing.Results.SingleOrDefault(static r => r.DataName == "Mse");
         mseResult2.Should().NotBeNull();
-        mseResult2!.DisplayName.Should().Be("Mean square error");
+        mseResult2!.DisplayName.Should().Be("Mean Square Error");
         mseResult2.IsReusable.Should().Be(false);
         IndicatorResult mapeResult3 = listing.Results.SingleOrDefault(static r => r.DataName == "Mape");
         mapeResult3.Should().NotBeNull();
-        mapeResult3!.DisplayName.Should().Be("Mean absolute percentage error");
+        mapeResult3!.DisplayName.Should().Be("Mean Absolute Percentage Error");
         mapeResult3.IsReusable.Should().Be(false);
     }
 
@@ -117,15 +117,15 @@ public class SmaAnalysisCatalogTests : TestBase
         smaResult.IsReusable.Should().Be(true);
         IndicatorResult madResult1 = listing.Results.SingleOrDefault(static r => r.DataName == "Mad");
         madResult1.Should().NotBeNull();
-        madResult1!.DisplayName.Should().Be("Mean absolute deviation");
+        madResult1!.DisplayName.Should().Be("Mean Absolute Deviation");
         madResult1.IsReusable.Should().Be(false);
         IndicatorResult mseResult2 = listing.Results.SingleOrDefault(static r => r.DataName == "Mse");
         mseResult2.Should().NotBeNull();
-        mseResult2!.DisplayName.Should().Be("Mean square error");
+        mseResult2!.DisplayName.Should().Be("Mean Square Error");
         mseResult2.IsReusable.Should().Be(false);
         IndicatorResult mapeResult3 = listing.Results.SingleOrDefault(static r => r.DataName == "Mape");
         mapeResult3.Should().NotBeNull();
-        mapeResult3!.DisplayName.Should().Be("Mean absolute percentage error");
+        mapeResult3!.DisplayName.Should().Be("Mean Absolute Percentage Error");
         mapeResult3.IsReusable.Should().Be(false);
     }
 }

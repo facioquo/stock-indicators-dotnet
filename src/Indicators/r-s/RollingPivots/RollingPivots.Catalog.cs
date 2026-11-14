@@ -9,7 +9,7 @@ public static partial class RollingPivots
         new CatalogListingBuilder()
             .WithName("Rolling Pivot Points")
             .WithId("ROLLING-PIVOTS")
-            .WithCategory(Category.PriceTrend)
+            .WithCategory(Category.PriceChannel)
             .AddParameter<int>("windowPeriods", "Window Periods", description: "Number of periods for the rolling window", isRequired: false, defaultValue: 20, minimum: 1, maximum: 250)
             .AddParameter<int>("offsetPeriods", "Offset Periods", description: "Number of periods to offset the pivots", isRequired: false, defaultValue: 0, minimum: 0, maximum: 100)
             .AddEnumParameter<PivotPointType>("pointType", "Point Type", description: "Type of pivot points to calculate", isRequired: false, defaultValue: PivotPointType.Standard)

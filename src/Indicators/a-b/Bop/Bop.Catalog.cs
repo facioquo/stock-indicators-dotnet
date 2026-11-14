@@ -9,7 +9,7 @@ public static partial class Bop
         new CatalogListingBuilder()
             .WithName("Balance of Power (BOP)")
             .WithId("BOP")
-            .WithCategory(Category.Oscillator)
+            .WithCategory(Category.PriceCharacteristic)
             .AddParameter<int>("smoothPeriods", "Smooth Periods", defaultValue: 14, minimum: 1, maximum: 250)
             .AddResult(nameof(BopResult.Bop), "BOP", "Bop", ResultType.Default, isReusable: true)
             .Build();

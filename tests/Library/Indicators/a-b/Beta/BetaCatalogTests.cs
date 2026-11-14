@@ -14,7 +14,7 @@ public class BetaCatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("Beta");
+        listing.Name.Should().Be("Beta Coefficient");
         listing.Uiid.Should().Be("BETA");
         listing.Style.Should().Be(Style.Series);
         listing.Category.Should().Be(Category.PriceCharacteristic);
@@ -51,11 +51,11 @@ public class BetaCatalogTests : TestBase
         convexityResult4.IsReusable.Should().Be(false);
         IndicatorResult returnsevalResult5 = listing.Results.SingleOrDefault(static r => r.DataName == "ReturnsEval");
         returnsevalResult5.Should().NotBeNull();
-        returnsevalResult5?.DisplayName.Should().Be("Returns Eval");
+        returnsevalResult5?.DisplayName.Should().Be("Evaluated Returns");
         returnsevalResult5.IsReusable.Should().Be(false);
         IndicatorResult returnsmrktResult6 = listing.Results.SingleOrDefault(static r => r.DataName == "ReturnsMrkt");
         returnsmrktResult6.Should().NotBeNull();
-        returnsmrktResult6?.DisplayName.Should().Be("Returns Mrkt");
+        returnsmrktResult6?.DisplayName.Should().Be("Market Returns");
         returnsmrktResult6.IsReusable.Should().Be(false);
     }
 
@@ -89,7 +89,7 @@ public class BetaCatalogTests : TestBase
     private static void AssertStyleListing(IndicatorListing listing, Style style, string methodName)
     {
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("Beta");
+        listing.Name.Should().Be("Beta Coefficient");
         listing.Uiid.Should().Be("BETA");
         listing.Style.Should().Be(style);
         listing.Category.Should().Be(Category.PriceCharacteristic);
