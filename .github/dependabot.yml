@@ -17,9 +17,7 @@ updates:
       include: scope
 
   - package-ecosystem: npm
-    directories:
-      - "/"
-      - "/docs"
+    directory: /docs
     schedule:
       interval: monthly
     cooldown:
