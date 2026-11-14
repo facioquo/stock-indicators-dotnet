@@ -17,7 +17,7 @@ public class PivotPointsCatalogTests : TestBase
         listing.Name.Should().Be("Pivot Points");
         listing.Uiid.Should().Be("PIVOT-POINTS");
         listing.Style.Should().Be(Style.Series);
-        listing.Category.Should().Be(Category.PriceTrend);
+        listing.Category.Should().Be(Category.PriceChannel);
         listing.MethodName.Should().Be("ToPivotPoints");
 
         listing.Parameters?.Count.Should().Be(2);
@@ -72,7 +72,7 @@ public class PivotPointsCatalogTests : TestBase
         listing.Name.Should().Be("Pivot Points");
         listing.Uiid.Should().Be("PIVOT-POINTS");
         listing.Style.Should().Be(Style.Buffer);
-        listing.Category.Should().Be(Category.PriceTrend);
+        listing.Category.Should().Be(Category.PriceChannel);
         listing.MethodName.Should().Be("ToPivotPointsList");
 
         listing.Parameters?.Count.Should().Be(2);

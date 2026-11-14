@@ -9,7 +9,7 @@ public static partial class Pivots
         new CatalogListingBuilder()
             .WithName("Pivots")
             .WithId("PIVOTS")
-            .WithCategory(Category.PriceTrend)
+            .WithCategory(Category.PricePattern)
             .AddParameter<int>("leftSpan", "Left Span", description: "Number of periods to the left for pivot identification", isRequired: false, defaultValue: 2, minimum: 2, maximum: 100)
             .AddParameter<int>("rightSpan", "Right Span", description: "Number of periods to the right for pivot identification", isRequired: false, defaultValue: 2, minimum: 2, maximum: 100)
             .AddParameter<int>("maxTrendPeriods", "Max Trend Periods", description: "Maximum number of periods to track trend", isRequired: false, defaultValue: 20, minimum: 2, maximum: 1000)

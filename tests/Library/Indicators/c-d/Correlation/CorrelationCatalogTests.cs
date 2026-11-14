@@ -14,10 +14,10 @@ public class CorrelationCatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("Correlation");
+        listing.Name.Should().Be("Correlation Coefficient");
         listing.Uiid.Should().Be("CORR");
         listing.Style.Should().Be(Style.Series);
-        listing.Category.Should().Be(Category.Oscillator);
+        listing.Category.Should().Be(Category.PriceCharacteristic);
         listing.MethodName.Should().Be("ToCorrelation");
 
         listing.Parameters.Should().NotBeNull();
@@ -80,10 +80,10 @@ public class CorrelationCatalogTests : TestBase
     private static void AssertStyleListing(IndicatorListing listing, Style style, string methodName)
     {
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("Correlation");
+        listing.Name.Should().Be("Correlation Coefficient");
         listing.Uiid.Should().Be("CORR");
         listing.Style.Should().Be(style);
-        listing.Category.Should().Be(Category.Oscillator);
+        listing.Category.Should().Be(Category.PriceCharacteristic);
         listing.MethodName.Should().Be(methodName);
 
         listing.Parameters.Select(static p => p.ParameterName)

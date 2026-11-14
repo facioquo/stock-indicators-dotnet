@@ -17,7 +17,7 @@ public class ChopCatalogTests : TestBase
         listing.Name.Should().Be("Choppiness Index");
         listing.Uiid.Should().Be("CHOP");
         listing.Style.Should().Be(Style.Series);
-        listing.Category.Should().Be(Category.Oscillator);
+        listing.Category.Should().Be(Category.PriceCharacteristic);
         listing.MethodName.Should().Be("ToChop");
 
         listing.Parameters.Should().NotBeNull();
@@ -46,7 +46,7 @@ public class ChopCatalogTests : TestBase
         listing.Name.Should().Be("Choppiness Index");
         listing.Uiid.Should().Be("CHOP");
         listing.Style.Should().Be(Style.Stream);
-        listing.Category.Should().Be(Category.Oscillator);
+        listing.Category.Should().Be(Category.PriceCharacteristic);
         listing.MethodName.Should().Be("ToChopHub");
 
         listing.Parameters.Should().NotBeNull();

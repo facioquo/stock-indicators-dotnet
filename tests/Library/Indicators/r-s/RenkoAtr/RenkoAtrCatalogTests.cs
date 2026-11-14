@@ -17,7 +17,7 @@ public class RenkoAtrCatalogTests : TestBase
         listing.Name.Should().Be("Renko (ATR)");
         listing.Uiid.Should().Be("RENKO-ATR");
         listing.Style.Should().Be(Style.Series);
-        listing.Category.Should().Be(Category.PriceTrend);
+        listing.Category.Should().Be(Category.PriceTransform);
         listing.MethodName.Should().Be("ToRenkoAtr");
 
         listing.Parameters.Should().NotBeNull();

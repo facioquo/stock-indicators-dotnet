@@ -17,7 +17,7 @@ public class VwapCatalogTests : TestBase
         listing.Name.Should().Be("Volume Weighted Average Price");
         listing.Uiid.Should().Be("VWAP");
         listing.Style.Should().Be(Style.Series);
-        listing.Category.Should().Be(Category.PriceChannel);
+        listing.Category.Should().Be(Category.MovingAverage);
         listing.MethodName.Should().Be("ToVwap");
 
         listing.Parameters?.Count.Should().Be(1);
@@ -43,7 +43,7 @@ public class VwapCatalogTests : TestBase
         listing.Name.Should().Be("Volume Weighted Average Price");
         listing.Uiid.Should().Be("VWAP");
         listing.Style.Should().Be(Style.Buffer);
-        listing.Category.Should().Be(Category.PriceChannel);
+        listing.Category.Should().Be(Category.MovingAverage);
         listing.MethodName.Should().Be("ToVwapList");
 
         listing.Parameters?.Count.Should().Be(1);
@@ -63,7 +63,7 @@ public class VwapCatalogTests : TestBase
         listing.Name.Should().Be("Volume Weighted Average Price");
         listing.Uiid.Should().Be("VWAP");
         listing.Style.Should().Be(Style.Stream);
-        listing.Category.Should().Be(Category.PriceChannel);
+        listing.Category.Should().Be(Category.MovingAverage);
         listing.MethodName.Should().Be("ToVwapHub");
 
         listing.Parameters?.Count.Should().Be(1);

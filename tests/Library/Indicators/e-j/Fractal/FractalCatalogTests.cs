@@ -14,7 +14,7 @@ public class FractalCatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("Williams Fractal (high/low)");
+        listing.Name.Should().Be("Williams Fractal");
         listing.Uiid.Should().Be("FRACTAL");
         listing.Style.Should().Be(Style.Series);
         listing.Category.Should().Be(Category.PricePattern);
@@ -47,7 +47,7 @@ public class FractalCatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("Williams Fractal (high/low)");
+        listing.Name.Should().Be("Williams Fractal");
         listing.Uiid.Should().Be("FRACTAL");
         listing.Style.Should().Be(Style.Buffer);
         listing.Category.Should().Be(Category.PricePattern);
@@ -68,7 +68,7 @@ public class FractalCatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("Williams Fractal (high/low)");
+        listing.Name.Should().Be("Williams Fractal");
         listing.Uiid.Should().Be("FRACTAL");
         listing.Style.Should().Be(Style.Stream);
         listing.Category.Should().Be(Category.PricePattern);

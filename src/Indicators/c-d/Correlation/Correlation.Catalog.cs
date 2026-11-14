@@ -7,9 +7,9 @@ public static partial class Correlation
     /// </summary>
     internal static readonly IndicatorListing CommonListing =
         new CatalogListingBuilder()
-            .WithName("Correlation")
+            .WithName("Correlation Coefficient")
             .WithId("CORR")
-            .WithCategory(Category.Oscillator)
+            .WithCategory(Category.PriceCharacteristic)
             .AddSeriesParameter("sourceA", "Source A")
             .AddSeriesParameter("sourceB", "Source B")
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", isRequired: true, defaultValue: 20, minimum: 1, maximum: 250)
