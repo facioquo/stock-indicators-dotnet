@@ -17,7 +17,7 @@ index 1b0bec6304cd9e9478551baa4d4474562ca3521f..f034ece27e7c4afecb493d32d629d6c6
  }
  async function prepareMarkdownFiles({ bundle, mdFiles, settings, config }) {
 diff --git a/dist/vitepress-components/CopyOrDownloadAsMarkdownButtons.vue b/dist/vitepress-components/CopyOrDownloadAsMarkdownButtons.vue
-index 8df9f041480d698aaad678cdb66736d56fe46966..b056f91cef8b92c910bb5d571ae9dd42e30db758 100644
+index 8df9f041480d698aaad678cdb66736d56fe46966..d0cc6bb1826ddbe3ce956f8c630f7f9b92e1027c 100644
 --- a/dist/vitepress-components/CopyOrDownloadAsMarkdownButtons.vue
 +++ b/dist/vitepress-components/CopyOrDownloadAsMarkdownButtons.vue
 @@ -19,7 +19,12 @@
@@ -34,15 +34,11 @@ index 8df9f041480d698aaad678cdb66736d56fe46966..b056f91cef8b92c910bb5d571ae9dd42
  						<span v-html="iconChevron" class="icon chevron" :class="{ open: isOpen }"></span>
  					</button>
  				</div>
-@@ -32,6 +37,15 @@
+@@ -32,6 +37,11 @@
  						<span v-html="iconExternal" class="icon external"></span>
  					</button>
  
-+					<button
-+						v-if="showDownload !== false"
-+						class="dropdown-item"
-+						@click="handleDownloadMarkdown"
-+					>
++					<button class="dropdown-item" @click="handleDownloadMarkdown">
 +						<span v-html="downloaded ? iconCheck : iconDownload" class="icon"></span>
 +						{{ theme.llms?.downloadText || 'Download as Markdown' }}
 +					</button>
@@ -50,7 +46,7 @@ index 8df9f041480d698aaad678cdb66736d56fe46966..b056f91cef8b92c910bb5d571ae9dd42
  					<button
  						v-for="provider in aiProviders"
  						:key="provider.name"
-@@ -49,11 +63,6 @@
+@@ -49,11 +59,6 @@
  					</button>
  				</div>
  			</div>
@@ -62,7 +58,7 @@ index 8df9f041480d698aaad678cdb66736d56fe46966..b056f91cef8b92c910bb5d571ae9dd42
  		</div>
  	</div>
  </template>
-@@ -139,6 +148,11 @@ function handleViewAsMarkdown(): void {
+@@ -139,6 +144,11 @@ function handleViewAsMarkdown(): void {
  	closeDropdown()
  }
  
@@ -74,7 +70,7 @@ index 8df9f041480d698aaad678cdb66736d56fe46966..b056f91cef8b92c910bb5d571ae9dd42
  function handleOpenInAI(provider: MarkdownAiProvider): void {
  	openInAI(provider)
  	closeDropdown()
-@@ -164,7 +178,6 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
+@@ -164,7 +174,6 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
  .markdown-copy-buttons-inner {
  	margin: 16px 0;
  	display: flex;
@@ -82,7 +78,7 @@ index 8df9f041480d698aaad678cdb66736d56fe46966..b056f91cef8b92c910bb5d571ae9dd42
  	position: relative;
  }
  
-@@ -260,17 +273,6 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
+@@ -260,17 +269,6 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
  	opacity: 0.6;
  }
  
@@ -100,7 +96,7 @@ index 8df9f041480d698aaad678cdb66736d56fe46966..b056f91cef8b92c910bb5d571ae9dd42
  .icon {
  	width: 18px;
  	height: 18px;
-@@ -295,8 +297,7 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
+@@ -295,8 +293,7 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
  
  	/* Hover zones */
  	.copy-page:hover,
@@ -110,7 +106,7 @@ index 8df9f041480d698aaad678cdb66736d56fe46966..b056f91cef8b92c910bb5d571ae9dd42
  		background: var(--vp-c-bg-soft);
  	}
  
-@@ -304,13 +305,11 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
+@@ -304,13 +301,11 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
  	.copy-page,
  	.chevron-wrapper,
  	.dropdown-item,

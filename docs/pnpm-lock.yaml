@@ -163,7 +163,7 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  vitepress-plugin-llms@1.15.0: 34cc0d741ce96e2547803106932a282aaa4d5e6cd5e09f7c8c25d2f205edfcc9
+  vitepress-plugin-llms@1.15.0: 45633c4565e70501a4fe9672dee67030773071c2dc7eda2fdf3569c9ebefb546
 
 importers:
 
@@ -199,7 +199,7 @@ importers:
         version: 2.0.0-alpha.20(@types/node@26.6.4)(esbuild@0.28.2)(postcss@8.5.28)(sass-embedded@1.108.2)(sass@1.108.2)
       vitepress-plugin-llms:
         specifier: 1.15.0
-        version: 1.15.0(patch_hash=34cc0d741ce96e2547803106932a282aaa4d5e6cd5e09f7c8c25d2f205edfcc9)(supports-color@10.2.2)
+        version: 1.15.0(patch_hash=45633c4565e70501a4fe9672dee67030773071c2dc7eda2fdf3569c9ebefb546)(supports-color@10.2.2)
       vue:
         specifier: ^3.5.45
         version: 3.5.45
@@ -3566,7 +3566,7 @@ snapshots:
       sass: 1.108.2
       sass-embedded: 1.108.2
 
-  vitepress-plugin-llms@1.15.0(patch_hash=34cc0d741ce96e2547803106932a282aaa4d5e6cd5e09f7c8c25d2f205edfcc9)(supports-color@10.2.2):
+  vitepress-plugin-llms@1.15.0(patch_hash=45633c4565e70501a4fe9672dee67030773071c2dc7eda2fdf3569c9ebefb546)(supports-color@10.2.2):
     dependencies:
       '@11ty/gray-matter': 3.0.0
       markdown-it: 14.3.2
