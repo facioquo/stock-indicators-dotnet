@@ -114,14 +114,13 @@ That is everything most contributors need. For the baseline set, single-style sp
 
 This site uses [VitePress](https://vitepress.dev) with Vue components and Markdown. Our documentation site code is in the `docs` folder. Build the site locally to test that it works properly.
 
-The site renders charts with the `@facioquo/indy-charts` package from GitHub Packages, so installing needs a token with `read:packages` access, stored in your user-level `~/.npmrc` (not the project `.npmrc`):
+The site renders charts with the `@facioquo/indy-charts` package from GitHub Packages, so installing needs a token with `read:packages` access. The project `docs/.npmrc` maps the `@facioquo` scope to that registry; keep the token in your user-level `~/.npmrc`, never the project file:
 
 ```bash
 # one-time: grant your gh CLI token read:packages access
 gh auth refresh --scopes read:packages
 
-# write the registry and token to your user-level ~/.npmrc
-pnpm config set @facioquo:registry https://npm.pkg.github.com
+# write the token to your user-level ~/.npmrc
 pnpm config set "//npm.pkg.github.com/:_authToken" "$(gh auth token)"
 ```
 
