@@ -20,10 +20,10 @@
     <PackageVersion Include="AwesomeAssertions" Version="9.6.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.UserSecrets" Version="11.0.0" />
     <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.12.0" />
-    <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.5.2" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.5.3" />
     <PackageVersion Include="Microsoft.VisualStudio.TestTools.Analyzers" Version="2.0.0" />
-    <PackageVersion Include="MSTest.TestAdapter" Version="4.5.2" />
-    <PackageVersion Include="MSTest.TestFramework" Version="4.5.2" />
+    <PackageVersion Include="MSTest.TestAdapter" Version="4.5.3" />
+    <PackageVersion Include="MSTest.TestFramework" Version="4.5.3" />
     <PackageVersion Include="Roslynator.Analyzers" Version="5.0.1" />
   </ItemGroup>
 </Project>

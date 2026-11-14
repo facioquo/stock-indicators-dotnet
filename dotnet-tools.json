@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "dotnet-outdated-tool": {
-      "version": "4.8.1",
+      "version": "4.9.0",
       "commands": [
         "dotnet-outdated"
       ],

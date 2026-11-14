@@ -24,11 +24,14 @@ jobs:
     name: Cloudflare Pages
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    # Fork PRs get no secrets, so the deploy cannot succeed for them. Skip it
-    # quietly; CI verifies forks.
+    # Fork PRs and Dependabot-triggered runs get no Actions secrets, so the
+    # deploy cannot succeed for them. Skip it quietly; CI verifies both. A
+    # maintainer's push to a Dependabot branch runs as that maintainer and
+    # still deploys a preview.
     if: |
       github.event_name != 'pull_request' ||
-      github.event.pull_request.head.repo.full_name == github.repository
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+       github.actor != 'dependabot[bot]')
     defaults:
       run:
         working-directory: docs
@@ -44,7 +47,7 @@ jobs:
           fetch-depth: 0 # required for proper Last Updated page dates
 
       - name: Setup pnpm and Node.js
-        uses: pnpm/setup@v2.1.0
+        uses: pnpm/setup@v3
         with:
           cache: true
           runtime: node@${{ env.NODE_VERSION }}
