@@ -1,8 +1,8 @@
 diff --git a/dist/index.js b/dist/index.js
-index 36612eeae11b6a232e52548fb020eeacea3858c0..fc51d7fca47e7c55488ab5a8795aef2d9ebacf16 100644
+index 1b0bec6304cd9e9478551baa4d4474562ca3521f..f034ece27e7c4afecb493d32d629d6c69be17696 100644
 --- a/dist/index.js
 +++ b/dist/index.js
-@@ -930,9 +930,11 @@ function extractImageMap(bundle) {
+@@ -910,9 +910,11 @@ function extractImageMap(bundle) {
  	}
  	return imageMap;
  }
@@ -17,7 +17,7 @@ index 36612eeae11b6a232e52548fb020eeacea3858c0..fc51d7fca47e7c55488ab5a8795aef2d
  }
  async function prepareMarkdownFiles({ bundle, mdFiles, settings, config }) {
 diff --git a/dist/vitepress-components/CopyOrDownloadAsMarkdownButtons.vue b/dist/vitepress-components/CopyOrDownloadAsMarkdownButtons.vue
-index 5cbd240c46cbe7873b27b6912040e22ac952ff8e..1503a5b8b3715f85dcd97630b29a6b61d5fa4fd7 100644
+index 8df9f041480d698aaad678cdb66736d56fe46966..b056f91cef8b92c910bb5d571ae9dd42e30db758 100644
 --- a/dist/vitepress-components/CopyOrDownloadAsMarkdownButtons.vue
 +++ b/dist/vitepress-components/CopyOrDownloadAsMarkdownButtons.vue
 @@ -19,7 +19,12 @@
@@ -34,11 +34,15 @@ index 5cbd240c46cbe7873b27b6912040e22ac952ff8e..1503a5b8b3715f85dcd97630b29a6b61
  						<span v-html="iconChevron" class="icon chevron" :class="{ open: isOpen }"></span>
  					</button>
  				</div>
-@@ -32,6 +37,11 @@
+@@ -32,6 +37,15 @@
  						<span v-html="iconExternal" class="icon external"></span>
  					</button>
  
-+					<button class="dropdown-item" @click="handleDownloadMarkdown">
++					<button
++						v-if="showDownload !== false"
++						class="dropdown-item"
++						@click="handleDownloadMarkdown"
++					>
 +						<span v-html="downloaded ? iconCheck : iconDownload" class="icon"></span>
 +						{{ theme.llms?.downloadText || 'Download as Markdown' }}
 +					</button>
@@ -46,19 +50,19 @@ index 5cbd240c46cbe7873b27b6912040e22ac952ff8e..1503a5b8b3715f85dcd97630b29a6b61
  					<button
  						v-for="provider in aiProviders"
  						:key="provider.name"
-@@ -49,11 +59,6 @@
+@@ -49,11 +63,6 @@
  					</button>
  				</div>
  			</div>
 -
 -			<!-- Download button -->
--			<button class="download-btn" @click="downloadMarkdown">
+-			<button v-if="showDownload" class="download-btn" @click="downloadMarkdown">
 -				<span v-html="downloaded ? iconCheck : iconDownload" class="icon"></span>
 -			</button>
  		</div>
  	</div>
  </template>
-@@ -136,6 +141,11 @@ function handleViewAsMarkdown(): void {
+@@ -139,6 +148,11 @@ function handleViewAsMarkdown(): void {
  	closeDropdown()
  }
  
@@ -70,7 +74,7 @@ index 5cbd240c46cbe7873b27b6912040e22ac952ff8e..1503a5b8b3715f85dcd97630b29a6b61
  function handleOpenInAI(provider: MarkdownAiProvider): void {
  	openInAI(provider)
  	closeDropdown()
-@@ -161,7 +171,6 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
+@@ -164,7 +178,6 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
  .markdown-copy-buttons-inner {
  	margin: 16px 0;
  	display: flex;
@@ -78,7 +82,7 @@ index 5cbd240c46cbe7873b27b6912040e22ac952ff8e..1503a5b8b3715f85dcd97630b29a6b61
  	position: relative;
  }
  
-@@ -257,17 +266,6 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
+@@ -260,17 +273,6 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
  	opacity: 0.6;
  }
  
@@ -96,7 +100,7 @@ index 5cbd240c46cbe7873b27b6912040e22ac952ff8e..1503a5b8b3715f85dcd97630b29a6b61
  .icon {
  	width: 18px;
  	height: 18px;
-@@ -292,8 +290,7 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
+@@ -295,8 +297,7 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
  
  	/* Hover zones */
  	.copy-page:hover,
@@ -106,7 +110,7 @@ index 5cbd240c46cbe7873b27b6912040e22ac952ff8e..1503a5b8b3715f85dcd97630b29a6b61
  		background: var(--vp-c-bg-soft);
  	}
  
-@@ -301,13 +298,11 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
+@@ -304,13 +305,11 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside))
  	.copy-page,
  	.chevron-wrapper,
  	.dropdown-item,
