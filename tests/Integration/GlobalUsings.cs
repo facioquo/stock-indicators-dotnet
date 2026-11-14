@@ -1,5 +1,5 @@
-global using FacioQuo.Stock.Indicators;
 global using AwesomeAssertions;
+global using FacioQuo.Stock.Indicators;
 global using Microsoft.VisualStudio.TestTools.UnitTesting;
 global using Test.Base;
 
