@@ -44,7 +44,7 @@ jobs:
           fetch-depth: 0 # required for proper Last Updated page dates
 
       - name: Setup pnpm and Node.js
-        uses: pnpm/setup@v2.1.0
+        uses: pnpm/setup@v3.1.2
         with:
           cache: true
           runtime: node@${{ env.NODE_VERSION }}
