@@ -84,4 +84,30 @@ public class VwmaBufferListTests : BufferListTestBase, ITestBarBufferList
         sut.Should().HaveCount(maxListSize);
         sut.IsExactly(expected);
     }
+
+    [TestMethod]
+    [DataRow(CandlePart.Open)]
+    [DataRow(CandlePart.HLC3)]
+    [DataRow(CandlePart.Volume)]
+    public void ToVwmaList_SelectedCandlePart_MatchesSeriesExactly(CandlePart candlePart)
+    {
+        IReadOnlyList<VwmaResult> expected = Bars.ToVwma(14, candlePart);
+        VwmaList actual = new(14, candlePart, Bars);
+        actual.IsExactly(expected);
+        Bars.ToVwmaList(14, candlePart).IsExactly(expected);
+
+        actual.Clear();
+        actual.Add(Bars);
+        actual.IsExactly(expected);
+    }
+
+    [TestMethod]
+    public void Add_PreselectedPrice_DoesNotApplyCandlePartAgain()
+    {
+        DateTime day = new(2026, 1, 1);
+        VwmaList list = new(2, CandlePart.High);
+        list.Add(day, 10, 2);
+        list.Add(day.AddDays(1), 20, 1);
+        list[1].Vwma.Should().BeApproximately(40d / 3d, 0.000000000001);
+    }
 }

@@ -14,10 +14,19 @@ public class VwmaList : BufferList<VwmaResult>, IIncrementFromBar, IVwma
     /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="lookbackPeriods"/> is invalid.</exception>
     public VwmaList(
         int lookbackPeriods
-    )
+    ) : this(lookbackPeriods, CandlePart.Close) { }
+
+    /// <summary>
+    /// Initializes a VWMA buffer using the selected component of each bar.
+    /// </summary>
+    /// <param name="lookbackPeriods">Quantity of periods in lookback window.</param>
+    /// <param name="candlePart">Bar component to weight by volume.</param>
+    public VwmaList(int lookbackPeriods, CandlePart candlePart)
     {
         Vwma.Validate(lookbackPeriods);
+        BarParts.Validate(candlePart);
         LookbackPeriods = lookbackPeriods;
+        CandlePart = candlePart;
 
         _buffer = new Queue<(double, double)>(lookbackPeriods);
 
@@ -35,14 +44,26 @@ public class VwmaList : BufferList<VwmaResult>, IIncrementFromBar, IVwma
     )
         : this(lookbackPeriods) => Add(bars);
 
+    /// <summary>
+    /// Initializes a VWMA buffer with initial bars and a selected component.
+    /// </summary>
+    /// <param name="lookbackPeriods">Quantity of periods in lookback window.</param>
+    /// <param name="candlePart">Bar component to weight by volume.</param>
+    /// <param name="bars">Aggregate OHLCV price bars, time sorted.</param>
+    public VwmaList(int lookbackPeriods, CandlePart candlePart, IReadOnlyList<IBar> bars)
+        : this(lookbackPeriods, candlePart) => Add(bars);
+
     /// <inheritdoc />
     public int LookbackPeriods { get; init; }
+
+    /// <inheritdoc />
+    public CandlePart CandlePart { get; }
 
     /// <inheritdoc />
     public void Add(IBar bar)
     {
         ArgumentNullException.ThrowIfNull(bar);
-        Add(bar.Timestamp, (double)bar.Close, (double)bar.Volume);
+        Add(bar.Timestamp, bar.ToBarPartValue(CandlePart), (double)bar.Volume);
     }
 
     /// <inheritdoc />
@@ -60,7 +81,7 @@ public class VwmaList : BufferList<VwmaResult>, IIncrementFromBar, IVwma
     /// Apply new price and volume values for calculating incremental VWMA values.
     /// </summary>
     /// <param name="timestamp">Date context.</param>
-    /// <param name="price">Price value (typically close price).</param>
+    /// <param name="price">Preselected price value. CandlePart applies only to bar inputs.</param>
     /// <param name="volume">Volume value.</param>
     public void Add(DateTime timestamp, double price, double volume)
     {
@@ -107,4 +128,16 @@ public static partial class Vwma
         this IReadOnlyList<IBar> bars,
         int lookbackPeriods)
         => new(lookbackPeriods) { bars };
+
+    /// <summary>
+    /// Creates a VWMA buffer using the selected component of each bar.
+    /// </summary>
+    /// <param name="bars">Aggregate OHLCV price bars, time sorted.</param>
+    /// <param name="lookbackPeriods">Quantity of periods in lookback window.</param>
+    /// <param name="candlePart">Bar component to weight by volume. Default is Close.</param>
+    public static VwmaList ToVwmaList(
+        this IReadOnlyList<IBar> bars,
+        int lookbackPeriods,
+        CandlePart candlePart = CandlePart.Close)
+        => new(lookbackPeriods, candlePart) { bars };
 }
