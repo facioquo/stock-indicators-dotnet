@@ -82,4 +82,57 @@ public class VwmaSeriesTests : StaticSeriesTestBase
             .Invoking(static () => Bars.ToVwma(0))
             .Should()
             .ThrowExactly<ArgumentOutOfRangeException>();
+
+    [TestMethod]
+    [DataRow(CandlePart.Open)]
+    [DataRow(CandlePart.High)]
+    [DataRow(CandlePart.Low)]
+    [DataRow(CandlePart.Close)]
+    [DataRow(CandlePart.HL2)]
+    [DataRow(CandlePart.HLC3)]
+    [DataRow(CandlePart.OC2)]
+    [DataRow(CandlePart.OHL3)]
+    [DataRow(CandlePart.OHLC4)]
+    [DataRow(CandlePart.Volume)]
+    public void ToVwma_SelectedCandlePart_MatchesWeightedReference(
+        CandlePart candlePart)
+    {
+        (double first, double second) = candlePart switch {
+            CandlePart.Open => (40d / 3d, 27.5),
+            CandlePart.High => (52d / 3d, 31.5),
+            CandlePart.Low => (34d / 3d, 25.5),
+            CandlePart.Close => (46d / 3d, 29.5),
+            CandlePart.HL2 => (43d / 3d, 28.5),
+            CandlePart.HLC3 => (44d / 3d, 173d / 6d),
+            CandlePart.OC2 => (43d / 3d, 28.5),
+            CandlePart.OHL3 => (14d, 169d / 6d),
+            CandlePart.OHLC4 => (43d / 3d, 28.5),
+            CandlePart.Volume => (5d / 3d, 2.5),
+            _ => throw new ArgumentOutOfRangeException(nameof(candlePart))
+        };
+
+        DateTime day = new(2026, 1, 1);
+        IReadOnlyList<Bar> bars = [
+            new(day, 10m, 14m, 8m, 12m, 2m),
+            new(day.AddDays(1), 20m, 24m, 18m, 22m, 1m),
+            new(day.AddDays(2), 30m, 34m, 28m, 32m, 3m)
+        ];
+
+        IReadOnlyList<VwmaResult> actual = bars.ToVwma(2, candlePart);
+
+        // For Open: (10*2 + 20*1)/3, then (20*1 + 30*3)/4.
+        actual[0].Vwma.Should().BeNull();
+        actual[1].Vwma.Should().BeApproximately(first, Money12);
+        actual[2].Vwma.Should().BeApproximately(second, Money12);
+    }
+
+    [TestMethod]
+    public void ToVwma_ExplicitClose_PreservesExistingOverload()
+        => Bars.ToVwma(14, CandlePart.Close).IsExactly(Bars.ToVwma(14));
+
+    [TestMethod]
+    public void ToVwma_InvalidCandlePart_ThrowsArgumentOutOfRangeException()
+        => FluentActions.Invoking(() => Bars.ToVwma(14, (CandlePart)(-1)))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>()
+            .WithParameterName("candlePart");
 }

@@ -8,10 +8,17 @@ public class VwmaHub
 {
     internal VwmaHub(
         IBarProvider<IBar> provider,
-        int lookbackPeriods) : base(provider)
+        int lookbackPeriods) : this(provider, lookbackPeriods, CandlePart.Close) { }
+
+    internal VwmaHub(
+        IBarProvider<IBar> provider,
+        int lookbackPeriods,
+        CandlePart candlePart) : base(provider)
     {
         Vwma.Validate(lookbackPeriods);
+        BarParts.Validate(candlePart);
         LookbackPeriods = lookbackPeriods;
+        CandlePart = candlePart;
         Name = $"VWMA({lookbackPeriods})";
 
         // Validate cache size for warmup requirements
@@ -22,6 +29,9 @@ public class VwmaHub
 
     /// <inheritdoc/>
     public int LookbackPeriods { get; init; }
+
+    /// <inheritdoc />
+    public CandlePart CandlePart { get; }
 
 
     /// <inheritdoc />
@@ -47,7 +57,7 @@ public class VwmaHub
             for (int p = index - LookbackPeriods + 1; p <= index; p++)
             {
                 IBar bar = ProviderCache[p];
-                double price = (double)bar.Close;
+                double price = bar.ToBarPartValue(CandlePart);
                 double volume = (double)bar.Volume;
 
                 priceVolumeSum += price * volume;
@@ -81,5 +91,21 @@ public static partial class Vwma
     {
         ArgumentNullException.ThrowIfNull(barProvider);
         return new(barProvider, lookbackPeriods);
+    }
+
+    /// <summary>
+    /// Converts the provider to a VWMA hub using the selected bar component.
+    /// </summary>
+    /// <param name="barProvider">Bar provider.</param>
+    /// <param name="lookbackPeriods">Quantity of periods in lookback window.</param>
+    /// <param name="candlePart">Bar component to weight by volume. Default is Close.</param>
+    /// <returns>A VWMA hub.</returns>
+    public static VwmaHub ToVwmaHub(
+        this IBarProvider<IBar> barProvider,
+        int lookbackPeriods,
+        CandlePart candlePart = CandlePart.Close)
+    {
+        ArgumentNullException.ThrowIfNull(barProvider);
+        return new(barProvider, lookbackPeriods, candlePart);
     }
 }

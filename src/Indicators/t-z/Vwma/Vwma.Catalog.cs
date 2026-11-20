@@ -11,6 +11,7 @@ public static partial class Vwma
             .WithId("VWMA")
             .WithCategory(Category.MovingAverage)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", description: "Number of periods for the VWMA calculation", isRequired: true, defaultValue: 14, minimum: 1, maximum: 250)
+            .AddEnumParameter<CandlePart>("candlePart", "Candle Part", description: "Bar component to weight by volume", isRequired: false, defaultValue: CandlePart.Close)
             .AddResult(nameof(VwmaResult.Vwma), "VWMA", IndicatorResult.PricePane, ResultType.Default, isReusable: true)
             .Build();
 
