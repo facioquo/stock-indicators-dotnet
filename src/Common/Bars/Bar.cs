@@ -23,7 +23,7 @@ namespace FacioQuo.Stock.Indicators;
 /// </param>
 /// <inheritdoc cref="IBar"/>
 [Serializable]
-public record Bar
+public partial record Bar
 (
     DateTime Timestamp,
     decimal Open,
