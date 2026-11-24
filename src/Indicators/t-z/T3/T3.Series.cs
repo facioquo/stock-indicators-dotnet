@@ -24,7 +24,7 @@ public static partial class T3
 
         // initialize
         int length = source.Count;
-        List<T3Result> results = new(length);
+        List<T3Result> results = [with(length)];
 
         double k = 2d / (lookbackPeriods + 1);
         double a = volumeFactor;

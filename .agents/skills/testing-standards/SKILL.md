@@ -1,11 +1,11 @@
 ---
 name: testing-standards
-description: Test conventions for the indicator library — base class and test interface per style, required test methods, `MethodName_StateUnderTest_ExpectedBehavior` naming, shared bar fixtures, FluentAssertions and `IsExactly` parity, and `Money*` precision constants. Use when creating or editing any file under `tests/Library/`, when a test class fails to compile for a missing abstract or interface method, or when choosing an assertion tolerance.
+description: Test conventions for the indicator library — base class and test interface per style, required test methods, `MethodName_StateUnderTest_ExpectedBehavior` naming, shared bar fixtures, AwesomeAssertions and `IsExactly` parity, and `Money*` precision constants. Use when creating or editing any file under `tests/Library/`, when a test class fails to compile for a missing abstract or interface method, or when choosing an assertion tolerance.
 ---
 
 # Testing standards
 
-Tests use MSTest with FluentAssertions. Base classes and test interfaces live in `tests/Library/TestBase/`; assertion helpers live in `tests/Library/TestTools/TestAssert.cs`.
+Tests use MSTest with AwesomeAssertions. Base classes and test interfaces live in `tests/Library/TestBase/`; assertion helpers live in `tests/Library/TestTools/TestAssert.cs`.
 
 Load [required test methods and precision constants](references/patterns.md) before writing a new test class or picking a `Money*` tolerance.
 

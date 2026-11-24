@@ -23,7 +23,7 @@ public static partial class Fcb
 
         // initialize
         int length = bars.Count;
-        List<FcbResult> results = new(length);
+        List<FcbResult> results = [with(length)];
 
         IReadOnlyList<FractalResult> fractals = bars
             .ToFractal(windowSpan, windowSpan, EndType.HighLow);

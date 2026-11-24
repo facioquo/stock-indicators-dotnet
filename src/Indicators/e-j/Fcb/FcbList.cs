@@ -105,7 +105,7 @@ public class FcbList : BufferList<FcbResult>, IIncrementFromBar, IFcb
             }
 
             // update lines based on fractals detected windowSpan periods ago
-            if (Count >= _windowSpan)
+            if (TotalCount >= _windowSpan)
             {
                 if (isBearishFractal)
                 {

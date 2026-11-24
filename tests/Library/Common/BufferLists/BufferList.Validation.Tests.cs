@@ -24,7 +24,7 @@ public class BufferListValidation : TestBase
     [TestMethod]
     public void MaxListSize_SetBelowCurrentCount_PrunesImmediately()
     {
-        SmaList sut = new(5);
+        SmaList sut = [with(5)];
         sut.Add(Bars.Take(50).ToList());
         sut.Should().HaveCount(50);
 
@@ -39,7 +39,7 @@ public class BufferListValidation : TestBase
     [TestMethod]
     public void MaxListSize_SetAboveCurrentCount_DoesNotPrune()
     {
-        SmaList sut = new(5);
+        SmaList sut = [with(5)];
         sut.Add(Bars.Take(50).ToList());
 
         sut.MaxListSize = 60;

@@ -45,6 +45,24 @@ internal struct CircularDoubleBuffer
         _fill = 0;
     }
 
+    /// <summary>
+    /// Sums the values from newest to oldest, the order a Series lookback loop adds them,
+    /// so the result rounds the same as the Series.
+    /// </summary>
+    internal readonly double SumNewestFirst()
+    {
+        double sum = 0;
+        int index = _head;
+
+        for (int n = 0; n < _fill; n++)
+        {
+            index = (index == 0 ? _values.Length : index) - 1;
+            sum += _values[index];
+        }
+
+        return sum;
+    }
+
     internal readonly double GetMax()
     {
         if (_fill == 0)

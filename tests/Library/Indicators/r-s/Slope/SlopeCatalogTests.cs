@@ -14,7 +14,7 @@ public class SlopeCatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("Slope");
+        listing.Name.Should().Be("Slope and Linear Regression");
         listing.Uiid.Should().Be("SLOPE");
         listing.Style.Should().Be(Style.Series);
         listing.Category.Should().Be(Category.PriceCharacteristic);
@@ -39,7 +39,7 @@ public class SlopeCatalogTests : TestBase
         interceptResult1.IsReusable.Should().Be(false);
         IndicatorResult stddevResult2 = listing.Results.SingleOrDefault(static r => r.DataName == "StdDev");
         stddevResult2.Should().NotBeNull();
-        stddevResult2?.DisplayName.Should().Be("Standard deviation");
+        stddevResult2?.DisplayName.Should().Be("Standard Deviation");
         stddevResult2.IsReusable.Should().Be(false);
         IndicatorResult rsquaredResult3 = listing.Results.SingleOrDefault(static r => r.DataName == "RSquared");
         rsquaredResult3.Should().NotBeNull();
@@ -59,7 +59,7 @@ public class SlopeCatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("Slope");
+        listing.Name.Should().Be("Slope and Linear Regression");
         listing.Uiid.Should().Be("SLOPE");
         listing.Style.Should().Be(Style.Stream);
         listing.Category.Should().Be(Category.PriceCharacteristic);
@@ -84,7 +84,7 @@ public class SlopeCatalogTests : TestBase
         interceptResult1?.IsReusable.Should().Be(false);
         IndicatorResult stddevResult2 = listing.Results.SingleOrDefault(static r => r.DataName == "StdDev");
         stddevResult2.Should().NotBeNull();
-        stddevResult2?.DisplayName.Should().Be("Standard deviation");
+        stddevResult2?.DisplayName.Should().Be("Standard Deviation");
         stddevResult2?.IsReusable.Should().Be(false);
         IndicatorResult rsquaredResult3 = listing.Results.SingleOrDefault(static r => r.DataName == "RSquared");
         rsquaredResult3.Should().NotBeNull();
@@ -104,7 +104,7 @@ public class SlopeCatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("Slope");
+        listing.Name.Should().Be("Slope and Linear Regression");
         listing.Uiid.Should().Be("SLOPE");
         listing.Style.Should().Be(Style.Buffer);
         listing.Category.Should().Be(Category.PriceCharacteristic);
@@ -129,7 +129,7 @@ public class SlopeCatalogTests : TestBase
         interceptResult1?.IsReusable.Should().Be(false);
         IndicatorResult stddevResult2 = listing.Results.SingleOrDefault(static r => r.DataName == "StdDev");
         stddevResult2.Should().NotBeNull();
-        stddevResult2?.DisplayName.Should().Be("Standard deviation");
+        stddevResult2?.DisplayName.Should().Be("Standard Deviation");
         stddevResult2?.IsReusable.Should().Be(false);
         IndicatorResult rsquaredResult3 = listing.Results.SingleOrDefault(static r => r.DataName == "RSquared");
         rsquaredResult3.Should().NotBeNull();

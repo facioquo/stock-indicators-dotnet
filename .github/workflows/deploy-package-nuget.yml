@@ -51,7 +51,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: "10.x"
+          dotnet-version: "11.x"
           dotnet-quality: "ga"
 
       - name: Extract version from release tag
@@ -217,7 +217,7 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: "10.x"
+          dotnet-version: "11.x"
           dotnet-quality: "ga"
 
       - name: Download package

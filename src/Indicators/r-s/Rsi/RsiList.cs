@@ -68,7 +68,7 @@ public class RsiList : BufferList<RsiResult>, IIncrementFromChain, IRsi
 
         // Calculate RSI when we have enough data points
         // We need at least lookbackPeriods + 1 total values (because first value is just for reference)
-        int totalValuesProcessed = Count + 1; // +1 because we haven't added to base list yet
+        int totalValuesProcessed = TotalCount + 1; // +1 because we haven't added to base list yet
 
         // Re/initialize average gain/loss (first calculation after reaching lookback periods)
         if (totalValuesProcessed >= LookbackPeriods + 1 && (double.IsNaN(_avgGain) || double.IsNaN(_avgLoss)))

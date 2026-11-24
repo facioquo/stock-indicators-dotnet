@@ -9,7 +9,7 @@ public static partial class Chop
         new CatalogListingBuilder()
             .WithName("Choppiness Index")
             .WithId("CHOP")
-            .WithCategory(Category.Oscillator)
+            .WithCategory(Category.PriceCharacteristic)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", defaultValue: 14, minimum: 2, maximum: 250)
             .AddResult(nameof(ChopResult.Chop), "CHOP", "Chop", ResultType.Default, isReusable: true)
             .Build();

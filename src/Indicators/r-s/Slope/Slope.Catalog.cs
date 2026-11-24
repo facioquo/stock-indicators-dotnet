@@ -7,13 +7,13 @@ public static partial class Slope
     /// </summary>
     internal static readonly IndicatorListing CommonListing =
         new CatalogListingBuilder()
-            .WithName("Slope")
+            .WithName("Slope and Linear Regression")
             .WithId("SLOPE")
             .WithCategory(Category.PriceCharacteristic)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", description: "Number of periods for the slope calculation", isRequired: false, defaultValue: 14, minimum: 2, maximum: 250)
             .AddResult(nameof(SlopeResult.Slope), "Slope", "Slope", ResultType.Default, isReusable: true)
             .AddResult(nameof(SlopeResult.Intercept), "Intercept", "Intercept", ResultType.Default)
-            .AddResult(nameof(SlopeResult.StdDev), "Standard deviation", "StdDev", ResultType.Default)
+            .AddResult(nameof(SlopeResult.StdDev), "Standard Deviation", "StdDev", ResultType.Default)
             .AddResult(nameof(SlopeResult.RSquared), "R-squared", "RSquared", ResultType.Default)
             .AddResult(nameof(SlopeResult.Line), "Line", IndicatorResult.PricePane, ResultType.Default)
             .Build();

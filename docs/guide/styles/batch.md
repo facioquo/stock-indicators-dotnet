@@ -5,105 +5,87 @@ description: Learn how to use Series batch style indicators for one-time bulk co
 
 # Series style indicators for batch processing
 
-Series batch style is the fastest and simplest way to calculate indicators from complete historical datasets. Use this when you have all your historical price bars available and need to convert them to indicators in one operation.
+Series style calculates an indicator over a full collection of bars in one call. It is the simplest and fastest style, and the one to start with.
 
 ## When to use batch style
 
-**Ideal for:**
+Use Series style when you have the bars you need up front, as in:
 
-- Complete historical datasets ready for conversion
-- One-time indicator calculations
-- Backtesting and historical analysis
-- Performance-critical batch processing
-- Simplest implementation with minimal code
+- Backtesting and historical research
+- Screening many symbols
+- Charts and reports
 
-**Not ideal for:**
-
-- Real-time or streaming data (use [Stream hubs](/guide/styles/stream))
-- Incremental bar-by-bar processing (use [Buffer lists](/guide/styles/buffer))
-- Live data feeds requiring continuous updates
+When bars keep arriving, don't re-run a Series method for every new bar; its cost grows with the history it recalculates. Use [Buffer lists](/guide/styles/buffer) or [Stream hubs](/guide/styles/stream) instead, which add each bar at a flat cost. See [Bars that arrive one at a time](/guide/styles/#bars-that-arrive-one-at-a-time) for a comparison.
 
 ## Basic usage
 
-All series-style indicators produce complete results for the entire bar history provided. The results are returned as a time series dataset, not just a single value.
+Call an indicator method on your bars to get a result for every bar:
 
 ```csharp
 using FacioQuo.Stock.Indicators;
 
-// fetch historical price bars from your data source
+// your own method that gets historical bars from your data source
 IReadOnlyList<Bar> bars = GetBarsFromFeed("MSFT");
 
-// calculate 20-period SMA
+// calculate a 20-period SMA
 IReadOnlyList<SmaResult> results = bars.ToSma(20);
 
-// iterate through all results
 foreach (SmaResult r in results)
 {
-    Console.WriteLine($"SMA on {r.Timestamp:d} was ${r.Sma:N4}");
+    Console.WriteLine($"SMA on {r.Timestamp:d} was {r.Sma:N4}");
 }
 ```
 
+The results hold one result per bar, in the same order as the bars. Values are `null` until the indicator has enough bars to warm up; each indicator's page lists its warmup period. For how much history to provide, see [How much historical bar data do I need?](/guide/getting-started#how-much-historical-bar-data-do-i-need)
+
+## Bar order
+
+Series methods expect bars in time order, oldest first, with no duplicate timestamps. They don't sort or check your bars.
+
+::: warning 🚩 Silent errors from unsorted bars
+Bars that are out of order, or that repeat a timestamp, produce incorrect results without any error. If your data source doesn't guarantee the order, sort the bars first with [`ToSortedList()`](/utilities/bars#sort-bars). To check for duplicates and order problems, use [`Validate()`](/utilities/bars#validate-bar-history).
+:::
+
 ## Chaining indicators
 
-Create sophisticated analysis by chaining indicators together. For the broader concept, see [Chaining indicators](/guide/chaining).
+Call one indicator method on another's results to calculate an indicator from that indicator. For the broader concept, see [Chaining indicators](/guide/chaining).
 
 ```csharp
-// calculate RSI of On-Balance Volume
-IReadOnlyList<RsiResult> results = bars
+// RSI of On-Balance Volume
+IReadOnlyList<RsiResult> rsiOfObv = bars
     .ToObv()
     .ToRsi(14);
 
-// or use alternate candle price
-IReadOnlyList<EmaResult> results = bars
+// EMA of the (High + Low) / 2 price instead of Close
+IReadOnlyList<EmaResult> emaOfHl2 = bars
     .Use(CandlePart.HL2)
     .ToEma(20);
 ```
 
-## Performance characteristics
+## Working with results
 
-- **Speed:** Fastest indicator style (~baseline performance)
-- **Memory:** Minimal overhead, returns `IReadOnlyList<TResult>`
-- **Thread safety:** Results are immutable and thread-safe
-- **Scalability:** Limited to single calculation per dataset
-
-## Processing results
-
-### Find specific dates
+[Result utilities](/utilities/results) help with common follow-up steps:
 
 ```csharp
-IReadOnlyList<SmaResult> results = bars.ToSma(20);
-DateTime lookupDate = DateTime.Parse("2024-01-15");
-SmaResult? result = results.Find(lookupDate);
-```
+IReadOnlyList<AdxResult> results = bars.ToAdx(14);
 
-### Remove warmup periods
+// find the result for a timestamp
+AdxResult? result = results.Find(new DateTime(2024, 1, 15));
 
-```csharp
-// auto-remove recommended warmup
-IReadOnlyList<AdxResult> results = bars
-    .ToAdx(14)
-    .RemoveWarmupPeriods();
+// remove the warmup period's results
+IReadOnlyList<AdxResult> warmedUp = results.RemoveWarmupPeriods();
 
-// or specify custom amount
-IReadOnlyList<AdxResult> results = bars
-    .ToAdx(14)
-    .RemoveWarmupPeriods(100);
-```
-
-### Condense results
-
-Remove non-essential data points (useful for candlestick patterns):
-
-```csharp
-// only return records with signals
+// keep only the bars where a candlestick pattern matched
 IReadOnlyList<CandleResult> signals = bars
     .ToMarubozu()
     .Condense();
 ```
 
+Results are lists of immutable records, so you can use LINQ on them and share them across threads. A Series method doesn't change the bars you pass, so you can also calculate several indicators from the same bars on different threads at once.
+
 ## See also
 
-- [Buffer lists](/guide/styles/buffer) for incremental processing
-- [Stream hubs](/guide/styles/stream) for real-time data
-- [Guide](/guide/) for detailed examples
+- [Getting started](/guide/getting-started) for installation and supplying bar data
+- [Result utilities](/utilities/results) for finding, trimming, and condensing results
+- [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for bars that arrive one at a time
 - [Indicators](/indicators) for available indicators

@@ -25,7 +25,7 @@ public static partial class Rsi
         double avgGain = double.NaN;
         double avgLoss = double.NaN;
 
-        List<RsiResult> results = new(length);
+        List<RsiResult> results = [with(length)];
         double[] gain = new double[length]; // gain
         double[] loss = new double[length]; // loss
 

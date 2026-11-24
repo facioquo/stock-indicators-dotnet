@@ -28,7 +28,7 @@ public class MfiBufferListTests : BufferListTestBase, ITestBarBufferList
     [TestMethod]
     public void AddBar_IncrementsResults()
     {
-        MfiList sut = new(lookbackPeriods);
+        MfiList sut = [with(lookbackPeriods)];
 
         foreach (Bar bar in Bars)
         {

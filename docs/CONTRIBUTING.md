@@ -48,7 +48,7 @@ Use the [Discussions](https://github.com/facioquo/stock-indicators-dotnet/discus
 
 The recommended setup uses VS Code with the dev container (automated) or the **Setup: Dev tools** VS Code task to check for prerequisites.  For manual setup, run these commands once after cloning:
 
-Install the .NET 10 SDK for local development. The library targets .NET 8, 9, and 10, but the test project defaults to .NET 10; the CI matrix also runs the unit tests on other supported .NET framwork versions. You do not need the .NET 8 or 9 SDKs for the normal local test workflow.
+Install the .NET 11 SDK for local development. The library targets .NET 10 and 11, but the test project defaults to .NET 11; the CI matrix also runs the unit tests on .NET 10. You do not need the .NET 10 SDK for the normal local test workflow.
 
 ```bash
 dotnet tool restore   # install .NET CLI tools
@@ -62,6 +62,15 @@ dotnet restore        # restore NuGet packages
 - Historical Stock Bars are automatically added to unit test methods.  A `Data.Quotes.xlsx` Excel file is included in the `tests/Library/TestData` folder that is an exact copy of what is used in the unit tests.  Use a copy of this file for your manual calculations to ensure that it is correct.  Do not commit changes to the original file.
 - We expect all unit tests to execute successfully and all Errors and Warning resolved before you submit your code.
 - Failed builds or unit testing will block acceptance of your Pull Request when submitting changes.
+
+### Codacy
+
+Codacy runs static analysis and coverage checks on every pull request, configured by `.codacy.yml`. CI uploads the unit-test coverage. To see findings before you push, set up Codacy's agent tooling in your user environment. Nothing in this repository installs it:
+
+- **Claude Code**: install the [Codacy Skills](https://docs.codacy.com/codacy-skills/) plugin and the CLIs it uses, then sign in with `codacy login`.
+- **Other agents**: add the [Codacy MCP server](https://github.com/codacy/codacy-mcp-server) to your own MCP configuration, with an account token in `CODACY_ACCOUNT_TOKEN`.
+
+Create tokens under Codacy → My account → Access management. Never commit one.
 
 ### Regression baseline testing
 
@@ -145,7 +154,7 @@ Broken-link checking is a separate task, `Test: Website links (htmlproofer)`, or
 
 ### Chart snapshot
 
-Charts fall back to a snapshot of the chart API committed under `docs/.vitepress/public/data/chart-api/`, so they still render when the API is unreachable. The `Refresh chart snapshot` workflow regenerates it monthly and opens a pull request; `docs:build` never fetches it.
+Charts fall back to a snapshot of the chart API committed under `docs/.vitepress/public/data/chart-api/`, so they still render when the API is unreachable. The `Regenerate chart snapshots` workflow regenerates it monthly and opens a pull request; `docs:build` never fetches it.
 
 - Regenerate it by hand with `pnpm run snapshot:charts` after adding a chart to `.vitepress/theme/chart-indicators.ts` or changing the landing overlays.
 - `pnpm run test:offline` blocks the API and checks that every chart renders from the snapshot.

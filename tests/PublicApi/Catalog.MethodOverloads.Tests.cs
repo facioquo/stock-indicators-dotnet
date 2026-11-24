@@ -25,7 +25,7 @@ public class CatalogMethodOverloadsTests
     public void OverloadInvokesLikeTheDirectCall()
     {
         IReadOnlyList<Bar> bars = Data.GetDefault();
-        IndicatorListing listing = Catalog.Get("EMA", Style.Series)!;
+        IndicatorListing listing = Catalog.Get("EMA", Style.Series);
 
         MethodInfo method = listing.GetMethodOverloads()
             .Single(static m => m.GetParameters()
@@ -38,9 +38,40 @@ public class CatalogMethodOverloadsTests
     }
 
     [TestMethod]
+    public void OperatorSharedAcrossStylesResolvesToTheListingStyle()
+    {
+        // IndyMath's Minus names both a Series method and a stream hub method
+        IReadOnlyList<MethodInfo> series = Catalog.Get("MINUS-SERIES", Style.Series).GetMethodOverloads();
+        IReadOnlyList<MethodInfo> stream = Catalog.Get("MINUS-SERIES", Style.Stream).GetMethodOverloads();
+
+        series.Should().NotBeEmpty()
+            .And.OnlyContain(static m => m.ReturnType == typeof(IReadOnlyList<MathResult>));
+        stream.Should().NotBeEmpty()
+            .And.OnlyContain(static m => typeof(IStreamObservable<MathResult>).IsAssignableFrom(m.ReturnType));
+
+        // the two-series hub and the fixed-amount hub both survive the filter
+        stream.Select(static m => m.ReturnType).Should().Contain([typeof(PairMathHub), typeof(ScalarMathHub)]);
+    }
+
+    [TestMethod]
+    public void BufferListingResolvesOnlyBufferOverloads()
+        => Catalog.Get("EMA", Style.Buffer).GetMethodOverloads()
+            .Should().NotBeEmpty()
+            .And.OnlyContain(static m => m.ReturnType == typeof(EmaList));
+
+    [TestMethod]
+    public void ListingWithNoOverloadOfItsStyleGetsEveryOverload()
+    {
+        IndicatorListing series = Catalog.Get("EMA", Style.Series);
+        IndicatorListing mislabeled = series with { Style = Style.Stream };
+
+        mislabeled.GetMethodOverloads().Should().Equal(series.GetMethodOverloads());
+    }
+
+    [TestMethod]
     public void OverloadsCannotBeModifiedThroughTheResult()
     {
-        IReadOnlyList<MethodInfo> overloads = Catalog.Get("EMA", Style.Series)!.GetMethodOverloads();
+        IReadOnlyList<MethodInfo> overloads = Catalog.Get("EMA", Style.Series).GetMethodOverloads();
 
         overloads.Should().NotBeAssignableTo<MethodInfo[]>();
         overloads.Should().BeAssignableTo<ICollection<MethodInfo>>()
@@ -50,7 +81,7 @@ public class CatalogMethodOverloadsTests
     [TestMethod]
     public void ListingNamingNoMethodHasNoOverloads()
     {
-        IndicatorListing listing = Catalog.Get("EMA", Style.Series)! with { MethodName = "NoSuchMethod" };
+        IndicatorListing listing = Catalog.Get("EMA", Style.Series) with { MethodName = "NoSuchMethod" };
 
         listing.GetMethodOverloads().Should().BeEmpty();
     }
@@ -58,7 +89,7 @@ public class CatalogMethodOverloadsTests
     [TestMethod]
     public void ListingBuiltWithOnlyMethodNameResolvesThroughTheCatalog()
     {
-        IndicatorListing catalogListing = Catalog.Get("EMA", Style.Series)!;
+        IndicatorListing catalogListing = Catalog.Get("EMA", Style.Series);
         IndicatorListing external = new() {
             Uiid = "MY-EMA",
             Name = "My EMA",
@@ -74,7 +105,7 @@ public class CatalogMethodOverloadsTests
     [TestMethod]
     public void ListingWithoutMethodHasNoOverloads()
     {
-        IndicatorListing listing = Catalog.Get("EMA", Style.Series)! with { MethodName = null };
+        IndicatorListing listing = Catalog.Get("EMA", Style.Series) with { MethodName = null };
 
         listing.GetMethodOverloads().Should().BeEmpty();
     }

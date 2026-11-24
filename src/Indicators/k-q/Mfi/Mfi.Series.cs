@@ -35,7 +35,7 @@ public static partial class Mfi
 
         // initialize
         int length = bars.Count;
-        List<MfiResult> results = new(length);
+        List<MfiResult> results = [with(length)];
 
         double[] tp = new double[length];  // true price
         double[] mf = new double[length];  // raw MF value

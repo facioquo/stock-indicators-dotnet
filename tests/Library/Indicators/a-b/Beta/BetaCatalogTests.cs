@@ -14,7 +14,7 @@ public class BetaCatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("Beta");
+        listing.Name.Should().Be("Beta Coefficient");
         listing.Uiid.Should().Be("BETA");
         listing.Style.Should().Be(Style.Series);
         listing.Category.Should().Be(Category.PriceCharacteristic);
@@ -51,11 +51,56 @@ public class BetaCatalogTests : TestBase
         convexityResult4.IsReusable.Should().Be(false);
         IndicatorResult returnsevalResult5 = listing.Results.SingleOrDefault(static r => r.DataName == "ReturnsEval");
         returnsevalResult5.Should().NotBeNull();
-        returnsevalResult5?.DisplayName.Should().Be("Returns Eval");
+        returnsevalResult5?.DisplayName.Should().Be("Evaluated Returns");
         returnsevalResult5.IsReusable.Should().Be(false);
         IndicatorResult returnsmrktResult6 = listing.Results.SingleOrDefault(static r => r.DataName == "ReturnsMrkt");
         returnsmrktResult6.Should().NotBeNull();
-        returnsmrktResult6?.DisplayName.Should().Be("Returns Mrkt");
+        returnsmrktResult6?.DisplayName.Should().Be("Market Returns");
         returnsmrktResult6.IsReusable.Should().Be(false);
+    }
+
+    [TestMethod]
+    public void BetaBuffer_InCatalog_ReturnsAllVariants()
+        => AssertStyleListing(Beta.BufferListing, Style.Buffer, "ToBetaList");
+
+    [TestMethod]
+    public void BetaStream_InCatalog_ReturnsAllVariants()
+        => AssertStyleListing(Beta.StreamListing, Style.Stream, "ToBetaHub");
+
+    [TestMethod]
+    public void BetaBufferAndStream_ExplicitSources_MatchSeries()
+    {
+        IReadOnlyList<BetaResult> expected = OtherBars.ToBeta(Bars, 50, BetaType.All);
+
+        foreach (Style style in (Style[])[Style.Buffer, Style.Stream])
+        {
+            Catalog.Get("BETA", style)
+                .WithParams(new Dictionary<string, object> {
+                    ["sourceEval"] = OtherBars,
+                    ["sourceMrkt"] = Bars,
+                    ["type"] = BetaType.All
+                })
+                .FromSource((IEnumerable<IBar>)Bars)
+                .Execute<BetaResult>()
+                .IsExactly(expected);
+        }
+    }
+
+    private static void AssertStyleListing(IndicatorListing listing, Style style, string methodName)
+    {
+        listing.Should().NotBeNull();
+        listing.Name.Should().Be("Beta Coefficient");
+        listing.Uiid.Should().Be("BETA");
+        listing.Style.Should().Be(style);
+        listing.Category.Should().Be(Category.PriceCharacteristic);
+        listing.MethodName.Should().Be(methodName);
+
+        listing.Parameters.Select(static p => p.ParameterName)
+            .Should().Equal("sourceEval", "sourceMrkt", "lookbackPeriods", "type");
+        listing.Results.Select(static r => r.DataName)
+            .Should().Equal(
+                nameof(BetaResult.Beta), nameof(BetaResult.BetaUp), nameof(BetaResult.BetaDown),
+                nameof(BetaResult.Ratio), nameof(BetaResult.Convexity),
+                nameof(BetaResult.ReturnsEval), nameof(BetaResult.ReturnsMrkt));
     }
 }

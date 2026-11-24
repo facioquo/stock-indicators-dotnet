@@ -42,7 +42,7 @@ public static partial class Keltner
 
         // initialize
         int length = bars.Count;
-        List<KeltnerResult> results = new(length);
+        List<KeltnerResult> results = [with(length)];
 
         IReadOnlyList<EmaResult> emaResults
             = bars.ToEma(emaPeriods);

@@ -9,7 +9,7 @@ public static partial class PivotPoints
         new CatalogListingBuilder()
             .WithName("Pivot Points")
             .WithId("PIVOT-POINTS")
-            .WithCategory(Category.PriceTrend)
+            .WithCategory(Category.PriceChannel)
             .AddEnumParameter<BarInterval>("windowSize", "Window Size", description: "Size of the window for pivot calculation", isRequired: false, defaultValue: BarInterval.Month)
             .AddEnumParameter<PivotPointType>("pointType", "Point Type", description: "Type of pivot points to calculate", isRequired: false, defaultValue: PivotPointType.Standard)
             .AddResult(nameof(PivotPointsResult.R3), "Resistance 3", IndicatorResult.PricePane, ResultType.Default)

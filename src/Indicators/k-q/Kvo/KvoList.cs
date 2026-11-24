@@ -19,6 +19,9 @@ public class KvoList : BufferList<KvoResult>, IIncrementFromBar, IKvo
     private double _prevVfSlowEma;
     private double _sumVf;
 
+    // oscillators that seed the signal, kept here because MaxListSize can prune them from the list
+    private readonly List<double> _signalSeed = [];
+
     /// <summary>
     /// Initializes a new instance of the <see cref="KvoList"/> class.
     /// </summary>
@@ -95,7 +98,7 @@ public class KvoList : BufferList<KvoResult>, IIncrementFromBar, IKvo
         // daily measurement
         double dm = high - low;
 
-        if (Count <= 0)
+        if (TotalCount <= 0)
         {
             _prevHlc = hlc;
             AddInternal(new KvoResult(bar.Timestamp));
@@ -105,7 +108,7 @@ public class KvoList : BufferList<KvoResult>, IIncrementFromBar, IKvo
         // trend direction
         double trend = hlc > _prevHlc ? 1 : -1;
 
-        if (Count <= 1)
+        if (TotalCount <= 1)
         {
             _prevHlc = hlc;
             _prevTrend = trend;
@@ -126,54 +129,59 @@ public class KvoList : BufferList<KvoResult>, IIncrementFromBar, IKvo
             : 0;
 
         // accumulate VF for EMA initialization (starting from period 2)
-        if (Count > 1)
+        if (TotalCount > 1)
         {
             _sumVf += vf;
         }
 
         // fast-period EMA of VF
         double vfFastEma = 0;
-        if (Count > _fastPeriods + 1)
+        if (TotalCount > _fastPeriods + 1)
         {
             vfFastEma = (vf * _kFast) + (_prevVfFastEma * (1 - _kFast));
         }
-        else if (Count == _fastPeriods + 1)
+        else if (TotalCount == _fastPeriods + 1)
         {
             vfFastEma = _sumVf / _fastPeriods;
         }
 
         // slow-period EMA of VF
         double vfSlowEma = 0;
-        if (Count > _slowPeriods + 1)
+        if (TotalCount > _slowPeriods + 1)
         {
             vfSlowEma = (vf * _kSlow) + (_prevVfSlowEma * (1 - _kSlow));
         }
-        else if (Count == _slowPeriods + 1)
+        else if (TotalCount == _slowPeriods + 1)
         {
             vfSlowEma = _sumVf / _slowPeriods;
         }
 
         // Klinger Oscillator
-        if (Count >= _slowPeriods + 1)
+        if (TotalCount >= _slowPeriods + 1)
         {
             kvo = vfFastEma - vfSlowEma;
 
             // Signal
-            if (Count > _slowPeriods + SignalPeriods)
+            if (TotalCount > _slowPeriods + SignalPeriods)
             {
                 double prevSignal = this[^1].Signal ?? 0;
                 sig = (kvo * _kSignal) + (prevSignal * (1 - _kSignal));
             }
-            else if (Count == _slowPeriods + SignalPeriods)
+            else if (TotalCount == _slowPeriods + SignalPeriods)
             {
                 // current value first, then the earlier ones: Series' order, so the sum rounds the same
                 double sum = kvo ?? 0;
-                for (int p = _slowPeriods + 1; p < Count; p++)
+                foreach (double oscillator in _signalSeed)
                 {
-                    sum += this[p].Oscillator ?? 0;
+                    sum += oscillator;
                 }
 
                 sig = sum / SignalPeriods;
+                _signalSeed.Clear();
+            }
+            else
+            {
+                _signalSeed.Add(kvo ?? 0);
             }
         }
 
@@ -213,6 +221,7 @@ public class KvoList : BufferList<KvoResult>, IIncrementFromBar, IKvo
         _prevVfFastEma = 0;
         _prevVfSlowEma = 0;
         _sumVf = 0;
+        _signalSeed.Clear();
     }
 }
 

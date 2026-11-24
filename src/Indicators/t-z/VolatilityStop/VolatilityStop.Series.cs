@@ -43,7 +43,7 @@ public static partial class VolatilityStop
 
         // initialize
         int length = bars.Count;
-        List<VolatilityStopResult> results = new(length);
+        List<VolatilityStopResult> results = [with(length)];
 
         if (length == 0)
         {

@@ -32,7 +32,7 @@ public class HeikinAshiBufferListTests : BufferListTestBase, ITestBarBufferList
     [TestMethod]
     public void BarsCtor_OnInstantiation_IncrementsResults()
     {
-        HeikinAshiList sut = new(Bars);
+        HeikinAshiList sut = [with(Bars)];
 
         sut.Should().HaveCount(Bars.Count);
         sut.IsExactly(series);
@@ -44,7 +44,7 @@ public class HeikinAshiBufferListTests : BufferListTestBase, ITestBarBufferList
         List<Bar> subset = Bars.Take(80).ToList();
         IReadOnlyList<HeikinAshiResult> expected = subset.ToHeikinAshi();
 
-        HeikinAshiList sut = new(subset);
+        HeikinAshiList sut = [with(subset)];
 
         sut.Should().HaveCount(subset.Count);
         sut.IsExactly(expected);

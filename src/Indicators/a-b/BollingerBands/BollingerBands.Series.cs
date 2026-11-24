@@ -24,7 +24,7 @@ public static partial class BollingerBands
 
         // initialize
         int length = source.Count;
-        List<BollingerBandsResult> results = new(length);
+        List<BollingerBandsResult> results = [with(length)];
 
         // roll through source values
         for (int i = 0; i < length; i++)

@@ -63,7 +63,7 @@ public class DemaList : BufferList<DemaResult>, IIncrementFromChain, IDema
         }
 
         // add nulls for incalculable periods
-        if (Count < LookbackPeriods - 1)
+        if (TotalCount < LookbackPeriods - 1)
         {
             AddInternal(new DemaResult(timestamp));
             return;

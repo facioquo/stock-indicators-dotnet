@@ -43,7 +43,7 @@ public static partial class Fractal
 
         // initialize
         int length = bars.Count;
-        List<FractalResult> results = new(length);
+        List<FractalResult> results = [with(length)];
 
         // roll through source values
         for (int i = 0; i < length; i++)

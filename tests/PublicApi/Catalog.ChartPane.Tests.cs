@@ -11,9 +11,9 @@ public class CatalogChartPaneTests
     [TestMethod]
     public void MixedScaleListing_GroupsIntoPanes()
     {
-        Dictionary<string, string[]> panes = Catalog.Get("BB", Style.Series)!.Results
+        Dictionary<string, string[]> panes = Catalog.Get("BB", Style.Series).Results
             .Where(static r => r.ChartPane is not null)
-            .GroupBy(static r => r.ChartPane!)
+            .GroupBy(static r => r.ChartPane)
             .ToDictionary(static g => g.Key, static g => g.Select(static r => r.DataName).ToArray());
 
         panes[IndicatorResult.PricePane].Should().BeEquivalentTo("Sma", "UpperBand", "LowerBand");
@@ -24,12 +24,12 @@ public class CatalogChartPaneTests
     public void JsonExport_NamesPanes()
     {
         using JsonDocument json = JsonDocument.Parse(
-            new[] { Catalog.Get("PSAR", Style.Series)! }.ToJson());
+            new[] { Catalog.Get("PSAR", Style.Series) }.ToJson());
 
         Dictionary<string, JsonElement> panes = json.RootElement[0].GetProperty("results")
             .EnumerateArray()
             .ToDictionary(
-                static r => r.GetProperty("dataName").GetString()!,
+                static r => r.GetProperty("dataName").GetString(),
                 static r => r.GetProperty("chartPane"));
 
         panes["Sar"].GetString().Should().Be(IndicatorResult.PricePane);
@@ -39,7 +39,7 @@ public class CatalogChartPaneTests
     [TestMethod]
     public void BoundedOscillator_ListsItsPaneRangeAndLines()
     {
-        IndicatorListing listing = Catalog.Get("RSI", Style.Stream)!;
+        IndicatorListing listing = Catalog.Get("RSI", Style.Stream);
 
         IndicatorPane pane = listing.Panes.Should().ContainSingle().Subject;
         pane.Name.Should().Be(listing.Results.Single().ChartPane);
@@ -47,14 +47,14 @@ public class CatalogChartPaneTests
         pane.Maximum.Should().Be(100);
         pane.Thresholds.Should().Equal(70, 30);
 
-        Catalog.Get("EMA", Style.Series)!.Panes.Should().BeNull();
+        Catalog.Get("EMA", Style.Series).Panes.Should().BeNull();
     }
 
     [TestMethod]
     public void JsonExport_CarriesPanes()
     {
         using JsonDocument json = JsonDocument.Parse(
-            new[] { Catalog.Get("WILLR", Style.Series)! }.ToJson());
+            new[] { Catalog.Get("WILLR", Style.Series) }.ToJson());
 
         JsonElement pane = json.RootElement[0].GetProperty("panes")[0];
 

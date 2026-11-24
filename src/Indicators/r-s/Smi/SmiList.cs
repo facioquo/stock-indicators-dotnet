@@ -141,13 +141,13 @@ public class SmiList : BufferList<SmiResult>, IIncrementFromBar, ISmi
             smi = 100 * (smEma2 / (0.5 * hlEma2));
 
             // Initialize signal line on first SMI calculation
-            if (_lastSignal == 0 && Count == LookbackPeriods - 1)
+            if (_lastSignal == 0 && TotalCount == LookbackPeriods - 1)
             {
                 _lastSignal = smi.Value;
             }
 
             // Signal line
-            if (Count >= LookbackPeriods - 1)
+            if (TotalCount >= LookbackPeriods - 1)
             {
                 signal = _lastSignal + (KS * (smi.Value - _lastSignal));
                 _lastSignal = signal.Value;

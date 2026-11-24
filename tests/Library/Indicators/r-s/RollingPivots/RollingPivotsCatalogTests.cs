@@ -17,7 +17,7 @@ public class RollingPivotsCatalogTests : TestBase
         listing.Name.Should().Be("Rolling Pivot Points");
         listing.Uiid.Should().Be("ROLLING-PIVOTS");
         listing.Style.Should().Be(Style.Series);
-        listing.Category.Should().Be(Category.PriceTrend);
+        listing.Category.Should().Be(Category.PriceChannel);
         listing.MethodName.Should().Be("ToRollingPivots");
 
         listing.Parameters.Should().NotBeNull();

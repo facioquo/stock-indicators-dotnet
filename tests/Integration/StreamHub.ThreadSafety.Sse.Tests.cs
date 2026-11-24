@@ -536,18 +536,18 @@ public class ThreadSafetyTests : TestBase
             // Try DOTNET_CONFIGURATION env var, then check for Release build, fallback to Debug
             string configuration = Environment.GetEnvironmentVariable("DOTNET_CONFIGURATION") ?? "Debug";
             string serverExePath = Path.Combine(
-                repoRoot, "tools", "sse-server", "bin", configuration, "net10.0", "Test.SseServer.exe");
+                repoRoot, "tools", "sse-server", "bin", configuration, "net11.0", "Test.SseServer.exe");
             string serverDllPath = Path.Combine(
-                repoRoot, "tools", "sse-server", "bin", configuration, "net10.0", "Test.SseServer.dll");
+                repoRoot, "tools", "sse-server", "bin", configuration, "net11.0", "Test.SseServer.dll");
 
             // Auto-detect configuration if default doesn't exist
             if (!File.Exists(serverExePath) && !File.Exists(serverDllPath))
             {
                 string alternateConfig = configuration == "Debug" ? "Release" : "Debug";
                 string alternateExePath = Path.Combine(
-                    repoRoot, "tools", "sse-server", "bin", alternateConfig, "net10.0", "Test.SseServer.exe");
+                    repoRoot, "tools", "sse-server", "bin", alternateConfig, "net11.0", "Test.SseServer.exe");
                 string alternateDllPath = Path.Combine(
-                    repoRoot, "tools", "sse-server", "bin", alternateConfig, "net10.0", "Test.SseServer.dll");
+                    repoRoot, "tools", "sse-server", "bin", alternateConfig, "net11.0", "Test.SseServer.dll");
 
                 if (File.Exists(alternateExePath) || File.Exists(alternateDllPath))
                 {

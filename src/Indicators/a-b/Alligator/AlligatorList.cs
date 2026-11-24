@@ -59,7 +59,7 @@ public class AlligatorList : BufferList<AlligatorResult>, IIncrementFromChain, I
             jawPeriods + jawOffset,
             Math.Max(teethPeriods + teethOffset, lipsPeriods + lipsOffset));
 
-        _inputBuffer = new List<double>(maxBuffer);
+        _inputBuffer = [with(maxBuffer)];
         _jawBuffer = new Queue<double>(jawPeriods);
         _teethBuffer = new Queue<double>(teethPeriods);
         _lipsBuffer = new Queue<double>(lipsPeriods);

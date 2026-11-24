@@ -362,7 +362,7 @@ internal class CatalogListingBuilder
     /// <exception cref="InvalidOperationException">A pane is unmatched, duplicated, empty, non-finite, or out of range.</exception>
     private void ValidatePanes()
     {
-        HashSet<string> seen = new(StringComparer.Ordinal);
+        HashSet<string> seen = [with(StringComparer.Ordinal)];
 
         foreach (IndicatorPane pane in _panes)
         {

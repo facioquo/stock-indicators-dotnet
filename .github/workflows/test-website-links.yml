@@ -1,4 +1,4 @@
-name: Website URLs
+name: Test website links
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: 24
+  NODE_VERSION: 26
 
 jobs:
   test:
@@ -32,7 +32,7 @@ jobs:
           ruby-version: 3.4
 
       - name: Setup pnpm and Node.js
-        uses: pnpm/setup@v2.1.0
+        uses: pnpm/setup@v3
         with:
           cache: true
           runtime: node@${{ env.NODE_VERSION }}

@@ -68,7 +68,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v6
         with:
-          node-version: 24
+          node-version: 26
           cache: npm
       - name: Cache VitePress
         uses: actions/cache@v4

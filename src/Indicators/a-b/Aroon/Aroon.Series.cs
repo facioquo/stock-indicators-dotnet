@@ -33,7 +33,7 @@ public static partial class Aroon
 
         // initialize
         int length = bars.Count;
-        List<AroonResult> results = new(length);
+        List<AroonResult> results = [with(length)];
 
         // roll through source values
         for (int i = 0; i < length; i++)

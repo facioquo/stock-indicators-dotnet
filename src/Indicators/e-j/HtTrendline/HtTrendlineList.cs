@@ -51,9 +51,14 @@ public class HtTrendlineList : BufferList<HtlResult>, IIncrementFromChain
     private readonly List<double> it;  // instantaneous trend (raw)
 
     /// <summary>
-    /// Minimum required for 11-period lookback (12th bar calculation)
+    /// State values kept after pruning: the dominant cycle window reaches back up to 50 values
     /// </summary>
-    private const int MinBufferSize = 12;
+    private const int MinBufferSize = 50;
+
+    /// <summary>
+    /// Number of values pruned from the start of the state arrays
+    /// </summary>
+    private int _stateOffset;
 
     /// <summary>
     /// Trigger point to prune buffers to MinBufferSize
@@ -89,11 +94,11 @@ public class HtTrendlineList : BufferList<HtlResult>, IIncrementFromChain
     /// <inheritdoc />
     public void Add(DateTime timestamp, double value)
     {
-        // Use pr.Count instead of Count to align with state arrays after pruning
+        // i indexes the state arrays; i + _stateOffset is the position counting pruned values
         pr.Add(value);
         int i = pr.Count - 1;
 
-        if (i > 5)
+        if (i + _stateOffset > 5)
         {
             double adj = (0.075 * pd[i - 1]) + 0.54;
 
@@ -160,7 +165,7 @@ public class HtTrendlineList : BufferList<HtlResult>, IIncrementFromChain
 
             for (int d = i - dcPeriods + 1; d <= i; d++)
             {
-                if (d >= 0)
+                if (d + _stateOffset >= 0)
                 {
                     sumPr += pr[d];
                 }
@@ -174,7 +179,7 @@ public class HtTrendlineList : BufferList<HtlResult>, IIncrementFromChain
             it.Add(itValue);
 
             // final indicators
-            double? trendline = i >= 11 // 12th bar
+            double? trendline = i + _stateOffset >= 11 // 12th bar
                 ? (((4 * it[i]) + (3 * it[i - 1]) + (2 * it[i - 2]) + it[i - 3]) / 10d).NaN2Null()
                 : pr[i].NaN2Null();
 
@@ -234,24 +239,6 @@ public class HtTrendlineList : BufferList<HtlResult>, IIncrementFromChain
     }
 
     /// <inheritdoc />
-    protected override void PruneList()
-    {
-        int overflow = Count - MaxListSize;
-
-        if (overflow > 0)
-        {
-            int removable = Math.Min(overflow, Math.Max(0, pr.Count - MinBufferSize));
-
-            if (removable > 0)
-            {
-                RemoveStateRange(removable);
-            }
-        }
-
-        base.PruneList();
-    }
-
-    /// <inheritdoc />
     public void Add(IReusable value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -287,6 +274,7 @@ public class HtTrendlineList : BufferList<HtlResult>, IIncrementFromChain
         im.Clear();
         sd.Clear();
         it.Clear();
+        _stateOffset = 0;
     }
     private void RemoveStateRange(int count)
     {
@@ -302,6 +290,7 @@ public class HtTrendlineList : BufferList<HtlResult>, IIncrementFromChain
         im.RemoveRange(0, count);
         sd.RemoveRange(0, count);
         it.RemoveRange(0, count);
+        _stateOffset += count;
     }
 }
 

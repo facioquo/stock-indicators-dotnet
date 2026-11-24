@@ -14,7 +14,7 @@ public class StdDevCatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("Standard deviation");
+        listing.Name.Should().Be("Standard Deviation");
         listing.Uiid.Should().Be("STDEV");
         listing.Style.Should().Be(Style.Series);
         listing.Category.Should().Be(Category.PriceCharacteristic);
@@ -31,7 +31,7 @@ public class StdDevCatalogTests : TestBase
 
         IndicatorResult stddevResult = listing.Results.SingleOrDefault(static r => r.DataName == "StdDev");
         stddevResult.Should().NotBeNull();
-        stddevResult?.DisplayName.Should().Be("Standard deviation");
+        stddevResult?.DisplayName.Should().Be("Standard Deviation");
         stddevResult.IsReusable.Should().Be(true);
         IndicatorResult meanResult = listing.Results.SingleOrDefault(static r => r.DataName == "Mean");
         meanResult.Should().NotBeNull();
@@ -51,7 +51,7 @@ public class StdDevCatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("Standard deviation");
+        listing.Name.Should().Be("Standard Deviation");
         listing.Uiid.Should().Be("STDEV");
         listing.Style.Should().Be(Style.Stream);
         listing.Category.Should().Be(Category.PriceCharacteristic);
@@ -68,7 +68,7 @@ public class StdDevCatalogTests : TestBase
 
         IndicatorResult stddevResult = listing.Results.SingleOrDefault(static r => r.DataName == "StdDev");
         stddevResult.Should().NotBeNull();
-        stddevResult!.DisplayName.Should().Be("Standard deviation");
+        stddevResult!.DisplayName.Should().Be("Standard Deviation");
         stddevResult.IsReusable.Should().Be(true);
         IndicatorResult meanResult = listing.Results.SingleOrDefault(static r => r.DataName == "Mean");
         meanResult.Should().NotBeNull();
@@ -88,7 +88,7 @@ public class StdDevCatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("Standard deviation");
+        listing.Name.Should().Be("Standard Deviation");
         listing.Uiid.Should().Be("STDEV");
         listing.Style.Should().Be(Style.Buffer);
         listing.Category.Should().Be(Category.PriceCharacteristic);
@@ -105,7 +105,7 @@ public class StdDevCatalogTests : TestBase
 
         IndicatorResult stddevResult = listing.Results.SingleOrDefault(static r => r.DataName == "StdDev");
         stddevResult.Should().NotBeNull();
-        stddevResult!.DisplayName.Should().Be("Standard deviation");
+        stddevResult!.DisplayName.Should().Be("Standard Deviation");
         stddevResult.IsReusable.Should().Be(true);
         IndicatorResult meanResult = listing.Results.SingleOrDefault(static r => r.DataName == "Mean");
         meanResult.Should().NotBeNull();

@@ -29,7 +29,7 @@ public static partial class StochRsi
         // initialize results
         int length = source.Count;
         int initPeriods = Math.Min(rsiPeriods + stochPeriods - 1, length);
-        List<StochRsiResult> results = new(length);
+        List<StochRsiResult> results = [with(length)];
 
         // add back auto-pruned results
         for (int i = 0; i < initPeriods; i++)

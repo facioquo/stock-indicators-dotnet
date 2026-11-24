@@ -26,7 +26,7 @@ public static partial class Correlation
 
         // initialize
         int length = sourceA.Count;
-        List<CorrResult> results = new(length);
+        List<CorrResult> results = [with(length)];
 
         // roll through source values
         for (int i = 0; i < length; i++)
@@ -81,8 +81,8 @@ public static partial class Correlation
     /// <returns>A <see cref="CorrResult"/> containing the correlation calculation result for the given period.</returns>
     internal static CorrResult PeriodCorrelation(
         DateTime timestamp,
-        double[] dataA,
-        double[] dataB)
+        ReadOnlySpan<double> dataA,
+        ReadOnlySpan<double> dataB)
     {
         int length = dataA.Length;
         double sumA = 0;

@@ -70,6 +70,47 @@ const siteNav = {
   ]
 }
 
+// Guide sidebar; the stream hub sub-pages are listed only within that section
+function guideSidebar(withStreamPages: boolean): DefaultTheme.SidebarItem[] {
+  return [
+    siteNav,
+    {
+      text: 'Guide',
+      items: [
+        { text: 'Overview', link: '/guide/' },
+        {
+          text: 'Getting started',
+          link: '/guide/getting-started',
+          items: [
+            { text: 'Agent setup', link: '/guide/agent-setup' }
+          ]
+        },
+        {
+          text: 'Indicator styles',
+          items: [
+            { text: 'Styles overview', link: '/guide/styles' },
+            { text: 'Batch (Series)', link: '/guide/styles/batch' },
+            { text: 'Buffer lists', link: '/guide/styles/buffer' },
+            {
+              text: 'Stream hubs',
+              link: '/guide/styles/stream',
+              items: withStreamPages
+                ? [
+                  { text: 'Threading and live feeds', link: '/guide/styles/stream/threading' },
+                  { text: 'Corrections and memory', link: '/guide/styles/stream/corrections' }
+                ]
+                : undefined
+            }]
+        },
+        { text: 'Chaining', link: '/guide/chaining' },
+        { text: 'Custom indicators', link: '/guide/customization' },
+        { text: 'Custom observers', link: '/guide/custom-observers' }
+      ]
+    }
+  ]
+}
+
+
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "stock indicators",
@@ -175,33 +216,9 @@ export default defineConfig({
     ],
 
     sidebar: {
-      '/guide/': [
-        siteNav,
-        {
-          text: 'Guide',
-          items: [
-            { text: 'Overview', link: '/guide/' },
-            {
-              text: 'Getting started',
-              link: '/guide/getting-started',
-              items: [
-                { text: 'Agent setup', link: '/guide/agent-setup' }
-              ]
-            },
-            {
-              text: 'Indicator styles',
-              items: [
-                { text: 'Styles overview', link: '/guide/styles' },
-                { text: 'Batch (Series)', link: '/guide/styles/batch' },
-                { text: 'Buffer lists', link: '/guide/styles/buffer' },
-                { text: 'Stream hubs', link: '/guide/styles/stream' }]
-            },
-            { text: 'Chaining', link: '/guide/chaining' },
-            { text: 'Custom indicators', link: '/guide/customization' },
-            { text: 'Custom observers', link: '/guide/custom-observers' }
-          ]
-        }
-      ],
+      // listed before '/guide/' so llms.txt includes the stream hub sub-pages
+      '/guide/styles/stream': guideSidebar(true),
+      '/guide/': guideSidebar(false),
       '/utilities': [
         siteNav,
         {
@@ -286,12 +303,11 @@ export default defineConfig({
           collapsed: true,
           items: [
             { text: 'Bollinger Bands®', link: '/indicators/bollinger-bands' },
-            { text: 'Donchian Channels', link: '/indicators/donchian' },
+            { text: 'Donchian Channels (Price Channels)', link: '/indicators/donchian' },
             { text: 'Fractal Chaos Bands', link: '/indicators/fcb' },
             { text: 'Keltner Channels', link: '/indicators/keltner' },
             { text: 'Moving Average Envelopes', link: '/indicators/ma-envelopes' },
             { text: 'Pivot Points', link: '/indicators/pivot-points' },
-            { text: 'Price Channels', link: '/indicators/donchian' },
             { text: 'Rolling Pivot Points', link: '/indicators/rolling-pivots' },
             { text: 'STARC Bands', link: '/indicators/starc-bands' },
             { text: 'Standard Deviation Channels', link: '/indicators/std-dev-channels' },
@@ -390,18 +406,15 @@ export default defineConfig({
           items: [
             { text: 'Arnaud Legoux Moving Average', link: '/indicators/alma' },
             { text: 'Double Exponential Moving Average', link: '/indicators/dema' },
-            { text: 'Endpoint Moving Average', link: '/indicators/epma' },
+            { text: 'Endpoint Moving Average (LSMA)', link: '/indicators/epma' },
             { text: 'Exponential Moving Average', link: '/indicators/ema' },
             { text: 'Hilbert Transform Instantaneous Trendline', link: '/indicators/ht-trendline' },
             { text: 'Hull Moving Average', link: '/indicators/hma' },
             { text: 'Kaufman\'s Adaptive Moving Average', link: '/indicators/kama' },
-            { text: 'Least Squares Moving Average (LSMA)', link: '/indicators/epma' },
             { text: 'MESA Adaptive Moving Average', link: '/indicators/mama' },
             { text: 'McGinley Dynamic', link: '/indicators/dynamic' },
-            { text: 'Modified Moving Average (MMA)', link: '/indicators/smma' },
-            { text: 'Running Moving Average (RMA)', link: '/indicators/smma' },
             { text: 'Simple Moving Average', link: '/indicators/sma' },
-            { text: 'Smoothed Moving Average', link: '/indicators/smma' },
+            { text: 'Smoothed Moving Average (MMA, RMA)', link: '/indicators/smma' },
             { text: 'Tillson T3 Moving Average', link: '/indicators/t3' },
             { text: 'Triple Exponential Moving Average', link: '/indicators/tema' },
             { text: 'Volume Weighted Average Price', link: '/indicators/vwap' },
@@ -417,6 +430,7 @@ export default defineConfig({
             { text: 'Basic price bar transforms', link: '/indicators/bar-part' },
             { text: 'Ehlers Fisher Transform', link: '/indicators/fisher-transform' },
             { text: 'Heikin Ashi', link: '/indicators/heikin-ashi' },
+            { text: 'IndyMath', link: '/indicators/indy-math' },
             { text: 'Renko Charts', link: '/indicators/renko' },
             { text: 'ZigZag', link: '/indicators/zig-zag' },
           ]
@@ -426,20 +440,16 @@ export default defineConfig({
           link: '/indicators/price-characteristics',
           collapsed: true,
           items: [
-            { text: 'Average True Range', link: '/indicators/atr' },
+            { text: 'Average True Range and Normalized ATR', link: '/indicators/atr' },
             { text: 'Balance of Power', link: '/indicators/bop' },
             { text: 'Bull and Bear Power', link: '/indicators/elder-ray' },
             { text: 'Choppiness Index', link: '/indicators/chop' },
             { text: 'Dominant Cycle Periods', link: '/indicators/ht-trendline' },
-            { text: 'Historical Volatility (HV)', link: '/indicators/std-dev' },
-            { text: 'Hurst Exponent', link: '/indicators/hurst' },
-            { text: 'Momentum Oscillator (MO)', link: '/indicators/roc' },
-            { text: 'Normalized Average True Range', link: '/indicators/atr' },
+            { text: 'Hurst Exponent and Rescaled Range', link: '/indicators/hurst' },
             { text: 'Price Momentum Oscillator (PMO)', link: '/indicators/pmo' },
             { text: 'Price Relative Strength (PRS)', link: '/indicators/prs' },
-            { text: 'Rate of Change (ROC)', link: '/indicators/roc' },
+            { text: 'Rate of Change (ROC) and Momentum (MO)', link: '/indicators/roc' },
             { text: 'Rate of Change with Bands', link: '/indicators/roc-wb' },
-            { text: 'Rescaled Range Analysis', link: '/indicators/hurst' },
             { text: 'True Range (TR)', link: '/indicators/tr' },
             { text: 'True Strength Index (TSI)', link: '/indicators/tsi' },
             { text: 'Ulcer Index (UI)', link: '/indicators/ulcer-index' },
@@ -449,16 +459,10 @@ export default defineConfig({
               collapsed: false,
               items: [
                 { text: 'Beta coefficient', link: '/indicators/beta' },
-                { text: 'Coefficient of determination', link: '/indicators/correlation' },
-                { text: 'Correlation coefficient', link: '/indicators/correlation' },
-                { text: 'Linear regression (best-fit line)', link: '/indicators/slope' },
-                { text: 'Mean absolute deviation', link: '/indicators/sma-analysis' },
-                { text: 'Mean absolute percentage error', link: '/indicators/sma-analysis' },
-                { text: 'Mean square error', link: '/indicators/sma-analysis' },
-                { text: 'R-squared (R²)', link: '/indicators/correlation' },
-                { text: 'Slope (gradient)', link: '/indicators/slope' },
-                { text: 'Standard deviation', link: '/indicators/std-dev' },
-                { text: 'Z-score (standard score)', link: '/indicators/std-dev' },
+                { text: 'Correlation coefficient and R-squared (R²)', link: '/indicators/correlation' },
+                { text: 'Slope and linear regression', link: '/indicators/slope' },
+                { text: 'SMA analysis (MAD, MAPE, MSE)', link: '/indicators/sma-analysis' },
+                { text: 'Standard deviation, Z-score, and volatility (HV)', link: '/indicators/std-dev' },
               ]
             },
           ]

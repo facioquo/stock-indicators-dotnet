@@ -33,7 +33,7 @@ public static partial class Cci
 
         // initialize
         int length = bars.Count;
-        List<CciResult> results = new(length);
+        List<CciResult> results = [with(length)];
         double[] tp = new double[length];
 
         // roll through source values

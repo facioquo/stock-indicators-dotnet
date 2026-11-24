@@ -23,7 +23,7 @@ public static partial class Wma
 
         // initialize
         int length = source.Count;
-        List<WmaResult> results = new(length);
+        List<WmaResult> results = [with(length)];
 
         double divisor = (double)lookbackPeriods * (lookbackPeriods + 1) / 2d;
 

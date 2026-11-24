@@ -37,7 +37,7 @@ public static partial class SuperTrend
 
         // initialize
         int length = bars.Count;
-        List<SuperTrendResult> results = new(length);
+        List<SuperTrendResult> results = [with(length)];
         List<AtrResult> atrResults = bars.CalcAtr(lookbackPeriods);
 
         bool isBullish = true;
@@ -109,9 +109,9 @@ public static partial class SuperTrend
 
             results.Add(new(
                 Timestamp: q.Timestamp,
-                SuperTrend: (decimal?)superTrend,
-                UpperBand: (decimal?)upperOnly,
-                LowerBand: (decimal?)lowerOnly));
+                SuperTrend: DeMath.ToDecimal(superTrend),
+                UpperBand: DeMath.ToDecimal(upperOnly),
+                LowerBand: DeMath.ToDecimal(lowerOnly)));
         }
 
         return results;

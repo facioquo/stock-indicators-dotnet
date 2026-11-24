@@ -14,7 +14,7 @@ public class VwapBufferListTests : BufferListTestBase, ITestBarBufferList
     [TestMethod]
     public void AddBar_IncrementsResults()
     {
-        VwapList sut = new(startDate);
+        VwapList sut = [with(startDate)];
 
         foreach (Bar bar in Bars)
         {

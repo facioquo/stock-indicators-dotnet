@@ -43,7 +43,7 @@ public static partial class Pvo
 
         // initialize
         int length = source.Count;
-        List<PvoResult> results = new(length);
+        List<PvoResult> results = [with(length)];
 
         double lastEmaFast = double.NaN;
         double lastEmaSlow = double.NaN;

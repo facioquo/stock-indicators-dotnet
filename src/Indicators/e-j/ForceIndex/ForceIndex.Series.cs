@@ -37,7 +37,7 @@ public static partial class ForceIndex
 
         // initialize
         int length = bars.Count;
-        List<ForceIndexResult> results = new(length);
+        List<ForceIndexResult> results = [with(length)];
         double? prevFi = null;
         double? sumRawFi = 0;
         double k = 2d / (lookbackPeriods + 1);

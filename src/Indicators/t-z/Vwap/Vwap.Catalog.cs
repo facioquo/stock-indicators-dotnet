@@ -9,7 +9,7 @@ public static partial class Vwap
         new CatalogListingBuilder()
             .WithName("Volume Weighted Average Price")
             .WithId("VWAP")
-            .WithCategory(Category.PriceChannel)
+            .WithCategory(Category.MovingAverage)
             .AddDateParameter("startDate", "Start Date", description: "Starting date for VWAP calculation", isRequired: false)
             .AddResult(nameof(VwapResult.Vwap), "VWAP", IndicatorResult.PricePane, ResultType.Default, isReusable: true)
             .Build();

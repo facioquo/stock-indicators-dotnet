@@ -20,7 +20,7 @@ public static partial class HtTrendline
 
         // initialize
         int length = values.Count;
-        List<HtlResult> results = new(length);
+        List<HtlResult> results = [with(length)];
 
         double[] pr = new double[length]; // price
         double[] sp = new double[length]; // smooth price

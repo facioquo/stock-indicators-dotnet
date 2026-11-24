@@ -38,4 +38,45 @@ public class PrsCatalogTests : TestBase
         prspercentResult1?.DisplayName.Should().Be("PRS %");
         prspercentResult1.IsReusable.Should().Be(false);
     }
+
+    [TestMethod]
+    public void PrsBuffer_InCatalog_ReturnsAllVariants()
+        => AssertStyleListing(Prs.BufferListing, Style.Buffer, "ToPrsList");
+
+    [TestMethod]
+    public void PrsStream_InCatalog_ReturnsAllVariants()
+        => AssertStyleListing(Prs.StreamListing, Style.Stream, "ToPrsHub");
+
+    [TestMethod]
+    public void PrsBufferAndStream_ExplicitSources_MatchSeries()
+    {
+        IReadOnlyList<PrsResult> expected = OtherBars.ToPrs(Bars, 20);
+
+        foreach (Style style in (Style[])[Style.Buffer, Style.Stream])
+        {
+            Catalog.Get("PRS", style)
+                .WithParams(new Dictionary<string, object> {
+                    ["sourceEval"] = OtherBars,
+                    ["sourceBase"] = Bars
+                })
+                .FromSource((IEnumerable<IBar>)Bars)
+                .Execute<PrsResult>()
+                .IsExactly(expected);
+        }
+    }
+
+    private static void AssertStyleListing(IndicatorListing listing, Style style, string methodName)
+    {
+        listing.Should().NotBeNull();
+        listing.Name.Should().Be("Price Relative Strength");
+        listing.Uiid.Should().Be("PRS");
+        listing.Style.Should().Be(style);
+        listing.Category.Should().Be(Category.PriceCharacteristic);
+        listing.MethodName.Should().Be(methodName);
+
+        listing.Parameters.Select(static p => p.ParameterName)
+            .Should().Equal("sourceEval", "sourceBase", "lookbackPeriods");
+        listing.Results.Select(static r => r.DataName)
+            .Should().Equal(nameof(PrsResult.Prs), nameof(PrsResult.PrsPercent));
+    }
 }

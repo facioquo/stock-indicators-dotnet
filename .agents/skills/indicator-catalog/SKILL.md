@@ -34,6 +34,7 @@ public static partial class Ema
 ```
 
 - Set `.WithMethodName(typeof({Name}), ...)` only on style listings: `To{Name}` for Series, `To{Name}List` for Buffer, `To{Name}Hub` for Stream. The type is the static class declaring the method; the catalog resolves the method on that class alone, which is what keeps it trim- and NativeAOT-safe.
+  - IndyMath operators are the exception: the Series and Stream listings both name the operator, such as `Minus`, and `GetMethodOverloads()` keeps the overloads that return the listing's style.
 - `Build()` derives `ResultRecordType` from the method name, so a method of the wrong style reports the wrong result shape.
 - `WithId` sets the UIID that names the regression baseline file (`{uiid-lowercase}.standard.json`) and the `Catalog.Get(id, style)` lookup.
 - Pick the `Category` an existing peer uses; MACD, Ichimoku, and Pivot Points are `PriceTrend`, and Beta and ATR are `PriceCharacteristic`.

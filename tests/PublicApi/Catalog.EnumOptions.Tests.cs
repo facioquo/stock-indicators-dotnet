@@ -15,7 +15,7 @@ public class CatalogEnumOptionsTests
     {
         foreach (Style style in Enum.GetValues<Style>())
         {
-            IndicatorParam endType = Catalog.Get("RENKO", style)!.Parameters!
+            IndicatorParam endType = Catalog.Get("RENKO", style).Parameters
                 .Single(static p => p.ParameterName == "endType");
 
             endType.DataType.Should().Be("enum");
@@ -30,7 +30,7 @@ public class CatalogEnumOptionsTests
     public void JsonExport_ListsEnumValues()
     {
         using JsonDocument json = JsonDocument.Parse(
-            new[] { Catalog.Get("RENKO", Style.Series)! }.ToJson());
+            new[] { Catalog.Get("RENKO", Style.Series) }.ToJson());
 
         JsonElement endType = json.RootElement[0].GetProperty("parameters")
             .EnumerateArray()

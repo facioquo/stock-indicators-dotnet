@@ -7,7 +7,7 @@ public static partial class Fractal
     /// </summary>
     internal static readonly IndicatorListing CommonListing =
         new CatalogListingBuilder()
-            .WithName("Williams Fractal (high/low)")
+            .WithName("Williams Fractal")
             .WithId("FRACTAL")
             .WithCategory(Category.PricePattern)
             .AddParameter<int>("windowSpan", "Window Span", description: "Number of periods to look back and forward for the calculation", isRequired: false, defaultValue: 2, minimum: 2, maximum: 100)

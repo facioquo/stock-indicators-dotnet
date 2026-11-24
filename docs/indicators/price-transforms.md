@@ -34,6 +34,12 @@ features:
       src: /assets/thumbs/indicators/heikin-ashi.png
     link: /indicators/heikin-ashi
 
+  - title: IndyMath
+    details: Arithmetic and rolling-window math on indicator results, such as the spread between two moving averages
+    icon:
+      src: /assets/thumbs/_placeholder.svg
+    link: /indicators/indy-math
+
   - title: Renko Charts
     details: Japanese candlestick transform that uses "bricks" in a non-linear time series
     icon:

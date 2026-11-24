@@ -79,7 +79,6 @@ CLAUDE.local.md
 .angular/
 .codacy/
 .impeccable/
-.ruby-lsp/
 .tmp/
 .vitepress/cache/
 .vitepress/dist/

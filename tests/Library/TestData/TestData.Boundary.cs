@@ -20,7 +20,7 @@ internal static class BoundaryBars
         decimal startPrice = 100m,
         decimal increment = 0.01m)
     {
-        List<Bar> series = new(bars);
+        List<Bar> series = [with(bars)];
         DateTime timestamp = DateTime.Today.AddDays(-bars);
 
         for (int i = 0; i < bars; i++)
@@ -55,7 +55,7 @@ internal static class BoundaryBars
         decimal startPrice = 1000m,
         decimal decrement = 0.01m)
     {
-        List<Bar> series = new(bars);
+        List<Bar> series = [with(bars)];
         DateTime timestamp = DateTime.Today.AddDays(-bars);
 
         for (int i = 0; i < bars; i++)
@@ -89,7 +89,7 @@ internal static class BoundaryBars
         const decimal openOffset = 1m;  // Open below Close/High
         const decimal lowOffset = 2m;   // Low below Open
 
-        List<Bar> series = new(bars);
+        List<Bar> series = [with(bars)];
         DateTime timestamp = DateTime.Today.AddDays(-bars);
 
         for (int i = 0; i < bars; i++)
@@ -115,7 +115,7 @@ internal static class BoundaryBars
     /// <returns>List of bars where Close equals Low.</returns>
     internal static IReadOnlyList<Bar> GetCloseEqualsLow(int bars = 100)
     {
-        List<Bar> series = new(bars);
+        List<Bar> series = [with(bars)];
         DateTime timestamp = DateTime.Today.AddDays(-bars);
 
         for (int i = 0; i < bars; i++)
@@ -141,7 +141,7 @@ internal static class BoundaryBars
     /// <returns>List of bars with flat candles.</returns>
     internal static IReadOnlyList<Bar> GetFlatCandles(int bars = 100)
     {
-        List<Bar> series = new(bars);
+        List<Bar> series = [with(bars)];
         DateTime timestamp = DateTime.Today.AddDays(-bars);
 
         for (int i = 0; i < bars; i++)
@@ -167,7 +167,7 @@ internal static class BoundaryBars
     /// <returns>List of bars with alternating price movements.</returns>
     internal static IReadOnlyList<Bar> GetAlternating(int bars = 100)
     {
-        List<Bar> series = new(bars);
+        List<Bar> series = [with(bars)];
         DateTime timestamp = DateTime.Today.AddDays(-bars);
         const decimal basePrice = 100m;
 
@@ -200,7 +200,7 @@ internal static class BoundaryBars
         const decimal largePriceBase = 1000000m;
         const decimal tinyIncrement = 0.0000001m;
 
-        List<Bar> series = new(bars);
+        List<Bar> series = [with(bars)];
         DateTime timestamp = DateTime.Today.AddDays(-bars);
 
         for (int i = 0; i < bars; i++)

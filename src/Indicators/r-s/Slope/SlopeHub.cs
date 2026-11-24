@@ -273,7 +273,7 @@ public class SlopeHub
             int globalIndex = globalIndexOffset + p;
 
             // Calculate Line using global X value (1-based)
-            decimal? line = (decimal?)((slope * (globalIndex + 1)) + intercept).NaN2Null();
+            decimal? line = DeMath.ToDecimal(((slope * (globalIndex + 1)) + intercept).NaN2Null());
 
             Cache[p] = existing with { Line = line };
         }

@@ -37,7 +37,7 @@ public class HurstCatalogTests : TestBase
 
         IndicatorResult hurstExponentAlResult = listing.Results.SingleOrDefault(static r => r.DataName == "HurstExponentAL");
         hurstExponentAlResult.Should().NotBeNull();
-        hurstExponentAlResult?.DisplayName.Should().Be("Hurst Exponent AL");
+        hurstExponentAlResult?.DisplayName.Should().Be("Hurst Exponent (Anis-Lloyd)");
         hurstExponentAlResult?.IsReusable.Should().Be(false);
     }
 
@@ -72,7 +72,7 @@ public class HurstCatalogTests : TestBase
 
         IndicatorResult hurstExponentAlResult = listing.Results.SingleOrDefault(static r => r.DataName == "HurstExponentAL");
         hurstExponentAlResult.Should().NotBeNull();
-        hurstExponentAlResult?.DisplayName.Should().Be("Hurst Exponent AL");
+        hurstExponentAlResult?.DisplayName.Should().Be("Hurst Exponent (Anis-Lloyd)");
         hurstExponentAlResult?.IsReusable.Should().Be(false);
     }
 }

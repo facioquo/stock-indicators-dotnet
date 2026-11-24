@@ -14,6 +14,9 @@ public class PvoList : BufferList<PvoResult>, IIncrementFromBar, IPvo
     private double? _lastSlowEma;
     private double _lastSignalEma = double.NaN;
 
+    // recent PVO values that seed the signal, kept here because MaxListSize can prune them from the list
+    private readonly Queue<double> _signalSeed = new();
+
     /// <summary>
     /// Initializes a new instance of the <see cref="PvoList"/> class.
     /// </summary>
@@ -138,16 +141,17 @@ public class PvoList : BufferList<PvoResult>, IIncrementFromBar, IPvo
         double signal;
         if (pvo.HasValue)
         {
-            if (double.IsNaN(_lastSignalEma) && Count >= SignalPeriods + SlowPeriods - 2)
+            if (double.IsNaN(_lastSignalEma) && TotalCount >= SignalPeriods + SlowPeriods - 2)
             {
-                // Initialize signal EMA with SMA of PVO values from results
+                // Initialize signal EMA with SMA of the current and prior PVO values
                 double sum = pvo.Value;
-                for (int p = Count - SignalPeriods + 1; p < Count; p++)
+                foreach (double prior in _signalSeed)
                 {
-                    sum += this[p].Value;
+                    sum += prior;
                 }
 
                 signal = sum / SignalPeriods;
+                _signalSeed.Clear();
             }
             else
             {
@@ -170,6 +174,12 @@ public class PvoList : BufferList<PvoResult>, IIncrementFromBar, IPvo
             Pvo: pvo,
             Signal: signal.NaN2Null(),
             Histogram: histogram);
+
+        // keep the prior PVO values the signal seed needs, until it is seeded
+        if (double.IsNaN(_lastSignalEma) && SignalPeriods > 1)
+        {
+            _signalSeed.Update(SignalPeriods - 1, result.Value);
+        }
 
         AddInternal(result);
     }
@@ -203,6 +213,7 @@ public class PvoList : BufferList<PvoResult>, IIncrementFromBar, IPvo
         _lastFastEma = null;
         _lastSlowEma = null;
         _lastSignalEma = double.NaN;
+        _signalSeed.Clear();
     }
 }
 

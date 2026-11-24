@@ -27,7 +27,7 @@ public static partial class Stc
 
         // initialize results
         int length = source.Count;
-        List<StcResult> results = new(length);
+        List<StcResult> results = [with(length)];
 
         // get stochastic of macd
         List<StochResult> stochMacd = source

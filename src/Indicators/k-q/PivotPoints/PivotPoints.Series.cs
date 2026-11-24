@@ -23,7 +23,7 @@ public static partial class PivotPoints
 
         // initialize
         int length = bars.Count;
-        List<PivotPointsResult> results = new(length);
+        List<PivotPointsResult> results = [with(length)];
 
         WindowPoint windowPoint = new();
 

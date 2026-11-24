@@ -11,7 +11,7 @@ public class CmfBufferListTests : BufferListTestBase, ITestBarBufferList
     [TestMethod]
     public void AddBar_IncrementsResults()
     {
-        CmfList sut = new(lookbackPeriods);
+        CmfList sut = [with(lookbackPeriods)];
 
         foreach (Bar bar in Bars)
         {

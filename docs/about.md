@@ -25,7 +25,7 @@ An alternate Python variant of this library is available at [python.stockindicat
 
 ## Attributions
 
-This NuGet library project is developed with support from [community contributors](/#contribute-to-help-others).
+This NuGet library project is developed with support from [community contributors](/#community-and-support).
 
 Our documentation, examples, and testing is additionally built upon the work of several excellent open-source projects and data providers.
 
@@ -80,11 +80,10 @@ If you find this library useful, consider:
 
 ### Target frameworks
 
-The library targets actively supported Microsoft .NET platforms:
+The library targets these Microsoft .NET platforms:
 
+- .NET 11.0
 - .NET 10.0
-- .NET 9.0
-- .NET 8.0
 
 The compiled library is [Common Language Specification (CLS) compliant](https://docs.microsoft.com/en-us/dotnet/standard/common-type-system) and can be used in other .NET languages.
 

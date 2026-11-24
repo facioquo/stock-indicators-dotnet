@@ -34,7 +34,7 @@ public static partial class Vortex
 
         // initialize
         int length = bars.Count;
-        List<VortexResult> results = new(length);
+        List<VortexResult> results = [with(length)];
 
         double[] tr = new double[length];
         double[] pvm = new double[length];

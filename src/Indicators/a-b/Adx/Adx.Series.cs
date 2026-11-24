@@ -33,7 +33,7 @@ public static partial class Adx
 
         // initialize
         int length = bars.Count;
-        List<AdxResult> results = new(length);
+        List<AdxResult> results = [with(length)];
 
         double prevHigh = 0;
         double prevLow = 0;

@@ -5,7 +5,10 @@ namespace FacioQuo.Stock.Indicators;
 /// </summary>
 public class ChopList : BufferList<ChopResult>, IIncrementFromBar, IChop
 {
-    private readonly Queue<(double TrueHigh, double TrueLow, double TrueRange)> _buffer;
+    // ring of the lookback window, so it can be read newest first as the Series does
+    private readonly (double TrueHigh, double TrueLow, double TrueRange)[] _window;
+    private int _head;
+    private int _fill;
     private double _previousClose;
     private bool _isInitialized;
 
@@ -19,7 +22,7 @@ public class ChopList : BufferList<ChopResult>, IIncrementFromBar, IChop
         Chop.Validate(lookbackPeriods);
         LookbackPeriods = lookbackPeriods;
 
-        _buffer = new Queue<(double, double, double)>(lookbackPeriods);
+        _window = new (double, double, double)[lookbackPeriods];
         _isInitialized = false;
 
         Name = $"CHOP({lookbackPeriods})";
@@ -61,18 +64,31 @@ public class ChopList : BufferList<ChopResult>, IIncrementFromBar, IChop
             double trueLow = Math.Min(low, _previousClose);
             double trueRange = trueHigh - trueLow;
 
-            // Update buffer with consolidated tuple
-            _buffer.Update(LookbackPeriods, (trueHigh, trueLow, trueRange));
+            _window[_head] = (trueHigh, trueLow, trueRange);
+            if (++_head == LookbackPeriods)
+            {
+                _head = 0;
+            }
+
+            if (_fill < LookbackPeriods)
+            {
+                _fill++;
+            }
 
             // Calculate CHOP when we have enough data
-            if (_buffer.Count == LookbackPeriods)
+            if (_fill == LookbackPeriods)
             {
-                double sumTrueRange = 0;
-                double maxTrueHigh = double.MinValue;
-                double minTrueLow = double.MaxValue;
+                // read newest first, as the Series does, so the sum rounds the same
+                double sumTrueRange = trueRange;
+                double maxTrueHigh = trueHigh;
+                double minTrueLow = trueLow;
+                int index = _head == 0 ? LookbackPeriods - 1 : _head - 1;
 
-                foreach ((double TrueHigh, double TrueLow, double TrueRange) in _buffer)
+                for (int n = 1; n < LookbackPeriods; n++)
                 {
+                    index = (index == 0 ? LookbackPeriods : index) - 1;
+                    (double TrueHigh, double TrueLow, double TrueRange) = _window[index];
+
                     sumTrueRange += TrueRange;
                     if (TrueHigh > maxTrueHigh)
                     {
@@ -114,7 +130,8 @@ public class ChopList : BufferList<ChopResult>, IIncrementFromBar, IChop
     public override void Clear()
     {
         base.Clear();
-        _buffer.Clear();
+        _head = 0;
+        _fill = 0;
         _previousClose = 0;
         _isInitialized = false;
     }

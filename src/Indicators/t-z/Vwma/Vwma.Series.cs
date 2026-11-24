@@ -34,7 +34,7 @@ public static partial class Vwma
 
         // initialize
         int length = bars.Count;
-        List<VwmaResult> results = new(length);
+        List<VwmaResult> results = [with(length)];
 
         // roll through source values
         for (int i = 0; i < length; i++)

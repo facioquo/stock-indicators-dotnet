@@ -4,11 +4,12 @@ This folder holds the library source. Load the matching skill from the root AGEN
 
 ## Technical constraints
 
-- **Targets** — net10.0, net9.0, and net8.0 must all build. Indicator unit tests run on net10.0 by default; others are supported in the CI matrix testing.
+- **Targets** — net11.0 and net10.0 must both build. Indicator unit tests run on net11.0 by default; the CI matrix also runs them on net10.0.
 - **Complexity** — single-pass O(n) unless mathematically impossible.
 - **Warmup** — the count of null warmup results is deterministic; when it is not obvious from the parameters, expose it as a static `WarmupPeriod(...)` helper in `{Name}.Utilities.cs`, as `Hma` and `StochRsi` do.
 - **Precision** — use `double` for speed; escalate to `decimal` only when rounding affects financial correctness.
 - **Allocation** — the result list plus minimal working buffers only.
+- **Collections** — create them with collection expressions: `[]` when empty, `[with(...)]` to pass a capacity, comparer, or source (`List<SmaResult> results = [with(length)];`). Lock objects are `System.Threading.Lock`.
 - **Thread safety** — Series calculations are stateless; each hub and list isolates its own state.
 - **Compatibility** — removing a public member or changing a default is a breaking, MAJOR-version change. A rename keeps the old name as an `[Obsolete]` shim in `Obsolete/` until the next major version.
 
@@ -41,7 +42,7 @@ Mirror `Indicators/e-j/Ema/EmaResult.cs`: a `[Serializable] public record` with 
 
 ## Per-indicator facade class
 
-`public static partial class {Name}` is the indicator's facade, not its Series implementation. Its partial files hold every style's entry point (`To{Name}`, `To{Name}List`, `To{Name}Hub`), the shared utilities, and the catalog listings.
+`public static partial class {Name}` is the indicator's facade, not its Series implementation. Its partial files hold every style's entry point (`To{Name}`, `To{Name}List`, `To{Name}Hub`), the shared utilities, and the catalog listings. IndyMath operators are the exception: the Series method and the stream hub method share the operator name, such as `Minus`, and the receiver picks the style.
 
 - Style-specific types carry a suffix: `{Name}Hub`, `{Name}List`, `{Name}Result`, and the `I{Name}` parameter interface.
 - Never give the facade a style suffix; an `EmaSeries` class would hold `ToEmaList` and `ToEmaHub`.

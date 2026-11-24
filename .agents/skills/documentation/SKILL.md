@@ -97,14 +97,13 @@ Add `[.RemoveWarmupPeriods()](/utilities/results#remove-warmup-periods)` before 
 
 `## Streaming` with two examples, ending with "See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides."
 
-- "Use the buffer-style `List<T>` when you need incremental calculations without a hub:" then `{Name}List {name}List = new(params);`, a handler that adds each bar (`// call from your WebSocket or SSE message handler` above `void OnBarReceived(IBar bar) => {name}List.Add(bar);`), then ``// based on `ICollection<{Name}Result>`; fills as the handler runs`` above `IReadOnlyList<{Name}Result> results = {name}List;`.
+- "Use the buffer-style `List<T>` when you need incremental calculations without a hub:" then `{Name}List {name}List = new(params);`, a handler that adds each bar (`// call from your WebSocket or SSE message handler` above `void OnBarReceived(IBar bar) => {name}List.Add(bar);`), then `// the list itself holds the results; fills as the handler runs` above `IReadOnlyList<{Name}Result> results = {name}List;`.
 - "Subscribe to a `BarHub` for advanced streaming scenarios:" then `BarHub barHub = new();`, `{Name}Hub observer = barHub.To{Name}Hub(params);`, the same handler calling `barHub.Add(bar)`, and `// results fill as the handler runs` above `observer.Results`.
 
 Follow `ema.md` for the exact layout. Show only the styles the indicator implements.
 
 When no streaming style exists, write one paragraph under `## Streaming`: "Streaming is not supported for this indicator." plus one sentence of architectural reason, then "Use the Series (batch) implementation with periodic recalculation instead." Existing reasons:
 
-- Second synchronized series (`beta.md`, `correlation.md`, `prs.md`): "This indicator requires a second synchronized bar series, which cannot be expressed in the single-series streaming model."
 - Lookahead and repaint (`zig-zag.md`): "This indicator requires lookahead to confirm reversal points; output repaints as new data arrives, making incremental results undefined."
 
 When only one variant streams (`renko.md`), show its examples and add a `::: warning 🚩` stating which method does not stream and why. Keep all streaming content under the one `## Streaming` heading.

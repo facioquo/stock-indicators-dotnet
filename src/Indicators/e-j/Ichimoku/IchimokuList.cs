@@ -73,8 +73,8 @@ public class IchimokuList : BufferList<IchimokuResult>, IIncrementFromBar, IIchi
         ChikouOffset = chikouOffset;
 
         // Initialize buffers
-        _historicalResults = new List<(DateTime, double?, double?)>();
-        _historicalHighLow = new List<(double, double)>();
+        _historicalResults = [];
+        _historicalHighLow = [];
         _tenkanBuffer = new Queue<(double, double)>(tenkanPeriods);
         _kijunBuffer = new Queue<(double, double)>(kijunPeriods);
 
@@ -147,7 +147,7 @@ public class IchimokuList : BufferList<IchimokuResult>, IIncrementFromBar, IIchi
 
         // Pre-populate the future close buffer with all closes for Chikou Span calculation
         // This allows us to look ahead for Chikou values during batch processing
-        List<double> allCloses = new(bars.Count);
+        List<double> allCloses = [with(bars.Count)];
         for (int i = 0; i < bars.Count; i++)
         {
             allCloses.Add((double)bars[i].Close);

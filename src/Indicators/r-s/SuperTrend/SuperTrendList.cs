@@ -121,9 +121,9 @@ public class SuperTrendList : BufferList<SuperTrendResult>, IIncrementFromBar
 
         AddInternal(new SuperTrendResult(
             Timestamp: bar.Timestamp,
-            SuperTrend: (decimal?)superTrend,
-            UpperBand: (decimal?)upperOnly,
-            LowerBand: (decimal?)lowerOnly));
+            SuperTrend: DeMath.ToDecimal(superTrend),
+            UpperBand: DeMath.ToDecimal(upperOnly),
+            LowerBand: DeMath.ToDecimal(lowerOnly)));
     }
 
     /// <inheritdoc />

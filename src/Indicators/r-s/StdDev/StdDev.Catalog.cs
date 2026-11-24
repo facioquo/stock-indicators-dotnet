@@ -7,11 +7,11 @@ public static partial class StdDev
     /// </summary>
     internal static readonly IndicatorListing CommonListing =
         new CatalogListingBuilder()
-            .WithName("Standard deviation")
+            .WithName("Standard Deviation")
             .WithId("STDEV")
             .WithCategory(Category.PriceCharacteristic)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", description: "Number of periods for the standard deviation calculation", isRequired: false, defaultValue: 14, minimum: 2, maximum: 250)
-            .AddResult(nameof(StdDevResult.StdDev), "Standard deviation", "StdDev", ResultType.Default, isReusable: true)
+            .AddResult(nameof(StdDevResult.StdDev), "Standard Deviation", "StdDev", ResultType.Default, isReusable: true)
             .AddResult(nameof(StdDevResult.Mean), "Mean", IndicatorResult.PricePane, ResultType.Default)
             .AddResult(nameof(StdDevResult.ZScore), "Z-Score", "ZScore", ResultType.Default)
             .Build();

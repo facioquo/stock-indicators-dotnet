@@ -20,6 +20,8 @@ BenchmarkDotNet v0.15.8, Windows 11 (10.0.26200.8737/25H2/2025Update/HudsonValle
 | **AwesomeHub**         |    **831.5 μs** |   **883.1 μs** | **229.35 μs** |
 | **BarHub**             |  **1,167.9 μs** | **1,215.9 μs** | **188.16 μs** |
 | **BarPartHub**         |  **1,525.8 μs** | **1,485.5 μs** | **385.79 μs** |
+| **BetaAllHub**                 | **1.622 ms** | **1.1723 ms** | **0.3044 ms** |
+| **BetaHub**                    | **1.185 ms** | **0.8664 ms** | **0.2250 ms** |
 | **BollingerBandsHub**  |    **886.3 μs** |   **859.3 μs** | **223.15 μs** |
 | **BopHub**             |    **662.5 μs** |   **460.4 μs** | **119.57 μs** |
 | **CciHub**             |    **696.6 μs** |   **459.0 μs** | **119.21 μs** |
@@ -29,6 +31,7 @@ BenchmarkDotNet v0.15.8, Windows 11 (10.0.26200.8737/25H2/2025Update/HudsonValle
 | **CmfHub**             |    **809.4 μs** |   **712.6 μs** | **185.07 μs** |
 | **CmoHub**             |    **600.2 μs** |   **408.4 μs** | **106.05 μs** |
 | **ConnorsRsiHub**      |    **510.6 μs** |   **230.5 μs** |  **59.86 μs** |
+| **CorrelationHub**             | **1.941 ms** | **1.9843 ms** | **0.5153 ms** |
 | **DemaHub**            |    **702.2 μs** |   **650.4 μs** | **168.92 μs** |
 | **DojiHub**            |    **870.1 μs** |   **729.8 μs** | **189.53 μs** |
 | **DonchianHub**        |    **799.5 μs** |   **774.3 μs** | **201.08 μs** |
@@ -47,6 +50,20 @@ BenchmarkDotNet v0.15.8, Windows 11 (10.0.26200.8737/25H2/2025Update/HudsonValle
 | **HtTrendlineHub**     |    **930.0 μs** |   **768.2 μs** | **199.51 μs** |
 | **HurstHub**           |  **1,547.5 μs** |   **103.1 μs** |  **15.95 μs** |
 | **IchimokuHub**        |    **629.5 μs** |   **266.2 μs** |  **69.13 μs** |
+| **IndyMathDividedByHub**       | **1.487 ms** | **1.5912 ms** | **0.4132 ms** |
+| **IndyMathDividedBySeriesHub** | **1.812 ms** | **1.6357 ms** | **0.4248 ms** |
+| **IndyMathMaxWithHub**         | **2.092 ms** | **2.1781 ms** | **0.5656 ms** |
+| **IndyMathMinWithHub**         | **1.930 ms** | **1.7036 ms** | **0.4424 ms** |
+| **IndyMathMinusHub**           | **1.498 ms** | **1.4598 ms** | **0.3791 ms** |
+| **IndyMathMinusSeriesHub**     | **1.870 ms** | **2.0293 ms** | **0.5270 ms** |
+| **IndyMathPlusHub**            | **1.667 ms** | **1.8553 ms** | **0.4818 ms** |
+| **IndyMathPlusPercentHub**     | **1.450 ms** | **1.8396 ms** | **0.4777 ms** |
+| **IndyMathPlusSeriesHub**      | **1.996 ms** | **1.9111 ms** | **0.4963 ms** |
+| **IndyMathRollingMaxHub**      | **1.524 ms** | **1.6950 ms** | **0.4402 ms** |
+| **IndyMathRollingMedianHub**   | **1.616 ms** | **1.5346 ms** | **0.3985 ms** |
+| **IndyMathRollingMinHub**      | **1.533 ms** | **1.5488 ms** | **0.4022 ms** |
+| **IndyMathTimesHub**           | **1.519 ms** | **1.4483 ms** | **0.3761 ms** |
+| **IndyMathTimesSeriesHub**     | **1.945 ms** | **1.6985 ms** | **0.4411 ms** |
 | **KamaHub**            |    **836.0 μs** | **2,298.9 μs** | **355.76 μs** |
 | **KeltnerHub**         |  **2,279.4 μs** | **1,884.2 μs** | **489.31 μs** |
 | **KvoHub**             |  **1,971.2 μs** | **1,812.1 μs** | **470.61 μs** |
@@ -60,6 +77,7 @@ BenchmarkDotNet v0.15.8, Windows 11 (10.0.26200.8737/25H2/2025Update/HudsonValle
 | **PivotPointsHub**     |  **2,350.1 μs** | **2,228.4 μs** | **578.70 μs** |
 | **PivotsHub**          | **10,847.1 μs** |   **246.3 μs** |  **63.96 μs** |
 | **PmoHub**             |  **2,093.2 μs** | **1,918.6 μs** | **498.25 μs** |
+| **PrsHub**                     | **1.929 ms** | **1.9987 ms** | **0.5191 ms** |
 | **PvoHub**             |  **2,371.4 μs** | **2,462.1 μs** | **639.40 μs** |
 | **RenkoHub**           |  **1,611.3 μs** | **1,691.3 μs** | **439.22 μs** |
 | **RocHub**             |  **1,961.9 μs** | **2,015.2 μs** | **523.34 μs** |

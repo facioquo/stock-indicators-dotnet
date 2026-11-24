@@ -17,7 +17,7 @@ public class RocCatalogTests : TestBase
         listing.Name.Should().Be("Rate of Change");
         listing.Uiid.Should().Be("ROC");
         listing.Style.Should().Be(Style.Series);
-        listing.Category.Should().Be(Category.Oscillator);
+        listing.Category.Should().Be(Category.PriceCharacteristic);
         listing.MethodName.Should().Be("ToRoc");
 
         listing.Parameters.Should().NotBeNull();
@@ -46,7 +46,7 @@ public class RocCatalogTests : TestBase
         listing.Name.Should().Be("Rate of Change");
         listing.Uiid.Should().Be("ROC");
         listing.Style.Should().Be(Style.Stream);
-        listing.Category.Should().Be(Category.Oscillator);
+        listing.Category.Should().Be(Category.PriceCharacteristic);
         listing.MethodName.Should().Be("ToRocHub");
 
         listing.Parameters.Should().NotBeNull();
@@ -75,7 +75,7 @@ public class RocCatalogTests : TestBase
         listing.Name.Should().Be("Rate of Change");
         listing.Uiid.Should().Be("ROC");
         listing.Style.Should().Be(Style.Buffer);
-        listing.Category.Should().Be(Category.Oscillator);
+        listing.Category.Should().Be(Category.PriceCharacteristic);
         listing.MethodName.Should().Be("ToRocList");
 
         listing.Parameters.Should().NotBeNull();

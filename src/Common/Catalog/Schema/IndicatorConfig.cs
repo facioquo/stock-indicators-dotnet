@@ -72,7 +72,7 @@ public class IndicatorConfig
         return new() {
             Id = builder.BaseListing.Uiid,
             Style = builder.BaseListing.Style,
-            Parameters = new Dictionary<string, object>(builder.ParameterOverrides),
+            Parameters = [with(builder.ParameterOverrides)],
             OmittedParameters = [.. builder.OmittedParameters],
             DisplayName = builder.BaseListing.Name
         };

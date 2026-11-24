@@ -32,7 +32,7 @@ public class AroonBufferListTests : BufferListTestBase, ITestBarBufferList
     [TestMethod]
     public void AddBar_IncrementsResults()
     {
-        AroonList sut = new(lookbackPeriods);
+        AroonList sut = [with(lookbackPeriods)];
 
         foreach (Bar bar in Bars)
         {

@@ -22,7 +22,7 @@ internal static class ServerManager
                 serverProjectPath,
                 "bin",
                 "Debug",
-                "net10.0",
+                "net11.0",
                 "Test.SseServer.exe");
 
             // If exe doesn't exist, try running with dotnet run
