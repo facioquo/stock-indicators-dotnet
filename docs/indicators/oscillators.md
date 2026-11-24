@@ -100,6 +100,10 @@ features:
       src: /assets/thumbs/indicators/tsi.png
     link: /indicators/tsi
 
+  - title: TTM Squeeze
+    details: Bollinger Bands inside Keltner Channels flag low volatility, with a momentum histogram for the breakout
+    link: /indicators/ttm-squeeze
+
   - title: Ultimate Oscillator
     details: Weighs buying power against true range price and oversold / overbought conditions
     icon:

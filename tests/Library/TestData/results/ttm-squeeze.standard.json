@@ -1,0 +1,2512 @@
+[
+  {
+    "timestamp": "2017-01-03T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": null
+  },
+  {
+    "timestamp": "2017-01-04T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": null
+  },
+  {
+    "timestamp": "2017-01-05T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": null
+  },
+  {
+    "timestamp": "2017-01-06T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": null
+  },
+  {
+    "timestamp": "2017-01-09T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": null
+  },
+  {
+    "timestamp": "2017-01-10T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": null
+  },
+  {
+    "timestamp": "2017-01-11T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": null
+  },
+  {
+    "timestamp": "2017-01-12T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": null
+  },
+  {
+    "timestamp": "2017-01-13T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": null
+  },
+  {
+    "timestamp": "2017-01-17T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": null
+  },
+  {
+    "timestamp": "2017-01-18T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": null
+  },
+  {
+    "timestamp": "2017-01-19T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": null
+  },
+  {
+    "timestamp": "2017-01-20T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": null
+  },
+  {
+    "timestamp": "2017-01-23T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": null
+  },
+  {
+    "timestamp": "2017-01-24T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": null
+  },
+  {
+    "timestamp": "2017-01-25T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": null
+  },
+  {
+    "timestamp": "2017-01-26T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": null
+  },
+  {
+    "timestamp": "2017-01-27T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": null
+  },
+  {
+    "timestamp": "2017-01-30T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": null
+  },
+  {
+    "timestamp": "2017-01-31T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": null
+  },
+  {
+    "timestamp": "2017-02-01T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-02-02T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-02-03T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-02-06T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-02-07T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-02-08T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-02-09T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-02-10T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-02-13T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-02-14T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-02-15T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-02-16T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-02-17T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-02-21T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-02-22T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-02-23T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-02-24T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-02-27T00:00:00",
+    "momentum": null,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-02-28T00:00:00",
+    "momentum": 5.68083571428571,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-03-01T00:00:00",
+    "momentum": 5.9500285714285726,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-03-02T00:00:00",
+    "momentum": 5.80884642857144,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-03-03T00:00:00",
+    "momentum": 5.53534285714287,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-03-06T00:00:00",
+    "momentum": 5.192635714285731,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-03-07T00:00:00",
+    "momentum": 4.630471428571446,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-03-08T00:00:00",
+    "momentum": 3.9416214285714486,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-03-09T00:00:00",
+    "momentum": 3.2401678571428834,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-03-10T00:00:00",
+    "momentum": 2.6978285714286017,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-03-13T00:00:00",
+    "momentum": 2.1439285714285923,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-03-14T00:00:00",
+    "momentum": 1.5057535714285875,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-03-15T00:00:00",
+    "momentum": 1.253603571428585,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-03-16T00:00:00",
+    "momentum": 0.9801321428571517,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-03-17T00:00:00",
+    "momentum": 0.6258678571428646,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-03-20T00:00:00",
+    "momentum": 0.21690000000000653,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-03-21T00:00:00",
+    "momentum": -0.5699357142857022,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-03-22T00:00:00",
+    "momentum": -1.16420714285713,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-03-23T00:00:00",
+    "momentum": -1.708696428571411,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-03-24T00:00:00",
+    "momentum": -2.164210714285702,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-03-27T00:00:00",
+    "momentum": -2.4869464285714167,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-03-28T00:00:00",
+    "momentum": -2.4914285714285613,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-03-29T00:00:00",
+    "momentum": -2.1468714285714245,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-03-30T00:00:00",
+    "momentum": -1.7422107142857082,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-03-31T00:00:00",
+    "momentum": -1.4229035714285696,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-04-03T00:00:00",
+    "momentum": -1.2062392857142843,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-04-04T00:00:00",
+    "momentum": -1.0041321428571417,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-04-05T00:00:00",
+    "momentum": -0.9524285714285684,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-04-06T00:00:00",
+    "momentum": -0.771842857142849,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-04-07T00:00:00",
+    "momentum": -0.5742857142857094,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-04-10T00:00:00",
+    "momentum": -0.35623214285714533,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-04-11T00:00:00",
+    "momentum": -0.2650500000000103,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-04-12T00:00:00",
+    "momentum": -0.16867857142858905,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-04-13T00:00:00",
+    "momentum": -0.33116071428573957,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-04-17T00:00:00",
+    "momentum": -0.10259285714288346,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-04-18T00:00:00",
+    "momentum": -0.03891428571431599,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-04-19T00:00:00",
+    "momentum": -0.2926785714285972,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-04-20T00:00:00",
+    "momentum": -0.16843571428573723,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-04-21T00:00:00",
+    "momentum": -0.23569285714287638,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-04-24T00:00:00",
+    "momentum": 0.09602857142854998,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-04-25T00:00:00",
+    "momentum": 0.49281428571426317,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-04-26T00:00:00",
+    "momentum": 0.9160428571428415,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-04-27T00:00:00",
+    "momentum": 1.36459642857142,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-04-28T00:00:00",
+    "momentum": 1.7530892857142848,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-05-01T00:00:00",
+    "momentum": 2.1672535714285757,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-05-02T00:00:00",
+    "momentum": 2.5121892857142973,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-05-03T00:00:00",
+    "momentum": 2.770682142857161,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-05-04T00:00:00",
+    "momentum": 2.9645321428571623,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-05-05T00:00:00",
+    "momentum": 3.3167607142857425,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-05-08T00:00:00",
+    "momentum": 3.571007142857174,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-05-09T00:00:00",
+    "momentum": 3.7289750000000255,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-05-10T00:00:00",
+    "momentum": 3.8800500000000295,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-05-11T00:00:00",
+    "momentum": 3.792428571428597,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-05-12T00:00:00",
+    "momentum": 3.4140357142857334,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-05-15T00:00:00",
+    "momentum": 3.375671428571441,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-05-16T00:00:00",
+    "momentum": 3.1548428571428646,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-05-17T00:00:00",
+    "momentum": 2.0677428571428553,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-05-18T00:00:00",
+    "momentum": 1.3162428571428513,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-05-19T00:00:00",
+    "momentum": 0.7540285714285657,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-05-22T00:00:00",
+    "momentum": 0.5900107142857076,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-05-23T00:00:00",
+    "momentum": 0.5939785714285599,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-05-24T00:00:00",
+    "momentum": 0.6691678571428457,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-05-25T00:00:00",
+    "momentum": 0.8939428571428405,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-05-26T00:00:00",
+    "momentum": 1.0407249999999855,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-05-30T00:00:00",
+    "momentum": 1.1828428571428438,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-05-31T00:00:00",
+    "momentum": 1.3077285714285636,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-06-01T00:00:00",
+    "momentum": 1.6668249999999953,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-06-02T00:00:00",
+    "momentum": 2.101528571428566,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-06-05T00:00:00",
+    "momentum": 2.537407142857141,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-06-06T00:00:00",
+    "momentum": 2.795660714285714,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-06-07T00:00:00",
+    "momentum": 3.080878571428561,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-06-08T00:00:00",
+    "momentum": 3.3936035714285637,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-06-09T00:00:00",
+    "momentum": 3.52995714285714,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-06-12T00:00:00",
+    "momentum": 3.574367857142846,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-06-13T00:00:00",
+    "momentum": 3.900639285714271,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-06-14T00:00:00",
+    "momentum": 4.099149999999981,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-06-15T00:00:00",
+    "momentum": 3.7462464285714088,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-06-16T00:00:00",
+    "momentum": 3.30632499999998,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-06-19T00:00:00",
+    "momentum": 3.1648428571428355,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-06-20T00:00:00",
+    "momentum": 2.728346428571415,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-06-21T00:00:00",
+    "momentum": 2.2890571428571342,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-06-22T00:00:00",
+    "momentum": 1.838739285714277,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-06-23T00:00:00",
+    "momentum": 1.516357142857129,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-06-26T00:00:00",
+    "momentum": 1.2243428571428443,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-06-27T00:00:00",
+    "momentum": 0.5770857142857064,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-06-28T00:00:00",
+    "momentum": 0.28855357142856364,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-06-29T00:00:00",
+    "momentum": -0.1927678571428657,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-06-30T00:00:00",
+    "momentum": -0.48093928571429667,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-07-03T00:00:00",
+    "momentum": -0.6560285714285847,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-07-05T00:00:00",
+    "momentum": -0.7619535714285832,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-07-06T00:00:00",
+    "momentum": -1.182707142857149,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-07-07T00:00:00",
+    "momentum": -1.2501535714285716,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-07-10T00:00:00",
+    "momentum": -1.2822499999999986,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-07-11T00:00:00",
+    "momentum": -1.321985714285718,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-07-12T00:00:00",
+    "momentum": -0.9016142857142859,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-07-13T00:00:00",
+    "momentum": -0.4257678571428577,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-07-14T00:00:00",
+    "momentum": 0.1398607142857134,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-07-17T00:00:00",
+    "momentum": 0.630475000000004,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-07-18T00:00:00",
+    "momentum": 1.2486821428571484,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-07-19T00:00:00",
+    "momentum": 1.860750000000008,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-07-20T00:00:00",
+    "momentum": 2.3984392857143013,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-07-21T00:00:00",
+    "momentum": 2.8095821428571615,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-07-24T00:00:00",
+    "momentum": 3.1789785714285927,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-07-25T00:00:00",
+    "momentum": 3.598128571428588,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-07-26T00:00:00",
+    "momentum": 3.7685857142857317,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-07-27T00:00:00",
+    "momentum": 3.9884750000000087,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-07-28T00:00:00",
+    "momentum": 3.8976285714285765,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-07-31T00:00:00",
+    "momentum": 3.7552892857142846,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-01T00:00:00",
+    "momentum": 3.6900464285714234,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-02T00:00:00",
+    "momentum": 3.6366142857142725,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-03T00:00:00",
+    "momentum": 3.2217357142857006,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-04T00:00:00",
+    "momentum": 2.946974999999995,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-07T00:00:00",
+    "momentum": 2.720396428571422,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-08T00:00:00",
+    "momentum": 2.163335714285704,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-09T00:00:00",
+    "momentum": 1.7258428571428466,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-10T00:00:00",
+    "momentum": 0.7224571428571318,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-11T00:00:00",
+    "momentum": -0.07332857142858829,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-14T00:00:00",
+    "momentum": -0.38763214285716585,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-15T00:00:00",
+    "momentum": -0.6640642857143109,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-16T00:00:00",
+    "momentum": -0.7353071428571665,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-17T00:00:00",
+    "momentum": -1.4082464285714513,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-18T00:00:00",
+    "momentum": -2.03075000000002,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-21T00:00:00",
+    "momentum": -2.5122607142857323,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-22T00:00:00",
+    "momentum": -2.4148535714285866,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-23T00:00:00",
+    "momentum": -2.42328571428573,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-24T00:00:00",
+    "momentum": -2.4951250000000176,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-25T00:00:00",
+    "momentum": -2.4418857142857346,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-28T00:00:00",
+    "momentum": -2.3568178571428775,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-29T00:00:00",
+    "momentum": -2.130167857142869,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-30T00:00:00",
+    "momentum": -1.6483964285714396,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-08-31T00:00:00",
+    "momentum": -0.946460714285722,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-09-01T00:00:00",
+    "momentum": -0.1654535714285767,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-09-05T00:00:00",
+    "momentum": 0.3363107142857108,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-09-06T00:00:00",
+    "momentum": 0.8873571428571396,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-09-07T00:00:00",
+    "momentum": 1.4037464285714176,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-09-08T00:00:00",
+    "momentum": 1.511707142857141,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-09-11T00:00:00",
+    "momentum": 2.0025678571428562,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-09-12T00:00:00",
+    "momentum": 2.7379392857142837,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-09-13T00:00:00",
+    "momentum": 3.41393571428571,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-09-14T00:00:00",
+    "momentum": 4.040164285714287,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-09-15T00:00:00",
+    "momentum": 4.2926357142857166,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-09-18T00:00:00",
+    "momentum": 4.461953571428579,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-09-19T00:00:00",
+    "momentum": 4.525292857142867,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-09-20T00:00:00",
+    "momentum": 4.7290464285714435,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-09-21T00:00:00",
+    "momentum": 4.6534321428571594,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-09-22T00:00:00",
+    "momentum": 4.453814285714298,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-09-25T00:00:00",
+    "momentum": 4.137485714285719,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-09-26T00:00:00",
+    "momentum": 3.785842857142863,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-09-27T00:00:00",
+    "momentum": 3.476985714285716,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-09-28T00:00:00",
+    "momentum": 3.25397142857142,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-09-29T00:00:00",
+    "momentum": 3.242171428571422,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-10-02T00:00:00",
+    "momentum": 3.370249999999988,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-10-03T00:00:00",
+    "momentum": 3.2921857142857,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-10-04T00:00:00",
+    "momentum": 3.2580142857142773,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-10-05T00:00:00",
+    "momentum": 3.365960714285707,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-10-06T00:00:00",
+    "momentum": 3.228610714285708,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-10-09T00:00:00",
+    "momentum": 3.115553571428562,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-10-10T00:00:00",
+    "momentum": 3.1421999999999928,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-10-11T00:00:00",
+    "momentum": 3.2259142857142837,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-10-12T00:00:00",
+    "momentum": 3.204246428571429,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-10-13T00:00:00",
+    "momentum": 3.2253642857142815,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-10-16T00:00:00",
+    "momentum": 3.296092857142853,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-10-17T00:00:00",
+    "momentum": 3.3632749999999967,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-10-18T00:00:00",
+    "momentum": 3.431307142857139,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-10-19T00:00:00",
+    "momentum": 3.410671428571421,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-10-20T00:00:00",
+    "momentum": 3.52511428571428,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-10-23T00:00:00",
+    "momentum": 3.302907142857134,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-10-24T00:00:00",
+    "momentum": 3.1210214285714226,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-10-25T00:00:00",
+    "momentum": 2.6783321428571374,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-10-26T00:00:00",
+    "momentum": 2.2730428571428476,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-10-27T00:00:00",
+    "momentum": 2.212617857142849,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-10-30T00:00:00",
+    "momentum": 1.9912892857142797,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-10-31T00:00:00",
+    "momentum": 1.8289464285714179,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-11-01T00:00:00",
+    "momentum": 1.6774642857142803,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-11-02T00:00:00",
+    "momentum": 1.6318142857142897,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-11-03T00:00:00",
+    "momentum": 1.6679178571428648,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-11-06T00:00:00",
+    "momentum": 1.6513035714285795,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-11-07T00:00:00",
+    "momentum": 1.6138142857142985,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-11-08T00:00:00",
+    "momentum": 1.6792750000000234,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-11-09T00:00:00",
+    "momentum": 1.5263678571428803,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-11-10T00:00:00",
+    "momentum": 1.3782107142857338,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-11-13T00:00:00",
+    "momentum": 1.299357142857156,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-11-14T00:00:00",
+    "momentum": 1.1322750000000155,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-11-15T00:00:00",
+    "momentum": 0.7692428571428711,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-11-16T00:00:00",
+    "momentum": 0.8257500000000147,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-11-17T00:00:00",
+    "momentum": 0.8466000000000151,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-11-20T00:00:00",
+    "momentum": 0.8417642857142945,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-11-21T00:00:00",
+    "momentum": 1.1286321428571424,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-11-22T00:00:00",
+    "momentum": 1.1414428571428503,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-11-24T00:00:00",
+    "momentum": 1.218849999999995,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2017-11-27T00:00:00",
+    "momentum": 1.3862464285714264,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-11-28T00:00:00",
+    "momentum": 1.7886285714285668,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-11-29T00:00:00",
+    "momentum": 2.0949821428571385,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-11-30T00:00:00",
+    "momentum": 2.640199999999994,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-12-01T00:00:00",
+    "momentum": 3.0050428571428505,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-12-04T00:00:00",
+    "momentum": 3.2915214285714303,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-12-05T00:00:00",
+    "momentum": 3.3809642857142883,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-12-06T00:00:00",
+    "momentum": 3.420350000000008,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-12-07T00:00:00",
+    "momentum": 3.614753571428583,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-12-08T00:00:00",
+    "momentum": 3.9246392857142913,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-12-11T00:00:00",
+    "momentum": 4.284453571428579,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-12-12T00:00:00",
+    "momentum": 4.631378571428574,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-12-13T00:00:00",
+    "momentum": 4.8076250000000105,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-12-14T00:00:00",
+    "momentum": 4.485385714285722,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-12-15T00:00:00",
+    "momentum": 4.6183892857143,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-12-18T00:00:00",
+    "momentum": 4.809657142857157,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-12-19T00:00:00",
+    "momentum": 4.7231071428571525,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-12-20T00:00:00",
+    "momentum": 4.6049392857142895,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-12-21T00:00:00",
+    "momentum": 4.4422892857142795,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-12-22T00:00:00",
+    "momentum": 4.238439285714274,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-12-26T00:00:00",
+    "momentum": 3.8674749999999896,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-12-27T00:00:00",
+    "momentum": 3.6624464285714198,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-12-28T00:00:00",
+    "momentum": 3.495653571428562,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2017-12-29T00:00:00",
+    "momentum": 3.2811571428571265,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-01-02T00:00:00",
+    "momentum": 3.2558035714285585,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-01-03T00:00:00",
+    "momentum": 3.3690178571428433,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-01-04T00:00:00",
+    "momentum": 3.4600249999999835,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-01-05T00:00:00",
+    "momentum": 3.7113107142856836,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-01-08T00:00:00",
+    "momentum": 3.9476214285713906,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-01-09T00:00:00",
+    "momentum": 4.215817857142815,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-01-10T00:00:00",
+    "momentum": 4.40231428571424,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-01-11T00:00:00",
+    "momentum": 4.873953571428527,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-01-12T00:00:00",
+    "momentum": 5.4735107142856805,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-01-16T00:00:00",
+    "momentum": 5.501532142857119,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-01-17T00:00:00",
+    "momentum": 6.016910714285698,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-01-18T00:00:00",
+    "momentum": 6.458317857142844,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-01-19T00:00:00",
+    "momentum": 6.907024999999981,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-01-22T00:00:00",
+    "momentum": 7.483046428571412,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-01-23T00:00:00",
+    "momentum": 8.003121428571399,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-01-24T00:00:00",
+    "momentum": 8.292271428571393,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-01-25T00:00:00",
+    "momentum": 8.402314285714255,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-01-26T00:00:00",
+    "momentum": 8.8559214285714,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-01-29T00:00:00",
+    "momentum": 8.832985714285694,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-01-30T00:00:00",
+    "momentum": 8.021346428571405,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-01-31T00:00:00",
+    "momentum": 7.1972464285714,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-02-01T00:00:00",
+    "momentum": 6.292496428571396,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-02-02T00:00:00",
+    "momentum": 4.283671428571407,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-02-05T00:00:00",
+    "momentum": 0.8738999999999719,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-02-06T00:00:00",
+    "momentum": -1.1330642857143145,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-02-07T00:00:00",
+    "momentum": -3.2275071428571644,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-02-08T00:00:00",
+    "momentum": -6.875457142857157,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-02-09T00:00:00",
+    "momentum": -9.105935714285708,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-02-12T00:00:00",
+    "momentum": -10.247482142857129,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-02-13T00:00:00",
+    "momentum": -11.212121428571404,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-02-14T00:00:00",
+    "momentum": -11.13091428571426,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-02-15T00:00:00",
+    "momentum": -10.33814285714283,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-02-16T00:00:00",
+    "momentum": -9.334228571428536,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-02-20T00:00:00",
+    "momentum": -8.369567857142819,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-02-21T00:00:00",
+    "momentum": -7.462960714285689,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-02-22T00:00:00",
+    "momentum": -6.368949999999975,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-02-23T00:00:00",
+    "momentum": -4.372557142857135,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-02-26T00:00:00",
+    "momentum": -1.4804214285714343,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-02-27T00:00:00",
+    "momentum": 0.7286499999999876,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-02-28T00:00:00",
+    "momentum": 2.260274999999978,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-03-01T00:00:00",
+    "momentum": 3.1328571428571124,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-03-02T00:00:00",
+    "momentum": 4.406932142857112,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-03-05T00:00:00",
+    "momentum": 5.697414285714255,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-03-06T00:00:00",
+    "momentum": 6.07678928571425,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-03-07T00:00:00",
+    "momentum": 6.7955142857142485,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-03-08T00:00:00",
+    "momentum": 7.4393571428571175,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-03-09T00:00:00",
+    "momentum": 7.750682142857113,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-03-12T00:00:00",
+    "momentum": 7.62918571428569,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-03-13T00:00:00",
+    "momentum": 7.18046428571426,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-03-14T00:00:00",
+    "momentum": 6.31451428571426,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-03-15T00:00:00",
+    "momentum": 5.589849999999981,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-03-16T00:00:00",
+    "momentum": 5.187685714285699,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-03-19T00:00:00",
+    "momentum": 4.130367857142845,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-03-20T00:00:00",
+    "momentum": 3.0476571428571457,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-03-21T00:00:00",
+    "momentum": 1.7751892857142941,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-03-22T00:00:00",
+    "momentum": -0.602171428571415,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-03-23T00:00:00",
+    "momentum": -3.1337464285714294,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-03-26T00:00:00",
+    "momentum": -3.795724999999993,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-03-27T00:00:00",
+    "momentum": -5.31682142857143,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-03-28T00:00:00",
+    "momentum": -6.956371428571435,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-03-29T00:00:00",
+    "momentum": -8.165478571428581,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-04-02T00:00:00",
+    "momentum": -9.910610714285719,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-04-03T00:00:00",
+    "momentum": -10.518392857142864,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-04-04T00:00:00",
+    "momentum": -10.383167857142853,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-04-05T00:00:00",
+    "momentum": -9.742021428571416,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-04-06T00:00:00",
+    "momentum": -9.90306785714284,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-04-09T00:00:00",
+    "momentum": -9.165753571428553,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-04-10T00:00:00",
+    "momentum": -7.717707142857127,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-04-11T00:00:00",
+    "momentum": -6.499274999999987,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-04-12T00:00:00",
+    "momentum": -4.889757142857136,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-04-13T00:00:00",
+    "momentum": -3.4095928571428464,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-04-16T00:00:00",
+    "momentum": -1.4208749999999797,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2018-04-17T00:00:00",
+    "momentum": 0.7660642857143016,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-04-18T00:00:00",
+    "momentum": 2.9260857142857266,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-04-19T00:00:00",
+    "momentum": 4.754867857142864,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2018-04-20T00:00:00",
+    "momentum": 5.43296071428572,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-04-23T00:00:00",
+    "momentum": 5.537546428571424,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-04-24T00:00:00",
+    "momentum": 5.51293571428571,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-04-25T00:00:00",
+    "momentum": 5.131378571428556,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-04-26T00:00:00",
+    "momentum": 5.0316999999999705,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-04-27T00:00:00",
+    "momentum": 5.127967857142821,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-04-30T00:00:00",
+    "momentum": 4.173139285714252,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2018-05-01T00:00:00",
+    "momentum": 3.482578571428541,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2018-05-02T00:00:00",
+    "momentum": 2.6012178571428417,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2018-05-03T00:00:00",
+    "momentum": 1.8155035714285657,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2018-05-04T00:00:00",
+    "momentum": 1.0324607142857116,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2018-05-07T00:00:00",
+    "momentum": 0.43868928571429644,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2018-05-08T00:00:00",
+    "momentum": 0.17150357142858996,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2018-05-09T00:00:00",
+    "momentum": 0.25732500000002534,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2018-05-10T00:00:00",
+    "momentum": 0.9083357142857487,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-05-11T00:00:00",
+    "momentum": 1.5217357142857442,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-05-14T00:00:00",
+    "momentum": 2.262610714285747,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-05-15T00:00:00",
+    "momentum": 2.925378571428607,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-05-16T00:00:00",
+    "momentum": 3.8333571428571775,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-05-17T00:00:00",
+    "momentum": 4.609650000000032,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-05-18T00:00:00",
+    "momentum": 5.022653571428614,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-05-21T00:00:00",
+    "momentum": 5.732600000000037,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-05-22T00:00:00",
+    "momentum": 5.870885714285748,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-05-23T00:00:00",
+    "momentum": 6.077321428571448,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-05-24T00:00:00",
+    "momentum": 6.321114285714298,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-05-25T00:00:00",
+    "momentum": 6.406728571428581,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-05-29T00:00:00",
+    "momentum": 5.630789285714281,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-05-30T00:00:00",
+    "momentum": 5.488464285714282,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-05-31T00:00:00",
+    "momentum": 4.752342857142855,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-06-01T00:00:00",
+    "momentum": 4.246317857142846,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-06-04T00:00:00",
+    "momentum": 3.909824999999994,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-06-05T00:00:00",
+    "momentum": 3.5849642857142925,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-06-06T00:00:00",
+    "momentum": 3.410042857142866,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-06-07T00:00:00",
+    "momentum": 3.315525000000011,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-06-08T00:00:00",
+    "momentum": 3.5347428571428674,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-06-11T00:00:00",
+    "momentum": 3.8008535714285925,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-06-12T00:00:00",
+    "momentum": 4.100646428571452,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-06-13T00:00:00",
+    "momentum": 4.033021428571444,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-06-14T00:00:00",
+    "momentum": 4.169017857142858,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-06-15T00:00:00",
+    "momentum": 4.190482142857137,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-06-18T00:00:00",
+    "momentum": 4.014885714285706,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-06-19T00:00:00",
+    "momentum": 3.8240249999999882,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-06-20T00:00:00",
+    "momentum": 3.649664285714271,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-06-21T00:00:00",
+    "momentum": 3.23519999999997,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-06-22T00:00:00",
+    "momentum": 2.8905249999999727,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-06-25T00:00:00",
+    "momentum": 1.8437428571428331,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-06-26T00:00:00",
+    "momentum": 0.5526571428571194,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-06-27T00:00:00",
+    "momentum": -0.7587964285714519,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-06-28T00:00:00",
+    "momentum": -1.830292857142875,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-06-29T00:00:00",
+    "momentum": -2.5700571428571592,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-07-02T00:00:00",
+    "momentum": -3.1178535714285855,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-07-03T00:00:00",
+    "momentum": -3.7483464285714385,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-07-05T00:00:00",
+    "momentum": -3.768403571428582,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-07-06T00:00:00",
+    "momentum": -3.347296428571439,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-07-09T00:00:00",
+    "momentum": -2.380671428571442,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-07-10T00:00:00",
+    "momentum": -1.2674142857142954,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-07-11T00:00:00",
+    "momentum": -0.4955357142857091,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-07-12T00:00:00",
+    "momentum": 0.6265178571428683,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-07-13T00:00:00",
+    "momentum": 1.793553571428582,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-07-16T00:00:00",
+    "momentum": 2.8480142857142994,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-07-17T00:00:00",
+    "momentum": 3.9637142857142984,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-07-18T00:00:00",
+    "momentum": 5.0048107142857186,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-07-19T00:00:00",
+    "momentum": 5.818510714285711,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-07-20T00:00:00",
+    "momentum": 6.345260714285709,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-07-23T00:00:00",
+    "momentum": 6.93042857142856,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-07-24T00:00:00",
+    "momentum": 7.247167857142847,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-07-25T00:00:00",
+    "momentum": 7.736710714285705,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-07-26T00:00:00",
+    "momentum": 7.69047857142856,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-07-27T00:00:00",
+    "momentum": 7.223842857142858,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-07-30T00:00:00",
+    "momentum": 6.395600000000005,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-07-31T00:00:00",
+    "momentum": 5.712135714285711,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-01T00:00:00",
+    "momentum": 4.718746428571427,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-02T00:00:00",
+    "momentum": 4.029849999999997,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-03T00:00:00",
+    "momentum": 3.5259678571428568,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-06T00:00:00",
+    "momentum": 3.368421428571426,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-07T00:00:00",
+    "momentum": 3.381435714285705,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-08T00:00:00",
+    "momentum": 3.095574999999992,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-09T00:00:00",
+    "momentum": 2.893471428571417,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-10T00:00:00",
+    "momentum": 2.3637071428571472,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-13T00:00:00",
+    "momentum": 1.6591857142857283,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-14T00:00:00",
+    "momentum": 1.3815250000000128,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-15T00:00:00",
+    "momentum": 0.8140178571428662,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-16T00:00:00",
+    "momentum": 0.6200250000000134,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-17T00:00:00",
+    "momentum": 0.5874285714285779,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-20T00:00:00",
+    "momentum": 0.7017071428571415,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-21T00:00:00",
+    "momentum": 0.9630678571428448,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-22T00:00:00",
+    "momentum": 1.3794428571428403,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-23T00:00:00",
+    "momentum": 1.6785535714285458,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-24T00:00:00",
+    "momentum": 2.0704107142856976,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-27T00:00:00",
+    "momentum": 2.5625392857142733,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-28T00:00:00",
+    "momentum": 3.0580714285714206,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-29T00:00:00",
+    "momentum": 3.616189285714277,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-30T00:00:00",
+    "momentum": 3.910957142857135,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-08-31T00:00:00",
+    "momentum": 4.162603571428574,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-09-04T00:00:00",
+    "momentum": 4.355103571428581,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-09-05T00:00:00",
+    "momentum": 4.443635714285728,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-09-06T00:00:00",
+    "momentum": 4.326735714285719,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-09-07T00:00:00",
+    "momentum": 4.0521142857142936,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-09-10T00:00:00",
+    "momentum": 3.6765750000000104,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-09-11T00:00:00",
+    "momentum": 3.3228000000000057,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-09-12T00:00:00",
+    "momentum": 3.0749535714285643,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-09-13T00:00:00",
+    "momentum": 2.7308178571428527,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-09-14T00:00:00",
+    "momentum": 2.5246035714285755,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-09-17T00:00:00",
+    "momentum": 2.009453571428584,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-09-18T00:00:00",
+    "momentum": 1.8035357142857347,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-09-19T00:00:00",
+    "momentum": 1.6622642857143042,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-09-20T00:00:00",
+    "momentum": 1.800757142857159,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-09-21T00:00:00",
+    "momentum": 1.7273178571428711,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-09-24T00:00:00",
+    "momentum": 1.5747464285714476,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-09-25T00:00:00",
+    "momentum": 1.5319107142857395,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-09-26T00:00:00",
+    "momentum": 1.357360714285731,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-09-27T00:00:00",
+    "momentum": 1.4814250000000122,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-09-28T00:00:00",
+    "momentum": 1.5087928571428757,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-10-01T00:00:00",
+    "momentum": 1.732242857142874,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-10-02T00:00:00",
+    "momentum": 1.8751178571428806,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-10-03T00:00:00",
+    "momentum": 1.9654500000000188,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-10-04T00:00:00",
+    "momentum": 1.5466892857143022,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-10-05T00:00:00",
+    "momentum": 0.7815250000000072,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-10-08T00:00:00",
+    "momentum": 0.09951071428571434,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2018-10-09T00:00:00",
+    "momentum": -0.5345571428571418,
+    "isSqueezeOn": true
+  },
+  {
+    "timestamp": "2018-10-10T00:00:00",
+    "momentum": -2.371028571428576,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-10-11T00:00:00",
+    "momentum": -4.672610714285727,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-10-12T00:00:00",
+    "momentum": -6.016310714285734,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-10-15T00:00:00",
+    "momentum": -7.6167464285714415,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-10-16T00:00:00",
+    "momentum": -7.80595000000002,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-10-17T00:00:00",
+    "momentum": -7.841267857142881,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-10-18T00:00:00",
+    "momentum": -8.298653571428598,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-10-19T00:00:00",
+    "momentum": -8.638810714285723,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-10-22T00:00:00",
+    "momentum": -9.105410714285716,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-10-23T00:00:00",
+    "momentum": -9.563339285714278,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-10-24T00:00:00",
+    "momentum": -11.184557142857138,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-10-25T00:00:00",
+    "momentum": -11.553564285714284,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-10-26T00:00:00",
+    "momentum": -12.402478571428574,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-10-29T00:00:00",
+    "momentum": -12.983939285714294,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-10-30T00:00:00",
+    "momentum": -12.55134285714286,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-10-31T00:00:00",
+    "momentum": -11.254696428571435,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-11-01T00:00:00",
+    "momentum": -9.447417857142856,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-11-02T00:00:00",
+    "momentum": -7.946057142857139,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-11-05T00:00:00",
+    "momentum": -6.098103571428572,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-11-06T00:00:00",
+    "momentum": -3.849685714285706,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-11-07T00:00:00",
+    "momentum": -1.022082142857128,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-11-08T00:00:00",
+    "momentum": 1.0424857142857427,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-11-09T00:00:00",
+    "momentum": 2.7055392857143152,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-11-12T00:00:00",
+    "momentum": 3.114153571428611,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-11-13T00:00:00",
+    "momentum": 3.926692857142894,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-11-14T00:00:00",
+    "momentum": 4.420146428571462,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-11-15T00:00:00",
+    "momentum": 5.052160714285743,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-11-16T00:00:00",
+    "momentum": 5.724871428571463,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-11-19T00:00:00",
+    "momentum": 5.37492857142861,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-11-20T00:00:00",
+    "momentum": 4.0347464285714665,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-11-21T00:00:00",
+    "momentum": 2.18348928571432,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-11-23T00:00:00",
+    "momentum": 0.43165357142860517,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-11-26T00:00:00",
+    "momentum": -0.9341321428571085,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-11-27T00:00:00",
+    "momentum": -2.4573214285713973,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-11-28T00:00:00",
+    "momentum": -2.5915678571428304,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-11-29T00:00:00",
+    "momentum": -2.6312821428571196,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-11-30T00:00:00",
+    "momentum": -2.1318892857142773,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-12-03T00:00:00",
+    "momentum": -1.1607785714285734,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-12-04T00:00:00",
+    "momentum": -1.7654785714285826,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-12-06T00:00:00",
+    "momentum": -2.1259571428571538,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-12-07T00:00:00",
+    "momentum": -2.77859642857143,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-12-10T00:00:00",
+    "momentum": -2.888432142857138,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-12-11T00:00:00",
+    "momentum": -2.9968678571428526,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-12-12T00:00:00",
+    "momentum": -3.1804857142857155,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-12-13T00:00:00",
+    "momentum": -3.315485714285718,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-12-14T00:00:00",
+    "momentum": -4.392707142857147,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-12-17T00:00:00",
+    "momentum": -5.702603571428579,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-12-18T00:00:00",
+    "momentum": -6.704007142857155,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-12-19T00:00:00",
+    "momentum": -8.380942857142875,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-12-20T00:00:00",
+    "momentum": -10.805682142857163,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-12-21T00:00:00",
+    "momentum": -13.673500000000018,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-12-24T00:00:00",
+    "momentum": -17.272314285714298,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-12-26T00:00:00",
+    "momentum": -17.955353571428578,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-12-27T00:00:00",
+    "momentum": -18.091385714285707,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-12-28T00:00:00",
+    "momentum": -17.497374999999987,
+    "isSqueezeOn": false
+  },
+  {
+    "timestamp": "2018-12-31T00:00:00",
+    "momentum": -16.30597857142855,
+    "isSqueezeOn": false
+  }
+]
