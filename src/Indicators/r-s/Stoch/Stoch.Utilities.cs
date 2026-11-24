@@ -56,7 +56,7 @@ public static partial class Stoch
 
         if (movingAverageType is not MaType.SMA and not MaType.SMMA)
         {
-            throw new ArgumentOutOfRangeException(nameof(dFactor), dFactor,
+            throw new ArgumentOutOfRangeException(nameof(movingAverageType), movingAverageType,
                 "Stochastic only supports SMA and SMMA moving average types.");
         }
     }
