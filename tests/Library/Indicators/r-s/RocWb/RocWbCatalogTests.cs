@@ -14,10 +14,10 @@ public class RocWbCatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("ROC with Bands");
+        listing.Name.Should().Be("Rate of Change with Bands");
         listing.Uiid.Should().Be("ROC-WB");
         listing.Style.Should().Be(Style.Series);
-        listing.Category.Should().Be(Category.PriceTrend);
+        listing.Category.Should().Be(Category.PriceCharacteristic);
         listing.MethodName.Should().Be("ToRocWb");
 
         listing.Parameters.Should().NotBeNull();
@@ -59,10 +59,10 @@ public class RocWbCatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("ROC with Bands");
+        listing.Name.Should().Be("Rate of Change with Bands");
         listing.Uiid.Should().Be("ROC-WB");
         listing.Style.Should().Be(Style.Stream);
-        listing.Category.Should().Be(Category.PriceTrend);
+        listing.Category.Should().Be(Category.PriceCharacteristic);
         listing.MethodName.Should().Be("ToRocWbHub");
 
         listing.Parameters.Should().NotBeNull();
@@ -104,10 +104,10 @@ public class RocWbCatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("ROC with Bands");
+        listing.Name.Should().Be("Rate of Change with Bands");
         listing.Uiid.Should().Be("ROC-WB");
         listing.Style.Should().Be(Style.Buffer);
-        listing.Category.Should().Be(Category.PriceTrend);
+        listing.Category.Should().Be(Category.PriceCharacteristic);
         listing.MethodName.Should().Be("ToRocWbList");
 
         listing.Parameters.Should().NotBeNull();

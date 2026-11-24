@@ -142,8 +142,10 @@ dotnet_diagnostic.IDE0230.severity = suggestion  # Use raw string literal when b
 dotnet_diagnostic.IDE0305.severity = none        # Use collection expression for fluent, foo.ToList→[..foo]
 dotnet_diagnostic.IDE0306.severity = none        # Use collection expression for new, new(foo)→[..foo]
 
-# remove this when no-longer supporting pre-9.0 frameworks
-dotnet_diagnostic.IDE0330.severity = none        # Prefer 'System.Threading.Lock'
+dotnet_diagnostic.IDE0330.severity = warning     # Prefer 'System.Threading.Lock'
+
+# Roslynator analyzers: report every enabled rule as a build warning, so builds with -warnAsError enforce them
+dotnet_analyzer_diagnostic.category-roslynator.severity = warning
 
 # Roslynator analyzer suppressions
 dotnet_diagnostic.IDE0008.severity = suggestion  # Use explicit type

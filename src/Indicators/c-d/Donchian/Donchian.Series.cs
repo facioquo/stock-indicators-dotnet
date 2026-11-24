@@ -23,7 +23,7 @@ public static partial class Donchian
 
         // initialize
         int length = bars.Count;
-        List<DonchianResult> results = new(length);
+        List<DonchianResult> results = [with(length)];
 
         // roll through source values
         for (int i = 0; i < length; i++)

@@ -59,13 +59,13 @@ public class EmaList : BufferList<EmaResult>, IIncrementFromChain, IEma
         }
 
         // add nulls for incalculable periods
-        if (Count < LookbackPeriods - 1)
+        if (TotalCount < LookbackPeriods - 1)
         {
             AddInternal(new EmaResult(timestamp));
             return;
         }
 
-        double? lastEma = Count == 0 ? null : this[^1].Ema;
+        double? lastEma = TotalCount == 0 ? null : this[^1].Ema;
 
         // re/initialize as SMA
         if (lastEma is null)

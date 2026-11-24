@@ -23,7 +23,7 @@ public static partial class StdDev
 
         // initialize
         int length = source.Count;
-        List<StdDevResult> results = new(length);
+        List<StdDevResult> results = [with(length)];
 
         // roll through source values
         for (int i = 0; i < length; i++)

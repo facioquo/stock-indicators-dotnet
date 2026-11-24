@@ -72,7 +72,7 @@ Each `IndicatorListing` describes one indicator-and-style combination. This is t
 | `MethodName`<br>`string?` | Method name, for automation use cases |
 | `LegendTemplate`<br>`string` | Legend template for charting |
 
-`GetMethodOverloads()` returns the public static overloads of `MethodName` as `IReadOnlyList<MethodInfo>`, for a caller that reads their parameters or invokes them directly. The list is empty when `MethodName` is unset or no catalog listing names the method. The methods survive trimming and NativeAOT publishing, so no assembly scan is needed.
+`GetMethodOverloads()` returns the public static overloads of `MethodName` that return the listing's `Style`, as `IReadOnlyList<MethodInfo>`, for a caller that reads their parameters or invokes them directly. One name can serve two styles, such as IndyMath's `Minus`, which names both a Series method and a stream hub method; a listing gets only its own style's overloads, or every overload when none returns its style. The list is empty when `MethodName` is unset or no catalog listing names the method. The methods survive trimming and NativeAOT publishing, so no assembly scan is needed.
 
 `IndicatorParam` (each input parameter):
 
@@ -224,14 +224,6 @@ IReadOnlyList<EmaResult> results = config.Execute<EmaResult>(bars);
 ```
 
 Use `config.ToBuilder()` to obtain a `ListingExecutionBuilder` for further fluent configuration, or `IndicatorConfig.FromBuilder(builder)` to capture an existing builder's settings back into a config for storage.
-
-## Trimming and NativeAOT
-
-The package is marked trimmable, so a trimmed app keeps only the library members it uses. Catalog lookup and execution work in trimmed and NativeAOT apps; `ToJson` does not (see below). A listing's `MethodName` must name a catalog indicator method: a listing you build yourself, or a `with` copy, cannot name any other library method.
-
-::: warning Reflection-based helpers
-`ToJson` serializes with reflection, so it carries `[RequiresUnreferencedCode]` and `[RequiresDynamicCode]` and raises IL2026 and IL3050 in a trimmed or NativeAOT build; export the catalog from an untrimmed app instead. `ToStringOut` and `ToConsole` require the public properties of `T` to be preserved, which an unannotated generic caller sees as IL2091; annotate the caller's own type parameter with `[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)]`, or call them with a concrete result type. In a NativeAOT app they print no property descriptions: they read descriptions from the XML documentation file beside the assembly, and a native executable has no assembly file to sit beside.
-:::
 
 ## See also
 

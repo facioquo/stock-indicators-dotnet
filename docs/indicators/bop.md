@@ -80,7 +80,7 @@ BopList bopList = new(smoothPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => bopList.Add(bar);
 
-// based on `ICollection<BopResult>`; fills as the handler runs
+// the list itself holds the results; fills as the handler runs
 IReadOnlyList<BopResult> results = bopList;
 ```
 

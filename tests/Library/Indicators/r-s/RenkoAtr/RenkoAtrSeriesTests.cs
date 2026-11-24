@@ -81,7 +81,7 @@ public class RenkoAtrSeriesTests : StaticSeriesTestBase
             r.High.Should().NotBe(0);
             r.Low.Should().NotBe(0);
             r.Close.Should().NotBe(0);
-            r.High.Should().BeGreaterOrEqualTo(r.Low);
+            r.High.Should().BeGreaterThanOrEqualTo(r.Low);
         }
     }
 
@@ -100,7 +100,7 @@ public class RenkoAtrSeriesTests : StaticSeriesTestBase
             r.Close.Should().BeGreaterThan(0);
 
             // High should be >= Low
-            r.High.Should().BeGreaterOrEqualTo(r.Low);
+            r.High.Should().BeGreaterThanOrEqualTo(r.Low);
         }
     }
 

@@ -23,7 +23,7 @@ public class OrderingContract : TestBase
         // Positive control: chronological input reproduces the batch series exactly.
         IReadOnlyList<Bar> bars = Bars.Take(60).ToList();
 
-        SmaList sut = new(20);
+        SmaList sut = [with(20)];
         sut.Add(bars);
 
         sut.IsExactly(bars.ToSma(20));
@@ -37,7 +37,7 @@ public class OrderingContract : TestBase
         List<Bar> scrambled = [.. bars];
         (scrambled[40], scrambled[41]) = (scrambled[41], scrambled[40]);
 
-        SmaList sut = new(20);
+        SmaList sut = [with(20)];
         sut.Add(scrambled);
 
         // The buffer preserves input order verbatim; it neither sorts nor drops.
@@ -62,7 +62,7 @@ public class OrderingContract : TestBase
         // correction/rollback), a buffer list appends a second row.
         IReadOnlyList<Bar> bars = Bars.Take(30).ToList();
 
-        SmaList sut = new(20);
+        SmaList sut = [with(20)];
         sut.Add(bars);
         int countBeforeResend = sut.Count;
 
@@ -210,7 +210,7 @@ public class OrderingContract : TestBase
             Close: jump,
             Volume: 1000m);
 
-        RenkoList control = new(1m);
+        RenkoList control = [with(1m)];
         control.Add(Bars);
         int before = control.Count;
         control.Add(earlier);

@@ -19,7 +19,7 @@ internal static class CatalogReflection
     private static readonly Assembly IndicatorsAssembly = typeof(Catalog).Assembly;
 
     /// <summary>
-    /// Gets every public static overload of a listing's method.
+    /// Gets every public static overload of a listing's method in the listing's style.
     /// </summary>
     /// <remarks>
     /// Delegates to the library's own <see cref="CatalogMethodResolver"/> so the tests
@@ -30,7 +30,7 @@ internal static class CatalogReflection
     /// <param name="listing">Catalog listing naming the method.</param>
     /// <returns>All matching overloads; empty when the method resolves to nothing.</returns>
     internal static IReadOnlyList<MethodInfo> GetOverloads(IndicatorListing listing)
-        => CatalogMethodResolver.GetOverloads(listing.MethodName);
+        => CatalogMethodResolver.GetOverloads(listing.MethodName, listing.Style);
 
     /// <summary>
     /// Gets every public static method with the given name on any static class in the library.

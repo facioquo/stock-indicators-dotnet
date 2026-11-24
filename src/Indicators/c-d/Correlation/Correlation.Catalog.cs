@@ -7,9 +7,9 @@ public static partial class Correlation
     /// </summary>
     internal static readonly IndicatorListing CommonListing =
         new CatalogListingBuilder()
-            .WithName("Correlation")
+            .WithName("Correlation Coefficient")
             .WithId("CORR")
-            .WithCategory(Category.Oscillator)
+            .WithCategory(Category.PriceCharacteristic)
             .AddSeriesParameter("sourceA", "Source A")
             .AddSeriesParameter("sourceB", "Source B")
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", isRequired: true, defaultValue: 20, minimum: 1, maximum: 250)
@@ -27,5 +27,23 @@ public static partial class Correlation
         new CatalogListingBuilder(CommonListing)
             .WithStyle(Style.Series)
             .WithMethodName(typeof(Correlation), "ToCorrelation")
+            .Build();
+
+    /// <summary>
+    /// Correlation Buffer Listing
+    /// </summary>
+    internal static readonly IndicatorListing BufferListing =
+        new CatalogListingBuilder(CommonListing)
+            .WithStyle(Style.Buffer)
+            .WithMethodName(typeof(Correlation), "ToCorrelationList")
+            .Build();
+
+    /// <summary>
+    /// Correlation Stream Listing
+    /// </summary>
+    internal static readonly IndicatorListing StreamListing =
+        new CatalogListingBuilder(CommonListing)
+            .WithStyle(Style.Stream)
+            .WithMethodName(typeof(Correlation), "ToCorrelationHub")
             .Build();
 }

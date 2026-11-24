@@ -25,8 +25,8 @@ public class TestCompliance
 
         Console.WriteLine($"\nFound {streamHubTestClasses.Count} StreamHub test classes");
 
-        List<string> violations = new();
-        List<string> warnings = new();
+        List<string> violations = [];
+        List<string> warnings = [];
         int validated = 0;
 
         // Define observer and provider interface types

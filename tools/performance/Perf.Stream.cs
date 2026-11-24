@@ -51,6 +51,8 @@ public class StreamIndicators
     [Benchmark] public object AtrHub() => barHub.ToAtrHub(n).Results;
     [Benchmark] public object AtrStopHub() => barHub.ToAtrStopHub().Results;
     [Benchmark] public object AwesomeHub() => barHub.ToAwesomeHub().Results;
+    [Benchmark] public object BetaAllHub() => barHub.ToBetaHub(barHubOther, 20, BetaType.All).Results;
+    [Benchmark] public object BetaHub() => barHub.ToBetaHub(barHubOther, 20, BetaType.Standard).Results;
     [Benchmark] public object BollingerBandsHub() => barHub.ToBollingerBandsHub(20, 2).Results;
     [Benchmark] public object BopHub() => barHub.ToBopHub(n).Results;
     [Benchmark] public object CciHub() => barHub.ToCciHub(n).Results;
@@ -60,6 +62,7 @@ public class StreamIndicators
     [Benchmark] public object CmfHub() => barHub.ToCmfHub(n).Results;
     [Benchmark] public object CmoHub() => barHub.ToCmoHub(n).Results;
     [Benchmark] public object ConnorsRsiHub() => barHub.ToConnorsRsiHub(3, 2, 100).Results;
+    [Benchmark] public object CorrelationHub() => barHub.ToCorrelationHub(barHubOther, 20).Results;
     [Benchmark] public object DemaHub() => barHub.ToDemaHub(n).Results;
     [Benchmark] public object DojiHub() => barHub.ToDojiHub().Results;
     [Benchmark] public object DonchianHub() => barHub.ToDonchianHub(20).Results;
@@ -78,6 +81,20 @@ public class StreamIndicators
     [Benchmark] public object HtTrendlineHub() => barHub.ToHtTrendlineHub().Results;
     [Benchmark] public object HurstHub() => barHub.ToHurstHub(100).Results;
     [Benchmark] public object IchimokuHub() => barHub.ToIchimokuHub().Results;
+    [Benchmark] public object IndyMathPlusHub() => barHub.Plus(1).Results;
+    [Benchmark] public object IndyMathMinusHub() => barHub.Minus(1).Results;
+    [Benchmark] public object IndyMathTimesHub() => barHub.Times(2).Results;
+    [Benchmark] public object IndyMathDividedByHub() => barHub.DividedBy(2).Results;
+    [Benchmark] public object IndyMathPlusPercentHub() => barHub.PlusPercent(2.5).Results;
+    [Benchmark] public object IndyMathRollingMaxHub() => barHub.RollingMax(20).Results;
+    [Benchmark] public object IndyMathRollingMinHub() => barHub.RollingMin(20).Results;
+    [Benchmark] public object IndyMathRollingMedianHub() => barHub.RollingMedian(20).Results;
+    [Benchmark] public object IndyMathPlusSeriesHub() => barHubOther.Plus(barHub).Results;
+    [Benchmark] public object IndyMathMinusSeriesHub() => barHubOther.Minus(barHub).Results;
+    [Benchmark] public object IndyMathTimesSeriesHub() => barHubOther.Times(barHub).Results;
+    [Benchmark] public object IndyMathDividedBySeriesHub() => barHubOther.DividedBy(barHub).Results;
+    [Benchmark] public object IndyMathMaxWithHub() => barHubOther.MaxWith(barHub).Results;
+    [Benchmark] public object IndyMathMinWithHub() => barHubOther.MinWith(barHub).Results;
     [Benchmark] public object KamaHub() => barHub.ToKamaHub(10, 2, 30).Results;
     [Benchmark] public object KvoHub() => barHub.ToKvoHub(34, 55, 13).Results;
     [Benchmark] public object KeltnerHub() => barHub.ToKeltnerHub(20, 2, 10).Results;
@@ -91,6 +108,7 @@ public class StreamIndicators
     [Benchmark] public object PivotPointsHub() => barHub.ToPivotPointsHub(BarInterval.Month, PivotPointType.Standard).Results;
     [Benchmark] public object PivotsHub() => barHub.ToPivotsHub(2, 2, 20).Results;
     [Benchmark] public object PmoHub() => barHub.ToPmoHub(35, 20, 10).Results;
+    [Benchmark] public object PrsHub() => barHub.ToPrsHub(barHubOther).Results;
     [Benchmark] public object PvoHub() => barHub.ToPvoHub().Results;
     [Benchmark] public object BarHub() => barHub.ToBarHub().Results;
     [Benchmark] public object BarPartHub() => barHub.ToBarPartHub(CandlePart.OHL3).Results;

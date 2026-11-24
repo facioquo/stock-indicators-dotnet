@@ -26,7 +26,7 @@ public static partial class Awesome
 
         // initialize
         int length = values.Count;
-        List<AwesomeResult> results = new(length);
+        List<AwesomeResult> results = [with(length)];
         double[] pr = new double[length];
 
         // roll through source values

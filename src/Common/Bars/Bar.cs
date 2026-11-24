@@ -38,6 +38,7 @@ public partial record Bar
     public double Value => (double)Close;
 
     /// <inheritdoc/>
+    [JsonIgnore]
     [Obsolete("Use 'Timestamp' property instead.")]
     public DateTime Date
     {

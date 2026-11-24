@@ -24,7 +24,7 @@ public static partial class Renko
 
         // initialize
         int length = bars.Count;
-        List<RenkoResult> results = new(length);
+        List<RenkoResult> results = [with(length)];
 
         if (length == 0)
         {

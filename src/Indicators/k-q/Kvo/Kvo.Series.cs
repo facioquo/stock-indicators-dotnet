@@ -42,7 +42,7 @@ public static partial class Kvo
 
         // initialize
         int length = bars.Count;
-        List<KvoResult> results = new(length);
+        List<KvoResult> results = [with(length)];
 
         double[] t = new double[length];          // trend direction
         double[] hlc = new double[length];        // trend basis

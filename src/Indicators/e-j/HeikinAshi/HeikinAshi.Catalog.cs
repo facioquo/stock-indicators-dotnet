@@ -7,7 +7,7 @@ public static partial class HeikinAshi
     /// </summary>
     internal static readonly IndicatorListing CommonListing =
         new CatalogListingBuilder()
-            .WithName("HeikinAshi")
+            .WithName("Heikin-Ashi")
             .WithId("HEIKINASHI")
             .WithCategory(Category.PriceTransform)
             .AddResult(nameof(HeikinAshiResult.Open), "Open", IndicatorResult.PricePane, ResultType.Default)

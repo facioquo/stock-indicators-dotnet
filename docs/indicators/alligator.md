@@ -93,7 +93,7 @@ AlligatorList alligatorList = new(jawPeriods, jawOffset, teethPeriods, teethOffs
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => alligatorList.Add(bar);
 
-// based on `ICollection<AlligatorResult>`; fills as the handler runs
+// the list itself holds the results; fills as the handler runs
 IReadOnlyList<AlligatorResult> results = alligatorList;
 ```
 

@@ -33,7 +33,7 @@ public static partial class Chop
 
         // initialize
         int length = bars.Count;
-        List<ChopResult> results = new(length);
+        List<ChopResult> results = [with(length)];
         double[] trueHigh = new double[length];
         double[] trueLow = new double[length];
         double[] trueRange = new double[length];

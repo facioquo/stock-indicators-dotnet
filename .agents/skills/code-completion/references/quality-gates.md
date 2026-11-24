@@ -7,8 +7,7 @@ Use this when a single gate fails, or you need the VS Code task behind one gate.
 | Gate | VS Code task |
 | ---- | ------------ |
 | Restore .NET tools | `Install: .NET tools` |
-| Roslynator | `Lint: .NET Roslynator (fix)`, `Lint: .NET Roslynator (analyze)` |
-| Format | `Lint: .NET format (fix)`, `Lint: .NET format` |
+| Analyzers and format, Roslynator included | `Lint: .NET format (fix)`, `Lint: .NET format` |
 | Markdown | `Lint: Markdown (fix)`, `Lint: Markdown` |
 | All fixers | `Lint: All (fix)` |
 | All linters | `Lint: All` |
@@ -25,7 +24,6 @@ Use this when a single gate fails, or you need the VS Code task behind one gate.
 | ------- | -------- |
 | Analyzer level and mode | `AnalysisLevel` / `AnalysisMode` in each `.csproj` (e.g., `src/Indicators.csproj`) |
 | Rule severities, formatting, Roslynator suppressions | `.editorconfig` |
-| Roslynator CLI version | `dotnet-tools.json` |
 | Roslynator analyzer package version | `src/Directory.Packages.props` |
 | Code-level suppressions | `src/GlobalSuppressions.cs`, `src/Obsolete/Obsolete.V3.Suppressions.cs` |
 | Markdown rules | `.markdownlint-cli2.jsonc`, with `docs/.markdownlint-cli2.jsonc` for the docs site |

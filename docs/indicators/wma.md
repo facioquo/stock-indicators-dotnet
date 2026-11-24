@@ -87,7 +87,7 @@ WmaList wmaList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => wmaList.Add(bar);
 
-// based on `ICollection<WmaResult>`; fills as the handler runs
+// the list itself holds the results; fills as the handler runs
 IReadOnlyList<WmaResult> results = wmaList;
 ```
 

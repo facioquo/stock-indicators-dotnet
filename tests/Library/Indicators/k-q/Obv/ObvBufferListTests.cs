@@ -31,7 +31,7 @@ public class ObvBufferListTests : BufferListTestBase, ITestBarBufferList
     [TestMethod]
     public void BarsCtor_OnInstantiation_IncrementsResults()
     {
-        ObvList sut = new(Bars);
+        ObvList sut = [with(Bars)];
 
         sut.Should().HaveCount(Bars.Count);
         sut.IsExactly(series);
@@ -45,7 +45,7 @@ public class ObvBufferListTests : BufferListTestBase, ITestBarBufferList
         List<Bar> firstHalf = Bars.Take(splitPoint).ToList();
         List<Bar> secondHalf = Bars.Skip(splitPoint).ToList();
 
-        ObvList sut = new(firstHalf);
+        ObvList sut = [with(firstHalf)];
 
         foreach (Bar bar in secondHalf)
         {
@@ -62,7 +62,7 @@ public class ObvBufferListTests : BufferListTestBase, ITestBarBufferList
         List<Bar> subset = Bars.Take(80).ToList();
         IReadOnlyList<ObvResult> expected = subset.ToObv();
 
-        ObvList sut = new(subset);
+        ObvList sut = [with(subset)];
 
         sut.Should().HaveCount(subset.Count);
         sut.IsExactly(expected);

@@ -53,7 +53,7 @@ public static partial class Smi
 
         // initialize
         int length = bars.Count;
-        List<SmiResult> results = new(length);
+        List<SmiResult> results = [with(length)];
 
         double k1 = 2d / (firstSmoothPeriods + 1);
         double k2 = 2d / (secondSmoothPeriods + 1);

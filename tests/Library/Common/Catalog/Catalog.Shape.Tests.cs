@@ -155,7 +155,7 @@ public class CatalogShapeTests : TestBase
     /// </summary>
     private static Dictionary<string, string> SplitBlocks(string rendered)
     {
-        Dictionary<string, string> blocks = new(StringComparer.Ordinal);
+        Dictionary<string, string> blocks = [with(StringComparer.Ordinal)];
 
         foreach (string block in rendered.Split("\n\n", StringSplitOptions.RemoveEmptyEntries))
         {

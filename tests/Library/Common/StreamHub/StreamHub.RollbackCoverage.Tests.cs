@@ -170,7 +170,7 @@ public class RollbackCoverage : TestBase
     private static List<TradeTick> BuildTradeTicks(int count)
     {
         DateTime start = new(2023, 11, 9, 9, 30, 0, DateTimeKind.Utc);
-        List<TradeTick> ticks = new(count);
+        List<TradeTick> ticks = [with(count)];
 
         for (int i = 0; i < count; i++)
         {

@@ -11,7 +11,7 @@ public class MarubozuBufferListTests : BufferListTestBase, ITestBarBufferList
     [TestMethod]
     public void AddBar_IncrementsResults()
     {
-        MarubozuList sut = new(minBodyPercent);
+        MarubozuList sut = [with(minBodyPercent)];
 
         foreach (Bar bar in Bars)
         {

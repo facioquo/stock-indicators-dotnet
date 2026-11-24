@@ -47,7 +47,7 @@ public class AdxList : BufferList<AdxResult>, IIncrementFromBar, IAdx
             (double)bar.Close);
 
         // skip first period
-        if (Count == 0)
+        if (TotalCount == 0)
         {
             _buffer.Update(LookbackPeriods, curr);
             AddInternal(new AdxResult(timestamp));
@@ -71,14 +71,14 @@ public class AdxList : BufferList<AdxResult>, IIncrementFromBar, IAdx
         curr.Mdm1 = plml > hmph ? Math.Max(plml, 0) : 0;
 
         // skip incalculable
-        if (Count < LookbackPeriods)
+        if (TotalCount < LookbackPeriods)
         {
             AddInternal(new AdxResult(timestamp));
             return;
         }
 
         // re/initialize smooth TR and DM
-        if (Count >= LookbackPeriods && last.Trs == 0)
+        if (TotalCount >= LookbackPeriods && last.Trs == 0)
         {
             foreach (AdxBuffer buffer in _buffer)
             {
@@ -115,7 +115,7 @@ public class AdxList : BufferList<AdxResult>, IIncrementFromBar, IAdx
             : double.NaN;
 
         // skip incalculable ADX periods
-        if (Count < (2 * LookbackPeriods) - 1)
+        if (TotalCount < (2 * LookbackPeriods) - 1)
         {
             AddInternal(new AdxResult(timestamp,
                 Pdi: pdi.NaN2Null(),
@@ -128,7 +128,7 @@ public class AdxList : BufferList<AdxResult>, IIncrementFromBar, IAdx
         double adxr = double.NaN;
 
         // re/initialize ADX
-        if (Count >= (2 * LookbackPeriods) - 1 && double.IsNaN(last.Adx))
+        if (TotalCount >= (2 * LookbackPeriods) - 1 && double.IsNaN(last.Adx))
         {
             double sumDx = 0;
 

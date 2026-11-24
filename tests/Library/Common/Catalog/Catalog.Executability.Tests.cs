@@ -109,7 +109,10 @@ public class CatalogExecutabilityTests : TestBase
     /// excluded here by name so the count below stays a real assertion.
     /// </remarks>
     private static readonly HashSet<string> TwoSeriesIndicators
-        = new(StringComparer.Ordinal) { "BETA", "CORR", "PRS" };
+        = new(StringComparer.Ordinal) {
+            "BETA", "CORR", "PRS",
+            "DIVIDED-BY-SERIES", "MAX-WITH", "MIN-WITH", "MINUS-SERIES", "PLUS-SERIES", "TIMES-SERIES"
+        };
 
     [TestMethod]
     public void EveryListingExecutes()
@@ -164,8 +167,9 @@ public class CatalogExecutabilityTests : TestBase
 
         // guard the exclusion list itself: if the executor gains multi-series support,
         // this count changes and the exclusion should be revisited rather than kept
+        // (BETA, CORR, and PRS have all three styles; the six IndyMath IDs have no buffer list)
         executable.Should().HaveCount(
-            Catalog.Get().Count - TwoSeriesIndicators.Count,
-            "exactly the known two-series indicators are excluded");
+            Catalog.Get().Count - 21,
+            "exactly the known two-series listings are excluded");
     }
 }

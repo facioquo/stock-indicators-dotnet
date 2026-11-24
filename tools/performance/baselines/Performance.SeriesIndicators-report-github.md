@@ -10,6 +10,20 @@ BenchmarkDotNet v0.15.8, Windows 11 (10.0.26200.8737/25H2/2025Update/HudsonValle
 ```
 | Method                 | Mean         | Error       | StdDev     |
 |----------------------- |-------------:|------------:|-----------:|
+| **IndyMathDividedByBatch**       |   **3.588 μs** |  **0.1685 μs** | **0.0438 μs** |
+| **IndyMathDividedBySeriesBatch** |   **4.872 μs** |  **0.3045 μs** | **0.0791 μs** |
+| **IndyMathMaxWithBatch**         |   **4.997 μs** |  **0.3554 μs** | **0.0550 μs** |
+| **IndyMathMinWithBatch**         |   **5.059 μs** |  **0.2289 μs** | **0.0594 μs** |
+| **IndyMathMinusBatch**           |   **3.544 μs** |  **0.2686 μs** | **0.0697 μs** |
+| **IndyMathMinusSeriesBatch**     |   **4.705 μs** |  **0.2530 μs** | **0.0657 μs** |
+| **IndyMathPlusBatch**            |   **3.540 μs** |  **0.1832 μs** | **0.0476 μs** |
+| **IndyMathPlusPercentBatch**     |   **3.885 μs** |  **0.1262 μs** | **0.0328 μs** |
+| **IndyMathPlusSeriesBatch**      |   **4.670 μs** |  **0.1387 μs** | **0.0360 μs** |
+| **IndyMathRollingMaxBatch**      |   **6.628 μs** |  **0.1032 μs** | **0.0268 μs** |
+| **IndyMathRollingMedianBatch**   |  **24.442 μs** |  **1.0454 μs** | **0.1618 μs** |
+| **IndyMathRollingMinBatch**      |   **7.003 μs** |  **0.1767 μs** | **0.0459 μs** |
+| **IndyMathTimesBatch**           |   **3.562 μs** |  **0.1651 μs** | **0.0429 μs** |
+| **IndyMathTimesSeriesBatch**     |   **4.808 μs** |  **0.5251 μs** | **0.1364 μs** |
 | **ToAdlBatch**             |     **6.926 μs** |   **1.2602 μs** |  **0.1950 μs** |
 | **ToAdxBatch**             |    **16.868 μs** |   **3.7036 μs** |  **0.5731 μs** |
 | **ToAlligatorBatch**       |    **13.007 μs** |   **7.8641 μs** |  **2.0423 μs** |

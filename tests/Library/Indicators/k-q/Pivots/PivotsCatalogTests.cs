@@ -17,7 +17,7 @@ public class PivotsCatalogTests : TestBase
         listing.Name.Should().Be("Pivots");
         listing.Uiid.Should().Be("PIVOTS");
         listing.Style.Should().Be(Style.Series);
-        listing.Category.Should().Be(Category.PriceTrend);
+        listing.Category.Should().Be(Category.PricePattern);
         listing.MethodName.Should().Be("ToPivots");
 
         listing.Parameters?.Count.Should().Be(4);
@@ -79,7 +79,7 @@ public class PivotsCatalogTests : TestBase
         listing.Name.Should().Be("Pivots");
         listing.Uiid.Should().Be("PIVOTS");
         listing.Style.Should().Be(Style.Buffer);
-        listing.Category.Should().Be(Category.PriceTrend);
+        listing.Category.Should().Be(Category.PricePattern);
         listing.MethodName.Should().Be("ToPivotsList");
 
         listing.Parameters?.Count.Should().Be(4);
@@ -97,7 +97,7 @@ public class PivotsCatalogTests : TestBase
         listing.Name.Should().Be("Pivots");
         listing.Uiid.Should().Be("PIVOTS");
         listing.Style.Should().Be(Style.Stream);
-        listing.Category.Should().Be(Category.PriceTrend);
+        listing.Category.Should().Be(Category.PricePattern);
         listing.MethodName.Should().Be("ToPivotsHub");
 
         listing.Parameters?.Count.Should().Be(4);

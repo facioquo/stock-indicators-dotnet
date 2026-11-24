@@ -14,7 +14,7 @@ public class PvoCatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("Price Volume Oscillator");
+        listing.Name.Should().Be("Percentage Volume Oscillator");
         listing.Uiid.Should().Be("PVO");
         listing.Style.Should().Be(Style.Series);
         listing.Category.Should().Be(Category.VolumeBased);
@@ -55,7 +55,7 @@ public class PvoCatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("Price Volume Oscillator");
+        listing.Name.Should().Be("Percentage Volume Oscillator");
         listing.Uiid.Should().Be("PVO");
         listing.Style.Should().Be(Style.Buffer);
         listing.Category.Should().Be(Category.VolumeBased);

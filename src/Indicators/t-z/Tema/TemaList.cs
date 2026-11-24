@@ -68,7 +68,7 @@ public class TemaList : BufferList<TemaResult>, IIncrementFromChain, ITema
         }
 
         // add nulls for incalculable periods
-        if (Count < LookbackPeriods - 1)
+        if (TotalCount < LookbackPeriods - 1)
         {
             AddInternal(new TemaResult(timestamp));
             return;

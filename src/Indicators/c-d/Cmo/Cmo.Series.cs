@@ -21,8 +21,8 @@ public static partial class Cmo
 
         // initialize
         int length = source.Count;
-        List<CmoResult> results = new(length);
-        List<(bool? isUp, double value)> ticks = new(length);
+        List<CmoResult> results = [with(length)];
+        List<(bool? isUp, double value)> ticks = [with(length)];
 
         // discontinue of empty
         if (length == 0)

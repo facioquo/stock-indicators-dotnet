@@ -26,7 +26,7 @@ public static partial class RocWb
 
         // initialize
         int length = source.Count;
-        List<RocWbResult> results = new(length);
+        List<RocWbResult> results = [with(length)];
 
         double k = 2d / (emaPeriods + 1);
         double prevEma = double.NaN;

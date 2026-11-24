@@ -23,7 +23,7 @@ public static partial class Slope
 
         // initialize
         int length = source.Count;
-        List<SlopeResult> results = new(length);
+        List<SlopeResult> results = [with(length)];
 
         // roll through source values
         for (int i = 0; i < length; i++)
@@ -110,7 +110,7 @@ public static partial class Slope
             SlopeResult d = results[p];
 
             results[p] = d with {
-                Line = (decimal?)((last.Slope * (p + 1)) + last.Intercept).NaN2Null()
+                Line = DeMath.ToDecimal(((last.Slope * (p + 1)) + last.Intercept).NaN2Null())
             };
         }
 

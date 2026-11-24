@@ -2,7 +2,7 @@
 
 This repository is the production source for the [FacioQuo.Stock.Indicators](https://www.nuget.org/packages/FacioQuo.Stock.Indicators) NuGet package: financial market technical analysis indicators built for accuracy, performance, and ergonomics.
 
-- Multi-targets `net10.0`, `net9.0`, and `net8.0`, with analyzers enforcing strict code quality.
+- Multi-targets `net11.0` and `net10.0`, with analyzers enforcing strict code quality.
 - Every indicator ships in up to three styles: Series (batch), BufferList (incremental), and StreamHub (real-time).
 - The `docs/` folder is the source for [dotnet.stockindicators.dev](https://dotnet.stockindicators.dev).
 
@@ -24,6 +24,8 @@ Agents are the primary contributors; humans set direction, make architectural de
 - Deliver code, tests, and docs together in one pass, and run the quality gates before yielding.
 
 [PRINCIPLES.md](docs/PRINCIPLES.md) holds the six project principles and their rationale; this file holds the operating rules.
+
+During discovery and planning, read this repository's [Discussions](https://github.com/facioquo/stock-indicators-dotnet/discussions) alongside the roadmap, Issues, and other sources: they hold indicator requests, ideas, and concepts the roadmap does not carry yet, or carries with less detail. Read them only; the community and maintainers post there, not agents.
 
 ## Repository layout
 
@@ -55,7 +57,7 @@ dotnet format --severity info --no-restore
 npx markdownlint-cli2 --fix
 ```
 
-The code-completion skill holds the full quality-gate sequence, Roslynator commands, and VS Code task names.
+The code-completion skill holds the full quality-gate sequence, its commands, and VS Code task names.
 
 ## Skills
 
@@ -89,7 +91,7 @@ Read a folder's AGENTS.md before working in it:
 
 - The Roslyn C# language server (enabled through the `dotnet` plugin from the `dotnet/skills` marketplace) loads the repository's projects automatically. Use it for callers, implementations, and resolved types; use text search for literals, naming sweeps, and non-`.cs` files. It reports structure, not whether the code compiles.
   - The plugin starts `roslyn-language-server` with `dotnet dnx`, so it needs the .NET 10 SDK but no separate install. The same plugin adds Microsoft's .NET skills.
-- MCP servers in `.mcp.json`: codacy for this repository's static analysis and coverage findings; it reads `CODACY_ACCOUNT_TOKEN` from the environment. .NET and C# guidance comes from the claude.ai Microsoft Learn connector.
+- Codacy findings come from Codacy's per-user agent tooling, set up as described in [CONTRIBUTING.md](docs/CONTRIBUTING.md#codacy). .NET and C# guidance comes from the claude.ai Microsoft Learn connector.
 - Use the `gh` CLI for workflow runs, pull requests, and issues.
 
 ## Pull requests

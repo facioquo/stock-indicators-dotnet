@@ -11,8 +11,18 @@ public class CorrelationRegressionTests : RegressionTestBase<CorrResult>
     public override void Series_AgainstBaseline_MatchesExactly() => OtherBars.ToCorrelation(Bars, n).IsExactly(Expected);
 
     [TestMethod]
-    public override void Buffer_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
+    public override void Buffer_AgainstBaseline_MatchesExactly() => OtherBars.ToCorrelationList(Bars, n).IsExactly(Expected);
 
     [TestMethod]
-    public override void Stream_AgainstBaseline_MatchesExactly() => Assert.Inconclusive("Test not yet implemented");
+    public override void Stream_AgainstBaseline_MatchesExactly()
+    {
+        BarHub sourceA = new();
+        BarHub sourceB = new();
+        CorrelationHub observer = sourceA.ToCorrelationHub(sourceB, n);
+
+        sourceA.Add(OtherBars);
+        sourceB.Add(Bars);
+
+        observer.Results.IsExactly(Expected);
+    }
 }

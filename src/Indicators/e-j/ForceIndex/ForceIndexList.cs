@@ -52,7 +52,7 @@ public class ForceIndexList : BufferList<ForceIndexResult>, IIncrementFromBar, I
         ArgumentNullException.ThrowIfNull(bar);
 
         // skip first period
-        if (Count == 0)
+        if (TotalCount == 0)
         {
             _previousClose = (double)bar.Close;
             AddInternal(new ForceIndexResult(bar.Timestamp));
@@ -79,7 +79,7 @@ public class ForceIndexList : BufferList<ForceIndexResult>, IIncrementFromBar, I
             }
 
             // calculate EMA
-            if (Count >= LookbackPeriods)
+            if (TotalCount >= LookbackPeriods)
             {
                 if (!_previousFi.HasValue)
                 {

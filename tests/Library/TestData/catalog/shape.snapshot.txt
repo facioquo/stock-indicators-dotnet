@@ -323,6 +323,38 @@ Results:
   - ReturnsEval : Default : reusable=false : pane=Returns
   - ReturnsMrkt : Default : reusable=false : pane=Returns
 
+### BETA / Buffer
+Method: ToBetaList
+Parameters:
+  - sourceEval : IReadOnlyList<T> where T : IReusable : required
+  - sourceMrkt : IReadOnlyList<T> where T : IReusable : required
+  - lookbackPeriods : Int32 : required
+  - type : enum : optional
+Results:
+  - Beta : Default : reusable=true : pane=Beta
+  - BetaUp : Default : reusable=false : pane=Beta
+  - BetaDown : Default : reusable=false : pane=Beta
+  - Ratio : Default : reusable=false : pane=Ratio
+  - Convexity : Default : reusable=false : pane=Convexity
+  - ReturnsEval : Default : reusable=false : pane=Returns
+  - ReturnsMrkt : Default : reusable=false : pane=Returns
+
+### BETA / Stream
+Method: ToBetaHub
+Parameters:
+  - sourceEval : IReadOnlyList<T> where T : IReusable : required
+  - sourceMrkt : IReadOnlyList<T> where T : IReusable : required
+  - lookbackPeriods : Int32 : required
+  - type : enum : optional
+Results:
+  - Beta : Default : reusable=true : pane=Beta
+  - BetaUp : Default : reusable=false : pane=Beta
+  - BetaDown : Default : reusable=false : pane=Beta
+  - Ratio : Default : reusable=false : pane=Ratio
+  - Convexity : Default : reusable=false : pane=Convexity
+  - ReturnsEval : Default : reusable=false : pane=Returns
+  - ReturnsMrkt : Default : reusable=false : pane=Returns
+
 ### BOP / Series
 Method: ToBop
 Parameters:
@@ -507,6 +539,32 @@ Results:
   - Correlation : Default : reusable=true : pane=Correlation
   - RSquared : Default : reusable=false : pane=Correlation
 
+### CORR / Buffer
+Method: ToCorrelationList
+Parameters:
+  - sourceA : IReadOnlyList<T> where T : IReusable : required
+  - sourceB : IReadOnlyList<T> where T : IReusable : required
+  - lookbackPeriods : Int32 : required
+Results:
+  - VarianceA : Default : reusable=false : pane=Variance
+  - VarianceB : Default : reusable=false : pane=Variance
+  - Covariance : Default : reusable=false : pane=Variance
+  - Correlation : Default : reusable=true : pane=Correlation
+  - RSquared : Default : reusable=false : pane=Correlation
+
+### CORR / Stream
+Method: ToCorrelationHub
+Parameters:
+  - sourceA : IReadOnlyList<T> where T : IReusable : required
+  - sourceB : IReadOnlyList<T> where T : IReusable : required
+  - lookbackPeriods : Int32 : required
+Results:
+  - VarianceA : Default : reusable=false : pane=Variance
+  - VarianceB : Default : reusable=false : pane=Variance
+  - Covariance : Default : reusable=false : pane=Variance
+  - Correlation : Default : reusable=true : pane=Correlation
+  - RSquared : Default : reusable=false : pane=Correlation
+
 ### CRSI / Series
 Method: ToConnorsRsi
 Parameters:
@@ -569,6 +627,36 @@ Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
   - Dema : Default : reusable=true : pane=Price
+
+### DIVIDED-BY / Series
+Method: DividedBy
+Parameters:
+  - divisor : Double : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
+
+### DIVIDED-BY / Stream
+Method: DividedBy
+Parameters:
+  - divisor : Double : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
+
+### DIVIDED-BY-SERIES / Series
+Method: DividedBy
+Parameters:
+  - basisSource : IReadOnlyList<T> where T : IReusable : required
+  - otherSource : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
+
+### DIVIDED-BY-SERIES / Stream
+Method: DividedBy
+Parameters:
+  - basisSource : IReadOnlyList<T> where T : IReusable : required
+  - otherSource : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
 
 ### DOJI / Series
 Method: ToDoji
@@ -1221,6 +1309,22 @@ Parameters:
 Results:
   - Match : Default : reusable=true : pane=(none)
 
+### MAX-WITH / Series
+Method: MaxWith
+Parameters:
+  - basisSource : IReadOnlyList<T> where T : IReusable : required
+  - otherSource : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### MAX-WITH / Stream
+Method: MaxWith
+Parameters:
+  - basisSource : IReadOnlyList<T> where T : IReusable : required
+  - otherSource : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
 ### MFI / Series
 Method: ToMfi
 Parameters:
@@ -1244,6 +1348,52 @@ Parameters:
 Results:
   - Mfi : Default : reusable=true : pane=Mfi
 Pane: Mfi : range=0..100 : lines=80,20
+
+### MIN-WITH / Series
+Method: MinWith
+Parameters:
+  - basisSource : IReadOnlyList<T> where T : IReusable : required
+  - otherSource : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### MIN-WITH / Stream
+Method: MinWith
+Parameters:
+  - basisSource : IReadOnlyList<T> where T : IReusable : required
+  - otherSource : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### MINUS / Series
+Method: Minus
+Parameters:
+  - amount : Double : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### MINUS / Stream
+Method: Minus
+Parameters:
+  - amount : Double : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### MINUS-SERIES / Series
+Method: Minus
+Parameters:
+  - basisSource : IReadOnlyList<T> where T : IReusable : required
+  - otherSource : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
+
+### MINUS-SERIES / Stream
+Method: Minus
+Parameters:
+  - basisSource : IReadOnlyList<T> where T : IReusable : required
+  - otherSource : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
 
 ### OBV / Series
 Method: ToObv
@@ -1353,6 +1503,50 @@ Results:
   - HighTrend : Default : reusable=false : pane=(none)
   - LowTrend : Default : reusable=false : pane=(none)
 
+### PLUS / Series
+Method: Plus
+Parameters:
+  - amount : Double : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### PLUS / Stream
+Method: Plus
+Parameters:
+  - amount : Double : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### PLUS-PERCENT / Series
+Method: PlusPercent
+Parameters:
+  - percentOffset : Double : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### PLUS-PERCENT / Stream
+Method: PlusPercent
+Parameters:
+  - percentOffset : Double : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### PLUS-SERIES / Series
+Method: Plus
+Parameters:
+  - basisSource : IReadOnlyList<T> where T : IReusable : required
+  - otherSource : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
+
+### PLUS-SERIES / Stream
+Method: Plus
+Parameters:
+  - basisSource : IReadOnlyList<T> where T : IReusable : required
+  - otherSource : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
+
 ### PMO / Series
 Method: ToPmo
 Parameters:
@@ -1385,6 +1579,26 @@ Results:
 
 ### PRS / Series
 Method: ToPrs
+Parameters:
+  - sourceEval : IReadOnlyList<T> where T : IReusable : required
+  - sourceBase : IReadOnlyList<T> where T : IReusable : required
+  - lookbackPeriods : Int32 : required
+Results:
+  - Prs : Default : reusable=true : pane=Prs
+  - PrsPercent : Default : reusable=false : pane=PrsPercent
+
+### PRS / Buffer
+Method: ToPrsList
+Parameters:
+  - sourceEval : IReadOnlyList<T> where T : IReusable : required
+  - sourceBase : IReadOnlyList<T> where T : IReusable : required
+  - lookbackPeriods : Int32 : required
+Results:
+  - Prs : Default : reusable=true : pane=Prs
+  - PrsPercent : Default : reusable=false : pane=PrsPercent
+
+### PRS / Stream
+Method: ToPrsHub
 Parameters:
   - sourceEval : IReadOnlyList<T> where T : IReusable : required
   - sourceBase : IReadOnlyList<T> where T : IReusable : required
@@ -1561,6 +1775,69 @@ Results:
   - RocEma : Default : reusable=false : pane=RocWb
   - UpperBand : Default : reusable=false : pane=RocWb
   - LowerBand : Default : reusable=false : pane=RocWb
+
+### ROLLING-MAX / Series
+Method: RollingMax
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### ROLLING-MAX / Buffer
+Method: ToRollingMaxList
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### ROLLING-MAX / Stream
+Method: RollingMax
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### ROLLING-MEDIAN / Series
+Method: RollingMedian
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### ROLLING-MEDIAN / Buffer
+Method: ToRollingMedianList
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### ROLLING-MEDIAN / Stream
+Method: RollingMedian
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### ROLLING-MIN / Series
+Method: RollingMin
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### ROLLING-MIN / Buffer
+Method: ToRollingMinList
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Result : Default : reusable=true : pane=Price
+
+### ROLLING-MIN / Stream
+Method: RollingMin
+Parameters:
+  - lookbackPeriods : Int32 : required
+Results:
+  - Result : Default : reusable=true : pane=Price
 
 ### ROLLING-PIVOTS / Series
 Method: ToRollingPivots
@@ -1835,6 +2112,8 @@ Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
   - StdDev : Default : reusable=true : pane=StdDev
+  - Mean : Default : reusable=false : pane=Price
+  - ZScore : Default : reusable=false : pane=ZScore
 
 ### STDEV / Buffer
 Method: ToStdDevList
@@ -1842,6 +2121,8 @@ Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
   - StdDev : Default : reusable=true : pane=StdDev
+  - Mean : Default : reusable=false : pane=Price
+  - ZScore : Default : reusable=false : pane=ZScore
 
 ### STDEV / Stream
 Method: ToStdDevHub
@@ -1849,6 +2130,8 @@ Parameters:
   - lookbackPeriods : Int32 : optional
 Results:
   - StdDev : Default : reusable=true : pane=StdDev
+  - Mean : Default : reusable=false : pane=Price
+  - ZScore : Default : reusable=false : pane=ZScore
 
 ### STDEV-CHANNELS / Series
 Method: ToStdDevChannels
@@ -2004,6 +2287,36 @@ Parameters:
 Results:
   - Tema : Default : reusable=true : pane=Price
 
+### TIMES / Series
+Method: Times
+Parameters:
+  - factor : Double : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
+
+### TIMES / Stream
+Method: Times
+Parameters:
+  - factor : Double : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
+
+### TIMES-SERIES / Series
+Method: Times
+Parameters:
+  - basisSource : IReadOnlyList<T> where T : IReusable : required
+  - otherSource : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
+
+### TIMES-SERIES / Stream
+Method: Times
+Parameters:
+  - basisSource : IReadOnlyList<T> where T : IReusable : required
+  - otherSource : IReadOnlyList<T> where T : IReusable : required
+Results:
+  - Result : Default : reusable=true : pane=IndyMath
+
 ### TR / Series
 Method: ToTr
 Parameters:
@@ -2135,6 +2448,8 @@ Parameters:
 Results:
   - Sar : Default : reusable=true : pane=Price
   - IsStop : Default : reusable=false : pane=(none)
+  - UpperBand : Default : reusable=false : pane=Price
+  - LowerBand : Default : reusable=false : pane=Price
 
 ### VOL-STOP / Buffer
 Method: ToVolatilityStopList
@@ -2144,6 +2459,8 @@ Parameters:
 Results:
   - Sar : Default : reusable=true : pane=Price
   - IsStop : Default : reusable=false : pane=(none)
+  - UpperBand : Default : reusable=false : pane=Price
+  - LowerBand : Default : reusable=false : pane=Price
 
 ### VOL-STOP / Stream
 Method: ToVolatilityStopHub
@@ -2153,6 +2470,8 @@ Parameters:
 Results:
   - Sar : Default : reusable=true : pane=Price
   - IsStop : Default : reusable=false : pane=(none)
+  - UpperBand : Default : reusable=false : pane=Price
+  - LowerBand : Default : reusable=false : pane=Price
 
 ### VORTEX / Series
 Method: ToVortex

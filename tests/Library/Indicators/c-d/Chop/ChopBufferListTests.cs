@@ -11,7 +11,7 @@ public class ChopBufferListTests : BufferListTestBase, ITestBarBufferList
     [TestMethod]
     public void AddBar_IncrementsResults()
     {
-        ChopList sut = new(lookbackPeriods);
+        ChopList sut = [with(lookbackPeriods)];
 
         foreach (Bar bar in Bars)
         {
@@ -85,5 +85,29 @@ public class ChopBufferListTests : BufferListTestBase, ITestBarBufferList
 
         sut.Should().HaveCount(maxListSize);
         sut.IsExactly(expected);
+    }
+
+    [TestMethod]
+    public void AddBars_UnevenPrices_MatchesSeriesExactly()
+    {
+        // the window sum must round as the Series does, newest value first (#2446);
+        // prices with many decimal places make the summation order visible
+        Random random = new(7);
+        decimal price = 100m;
+        List<Bar> bars = [];
+
+        for (int i = 0; i < 1500; i++)
+        {
+            decimal open = price;
+            decimal close = Math.Max(1m, open + ((decimal)(random.NextDouble() - 0.5) * 3m));
+            decimal high = Math.Max(open, close) + (decimal)random.NextDouble();
+            decimal low = Math.Min(open, close) - (decimal)random.NextDouble();
+            bars.Add(new Bar(new DateTime(2020, 1, 1).AddDays(i), open, high, low, close, 1000 + random.Next(500)));
+            price = close;
+        }
+
+        ChopList sut = new(lookbackPeriods, bars);
+
+        sut.IsExactly(bars.ToChop(lookbackPeriods));
     }
 }

@@ -11,7 +11,7 @@ public class ForceIndexBufferListTests : BufferListTestBase, ITestBarBufferList
     [TestMethod]
     public void AddBar_IncrementsResults()
     {
-        ForceIndexList sut = new(lookbackPeriods);
+        ForceIndexList sut = [with(lookbackPeriods)];
 
         foreach (Bar q in Bars) { sut.Add(q); }
 

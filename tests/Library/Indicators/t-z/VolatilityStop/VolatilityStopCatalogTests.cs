@@ -29,7 +29,7 @@ public class VolatilityStopCatalogTests : TestBase
         multiplierParam1.Should().NotBeNull();
 
         listing.Results.Should().NotBeNull();
-        listing.Results.Should().HaveCount(2);
+        listing.Results.Should().HaveCount(4);
 
         IndicatorResult sarResult = listing.Results.SingleOrDefault(static r => r.DataName == "Sar");
         sarResult.Should().NotBeNull();
@@ -39,6 +39,14 @@ public class VolatilityStopCatalogTests : TestBase
         isstopResult1.Should().NotBeNull();
         isstopResult1?.DisplayName.Should().Be("Is Stop");
         isstopResult1.IsReusable.Should().Be(false);
+        IndicatorResult upperBandResult = listing.Results.SingleOrDefault(static r => r.DataName == "UpperBand");
+        upperBandResult.Should().NotBeNull();
+        upperBandResult?.DisplayName.Should().Be("Upper Band");
+        upperBandResult.IsReusable.Should().Be(false);
+        IndicatorResult lowerBandResult = listing.Results.SingleOrDefault(static r => r.DataName == "LowerBand");
+        lowerBandResult.Should().NotBeNull();
+        lowerBandResult?.DisplayName.Should().Be("Lower Band");
+        lowerBandResult.IsReusable.Should().Be(false);
     }
 
     [TestMethod]
@@ -59,7 +67,7 @@ public class VolatilityStopCatalogTests : TestBase
         listing.Parameters.Should().HaveCount(2);
 
         listing.Results.Should().NotBeNull();
-        listing.Results.Should().HaveCount(2);
+        listing.Results.Should().HaveCount(4);
     }
 
     [TestMethod]
@@ -85,7 +93,7 @@ public class VolatilityStopCatalogTests : TestBase
         multiplierParam.Should().NotBeNull();
 
         listing.Results.Should().NotBeNull();
-        listing.Results.Should().HaveCount(2);
+        listing.Results.Should().HaveCount(4);
 
         IndicatorResult sarResult = listing.Results.SingleOrDefault(static r => r.DataName == "Sar");
         sarResult.Should().NotBeNull();
@@ -95,5 +103,13 @@ public class VolatilityStopCatalogTests : TestBase
         isStopResult.Should().NotBeNull();
         isStopResult?.DisplayName.Should().Be("Is Stop");
         isStopResult.IsReusable.Should().Be(false);
+        IndicatorResult upperBandResult = listing.Results.SingleOrDefault(static r => r.DataName == "UpperBand");
+        upperBandResult.Should().NotBeNull();
+        upperBandResult?.DisplayName.Should().Be("Upper Band");
+        upperBandResult.IsReusable.Should().Be(false);
+        IndicatorResult lowerBandResult = listing.Results.SingleOrDefault(static r => r.DataName == "LowerBand");
+        lowerBandResult.Should().NotBeNull();
+        lowerBandResult?.DisplayName.Should().Be("Lower Band");
+        lowerBandResult.IsReusable.Should().Be(false);
     }
 }

@@ -107,7 +107,7 @@ public class MacdList : BufferList<MacdResult>, IIncrementFromChain, IMacd
 
         // Calculate Fast EMA
         double? fastEma = null;
-        if (Count >= FastPeriods - 1)
+        if (TotalCount >= FastPeriods - 1)
         {
             if (_lastFastEma is null)
             {
@@ -125,7 +125,7 @@ public class MacdList : BufferList<MacdResult>, IIncrementFromChain, IMacd
 
         // Calculate Slow EMA
         double? slowEma = null;
-        if (Count >= SlowPeriods - 1)
+        if (TotalCount >= SlowPeriods - 1)
         {
             if (_lastSlowEma is null)
             {
@@ -164,7 +164,7 @@ public class MacdList : BufferList<MacdResult>, IIncrementFromChain, IMacd
             }
 
             // Calculate signal line
-            if (Count >= SlowPeriods + SignalPeriods - 2)
+            if (TotalCount >= SlowPeriods + SignalPeriods - 2)
             {
                 if (_lastSignalEma is null)
                 {

@@ -129,8 +129,8 @@ public class SuperTrendHub
 
             r = new SuperTrendResult(
                 Timestamp: newBar.Timestamp,
-                SuperTrend: (decimal?)UpperBand,
-                UpperBand: (decimal?)UpperBand,
+                SuperTrend: DeMath.ToDecimal(UpperBand),
+                UpperBand: DeMath.ToDecimal(UpperBand),
                 LowerBand: null);
         }
 
@@ -141,9 +141,9 @@ public class SuperTrendHub
 
             r = new SuperTrendResult(
                 Timestamp: newBar.Timestamp,
-                SuperTrend: (decimal?)LowerBand,
+                SuperTrend: DeMath.ToDecimal(LowerBand),
                 UpperBand: null,
-                LowerBand: (decimal?)LowerBand);
+                LowerBand: DeMath.ToDecimal(LowerBand));
         }
 
         // snapshot state for O(1) near-tail rollback

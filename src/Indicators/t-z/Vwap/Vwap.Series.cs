@@ -54,7 +54,7 @@ public static partial class Vwap
 
         // initialize
         int length = bars.Count;
-        List<VwapResult> results = new(length);
+        List<VwapResult> results = [with(length)];
 
         if (length == 0)
         {

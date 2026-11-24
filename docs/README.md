@@ -12,7 +12,6 @@ To enable `pnpm install` or `pnpm add` you'll need to extend the scopes of your 
 
 ```bash
 # Write to your user-level ~/.npmrc (not the project .npmrc)
-pnpm config set @facioquo:registry https://npm.pkg.github.com
 pnpm config set "//npm.pkg.github.com/:_authToken" "$(gh auth token)"
 ```
 

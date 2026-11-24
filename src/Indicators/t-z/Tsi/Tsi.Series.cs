@@ -29,7 +29,7 @@ public static partial class Tsi
         double mult1 = 2d / (lookbackPeriods + 1);
         double mult2 = 2d / (smoothPeriods + 1);
         double multS = 2d / (signalPeriods + 1);
-        List<TsiResult> results = new(length);
+        List<TsiResult> results = [with(length)];
 
         double[] c = new double[length]; // price change
         double[] cs1 = new double[length]; // smooth 1

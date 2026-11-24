@@ -25,7 +25,7 @@ internal sealed class CoinbaseStrategy : IDisposable
     private readonly EmaHub _slowEma;
 
     // Lock object for thread-safe access to indicators
-    private readonly object _hubLock = new();
+    private readonly Lock _hubLock = new();
 
     private double _balance = 10000.0;
     private double _units;

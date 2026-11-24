@@ -3,11 +3,11 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class Pvo
 {
     /// <summary>
-    /// Price Volume Oscillator Common Base Listing
+    /// Percentage Volume Oscillator Common Base Listing
     /// </summary>
     internal static readonly IndicatorListing CommonListing =
         new CatalogListingBuilder()
-            .WithName("Price Volume Oscillator")
+            .WithName("Percentage Volume Oscillator")
             .WithId("PVO")
             .WithCategory(Category.VolumeBased)
             .AddParameter<int>("fastPeriods", "Fast Periods", description: "Number of periods for the fast EMA", isRequired: false, defaultValue: 12, minimum: 1, maximum: 100)
@@ -19,7 +19,7 @@ public static partial class Pvo
             .Build();
 
     /// <summary>
-    /// Price Volume Oscillator Series Listing
+    /// Percentage Volume Oscillator Series Listing
     /// </summary>
     internal static readonly IndicatorListing SeriesListing =
         new CatalogListingBuilder(CommonListing)
@@ -28,7 +28,7 @@ public static partial class Pvo
             .Build();
 
     /// <summary>
-    /// Price Volume Oscillator Buffer Listing
+    /// Percentage Volume Oscillator Buffer Listing
     /// </summary>
     internal static readonly IndicatorListing BufferListing =
         new CatalogListingBuilder(CommonListing)
@@ -37,7 +37,7 @@ public static partial class Pvo
             .Build();
 
     /// <summary>
-    /// Price Volume Oscillator Stream Listing
+    /// Percentage Volume Oscillator Stream Listing
     /// </summary>
     internal static readonly IndicatorListing StreamListing =
         new CatalogListingBuilder(CommonListing)

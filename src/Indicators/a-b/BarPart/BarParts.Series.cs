@@ -25,7 +25,7 @@ public static partial class BarParts
         Validate(candlePart);
 
         int length = bars.Count;
-        List<TimeValue> result = new(length);
+        List<TimeValue> result = [with(length)];
 
         for (int i = 0; i < length; i++)
         {

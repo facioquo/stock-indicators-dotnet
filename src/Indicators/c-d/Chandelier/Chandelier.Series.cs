@@ -42,7 +42,7 @@ public static partial class Chandelier
 
         // initialize
         int length = bars.Count;
-        List<ChandelierResult> results = new(length);
+        List<ChandelierResult> results = [with(length)];
 
         List<AtrResult> atrResult
             = bars.CalcAtr(lookbackPeriods);

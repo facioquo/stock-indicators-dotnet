@@ -31,7 +31,7 @@ public class DpoList : BufferList<DpoResult>, IIncrementFromChain
 
         // Use List instead of Queue for O(1) indexing (needed for retroactive updates)
         int maxBufferSize = lookbackPeriods + offset;
-        buffer = new List<(DateTime, double)>(maxBufferSize);
+        buffer = [with(maxBufferSize)];
 
         Name = $"DPO({lookbackPeriods})";
     }
@@ -73,10 +73,10 @@ public class DpoList : BufferList<DpoResult>, IIncrementFromChain
         // DPO[i - offset] = buffer[i - offset].Value - SMA[i].Sma
         //
         // We need:
-        // 1. SMA[i] to be valid (i >= LookbackPeriods - 1, i.e., Count >= LookbackPeriods)
-        // 2. Target index (i - offset) to be >= 0
+        // 1. SMA[i] to be valid (i >= LookbackPeriods - 1, counting pruned results)
+        // 2. Target index (i - offset) to be >= 0, so the target was not pruned
         // 3. Target index to be within the buffer
-        if (Count >= LookbackPeriods)
+        if (TotalCount >= LookbackPeriods)
         {
             int currentIndex = Count - 1;
             int targetIndex = currentIndex - offset;

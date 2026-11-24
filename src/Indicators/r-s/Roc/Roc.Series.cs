@@ -22,7 +22,7 @@ public static partial class Roc
 
         // initialize
         int length = source.Count;
-        List<RocResult> results = new(length);
+        List<RocResult> results = [with(length)];
 
         // roll through source values
         for (int i = 0; i < length; i++)

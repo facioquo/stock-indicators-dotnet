@@ -1,3 +1,4 @@
+using System.Text.Json;
 using FacioQuo.Stock.Indicators;
 
 // Runs every catalog listing and prints one line per outcome. A NativeAOT publish must
@@ -64,6 +65,22 @@ Require("omitted/ALMA", () => Catalog.Get("ALMA", Style.Series)!
     .WithoutParam("sigma")
     .FromSource(source)
     .Execute<object>());
+
+// Results serialize through generated metadata, so the trimmed binary writes the same JSON
+string emaJson = JsonSerializer.Serialize(bars.ToEma(20), IndicatorJsonContext.Default.IReadOnlyListEmaResult);
+Console.WriteLine($"json/EMA {emaJson.Length} {emaJson[^60..]}");
+
+// Bars round-trip through generated metadata, without the obsolete Date alias
+string barsJson = JsonSerializer.Serialize(bars, IndicatorJsonContext.Default.IReadOnlyListBar);
+IReadOnlyList<Bar> parsed = JsonSerializer.Deserialize(barsJson, IndicatorJsonContext.Default.IReadOnlyListBar)!;
+bool barsMatch = parsed.SequenceEqual(bars) && !barsJson.Contains("\"Date\"", StringComparison.Ordinal);
+
+if (!barsMatch)
+{
+    failures++;
+}
+
+Console.WriteLine($"json/Bar {barsJson.Length} {(barsMatch ? "ok" : "MISMATCH")}");
 
 return failures;
 

@@ -31,7 +31,7 @@ public static partial class Dpo
 
         // initialize
         int length = source.Count;
-        List<DpoResult> results = new(length);
+        List<DpoResult> results = [with(length)];
 
         int offset = (lookbackPeriods / 2) + 1;
 

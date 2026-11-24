@@ -3,13 +3,13 @@ namespace FacioQuo.Stock.Indicators;
 public static partial class RocWb
 {
     /// <summary>
-    /// ROC with Bands Common Base Listing
+    /// Rate of Change with Bands Common Base Listing
     /// </summary>
     internal static readonly IndicatorListing CommonListing =
         new CatalogListingBuilder()
-            .WithName("ROC with Bands")
+            .WithName("Rate of Change with Bands")
             .WithId("ROC-WB")
-            .WithCategory(Category.PriceTrend)
+            .WithCategory(Category.PriceCharacteristic)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", description: "Number of periods for the ROC calculation", isRequired: false, defaultValue: 20, minimum: 1, maximum: 250)
             .AddParameter<int>("emaPeriods", "EMA Periods", description: "Number of periods for the EMA calculation", isRequired: false, defaultValue: 5, minimum: 1, maximum: 100)
             .AddParameter<int>("stdDevPeriods", "Standard Deviation Periods", description: "Number of periods for the standard deviation calculation", isRequired: false, defaultValue: 5, minimum: 1, maximum: 100)
@@ -20,7 +20,7 @@ public static partial class RocWb
             .Build();
 
     /// <summary>
-    /// ROC with Bands Series Listing
+    /// Rate of Change with Bands Series Listing
     /// </summary>
     internal static readonly IndicatorListing SeriesListing =
         new CatalogListingBuilder(CommonListing)
@@ -29,7 +29,7 @@ public static partial class RocWb
             .Build();
 
     /// <summary>
-    /// ROC with Bands Stream Listing
+    /// Rate of Change with Bands Stream Listing
     /// </summary>
     internal static readonly IndicatorListing StreamListing =
         new CatalogListingBuilder(CommonListing)
@@ -38,7 +38,7 @@ public static partial class RocWb
             .Build();
 
     /// <summary>
-    /// ROC with Bands Buffer Listing
+    /// Rate of Change with Bands Buffer Listing
     /// </summary>
     internal static readonly IndicatorListing BufferListing =
         new CatalogListingBuilder(CommonListing)

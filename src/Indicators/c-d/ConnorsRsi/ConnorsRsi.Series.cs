@@ -25,7 +25,7 @@ public static partial class ConnorsRsi
 
         // initialize
         int length = source.Count;
-        List<ConnorsRsiResult> results = new(length);
+        List<ConnorsRsiResult> results = [with(length)];
 
         int startPeriod
             = Math.Max(rsiPeriods, Math.Max(streakPeriods, rankPeriods)) + 2;
@@ -86,7 +86,7 @@ public static partial class ConnorsRsi
         IReadOnlyList<RsiResult> rsiResults = source.ToRsi(rsiPeriods);
 
         int length = source.Count;
-        List<ConnorsRsiResult> results = new(length);
+        List<ConnorsRsiResult> results = [with(length)];
         double[] gain = new double[length];
 
         double streak = 0;

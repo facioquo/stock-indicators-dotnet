@@ -7,7 +7,7 @@ public static partial class Aroon
     /// </summary>
     internal static readonly IndicatorListing CommonListing =
         new CatalogListingBuilder()
-            .WithName("Aroon Up/Down")
+            .WithName("Aroon")
             .WithId("AROON")
             .WithCategory(Category.PriceTrend)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", defaultValue: 25, minimum: 1, maximum: 250)

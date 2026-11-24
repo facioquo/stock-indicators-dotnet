@@ -44,10 +44,10 @@ public static partial class StringOutExtensions
         PropertyInfo[] properties = GetStringOutProperties(typeof(T));
 
         // Lists to hold column data
-        List<string> names = new(properties.Length);
-        List<string> types = new(properties.Length);
-        List<string> values = new(properties.Length);
-        List<string> descriptions = new(properties.Length);
+        List<string> names = [with(properties.Length)];
+        List<string> types = [with(properties.Length)];
+        List<string> values = [with(properties.Length)];
+        List<string> descriptions = [with(properties.Length)];
 
         // Get descriptions from XML documentation
         Dictionary<string, string> descriptionDict

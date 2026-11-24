@@ -6,6 +6,7 @@ namespace Performance;
 public class BufferIndicators
 {
     private static readonly IReadOnlyList<Bar> q = Data.GetDefault();
+    private static readonly IReadOnlyList<Bar> o = Data.GetCompare();
     private const int n = 14;
 
     /* Parameter arguments should match the Perf.Series.cs equivalents */
@@ -18,6 +19,8 @@ public class BufferIndicators
     [Benchmark] public AtrList AtrList() => q.ToAtrList(n);
     [Benchmark] public AtrStopList AtrStopList() => q.ToAtrStopList();
     [Benchmark] public AwesomeList AwesomeList() => q.ToAwesomeList();
+    [Benchmark] public BetaList BetaAllList() => q.ToBetaList(o, 20, BetaType.All);
+    [Benchmark] public BetaList BetaList() => q.ToBetaList(o, 20, BetaType.Standard);
     [Benchmark] public BollingerBandsList BollingerBandsList() => q.ToBollingerBandsList(20, 2);
     [Benchmark] public BopList BopList() => q.ToBopList(n);
     [Benchmark] public CciList CciList() => q.ToCciList(n);
@@ -27,6 +30,7 @@ public class BufferIndicators
     [Benchmark] public CmfList CmfList() => q.ToCmfList(n);
     [Benchmark] public CmoList CmoList() => q.ToCmoList(n);
     [Benchmark] public ConnorsRsiList ConnorsRsiList() => q.ToConnorsRsiList(3, 2, 100);
+    [Benchmark] public CorrelationList CorrelationList() => q.ToCorrelationList(o, 20);
     [Benchmark] public DemaList DemaList() => q.ToDemaList(n);
     [Benchmark] public DojiList DojiList() => q.ToDojiList();
     [Benchmark] public DonchianList DonchianList() => q.ToDonchianList(20);
@@ -45,6 +49,9 @@ public class BufferIndicators
     [Benchmark] public HtTrendlineList HtTrendlineList() => q.ToHtTrendlineList();
     [Benchmark] public HurstList HurstList() => q.ToHurstList(100);
     [Benchmark] public IchimokuList IchimokuList() => q.ToIchimokuList();
+    [Benchmark] public RollingMaxList IndyMathRollingMaxList() => q.ToRollingMaxList(20);
+    [Benchmark] public RollingMinList IndyMathRollingMinList() => q.ToRollingMinList(20);
+    [Benchmark] public RollingMedianList IndyMathRollingMedianList() => q.ToRollingMedianList(20);
     [Benchmark] public KamaList KamaList() => q.ToKamaList(10, 2, 30);
     [Benchmark] public KeltnerList KeltnerList() => q.ToKeltnerList(20, 2, 10);
     [Benchmark] public KvoList KvoList() => q.ToKvoList(34, 55, 13);
@@ -59,6 +66,7 @@ public class BufferIndicators
     [Benchmark] public PivotsList PivotsList() => q.ToPivotsList(2, 2, 20);
     [Benchmark] public PmoList PmoList() => q.ToPmoList(35, 20, 10);
     [Benchmark] public BarPartList BarPartList() => q.ToBarPartList(CandlePart.OHL3);
+    [Benchmark] public PrsList PrsList() => q.ToPrsList(o);
     [Benchmark] public PvoList PvoList() => q.ToPvoList();
     [Benchmark] public RenkoList RenkoList() => q.ToRenkoList(2.5m);
     [Benchmark] public RocList RocList() => q.ToRocList(20);

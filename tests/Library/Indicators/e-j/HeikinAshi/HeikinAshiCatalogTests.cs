@@ -14,7 +14,7 @@ public class HeikinAshiCatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("HeikinAshi");
+        listing.Name.Should().Be("Heikin-Ashi");
         listing.Uiid.Should().Be("HEIKINASHI");
         listing.Style.Should().Be(Style.Series);
         listing.Category.Should().Be(Category.PriceTransform);
@@ -56,7 +56,7 @@ public class HeikinAshiCatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("HeikinAshi");
+        listing.Name.Should().Be("Heikin-Ashi");
         listing.Uiid.Should().Be("HEIKINASHI");
         listing.Style.Should().Be(Style.Stream);
         listing.Category.Should().Be(Category.PriceTransform);

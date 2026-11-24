@@ -7,7 +7,7 @@ public static partial class Beta
     /// </summary>
     internal static readonly IndicatorListing CommonListing =
         new CatalogListingBuilder()
-            .WithName("Beta")
+            .WithName("Beta Coefficient")
             .WithId("BETA")
             .WithCategory(Category.PriceCharacteristic)
             .AddSeriesParameter("sourceEval", "Evaluated Prices")
@@ -19,8 +19,8 @@ public static partial class Beta
             .AddResult(nameof(BetaResult.BetaDown), "Beta Down", "Beta", ResultType.Default)
             .AddResult(nameof(BetaResult.Ratio), "Ratio", "Ratio", ResultType.Default)
             .AddResult(nameof(BetaResult.Convexity), "Convexity", "Convexity", ResultType.Default)
-            .AddResult(nameof(BetaResult.ReturnsEval), "Returns Eval", "Returns", ResultType.Default)
-            .AddResult(nameof(BetaResult.ReturnsMrkt), "Returns Mrkt", "Returns", ResultType.Default)
+            .AddResult(nameof(BetaResult.ReturnsEval), "Evaluated Returns", "Returns", ResultType.Default)
+            .AddResult(nameof(BetaResult.ReturnsMrkt), "Market Returns", "Returns", ResultType.Default)
             .Build();
 
     /// <summary>
@@ -30,5 +30,23 @@ public static partial class Beta
         new CatalogListingBuilder(CommonListing)
             .WithStyle(Style.Series)
             .WithMethodName(typeof(Beta), "ToBeta")
+            .Build();
+
+    /// <summary>
+    /// Beta Buffer Listing
+    /// </summary>
+    internal static readonly IndicatorListing BufferListing =
+        new CatalogListingBuilder(CommonListing)
+            .WithStyle(Style.Buffer)
+            .WithMethodName(typeof(Beta), "ToBetaList")
+            .Build();
+
+    /// <summary>
+    /// Beta Stream Listing
+    /// </summary>
+    internal static readonly IndicatorListing StreamListing =
+        new CatalogListingBuilder(CommonListing)
+            .WithStyle(Style.Stream)
+            .WithMethodName(typeof(Beta), "ToBetaHub")
             .Build();
 }

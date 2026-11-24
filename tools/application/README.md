@@ -8,7 +8,7 @@
 dotnet run --project tools/application
 ```
 
-The VS Code task `Run: Test application` runs the same command. The project targets .NET 10 and references the package directly, outside central package management (`Directory.Packages.props` turns it off for this folder). `TreatWarningsAsErrors` is off because the v2 API raises `[Obsolete]` warnings.
+The VS Code task `Run: Test application` runs the same command. The project targets .NET 11 and references the package directly, outside central package management (`Directory.Packages.props` turns it off for this folder). `TreatWarningsAsErrors` is off because the v2 API raises `[Obsolete]` warnings.
 
 `Program.cs` generates 108 weekday quotes of synthetic OHLCV data, then runs three passes, each printing a success line:
 

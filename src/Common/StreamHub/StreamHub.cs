@@ -12,7 +12,7 @@ public abstract partial class StreamHub<TIn, TOut> : IStreamHub<TIn, TOut>
     /// This protects against concurrent cache modifications when out-of-order
     /// data triggers rebuild operations.
     /// </summary>
-    private protected object CacheLock { get; } = new();
+    private protected Lock CacheLock { get; } = new();
 
     /// <summary>
     /// Prevents self-recursion: during rebuild, OnAdd calls AppendCache,
@@ -87,7 +87,7 @@ public abstract partial class StreamHub<TIn, TOut> : IStreamHub<TIn, TOut>
         // footprint of multi-symbol deployments with thousands of hubs,
         // while growth-on-demand costs only a handful of one-time copies.
         // PruningList gives O(1) amortized front pruning once capped.
-        Cache = new PruningList<TOut>();
+        Cache = [];
 
         // build read-only cache reference
         Results = Cache.AsReadOnly();

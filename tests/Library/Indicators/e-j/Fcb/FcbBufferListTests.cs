@@ -11,7 +11,7 @@ public class FcbBufferListTests : BufferListTestBase, ITestBarBufferList
     [TestMethod]
     public void AddBar_IncrementsResults()
     {
-        FcbList sut = new(windowSpan);
+        FcbList sut = [with(windowSpan)];
 
         foreach (Bar q in Bars) { sut.Add(q); }
 

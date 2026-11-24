@@ -19,7 +19,7 @@ internal sealed class HubStressTest : IDisposable
     private readonly CoinbaseSocketClient _socketClient;
 
     // Lock object for thread-safe access - required per documented threading model
-    private readonly object _hubLock = new();
+    private readonly Lock _hubLock = new();
 
     // Primary bar hub with constrained cache size to force pruning
     private readonly BarHub _barHub;

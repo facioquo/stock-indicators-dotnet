@@ -170,6 +170,7 @@ See also: [Moving Average Envelopes](/indicators/ma-envelopes)
 - [Basic price bar transforms (HL2, HLC3, OC2, OHL3, OHLC4)](/indicators/bar-part)
 - [Ehlers Fisher Transform](/indicators/fisher-transform)
 - [Heikin Ashi](/indicators/heikin-ashi)
+- [IndyMath (result math)](/indicators/indy-math)
 - [Renko Charts](/indicators/renko)
 - [ZigZag](/indicators/zig-zag)
 

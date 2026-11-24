@@ -70,7 +70,8 @@ public class CatalogBindingTests : TestBase
                 continue;
             }
 
-            IEnumerable<MethodInfo> declared = CatalogReflection.GetOverloads(listing);
+            // every style's overloads, since an IndyMath operator names a Series and a stream hub method
+            IEnumerable<MethodInfo> declared = CatalogMethodResolver.GetOverloads(listing.MethodName);
             IEnumerable<MethodInfo> everywhere = CatalogReflection.GetAssemblyOverloads(listing.MethodName);
 
             if (!declared.ToHashSet().SetEquals(everywhere))

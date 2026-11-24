@@ -91,7 +91,7 @@ SmmaList smmaList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => smmaList.Add(bar);
 
-// based on `ICollection<SmmaResult>`; fills as the handler runs
+// the list itself holds the results; fills as the handler runs
 IReadOnlyList<SmmaResult> results = smmaList;
 ```
 

@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace Utilities;
 
 [TestClass]
@@ -48,4 +50,75 @@ public class DeMaths : TestBase
         double aboveBoundary = Math.BitIncrement(boundary);
         DeMath.Exp(aboveBoundary).Should().Be(double.PositiveInfinity);
     }
+
+    [TestMethod]
+    public void ToDecimal_Values_RoundTo15SignificantDigits()
+    {
+        (double value, string expected)[] cases =
+        [
+            (210.059, "210.059"),
+            (218.9497482878433, "218.949748287843"),
+            (-0.1, "-0.1"),
+            (1.23, "1.23"),
+            (1e20, "100000000000000000000"),
+            (123456789012345678.0, "123456789012346000"),
+            (1e-28, "0.0000000000000000000000000001"),
+            (1e-29, "0"),
+            (0.0, "0")
+        ];
+
+        foreach ((double value, string expected) in cases)
+        {
+            DeMath.ToDecimal(value).ToString(CultureInfo.InvariantCulture)
+                .Should().Be(expected, $"converting {value:R}");
+        }
+    }
+
+    [TestMethod]
+    public void ToDecimal_NullOrOutOfRange_ReturnsNullOrThrows()
+    {
+        DeMath.ToDecimal((double?)null).Should().BeNull();
+
+        FluentActions.Invoking(() => DeMath.ToDecimal(double.NaN))
+            .Should().Throw<OverflowException>();
+        FluentActions.Invoking(() => DeMath.ToDecimal(1e30))
+            .Should().Throw<OverflowException>();
+    }
+
+#if !NET11_0_OR_GREATER
+    [TestMethod]
+    public void ToDecimal_BeforeNet11_MatchesBuiltInConversion()
+    {
+        Random random = new(42);
+
+        for (int i = 0; i < 100_000; i++)
+        {
+            double value = (random.NextDouble() - 0.5) * Math.Pow(10, random.Next(-30, 29));
+            decimal expected = (decimal)value;
+            decimal actual = DeMath.ToDecimal(value);
+
+            actual.Should().Be(expected);
+            actual.Scale.Should().Be(expected.Scale);
+        }
+
+        // carries to 1E15, 15-digit midpoints, exponent boundaries, and the decimal maximum
+        double[] edges =
+        [
+            9.999999999999999E-14, 0.09999999999999999, 0.9999999999999999,
+            9.999999999999999E-28, 99999999999999.99, 999999999999999.9,
+            0.1234567890123455, 1.000000000000005, 2.5, 1234567890123.455,
+            1E-28, 5E-29, 1.0000000000000001E-28, 7.9E28, 7.92E28,
+            -9.999999999999999E-14, -7.9E28, double.Epsilon
+        ];
+
+        foreach (double value in edges)
+        {
+            decimal expected = (decimal)value;
+            decimal actual = DeMath.ToDecimal(value);
+
+            actual.Should().Be(expected, $"converting {value:R}");
+            actual.Scale.Should().Be(expected.Scale, $"scale of {value:R}");
+        }
+    }
+#endif
 }

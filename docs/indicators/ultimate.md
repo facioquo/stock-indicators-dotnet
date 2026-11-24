@@ -82,7 +82,7 @@ UltimateList ultimateList = new(shortPeriods, middlePeriods, longPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => ultimateList.Add(bar);
 
-// based on `ICollection<UltimateResult>`; fills as the handler runs
+// the list itself holds the results; fills as the handler runs
 IReadOnlyList<UltimateResult> results = ultimateList;
 ```
 

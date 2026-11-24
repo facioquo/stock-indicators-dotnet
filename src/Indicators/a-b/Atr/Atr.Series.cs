@@ -34,7 +34,7 @@ public static partial class Atr
 
         // initialize
         int length = bars.Count;
-        List<AtrResult> results = new(length);
+        List<AtrResult> results = [with(length)];
         double prevAtr = double.NaN;
         double prevClose = double.NaN;
         double sumTr = 0;

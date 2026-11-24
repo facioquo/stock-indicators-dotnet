@@ -31,7 +31,7 @@ public static partial class RenkoAtr
             .CalcAtr(atrPeriods);
 
         AtrResult? last = atrResults.Count > 0 ? atrResults[^1] : null;
-        decimal brickSize = (decimal?)last?.Atr ?? 0;
+        decimal brickSize = DeMath.ToDecimal(last?.Atr) ?? 0;
 
         return brickSize == 0
           ? []

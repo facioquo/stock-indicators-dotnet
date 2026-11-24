@@ -76,20 +76,24 @@ public class FractalList : BufferList<FractalResult>, IIncrementFromBar, IFracta
             bar.Close,
             bar.Timestamp));
 
+        // keep only the bars one fractal window needs, whatever MaxListSize is
+        if (_bars.Count > LeftSpan + RightSpan + 1)
+        {
+            _bars.RemoveAt(0);
+        }
+
         // always add a result (initially null)
         AddInternal(new FractalResult(bar.Timestamp, null, null));
 
-        int length = _bars.Count;
-
-        // Calculate fractal for the bar that just became calculable (if any)
-        // We only need to calculate the newest calculable index, not recalculate a range
+        // Calculate fractal for the bar that just became calculable (if any),
+        // at a position that counts pruned results
         // Previous fractals are already correct from earlier calls
-        int lastCalculableIndex = length - RightSpan - 1;
+        int centerPosition = TotalCount - RightSpan - 1;
 
-        // Only calculate if this index is newly calculable and has sufficient context
-        if (lastCalculableIndex >= 0 && lastCalculableIndex + 1 > LeftSpan)
+        // Only calculate if this position has a full left wing
+        if (centerPosition >= LeftSpan)
         {
-            int i = lastCalculableIndex;
+            int i = _bars.Count - RightSpan - 1;
             FractalBuffer center = _bars[i];
             bool isHigh = true;
             bool isLow = true;
@@ -124,8 +128,12 @@ public class FractalList : BufferList<FractalResult>, IIncrementFromBar, IFracta
             decimal? fractalBear = isHigh ? evalHigh : null;
             decimal? fractalBull = isLow ? evalLow : null;
 
-            // update the result at index i
-            UpdateInternal(i, new FractalResult(center.Timestamp, fractalBear, fractalBull));
+            // update the result for the center bar, unless it was pruned
+            int resultIndex = centerPosition - PrunedCount;
+            if (resultIndex >= 0)
+            {
+                UpdateInternal(resultIndex, new FractalResult(center.Timestamp, fractalBear, fractalBull));
+            }
         }
     }
 
@@ -145,22 +153,6 @@ public class FractalList : BufferList<FractalResult>, IIncrementFromBar, IFracta
     {
         base.Clear();
         _bars.Clear();
-    }
-    /// <inheritdoc />
-    protected override void PruneList()
-    {
-        int overflow = Count - MaxListSize;
-
-        if (overflow <= 0)
-        {
-            return;
-        }
-
-        // remove from results
-        base.PruneList();
-
-        // also remove from bars
-        _bars.RemoveRange(0, overflow);
     }
 
     internal class FractalBuffer(

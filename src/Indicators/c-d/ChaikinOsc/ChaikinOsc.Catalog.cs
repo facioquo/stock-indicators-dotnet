@@ -7,7 +7,7 @@ public static partial class ChaikinOsc
     /// </summary>
     internal static readonly IndicatorListing CommonListing =
         new CatalogListingBuilder()
-            .WithName("Chaikin Money Flow Oscillator")
+            .WithName("Chaikin Oscillator")
             .WithId("CHAIKIN-OSC")
             .WithCategory(Category.VolumeBased)
             .AddParameter<int>("fastPeriods", "Fast Periods", defaultValue: 3, minimum: 1, maximum: 100)

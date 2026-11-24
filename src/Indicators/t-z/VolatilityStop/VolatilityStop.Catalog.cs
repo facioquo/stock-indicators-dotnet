@@ -14,6 +14,8 @@ public static partial class VolatilityStop
             .AddParameter<double>("multiplier", "Multiplier", description: "Multiplier for the volatility calculation", isRequired: false, defaultValue: 3.0, minimum: 0.1, maximum: 10.0)
             .AddResult(nameof(VolatilityStopResult.Sar), "Stop and Reverse", IndicatorResult.PricePane, ResultType.Default, isReusable: true)
             .AddResult(nameof(VolatilityStopResult.IsStop), "Is Stop", null, ResultType.Default)
+            .AddResult(nameof(VolatilityStopResult.UpperBand), "Upper Band", IndicatorResult.PricePane, ResultType.Default)
+            .AddResult(nameof(VolatilityStopResult.LowerBand), "Lower Band", IndicatorResult.PricePane, ResultType.Default)
             .Build();
 
     /// <summary>

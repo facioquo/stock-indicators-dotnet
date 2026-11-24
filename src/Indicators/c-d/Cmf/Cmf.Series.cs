@@ -37,7 +37,7 @@ public static partial class Cmf
 
         // initialize
         int length = volume.Length;
-        List<CmfResult> results = new(length);
+        List<CmfResult> results = [with(length)];
         IReadOnlyList<AdlResult> adlResults = source.ToAdl();
 
         // roll through source values

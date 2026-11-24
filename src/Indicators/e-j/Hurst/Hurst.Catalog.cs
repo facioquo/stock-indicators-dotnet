@@ -12,7 +12,7 @@ public static partial class Hurst
             .WithCategory(Category.PriceCharacteristic)
             .AddParameter<int>("lookbackPeriods", "Lookback Periods", defaultValue: 100, minimum: 20, maximum: 250)
             .AddResult(nameof(HurstResult.HurstExponent), "Hurst Exponent", "Hurst", ResultType.Default, isReusable: true)
-            .AddResult(nameof(HurstResult.HurstExponentAL), "Hurst Exponent AL", "Hurst", ResultType.Default)
+            .AddResult(nameof(HurstResult.HurstExponentAL), "Hurst Exponent (Anis-Lloyd)", "Hurst", ResultType.Default)
             .Build();
 
     /// <summary>

@@ -31,6 +31,7 @@ dotnet_separate_import_directive_groups = false
 dotnet_style_namespace_match_folder = false:none
 
 # Diagnostic analyzer suppressions
+dotnet_diagnostic.IDE0028.severity = none  # Simplify collection initialization (flakey)
 dotnet_diagnostic.IDE0058.severity = none  # Don't require accessibility modifiers
 dotnet_diagnostic.IDE0305.severity = none  # Use collection expression for fluent, foo.ToList→[..foo]
 dotnet_diagnostic.IDE0306.severity = none  # Use collection expression for new, new(foo)→[..foo]

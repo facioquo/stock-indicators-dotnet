@@ -14,7 +14,7 @@ public class T3CatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("T3 Moving Average");
+        listing.Name.Should().Be("Tillson T3 Moving Average");
         listing.Uiid.Should().Be("T3");
         listing.Style.Should().Be(Style.Series);
         listing.Category.Should().Be(Category.MovingAverage);
@@ -45,7 +45,7 @@ public class T3CatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("T3 Moving Average");
+        listing.Name.Should().Be("Tillson T3 Moving Average");
         listing.Uiid.Should().Be("T3");
         listing.Style.Should().Be(Style.Stream);
         listing.Category.Should().Be(Category.MovingAverage);
@@ -66,7 +66,7 @@ public class T3CatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("T3 Moving Average");
+        listing.Name.Should().Be("Tillson T3 Moving Average");
         listing.Uiid.Should().Be("T3");
         listing.Style.Should().Be(Style.Buffer);
         listing.Category.Should().Be(Category.MovingAverage);

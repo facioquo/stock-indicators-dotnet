@@ -286,8 +286,8 @@ public abstract class WarmStartCases<TIn, TResult> : TestBase
     private static int CountOf(object collection) => collection switch {
         System.Collections.ICollection items => items.Count,
         _ => ((System.Collections.IEnumerable)collection.GetType()
-            .GetMethod("Entries", BindingFlags.Instance | BindingFlags.NonPublic)!
-            .Invoke(collection, null)!).Cast<object>().Count()
+            .GetMethod("Entries", BindingFlags.Instance | BindingFlags.NonPublic)
+            .Invoke(collection, null)).Cast<object>().Count()
     };
 
     private static void WriteMember(object hub, string name, object value)
@@ -301,7 +301,7 @@ public abstract class WarmStartCases<TIn, TResult> : TestBase
         }
         else
         {
-            type.GetProperty(name, flags)!.SetValue(hub, value);
+            type.GetProperty(name, flags).SetValue(hub, value);
         }
     }
 

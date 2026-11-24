@@ -96,7 +96,7 @@ public class Stackoverflow : TestBase
         BarHub barHub = new();
 
         // setup: subscribe a large chain depth
-        List<(string label, IReadOnlyList<ISeries> sut, bool irregular)> subscribers = new(chainDepth + 2);
+        List<(string label, IReadOnlyList<ISeries> sut, bool irregular)> subscribers = [with(chainDepth + 2)];
 
         SmaHub init = barHub.ToSmaHub(1);
         SmaHub sma = init.ToSmaHub(2);
@@ -185,6 +185,10 @@ public class Stackoverflow : TestBase
             HubRef(barHub.ToAdlHub()),
             HubRef(barHub.ToAlligatorHub()),
             HubRef(barHub.ToEmaHub(14)),
+
+            // two-series hub whose providers both descend from the same bar hub
+            HubRef(barHub.ToEmaHub(12).Minus(barHub.ToEmaHub(26))),
+            HubRef(barHub.ToSmaHub(5).ToBetaHub(barHub, 20, BetaType.All)),
             //HubRef(barHub.ToRenko(2.1m), irregular: true),
             HubRef(barHub.ToBarHub())
         ];

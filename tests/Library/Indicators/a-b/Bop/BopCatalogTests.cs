@@ -17,7 +17,7 @@ public class BopCatalogTests : TestBase
         listing.Name.Should().Be("Balance of Power (BOP)");
         listing.Uiid.Should().Be("BOP");
         listing.Style.Should().Be(Style.Series);
-        listing.Category.Should().Be(Category.Oscillator);
+        listing.Category.Should().Be(Category.PriceCharacteristic);
         listing.MethodName.Should().Be("ToBop");
 
         listing.Parameters.Should().NotBeNull();

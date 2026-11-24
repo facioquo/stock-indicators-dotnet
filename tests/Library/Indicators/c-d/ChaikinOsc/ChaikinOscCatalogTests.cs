@@ -14,7 +14,7 @@ public class ChaikinOscCatalogTests : TestBase
 
         // Assert
         listing.Should().NotBeNull();
-        listing.Name.Should().Be("Chaikin Money Flow Oscillator");
+        listing.Name.Should().Be("Chaikin Oscillator");
         listing.Uiid.Should().Be("CHAIKIN-OSC");
         listing.Style.Should().Be(Style.Series);
         listing.Category.Should().Be(Category.VolumeBased);
