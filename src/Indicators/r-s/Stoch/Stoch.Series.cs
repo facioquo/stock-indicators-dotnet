@@ -41,9 +41,9 @@ public static partial class Stoch
         int lookbackPeriods,
         int signalPeriods,
         int smoothPeriods,
-        double kFactor,
-        double dFactor,
-        MaType movingAverageType)
+        double kFactor = 3,
+        double dFactor = 2,
+        MaType movingAverageType = MaType.SMA)
         => bars
             .ToBarDList()
             .CalcStoch(
@@ -85,9 +85,9 @@ public static partial class Stoch
         int lookbackPeriods,
         int signalPeriods,
         int smoothPeriods,
-        double kFactor,
-        double dFactor,
-        MaType movingAverageType)
+        double kFactor = 3,
+        double dFactor = 2,
+        MaType movingAverageType = MaType.SMA)
         => new(lookbackPeriods, signalPeriods, smoothPeriods, kFactor, dFactor, movingAverageType) { bars };
 
     /// <summary>
