@@ -40,20 +40,20 @@ Every skill except vitepress is written for this repository only: repository pat
 ## Commands
 
 ```bash
-npx skills list              # List installed skills
-npx skills check             # Check community skills for updates
-pnpm dlx skills update --project --all  # Update community skills from their sources
-npx skills find <query>      # Search the skills.sh registry
-npx skills init .agents/skills/<name>  # Scaffold a new skill
-npx skills add <owner/repo> --skill <name> --agent universal --yes  # Add --copy for a private source
-npx skills remove <name>
+pnpm dlx skills list                        # List installed skills
+pnpm dlx skills check                       # Check community skills for updates
+pnpm dlx skills update --project --all      # Update community skills from their sources
+pnpm dlx skills find <query>                # Search the skills.sh registry
+pnpm dlx skills init .agents/skills/<name>  # Scaffold a new skill
+pnpm dlx skills add <owner/repo> --skill <name> --agent universal --yes  # Add --copy for a private source
+pnpm dlx skills remove <name>
 ```
 
 `skills-lock.json` pins each community skill's source and hash; the VS Code task `Update: Skills` runs the update.
 
 ## Boundaries
 
-✅ Always scaffold a new skill with `npx skills init` and add it to the skills table in the root AGENTS.md
+✅ Always scaffold a new skill with `pnpm dlx skills init` and add it to the skills table in the root AGENTS.md
 
 ⚠️ Ask before deleting a skill — first remove every reference to it
 

@@ -101,8 +101,8 @@
       "group": "build",
       "dependsOn": [
         "Git: pull",
-        "Clean: Docs (full)",
         "Install: Node packages",
+        "Clean: Docs (full)",
         "Install: Browsers for website tests",
         "Lint: Markdown (fix)",
         "Test: All (website)"
@@ -215,7 +215,7 @@
       "label": "Update: .NET packages (examples)",
       "detail": "Upgrade outdated NuGet packages in the Examples using dotnet-outdated",
       "type": "shell",
-      "command": "dotnet outdated docs/examples --upgrade --exclude FacioQuo.Stock.Indicators",
+      "command": "dotnet outdated docs/examples --upgrade",
       "dependsOn": [
         "Install: .NET tools",
         "Install: .NET packages"
