@@ -217,8 +217,8 @@ importers:
         specifier: ^1.108.2
         version: 1.108.2
       vitepress:
-        specifier: 2.0.0-alpha.20
-        version: 2.0.0-alpha.20(@types/node@26.6.11)(esbuild@0.28.2)(postcss@8.5.33)(sass-embedded@1.108.2)(sass@1.108.2)
+        specifier: 2.0.0-alpha.21
+        version: 2.0.0-alpha.21(@types/node@26.6.11)(esbuild@0.28.2)(postcss@8.5.33)(sass-embedded@1.108.2)(sass@1.108.2)
       vitepress-plugin-llms:
         specifier: 1.15.0
         version: 1.15.0(patch_hash=45633c4565e70501a4fe9672dee67030773071c2dc7eda2fdf3569c9ebefb546)(supports-color@10.2.2)
@@ -1031,8 +1031,8 @@ packages:
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
 
-  '@types/web-bluetooth@0.0.21':
-    resolution: {integrity: sha512-oIQLCGWtcFZy2JW77j9k8nHzAOpqMHLQejDA48XXMWH6tjCQHz5RCFz1bzsmROyL6PUm+LLnUiI4BCn221inxA==}
+  '@types/web-bluetooth@0.0.22':
+    resolution: {integrity: sha512-4O7kU0Ut0irZvFyk3EvgDrzFYBQI80Puhkb65I7eV6WTZX4iOo5zoDrEfjDBRB7x5Stz31csoHO4hAjSiRTALw==}
 
   '@types/yargs-parser@21.0.3':
     resolution: {integrity: sha512-I4q9QU9MQv4oEOz4tAHJtNz1cwuLxn2F3xcc2iV5WdqLPpUnj30aUuxt1mAxYTG+oe8CZMV/+6rU4S4gRDzqtQ==}
@@ -1086,18 +1086,20 @@ packages:
   '@vue/shared@3.5.46':
     resolution: {integrity: sha512-P1WePbdzHrcIciWtmY2Im9EFhdakd3rZxYqvalOa3SfoxtF35Q8Uhmj1tKn6bWP4utcOpN8ao6BoJUItq0Uf+g==}
 
-  '@vueuse/core@14.4.0':
-    resolution: {integrity: sha512-X4WHz1HlCzCBoYXesUkifzzWBAcZgXG8Fi5iNPQg/epdzOB3gu8Fawj3hvuwYR1nGcXGnvxwYYcUC/71++svtQ==}
+  '@vueuse/core@15.1.0':
+    resolution: {integrity: sha512-OuZ5ecLw/sikX0HFjlJM/p/PkfL0567Ntfov9G0jYlw92QqZpPVikZOoB1Mpe4unZ+7E/QQ+uFpEgAjj2FYRbw==}
+    engines: {node: '>=22'}
     peerDependencies:
       vue: ^3.5.0
 
-  '@vueuse/integrations@14.4.0':
-    resolution: {integrity: sha512-oJz9qTgczvA7L1nXQFRU7h8tQbOCoiceqvMMhT9XYMyOGTqLJ2rEa09PON+nD2t48sZUfeOmg4eaWJXV4sZb/w==}
+  '@vueuse/integrations@15.1.0':
+    resolution: {integrity: sha512-wkWMVNeK8kpLzX1piF5Oo5RUEiCsPj6eAQINrlP0OUp1vWF1mFsaTKH9qK7/qiWZDfkZfkLREDeTVutcJsR2aQ==}
+    engines: {node: '>=22'}
     peerDependencies:
       async-validator: ^4
       axios: ^1
       change-case: ^5
-      drauu: ^0.4
+      drauu: ^1 || ^0.4
       focus-trap: ^7 || ^8
       fuse.js: ^7
       idb-keyval: ^6
@@ -1133,11 +1135,13 @@ packages:
       universal-cookie:
         optional: true
 
-  '@vueuse/metadata@14.4.0':
-    resolution: {integrity: sha512-swx/255R6JyHZFJhx845iz5CRWDZdCfvkZOpACWc5+c5WHcG24mv8gUT1WIdFQaHt6dq79rvILd9QnCWiyVm9g==}
+  '@vueuse/metadata@15.1.0':
+    resolution: {integrity: sha512-yHKFelRTdQdp7vdjXXEw68Wh9v8OgyxWm1v1aHbGM6Z4qbqHhB6QgB8MTNB76pZYh22wPeALCdr8qjShlxPBHA==}
+    engines: {node: '>=22'}
 
-  '@vueuse/shared@14.4.0':
-    resolution: {integrity: sha512-JRgY90Sz8DDtPMsaDflvPMp9xYk69JZAmbuDvAquUVXKr2gEjqtzGNTTthLfckH0BzBqvnu31gb4a8TGLRe79g==}
+  '@vueuse/shared@15.1.0':
+    resolution: {integrity: sha512-JAbQLO+vOULt8MPR4oRbvstBuztTTMIX4LOfCGeBvp9JSgj5OppZDing3gKDrmlyUQvYYFSPIX4dxkfJgdsxWQ==}
+    engines: {node: '>=22'}
     peerDependencies:
       vue: ^3.5.0
 
@@ -2243,8 +2247,8 @@ packages:
     resolution: {integrity: sha512-WuYhR+WCNJSwSlZFdkisS94/7o1Tt+DSngUgq65zxCDM7CroquAGzuNl3BQhAaXno2uoBTmjzDD47LzRwsFhww==}
     engines: {node: '>=18'}
 
-  vitepress@2.0.0-alpha.20:
-    resolution: {integrity: sha512-uQWKmP9PaBkf9zxHn0iOml/ZPPDaGKqQXVMBHz3yjwyyd9Eg+BKLGxbqmOGlfOMCt6Fj8TLiAnE59qlKZ0A3xw==}
+  vitepress@2.0.0-alpha.21:
+    resolution: {integrity: sha512-b2PFPIw2mVfxDi490FhSq4AlkFi17b9lofLCqWfH4uPKz/dF4oy2C9vBpP2r7l7hl2hc5BG7OTRPvRFfRzF7MA==}
     hasBin: true
     peerDependencies:
       markdown-it-mathjax3: ^4
@@ -2921,7 +2925,7 @@ snapshots:
 
   '@types/unist@3.0.3': {}
 
-  '@types/web-bluetooth@0.0.21': {}
+  '@types/web-bluetooth@0.0.22': {}
 
   '@types/yargs-parser@21.0.3': {}
 
@@ -3004,24 +3008,24 @@ snapshots:
 
   '@vue/shared@3.5.46': {}
 
-  '@vueuse/core@14.4.0(vue@3.5.46)':
+  '@vueuse/core@15.1.0(vue@3.5.46)':
     dependencies:
-      '@types/web-bluetooth': 0.0.21
-      '@vueuse/metadata': 14.4.0
-      '@vueuse/shared': 14.4.0(vue@3.5.46)
+      '@types/web-bluetooth': 0.0.22
+      '@vueuse/metadata': 15.1.0
+      '@vueuse/shared': 15.1.0(vue@3.5.46)
       vue: 3.5.46
 
-  '@vueuse/integrations@14.4.0(focus-trap@8.2.6)(vue@3.5.46)':
+  '@vueuse/integrations@15.1.0(focus-trap@8.2.6)(vue@3.5.46)':
     dependencies:
-      '@vueuse/core': 14.4.0(vue@3.5.46)
-      '@vueuse/shared': 14.4.0(vue@3.5.46)
+      '@vueuse/core': 15.1.0(vue@3.5.46)
+      '@vueuse/shared': 15.1.0(vue@3.5.46)
       vue: 3.5.46
     optionalDependencies:
       focus-trap: 8.2.6
 
-  '@vueuse/metadata@14.4.0': {}
+  '@vueuse/metadata@15.1.0': {}
 
-  '@vueuse/shared@14.4.0(vue@3.5.46)':
+  '@vueuse/shared@15.1.0(vue@3.5.46)':
     dependencies:
       vue: 3.5.46
 
@@ -4085,7 +4089,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vitepress@2.0.0-alpha.20(@types/node@26.6.11)(esbuild@0.28.2)(postcss@8.5.33)(sass-embedded@1.108.2)(sass@1.108.2):
+  vitepress@2.0.0-alpha.21(@types/node@26.6.11)(esbuild@0.28.2)(postcss@8.5.33)(sass-embedded@1.108.2)(sass@1.108.2):
     dependencies:
       '@docsearch/css': 4.7.1
       '@docsearch/js': 4.7.1
@@ -4096,8 +4100,8 @@ snapshots:
       '@vitejs/plugin-vue': 6.0.11(vite@8.4.0(@types/node@26.6.11)(esbuild@0.28.2)(sass-embedded@1.108.2)(sass@1.108.2))(vue@3.5.46)
       '@vue/devtools-api': 8.2.1
       '@vue/shared': 3.5.46
-      '@vueuse/core': 14.4.0(vue@3.5.46)
-      '@vueuse/integrations': 14.4.0(focus-trap@8.2.6)(vue@3.5.46)
+      '@vueuse/core': 15.1.0(vue@3.5.46)
+      '@vueuse/integrations': 15.1.0(focus-trap@8.2.6)(vue@3.5.46)
       focus-trap: 8.2.6
       mark.js: 8.11.1
       minisearch: 7.2.0

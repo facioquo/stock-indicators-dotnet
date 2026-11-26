@@ -36,7 +36,7 @@ html:not(.dark) body {
 .VPHero {
   background-color: var(--vp-c-bg);
 
-  // Below 640px (VitePress's own hero breakpoint), keep its responsive .name
+  // Below 40rem (VitePress's own hero breakpoint), keep its responsive .name
   // font-size (2rem): the fixed 2.5em size and the NuGet badge beside the
   // title only fit from there. overflow-wrap guards any word still too wide.
   .name {
@@ -62,7 +62,7 @@ html:not(.dark) body {
   }
 }
 
-@media (min-width: 640px) {
+@media (width >= 40rem) {
   .VPHero .name {
     font-size: 2.5em !important;
     line-height: 0.7 !important;
@@ -71,7 +71,7 @@ html:not(.dark) body {
 
 // Phone portrait: tighten the wrapped title lines and the card padding
 // that VitePress sets for the single-column stack (1.25 and 1.5rem).
-@media (max-width: 639px) {
+@media (width < 40rem) {
   .VPHero .name {
     line-height: 1.1;
   }
@@ -184,7 +184,7 @@ html:not(.dark) body {
   aspect-ratio: 2.5;
 }
 
-@media (max-width: 880px) {
+@media (width <= 880px) {
   .indy-demo__canvas-wrap--overlay {
     aspect-ratio: 2;
   }
@@ -194,7 +194,7 @@ html:not(.dark) body {
   aspect-ratio: 6;
 }
 
-@media (max-width: 880px) {
+@media (width <= 880px) {
   .indy-demo__canvas-wrap--oscillator {
     aspect-ratio: 5;
   }
@@ -205,13 +205,13 @@ html:not(.dark) body {
 }
 
 /* Strong layout override: use CSS Grid to ensure consistent
-   2-column layout from 640px and 3-column layout at/above 1200px.
+   2-column layout from 40rem and 3-column layout at/above 1200px.
    This overrides VitePress-generated flex/grid sizing heuristics that
-   vary per-page and depend on item counts. Below 640px, VitePress's own
+   vary per-page and depend on item counts. Below 40rem, VitePress's own
    single-column stack (.items as flex, .item at width:100%) is left
    alone — forcing 2 columns that narrow makes card content overflow
    the viewport instead of wrapping. */
-@media (min-width: 640px) {
+@media (width >= 40rem) {
   .VPFeatures .container .items {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
@@ -223,17 +223,9 @@ html:not(.dark) body {
     max-width: none !important;
     box-sizing: border-box !important;
   }
-
-  .VPFeatures .container .items .item>a,
-  .VPFeatures .container .items .item .VPLink,
-  .VPFeatures .container .items a.VPFeature {
-    display: block !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
 }
 
-@media (min-width: 1200px) {
+@media (width >= 1200px) {
   .VPFeatures .container .items {
     grid-template-columns: repeat(3, 1fr) !important;
   }
@@ -250,18 +242,13 @@ html:not(.dark) body {
   opacity: 1;
 }
 
-// Code-comment contrast (WCAG 2.1 AA, 4.5:1) is now handled upstream.
-// VitePress 2.0.0-alpha.19 ships default Shiki `colorReplacements` that raise
-// the github-light/github-dark comment colour `#6a737d` to `#62687b` (5.1:1 on
-// the light code background) and `#818e99` (5.5:1 on the dark one). The former
-// `span[style*="--shiki-*:#6A737D"]` overrides here no longer match any token
-// and were removed. Should another token ever fail pa11y, set
-// `markdown.colorReplacements` in config.mts rather than re-adding CSS.
+// Fix a low-contrast syntax token with `markdown.colorReplacements` in
+// config.mts rather than CSS; VitePress's defaults already cover comments.
 
 // Page actions from vitepress-plugin-llms render as a block after the page
 // title. From tablet width up, lift them level with the title's first line,
 // and reserve that width so a long title wraps before reaching them.
-@media (min-width: 768px) {
+@media (width >= 48rem) {
   .vp-doc h1:has(+ .markdown-copy-buttons) {
     padding-right: 240px;
   }
@@ -289,7 +276,7 @@ html:not(.dark) body {
 // H1 for the plugin's own injection point, so the theme places the control
 // directly in the hero instead (see `home-hero-info-after` in theme/index.ts).
 // `.VPHero .main` is already `position: relative` in VitePress's own styles.
-@media (min-width: 768px) {
+@media (width >= 48rem) {
   .VPHero .main > .markdown-copy-buttons {
     position: absolute;
     top: 0;
@@ -321,7 +308,7 @@ html:not(.dark) body {
 }
 
 @supports (anchor-name: --hero-name) {
-  @media (min-width: 640px) {
+  @media (width >= 40rem) {
     .VPHero .name {
       anchor-name: --hero-name;
     }
@@ -408,7 +395,7 @@ html:not(.dark) body {
       }
 
       &::after {
-        content: 'Copied';
+        content: attr(data-copied);
       }
     }
 
@@ -418,7 +405,7 @@ html:not(.dark) body {
     }
   }
 
-  @media (max-width: 639px) {
+  @media (width < 40rem) {
     border-right: 0;
     border-left: 0;
   }

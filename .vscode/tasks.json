@@ -254,7 +254,7 @@
       "label": "Update: Skills",
       "detail": "Update external agents skills defined in skills-lock.json",
       "type": "shell",
-      "command": "pnpm dlx skills update --project --all"
+      "command": "pnpm dlx skills update --project --all --force"
     },
     {
       "label": "Clean: .NET Solution (dotnet clean)",

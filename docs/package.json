@@ -35,7 +35,7 @@
     "@playwright/test": "^1.65.1",
     "@types/node": "^26",
     "sass-embedded": "^1.108.2",
-    "vitepress": "2.0.0-alpha.20",
+    "vitepress": "2.0.0-alpha.21",
     "vitepress-plugin-llms": "1.15.0",
     "vue": "^3.5.46",
     "wrangler": "^4.168.0"

@@ -42,7 +42,7 @@ Every skill except vitepress is written for this repository only: repository pat
 ```bash
 npx skills list              # List installed skills
 npx skills check             # Check community skills for updates
-npx skills update --project --all  # Update community skills from their sources
+pnpm dlx skills update --project --all  # Update community skills from their sources
 npx skills find <query>      # Search the skills.sh registry
 npx skills init .agents/skills/<name>  # Scaffold a new skill
 npx skills add <owner/repo> --skill <name> --agent universal --yes  # Add --copy for a private source
@@ -57,7 +57,7 @@ npx skills remove <name>
 
 ⚠️ Ask before deleting a skill — first remove every reference to it
 
-🚫 Never hand-edit a community skill (vitepress); update it from its source
+🚫 Never edit a skill listed in `skills-lock.json` directly, including its version notes and references; update it only with `pnpm dlx skills update --project --all`
 
 🚫 Never add files under `.claude/skills/` — it is a symlink to this folder
 
