@@ -21,7 +21,7 @@ public class StochCatalogTests : TestBase
         listing.MethodName.Should().Be("ToStoch");
 
         listing.Parameters.Should().NotBeNull();
-        listing.Parameters.Should().HaveCount(3);
+        listing.Parameters.Should().HaveCount(6);
 
         IndicatorParam lookbackPeriodsParam = listing.Parameters.SingleOrDefault(static p => p.ParameterName == "lookbackPeriods");
         lookbackPeriodsParam.Should().NotBeNull();
@@ -30,8 +30,15 @@ public class StochCatalogTests : TestBase
         IndicatorParam smoothPeriodsParam2 = listing.Parameters.SingleOrDefault(static p => p.ParameterName == "smoothPeriods");
         smoothPeriodsParam2.Should().NotBeNull();
 
+        IndicatorParam kFactorParam = listing.Parameters.Single(static p => p.ParameterName == "kFactor");
+        kFactorParam.DefaultValue.Should().Be(3.0);
+        IndicatorParam dFactorParam = listing.Parameters.Single(static p => p.ParameterName == "dFactor");
+        dFactorParam.DefaultValue.Should().Be(2.0);
+        IndicatorParam movingAverageTypeParam = listing.Parameters.Single(static p => p.ParameterName == "movingAverageType");
+        movingAverageTypeParam.DefaultValue.Should().Be((int)MaType.SMA);
+
         listing.Results.Should().NotBeNull();
-        listing.Results.Should().HaveCount(2);
+        listing.Results.Should().HaveCount(3);
 
         IndicatorResult oscillatorResult = listing.Results.SingleOrDefault(static r => r.DataName == "Oscillator");
         oscillatorResult.Should().NotBeNull();
@@ -41,6 +48,9 @@ public class StochCatalogTests : TestBase
         signalResult1.Should().NotBeNull();
         signalResult1?.DisplayName.Should().Be("%D");
         signalResult1.IsReusable.Should().Be(false);
+        IndicatorResult percentJResult = listing.Results.Single(static r => r.DataName == "PercentJ");
+        percentJResult.DisplayName.Should().Be("%J");
+        percentJResult.IsReusable.Should().Be(false);
     }
 
     [TestMethod]
@@ -58,10 +68,10 @@ public class StochCatalogTests : TestBase
         listing.MethodName.Should().Be("ToStochHub");
 
         listing.Parameters.Should().NotBeNull();
-        listing.Parameters.Should().HaveCount(3);
+        listing.Parameters.Should().HaveCount(6);
 
         listing.Results.Should().NotBeNull();
-        listing.Results.Should().HaveCount(2);
+        listing.Results.Should().HaveCount(3);
     }
 
     [TestMethod]
@@ -79,9 +89,9 @@ public class StochCatalogTests : TestBase
         listing.MethodName.Should().Be("ToStochList");
 
         listing.Parameters.Should().NotBeNull();
-        listing.Parameters.Should().HaveCount(3);
+        listing.Parameters.Should().HaveCount(6);
 
         listing.Results.Should().NotBeNull();
-        listing.Results.Should().HaveCount(2);
+        listing.Results.Should().HaveCount(3);
     }
 }

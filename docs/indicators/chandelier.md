@@ -26,7 +26,7 @@ IReadOnlyList<ChandelierResult> results =
 
 ### Historical price bars requirements
 
-You must have at least `N+1` periods of `bars` to cover the warmup periods.
+You must have at least `N+100` periods of `bars` to cover the [warmup and convergence](https://github.com/facioquo/stock-indicators-dotnet/discussions/688) periods.  Since the underlying ATR uses a smoothing technique, we recommend you use at least `N+250` periods prior to the intended usage date for better precision.
 
 `bars` is a collection of generic `TBar` historical price bars.  It should have a consistent frequency (day, hour, minute, etc).  See [the Guide](/guide/getting-started#historical-bars) for more information.
 
@@ -42,6 +42,10 @@ IReadOnlyList<ChandelierResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The first `N` periods will have `null` Chandelier values since there's not enough data to calculate.
+
+::: warning 🚩 ⚞ Convergence warning
+The first `N+100` periods will have decreasing magnitude, convergence-related precision errors in the underlying ATR values.
+:::
 
 ### `ChandelierResult`
 

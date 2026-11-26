@@ -134,13 +134,15 @@ internal static class CatalogReflection
         => methodNames.AsSpan().IndexOf(catalogNames.AsSpan());
 
     /// <summary>
-    /// Determines whether an overload carrying the whole catalog run gives the
-    /// parameter at <paramref name="index"/> a C# default value.
+    /// Determines whether an overload carrying the catalog run up to and including the
+    /// parameter at <paramref name="index"/> gives that parameter a C# default value.
     /// </summary>
     /// <remarks>
     /// This is the only way omitting the argument provably yields a known value, so it
     /// is what lets a listing advertise a <see cref="IndicatorParam.DefaultValue"/> that
-    /// a caller can rely on by leaving the argument out.
+    /// a caller can rely on by leaving the argument out. Only a trailing run can be
+    /// omitted, so the overload need not carry the parameters after it: <c>ToStoch</c>
+    /// defaults its first three on a shorter overload than the one taking all six.
     /// </remarks>
     /// <param name="overloads">All overloads of the listing's method.</param>
     /// <param name="catalogNames">Catalog parameter names, in listing order.</param>
@@ -168,7 +170,7 @@ internal static class CatalogReflection
     {
         foreach (MethodInfo method in overloads)
         {
-            int offset = IndexOfRun(catalogNames, GetParameterNames(method));
+            int offset = IndexOfRun(catalogNames[..(index + 1)], GetParameterNames(method));
 
             if (offset >= 0 && method.GetParameters()[offset + index] is { HasDefaultValue: true } parameter)
             {

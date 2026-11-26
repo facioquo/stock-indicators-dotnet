@@ -2149,9 +2149,13 @@ Parameters:
   - lookbackPeriods : Int32 : optional
   - signalPeriods : Int32 : optional
   - smoothPeriods : Int32 : optional
+  - kFactor : Double : optional
+  - dFactor : Double : optional
+  - movingAverageType : enum : optional
 Results:
   - Oscillator : Default : reusable=true : pane=Stoch
   - Signal : Default : reusable=false : pane=Stoch
+  - PercentJ : Default : reusable=false : pane=Stoch
 Pane: Stoch : range=auto..auto : lines=80,20
 
 ### STOCH / Buffer
@@ -2160,9 +2164,13 @@ Parameters:
   - lookbackPeriods : Int32 : optional
   - signalPeriods : Int32 : optional
   - smoothPeriods : Int32 : optional
+  - kFactor : Double : optional
+  - dFactor : Double : optional
+  - movingAverageType : enum : optional
 Results:
   - Oscillator : Default : reusable=true : pane=Stoch
   - Signal : Default : reusable=false : pane=Stoch
+  - PercentJ : Default : reusable=false : pane=Stoch
 Pane: Stoch : range=auto..auto : lines=80,20
 
 ### STOCH / Stream
@@ -2171,9 +2179,13 @@ Parameters:
   - lookbackPeriods : Int32 : optional
   - signalPeriods : Int32 : optional
   - smoothPeriods : Int32 : optional
+  - kFactor : Double : optional
+  - dFactor : Double : optional
+  - movingAverageType : enum : optional
 Results:
   - Oscillator : Default : reusable=true : pane=Stoch
   - Signal : Default : reusable=false : pane=Stoch
+  - PercentJ : Default : reusable=false : pane=Stoch
 Pane: Stoch : range=auto..auto : lines=80,20
 
 ### STOCH-RSI / Series

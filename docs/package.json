@@ -7,6 +7,13 @@
   "engines": {
     "node": ">=26"
   },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "26",
+      "onFail": "download"
+    }
+  },
   "scripts": {
     "cleanup": "pnpm clean && rm -rf dist .vitepress/dist .vitepress/cache _site && rm -f pnpm-lock.yaml package-lock.json yarn.lock",
     "docs:dev": "vitepress dev",
