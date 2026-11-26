@@ -93,7 +93,7 @@
         "Initialize: Docs",
         "Initialize: .NET"
       ],
-      "dependsOrder": "parallel"
+      "dependsOrder": "sequence"
     },
     {
       "label": "Initialize: Docs",
@@ -101,8 +101,8 @@
       "group": "build",
       "dependsOn": [
         "Git: pull",
-        "Install: Node packages",
         "Clean: Docs (full)",
+        "Install: Node packages",
         "Install: Browsers for website tests",
         "Lint: Markdown (fix)",
         "Test: All (website)"
@@ -205,7 +205,7 @@
       "label": "Update: .NET packages",
       "detail": "Upgrade outdated NuGet packages in the root solution using dotnet-outdated",
       "type": "shell",
-      "command": "dotnet outdated --upgrade --exclude FacioQuo.Stock.Indicators docs/examples",
+      "command": "dotnet outdated --upgrade",
       "dependsOn": [
         "Install: .NET tools",
         "Install: .NET packages"
@@ -215,7 +215,7 @@
       "label": "Update: .NET packages (examples)",
       "detail": "Upgrade outdated NuGet packages in the Examples using dotnet-outdated",
       "type": "shell",
-      "command": "dotnet outdated docs/examples --upgrade",
+      "command": "dotnet outdated docs/examples --upgrade --exclude FacioQuo.Stock.Indicators",
       "dependsOn": [
         "Install: .NET tools",
         "Install: .NET packages"
@@ -254,7 +254,7 @@
       "label": "Update: Skills",
       "detail": "Update external agents skills defined in skills-lock.json",
       "type": "shell",
-      "command": "pnpm dlx skills update --project --all --force"
+      "command": "pnpm dlx skills update --project --all"
     },
     {
       "label": "Clean: .NET Solution (dotnet clean)",
