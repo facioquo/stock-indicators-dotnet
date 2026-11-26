@@ -1,0 +1,20 @@
+<svg width="720" height="720" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  overflow="hidden">
+
+  <!-- stripes -->
+  <g transform="rotate(40 360 360) scale(1.41) translate(-105 -105)">
+    <rect x="0"   y="0" width="163" height="720" fill="#ED7D31" />
+    <rect x="163" y="0" width="202" height="720" fill="#4472C4" />
+    <rect x="365" y="0" width="86"  height="720" fill="#FFC000" />
+    <rect x="451" y="0" width="48"  height="720" fill="#404040" />
+    <rect x="499" y="0" width="221" height="720" fill="#70AD47" />
+    <rect x="0" y="0" width="720" height="720" fill="#1B1B1B" fill-opacity="0.6" />
+  </g>
+
+  <!-- arrows -->
+  <path fill="#E6C74C" transform="rotate(180) translate(-255,-475)"
+    d="M 0 -200 175 0 90 0 90 200 -90 200 -90 0 -175 0 0 -200Z" />
+  <path fill="#E6C74C" transform="translate( 465, 245)"
+    d="M 0 -200 175 0 90 0 90 200 -90 200 -90 0 -175 0 0 -200Z" />
+
+</svg>
