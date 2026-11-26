@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useData } from 'vitepress'
 
 import {
   ChartManager,
@@ -16,31 +17,22 @@ import { CHART_API_BASE_URL, CHART_API_RESILIENCE } from '../theme/chart-api'
 import { LANDING_OVERLAY_SPECS } from '../theme/landing-overlays'
 
 const BAR_COUNT = 250
+const { isDark } = useData()
 const overlayCanvas = ref<HTMLCanvasElement | null>(null)
 const phase = ref<'idle' | 'loading' | 'ready' | 'error'>('idle')
 const errorMessage = ref('Unable to load chart preview.')
-const chartBackground = ref(readThemeBackground())
+// The translucent backdrop for axis/annotation labels. Deliberately not
+// `--vp-c-bg`: that is solid and would obscure the chart data behind the labels.
+const chartBackground = computed(() => (isDark.value ? DARK_SURFACE : LIGHT_SURFACE))
 
 let chartManager: ChartManager | null = null
-let themeObserver: MutationObserver | null = null
 let resizeHandler: (() => void) | null = null
 let disposed = false
 let loadToken = 0
 
-function isDark(): boolean {
-  return typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
-}
-
-// Returns the translucent backdrop colour for axis/annotation labels.
-// We deliberately do NOT read `--vp-c-bg` here — that variable is solid
-// and would obscure the chart data behind the labels.
-function readThemeBackground(): string {
-  return isDark() ? DARK_SURFACE : LIGHT_SURFACE
-}
-
 function currentSettings() {
   return {
-    isDarkTheme: isDark(),
+    isDarkTheme: isDark.value,
     showTooltips: false,
     background: chartBackground.value
   }
@@ -81,7 +73,6 @@ async function renderCharts(): Promise<void> {
   const token = ++loadToken
   phase.value = 'loading'
   errorMessage.value = 'Unable to load chart preview.'
-  chartBackground.value = readThemeBackground()
   destroyChart()
 
   try {
@@ -136,17 +127,10 @@ async function renderCharts(): Promise<void> {
   }
 }
 
+watch(isDark, updateTheme)
+
 onMounted(() => {
   void renderCharts()
-
-  themeObserver = new MutationObserver(() => {
-    chartBackground.value = readThemeBackground()
-    updateTheme()
-  })
-  themeObserver.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['class']
-  })
 
   resizeHandler = () => {
     chartManager?.resize()
@@ -157,8 +141,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   disposed = true
   loadToken += 1
-  themeObserver?.disconnect()
-  themeObserver = null
   if (resizeHandler) {
     window.removeEventListener('resize', resizeHandler)
     resizeHandler = null
