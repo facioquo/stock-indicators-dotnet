@@ -87,8 +87,13 @@ public class VwmaBufferListTests : BufferListTestBase, ITestBarBufferList
 
     [TestMethod]
     [DataRow(CandlePart.Open)]
+    [DataRow(CandlePart.High)]
+    [DataRow(CandlePart.Low)]
     [DataRow(CandlePart.HLC3)]
-    [DataRow(CandlePart.Volume)]
+    [DataRow(CandlePart.HL2)]
+    [DataRow(CandlePart.OC2)]
+    [DataRow(CandlePart.OHL3)]
+    [DataRow(CandlePart.OHLC4)]
     public void ToVwmaList_SelectedCandlePart_MatchesSeriesExactly(CandlePart candlePart)
     {
         IReadOnlyList<VwmaResult> expected = Bars.ToVwma(14, candlePart);
@@ -110,4 +115,12 @@ public class VwmaBufferListTests : BufferListTestBase, ITestBarBufferList
         list.Add(day.AddDays(1), 20, 1);
         list[1].Vwma.Should().BeApproximately(40d / 3d, 0.000000000001);
     }
+    [TestMethod]
+    public void SelectedPart_NameIncludesNonDefaultPrice()
+        => new VwmaList(14, CandlePart.HL2).Name.Should().Be("VWMA(14,HL2)");
+
+    [TestMethod]
+    public void VolumeAsPrice_Throws()
+        => FluentActions.Invoking(() => new VwmaList(14, CandlePart.Volume))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("candlePart");
 }

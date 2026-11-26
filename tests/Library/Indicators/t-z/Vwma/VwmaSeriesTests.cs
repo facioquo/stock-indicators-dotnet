@@ -93,7 +93,6 @@ public class VwmaSeriesTests : StaticSeriesTestBase
     [DataRow(CandlePart.OC2)]
     [DataRow(CandlePart.OHL3)]
     [DataRow(CandlePart.OHLC4)]
-    [DataRow(CandlePart.Volume)]
     public void ToVwma_SelectedCandlePart_MatchesWeightedReference(
         CandlePart candlePart)
     {
@@ -107,7 +106,6 @@ public class VwmaSeriesTests : StaticSeriesTestBase
             CandlePart.OC2 => (43d / 3d, 28.5),
             CandlePart.OHL3 => (14d, 169d / 6d),
             CandlePart.OHLC4 => (43d / 3d, 28.5),
-            CandlePart.Volume => (5d / 3d, 2.5),
             _ => throw new ArgumentOutOfRangeException(nameof(candlePart))
         };
 
@@ -131,8 +129,10 @@ public class VwmaSeriesTests : StaticSeriesTestBase
         => Bars.ToVwma(14, CandlePart.Close).IsExactly(Bars.ToVwma(14));
 
     [TestMethod]
-    public void ToVwma_InvalidCandlePart_ThrowsArgumentOutOfRangeException()
-        => FluentActions.Invoking(() => Bars.ToVwma(14, (CandlePart)(-1)))
+    [DataRow(CandlePart.Volume)]
+    [DataRow((CandlePart)(-1))]
+    public void ToVwma_InvalidCandlePart_ThrowsArgumentOutOfRangeException(CandlePart candlePart)
+        => FluentActions.Invoking(() => Bars.ToVwma(14, candlePart))
             .Should().ThrowExactly<ArgumentOutOfRangeException>()
-            .WithParameterName("candlePart");
+            .WithParameterName(nameof(candlePart));
 }

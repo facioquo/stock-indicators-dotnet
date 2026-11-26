@@ -23,14 +23,15 @@ public class VwmaList : BufferList<VwmaResult>, IIncrementFromBar, IVwma
     /// <param name="candlePart">Bar component to weight by volume.</param>
     public VwmaList(int lookbackPeriods, CandlePart candlePart)
     {
-        Vwma.Validate(lookbackPeriods);
-        BarParts.Validate(candlePart);
+        Vwma.Validate(lookbackPeriods, candlePart);
         LookbackPeriods = lookbackPeriods;
         CandlePart = candlePart;
 
         _buffer = new Queue<(double, double)>(lookbackPeriods);
 
-        Name = $"VWMA({lookbackPeriods})";
+        Name = candlePart == CandlePart.Close
+            ? $"VWMA({lookbackPeriods})"
+            : $"VWMA({lookbackPeriods},{candlePart})";
     }
 
     /// <summary>
@@ -56,7 +57,7 @@ public class VwmaList : BufferList<VwmaResult>, IIncrementFromBar, IVwma
     /// <inheritdoc />
     public int LookbackPeriods { get; init; }
 
-    /// <inheritdoc />
+    /// <summary>Gets the price component weighted by volume.</summary>
     public CandlePart CandlePart { get; }
 
     /// <inheritdoc />
@@ -138,6 +139,6 @@ public static partial class Vwma
     public static VwmaList ToVwmaList(
         this IReadOnlyList<IBar> bars,
         int lookbackPeriods,
-        CandlePart candlePart = CandlePart.Close)
+        CandlePart candlePart)
         => new(lookbackPeriods, candlePart) { bars };
 }

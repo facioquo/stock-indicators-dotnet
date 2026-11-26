@@ -201,13 +201,19 @@ public class VwmaHubTests : StreamHubTestBase, ITestBarObserver, ITestChainProvi
 
     [TestMethod]
     [DataRow(CandlePart.Open)]
+    [DataRow(CandlePart.High)]
+    [DataRow(CandlePart.Low)]
     [DataRow(CandlePart.HLC3)]
-    [DataRow(CandlePart.Volume)]
+    [DataRow(CandlePart.HL2)]
+    [DataRow(CandlePart.OC2)]
+    [DataRow(CandlePart.OHL3)]
+    [DataRow(CandlePart.OHLC4)]
     public void ToVwmaHub_SelectedPartWithReplay_MatchesSeriesExactly(CandlePart candlePart)
     {
         BarHub hub = new();
         hub.Add(Bars);
         VwmaHub observer = hub.ToVwmaHub(14, candlePart);
+        observer.Name.Should().Be($"VWMA(14,{candlePart})");
         observer.Results.IsExactly(Bars.ToVwma(14, candlePart));
 
         hub.RemoveAt(495);
@@ -232,4 +238,8 @@ public class VwmaHubTests : StreamHubTestBase, ITestBarObserver, ITestChainProvi
         observer.Unsubscribe();
         hub.EndTransmission();
     }
+    [TestMethod]
+    public void VolumeAsPrice_Throws()
+        => FluentActions.Invoking(() => new BarHub().ToVwmaHub(14, CandlePart.Volume))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("candlePart");
 }

@@ -27,7 +27,7 @@ public static partial class Vwma
     public static IReadOnlyList<VwmaResult> ToVwma(
         this IReadOnlyList<IBar> bars,
         int lookbackPeriods,
-        CandlePart candlePart = CandlePart.Close)
+        CandlePart candlePart)
         => bars.CalcVwma(lookbackPeriods, candlePart);
 
     /// <summary>
@@ -43,8 +43,7 @@ public static partial class Vwma
         CandlePart candlePart)
     {
         ArgumentNullException.ThrowIfNull(bars);
-        Validate(lookbackPeriods);
-        BarParts.Validate(candlePart);
+        Validate(lookbackPeriods, candlePart);
 
         // initialize
         int length = bars.Count;

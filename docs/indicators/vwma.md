@@ -24,7 +24,7 @@ IReadOnlyList<VwmaResult> hl2Results =
 | param | description |
 | ----- | ----------- |
 | `lookbackPeriods`<br>_`int`_ | Number of periods (`N`) in the moving average.  Must be greater than 0. |
-| `candlePart`<br>_`CandlePart`_ | Optional bar component to weight by volume.  Default is `CandlePart.Close`; for example, `CandlePart.HL2` uses `(High+Low)/2`.  Volume remains the weight for every selection. |
+| `candlePart`<br>_`CandlePart`_ | Optional bar component to weight by volume.  Default is `CandlePart.Close`; for example, `CandlePart.HL2` uses `(High+Low)/2`.  Volume supplies the weight and cannot be selected as the price. |
 
 ### Historical price bars requirements
 

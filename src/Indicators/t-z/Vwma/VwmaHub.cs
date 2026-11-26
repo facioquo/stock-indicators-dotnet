@@ -8,18 +8,15 @@ public class VwmaHub
 {
     internal VwmaHub(
         IBarProvider<IBar> provider,
-        int lookbackPeriods) : this(provider, lookbackPeriods, CandlePart.Close) { }
-
-    internal VwmaHub(
-        IBarProvider<IBar> provider,
         int lookbackPeriods,
         CandlePart candlePart) : base(provider)
     {
-        Vwma.Validate(lookbackPeriods);
-        BarParts.Validate(candlePart);
+        Vwma.Validate(lookbackPeriods, candlePart);
         LookbackPeriods = lookbackPeriods;
         CandlePart = candlePart;
-        Name = $"VWMA({lookbackPeriods})";
+        Name = candlePart == CandlePart.Close
+            ? $"VWMA({lookbackPeriods})"
+            : $"VWMA({lookbackPeriods},{candlePart})";
 
         // Validate cache size for warmup requirements
         ValidateCacheSize(lookbackPeriods, Name);
@@ -30,7 +27,7 @@ public class VwmaHub
     /// <inheritdoc/>
     public int LookbackPeriods { get; init; }
 
-    /// <inheritdoc />
+    /// <summary>Gets the price component weighted by volume.</summary>
     public CandlePart CandlePart { get; }
 
 
@@ -90,7 +87,7 @@ public static partial class Vwma
         int lookbackPeriods)
     {
         ArgumentNullException.ThrowIfNull(barProvider);
-        return new(barProvider, lookbackPeriods);
+        return new(barProvider, lookbackPeriods, CandlePart.Close);
     }
 
     /// <summary>
@@ -103,7 +100,7 @@ public static partial class Vwma
     public static VwmaHub ToVwmaHub(
         this IBarProvider<IBar> barProvider,
         int lookbackPeriods,
-        CandlePart candlePart = CandlePart.Close)
+        CandlePart candlePart)
     {
         ArgumentNullException.ThrowIfNull(barProvider);
         return new(barProvider, lookbackPeriods, candlePart);
