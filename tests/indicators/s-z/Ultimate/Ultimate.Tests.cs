@@ -89,7 +89,7 @@ public class UltimateTests : TestBase
 
         Assert.ThrowsExactly<ArgumentOutOfRangeException>(
             static () => quotes.GetUltimate(7, 0, 28))
-            .ParamName.Should().Be("middleAverage");
+            .ParamName.Should().Be("middlePeriods");
 
         Assert.ThrowsExactly<ArgumentOutOfRangeException>(
             static () => quotes.GetUltimate(7, 14, 0))

@@ -83,7 +83,7 @@ public static partial class Indicator
     // parameter validation
     private static void ValidateUltimate(
         int shortPeriods,
-        int middleAverage,
+        int middlePeriods,
         int longPeriods)
     {
         // check parameter arguments
@@ -93,9 +93,9 @@ public static partial class Indicator
                 "Short periods must be greater than 0 for Ultimate Oscillator.");
         }
 
-        if (middleAverage <= 0)
+        if (middlePeriods <= 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(middleAverage), middleAverage,
+            throw new ArgumentOutOfRangeException(nameof(middlePeriods), middlePeriods,
                 "Middle periods must be greater than 0 for Ultimate Oscillator.");
         }
 
@@ -105,9 +105,9 @@ public static partial class Indicator
                 "Long periods must be greater than 0 for Ultimate Oscillator.");
         }
 
-        if (shortPeriods >= middleAverage || middleAverage >= longPeriods)
+        if (shortPeriods >= middlePeriods || middlePeriods >= longPeriods)
         {
-            throw new ArgumentOutOfRangeException(nameof(middleAverage), middleAverage,
+            throw new ArgumentOutOfRangeException(nameof(middlePeriods), middlePeriods,
                 "Average periods must be increasingly larger than each other for Ultimate Oscillator.");
         }
     }
