@@ -17,11 +17,12 @@ public abstract partial class StreamHub<TIn, TOut>
         => throw new NotSupportedException($"{Name} does not support state snapshots.");
 
     /// <summary>
-    /// Captures the result cache and internal state.
+    /// Captures the result cache and internal state, so a later process can resume
+    /// streaming with <see cref="RestoreSnapshot"/> instead of replaying the source history.
     /// </summary>
     /// <returns>A snapshot that does not change as the hub keeps running.</returns>
     /// <exception cref="NotSupportedException">The hub does not support snapshots.</exception>
-    internal HubSnapshot<TOut> CaptureSnapshot()
+    public HubSnapshot<TOut> CaptureSnapshot()
     {
         lock (CacheLock)
         {
@@ -51,9 +52,11 @@ public abstract partial class StreamHub<TIn, TOut>
     /// <param name="snapshot">Snapshot captured from a hub with the same name.</param>
     /// <exception cref="InvalidDataException">
     /// The snapshot has another format version, another hub name, more results than the cache holds,
-    /// or results that do not line up with the provider's inputs.
+    /// or results that do not line up with the provider's inputs, or its state has a version or
+    /// length the hub cannot read.
     /// </exception>
-    internal void RestoreSnapshot(HubSnapshot<TOut> snapshot)
+    /// <exception cref="NotSupportedException">The hub does not support snapshots.</exception>
+    public void RestoreSnapshot(HubSnapshot<TOut> snapshot)
     {
         ArgumentNullException.ThrowIfNull(snapshot);
 
@@ -88,7 +91,7 @@ public abstract partial class StreamHub<TIn, TOut>
                     $"{Name} results do not line up with its provider; restore the provider first.");
             }
 
-            RestoreSnapshotState(snapshot.State);
+            RestoreSnapshotState(snapshot.State.Span);
 
             Cache.Clear();
 
