@@ -28,7 +28,7 @@ If you have general interest in contributing, but are not sure where to start, p
 
 ## Reporting bugs and feature requests
 
-If you suspect a problem, please [report a bug Issue](https://github.com/facioquo/stock-indicators-dotnet/issues/new?labels=bug&template=bug_report.yml) with a detailed description of the problem, steps to reproduce, code samples, and any reference materials.  For enhancements, [create a feature Issue](https://github.com/facioquo/stock-indicators-dotnet/issues/new?labels=enhancement&template=feature_request.yml).
+If you suspect a problem, please [report a bug Issue](https://github.com/facioquo/stock-indicators-dotnet/issues/new?labels=bug&template=bug_report.yml) with a detailed description of the problem, steps to reproduce, code samples, and any reference materials.  For enhancements, [create a feature Issue](https://github.com/facioquo/stock-indicators-dotnet/issues/new?labels=enhancement).
 
 Use the [Discussions](https://github.com/facioquo/stock-indicators-dotnet/discussions) area for general ideation and help/usage questions.
 
