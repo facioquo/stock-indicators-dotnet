@@ -135,7 +135,8 @@ public class PivotsTests : TestBase
 
         // bad lookback window
         Assert.ThrowsExactly<ArgumentOutOfRangeException>(
-            static () => quotes.GetPivots(20, 10, 20, EndType.Close));
+            static () => quotes.GetPivots(20, 10, 20, EndType.Close))
+            .ParamName.Should().Be("maxTrendPeriods");
     }
 
     [TestMethod]

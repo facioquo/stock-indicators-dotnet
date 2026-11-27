@@ -84,7 +84,16 @@ public class UltimateTests : TestBase
     {
         // bad short period
         Assert.ThrowsExactly<ArgumentOutOfRangeException>(
-            static () => quotes.GetUltimate(0));
+            static () => quotes.GetUltimate(0))
+            .ParamName.Should().Be("shortPeriods");
+
+        Assert.ThrowsExactly<ArgumentOutOfRangeException>(
+            static () => quotes.GetUltimate(7, 0, 28))
+            .ParamName.Should().Be("middleAverage");
+
+        Assert.ThrowsExactly<ArgumentOutOfRangeException>(
+            static () => quotes.GetUltimate(7, 14, 0))
+            .ParamName.Should().Be("longPeriods");
 
         // bad middle period
         Assert.ThrowsExactly<ArgumentOutOfRangeException>(

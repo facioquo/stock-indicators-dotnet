@@ -128,7 +128,7 @@ public static partial class Indicator
 
         if (maxTrendPeriods <= leftSpan)
         {
-            throw new ArgumentOutOfRangeException(nameof(leftSpan), leftSpan,
+            throw new ArgumentOutOfRangeException(nameof(maxTrendPeriods), maxTrendPeriods,
                 $"Lookback periods must be greater than the Left window span for {caller}.");
         }
     }

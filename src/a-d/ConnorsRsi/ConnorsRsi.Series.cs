@@ -120,7 +120,7 @@ public static partial class Indicator
                     }
                 }
 
-                r.PercentRank = 100 * qty / rankPeriods;
+                r.PercentRank = 100d * qty / rankPeriods;
             }
 
             lastClose = value;

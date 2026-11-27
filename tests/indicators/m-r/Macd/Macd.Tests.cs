@@ -152,5 +152,9 @@ public class MacdTests : TestBase
         // bad signal period
         Assert.ThrowsExactly<ArgumentOutOfRangeException>(
             static () => quotes.GetMacd(12, 26, -1));
+
+        Assert.ThrowsExactly<ArgumentOutOfRangeException>(
+            static () => quotes.GetMacd(12, 26, 0))
+            .ParamName.Should().Be("signalPeriods");
     }
 }

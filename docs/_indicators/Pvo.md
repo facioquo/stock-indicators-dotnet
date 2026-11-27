@@ -26,7 +26,7 @@ IEnumerable<PvoResult> results =
 
 **`slowPeriods`** _`int`_ - Number of periods (`S`) for the slower moving average.  Must be greater than `fastPeriods`.  Default is 26.
 
-**`signalPeriods`** _`int`_ - Number of periods (`P`) for the moving average of PVO.  Must be greater than or equal to 0.  Default is 9.
+**`signalPeriods`** _`int`_ - Number of periods (`P`) for the moving average of PVO.  Must be greater than 0.  Default is 9.
 
 ### Historical quotes requirements
 

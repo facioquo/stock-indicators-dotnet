@@ -54,10 +54,10 @@ public static partial class Indicator
         int slowPeriods)
     {
         // check parameter arguments
-        if (cyclePeriods < 0)
+        if (cyclePeriods <= 0)
         {
             throw new ArgumentOutOfRangeException(nameof(cyclePeriods), cyclePeriods,
-                "Trend Cycle periods must be greater than or equal to 0 for STC.");
+                "Trend Cycle periods must be greater than 0 for STC.");
         }
 
         if (fastPeriods <= 0)

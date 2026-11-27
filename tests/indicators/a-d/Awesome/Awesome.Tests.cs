@@ -127,7 +127,8 @@ public class AwesomeTests : TestBase
     {
         // bad fast period
         Assert.ThrowsExactly<ArgumentOutOfRangeException>(
-            static () => quotes.GetAwesome(0, 34));
+            static () => quotes.GetAwesome(0, 34))
+            .ParamName.Should().Be("fastPeriods");
 
         // bad slow period
         Assert.ThrowsExactly<ArgumentOutOfRangeException>(

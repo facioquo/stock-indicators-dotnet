@@ -22,7 +22,7 @@ IEnumerable<StcResult> results =
 
 ## Parameters
 
-**`cyclePeriods`** _`int`_ - Number of periods (`C`) for the Trend Cycle.  Must be greater than or equal to 0.  Default is 10.
+**`cyclePeriods`** _`int`_ - Number of periods (`C`) for the Trend Cycle.  Must be greater than 0.  Default is 10.
 
 **`fastPeriods`** _`int`_ - Number of periods (`F`) for the faster moving average.  Must be greater than 0.  Default is 23.
 
