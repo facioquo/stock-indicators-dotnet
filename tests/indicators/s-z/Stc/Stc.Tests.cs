@@ -165,5 +165,9 @@ public class StcTests : TestBase
         // bad signal period
         Assert.ThrowsExactly<ArgumentOutOfRangeException>(
             static () => quotes.GetStc(-1, 12, 26));
+
+        Assert.ThrowsExactly<ArgumentOutOfRangeException>(
+            static () => quotes.GetStc(0, 12, 26))
+            .ParamName.Should().Be("cyclePeriods");
     }
 }

@@ -73,10 +73,10 @@ public static partial class Indicator
                 "Fast periods must be greater than 0 for MACD.");
         }
 
-        if (signalPeriods < 0)
+        if (signalPeriods <= 0)
         {
             throw new ArgumentOutOfRangeException(nameof(signalPeriods), signalPeriods,
-                "Signal periods must be greater than or equal to 0 for MACD.");
+                "Signal periods must be greater than 0 for MACD.");
         }
 
         if (slowPeriods <= fastPeriods)

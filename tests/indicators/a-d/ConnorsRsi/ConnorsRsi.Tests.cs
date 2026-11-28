@@ -36,6 +36,28 @@ public class ConnorsRsiTests : TestBase
     }
 
     [TestMethod]
+    public void PercentRankNotTruncatedWhenRankPeriodsDoesNotDivide100()
+    {
+        // percent rank must not be truncated by integer division
+        List<ConnorsRsiResult> results = quotes
+            .GetConnorsRsi(3, 2, 3)
+            .ToList();
+
+        double[] expectedRanks = [0d, 100d / 3, 200d / 3, 100d];
+
+        List<ConnorsRsiResult> ranked = results
+            .Where(static x => x.PercentRank != null)
+            .ToList();
+
+        Assert.IsNotEmpty(ranked);
+        Assert.IsTrue(ranked.TrueForAll(x => expectedRanks.Contains((double)x.PercentRank!)));
+        Assert.IsTrue(ranked.Exists(static x => x.PercentRank == 200d / 3));
+
+        ConnorsRsiResult r = results.First(static x => x.PercentRank == 200d / 3 && x.ConnorsRsi != null);
+        Assert.AreEqual(((r.Rsi + r.RsiStreak + r.PercentRank) / 3).Round(10), r.ConnorsRsi.Round(10));
+    }
+
+    [TestMethod]
     public void UseTuple()
     {
         List<ConnorsRsiResult> results = quotes

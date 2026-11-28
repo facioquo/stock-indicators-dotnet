@@ -5,6 +5,7 @@ name: CI
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
   push:
     branches:
       - "main"
@@ -35,7 +36,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: "10.x"
           dotnet-quality: "ga"
@@ -83,7 +84,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: "10.x"
           dotnet-quality: "ga"
@@ -101,7 +102,7 @@ jobs:
           --collect:"XPlat Code Coverage"
 
       - name: Post unit test results
-        uses: dorny/test-reporter@v2.3.0
+        uses: dorny/test-reporter@v3.0.0
         if: ${{ !cancelled() }}
         with:
           name: Unit test results
@@ -111,7 +112,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload coverage reports
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}
         with:
           name: coverage-unit
@@ -121,7 +122,6 @@ jobs:
 
       - name: Publish coverage to Codacy
         uses: codacy/codacy-coverage-reporter-action@v1.3.0
-        if: success() && github.actor != 'dependabot[bot]'
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: test-results/unit/**/coverage.cobertura.xml
@@ -137,7 +137,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: "10.x"
           dotnet-quality: "ga"
@@ -166,3 +166,22 @@ jobs:
 
       - name: Check .NET code formatting
         run: dotnet format --verify-no-changes --severity info --no-restore
+
+  gate:
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+    needs: ["quick-check", "lint-and-test", "lint-full"]
+    if: ${{ !cancelled() && !github.event.pull_request.draft }}
+
+    steps:
+      - name: Require every job to pass
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "Job results: $RESULTS"
+          for result in $RESULTS; do
+            if [ "$result" != "success" ]; then
+              echo "::error::A required job ended with '$result'."
+              exit 1
+            fi
+          done

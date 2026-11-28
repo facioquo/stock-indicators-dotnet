@@ -15,6 +15,7 @@ bld/
 [Oo]bj/
 [Ll]og/
 dist/
+build/
 
 ##
 ## TESTING
@@ -48,6 +49,18 @@ _ReSharper*/
 *.sln.docstates
 *.userprefs
 
+# Agent configuration (harness-specific)
+.claude/*
+!.claude/settings.json
+CLAUDE.local.md
+.cline/
+.clinerules/
+.codex/
+.copilot/
+.cursor/
+.github/skills/
+.github/prompts/
+
 # .NET project sensitive
 
 **/Properties/launchSettings.json
@@ -62,8 +75,16 @@ _ReSharper*/
 .config/
 .angular/
 .codacy/
+.impeccable/
 .ruby-lsp/
+.tmp/
 .vitepress/cache/
 .vitepress/dist/
+.wrangler/
 _site/
 vendor/
+coverage/
+nul
+
+# local secrets
+.env
