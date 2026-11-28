@@ -55,14 +55,14 @@ jobs:
           regex: false
 
       - name: Build site (production)
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/v2'
         env:
           JEKYLL_ENV: production
           RUBYOPT: "-r ${{ github.workspace }}/docs/_plugins/liquid_ruby32_patch.rb"
         run: bundle exec jekyll build
 
       - name: Build site (preview)
-        if: github.ref != 'refs/heads/main'
+        if: github.ref != 'refs/heads/v2'
         env:
           JEKYLL_ENV: preview
           RUBYOPT: "-r ${{ github.workspace }}/docs/_plugins/liquid_ruby32_patch.rb"
