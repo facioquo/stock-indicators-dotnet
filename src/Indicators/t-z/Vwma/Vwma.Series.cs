@@ -15,22 +15,35 @@ public static partial class Vwma
     public static IReadOnlyList<VwmaResult> ToVwma(
         this IReadOnlyList<IBar> bars,
         int lookbackPeriods)
-        => bars
-            .ToBarDList()
-            .CalcVwma(lookbackPeriods);
+        => bars.CalcVwma(lookbackPeriods, CandlePart.Close);
+
+    /// <summary>
+    /// Calculates VWMA using the selected component of each bar.
+    /// </summary>
+    /// <param name="bars">Aggregate OHLCV price bars, time sorted.</param>
+    /// <param name="lookbackPeriods">Quantity of periods in lookback window.</param>
+    /// <param name="candlePart">Bar component to weight by volume. Default is Close.</param>
+    /// <returns>A list of VwmaResult containing the VWMA values.</returns>
+    public static IReadOnlyList<VwmaResult> ToVwma(
+        this IReadOnlyList<IBar> bars,
+        int lookbackPeriods,
+        CandlePart candlePart)
+        => bars.CalcVwma(lookbackPeriods, candlePart);
 
     /// <summary>
     /// Calculates the VWMA for a series of bars.
     /// </summary>
     /// <param name="bars">Source list of bars.</param>
     /// <param name="lookbackPeriods">Quantity of periods in lookback window.</param>
+    /// <param name="candlePart">Bar component to weight by volume.</param>
     /// <returns>A list of VwmaResult containing the VWMA values.</returns>
     private static List<VwmaResult> CalcVwma(
-        this List<BarD> bars,
-        int lookbackPeriods)
+        this IReadOnlyList<IBar> bars,
+        int lookbackPeriods,
+        CandlePart candlePart)
     {
-        // check parameter arguments
-        Validate(lookbackPeriods);
+        ArgumentNullException.ThrowIfNull(bars);
+        Validate(lookbackPeriods, candlePart);
 
         // initialize
         int length = bars.Count;
@@ -39,7 +52,7 @@ public static partial class Vwma
         // roll through source values
         for (int i = 0; i < length; i++)
         {
-            BarD q = bars[i];
+            IBar q = bars[i];
 
             double vwma;
 
@@ -49,9 +62,9 @@ public static partial class Vwma
                 double sumVl = 0;
                 for (int p = i + 1 - lookbackPeriods; p <= i; p++)
                 {
-                    BarD d = bars[p];
-                    double c = d.Close;
-                    double v = d.Volume;
+                    IBar d = bars[p];
+                    double c = d.ToBarPartValue(candlePart);
+                    double v = (double)d.Volume;
 
                     sumCl += c * v;
                     sumVl += v;

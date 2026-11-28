@@ -21,10 +21,13 @@ public class VwmaCatalogTests : TestBase
         listing.MethodName.Should().Be("ToVwma");
 
         listing.Parameters.Should().NotBeNull();
-        listing.Parameters.Should().HaveCount(1);
+        listing.Parameters.Should().HaveCount(2);
 
         IndicatorParam lookbackPeriodsParam = listing.Parameters.SingleOrDefault(static p => p.ParameterName == "lookbackPeriods");
         lookbackPeriodsParam.Should().NotBeNull();
+
+        listing.Parameters.Single(p => p.ParameterName == "candlePart")
+            .EnumOptions.Should().NotContainKey((int)CandlePart.Volume);
 
         listing.Results.Should().NotBeNull();
         listing.Results.Should().HaveCount(1);

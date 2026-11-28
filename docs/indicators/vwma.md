@@ -13,6 +13,10 @@ Volume Weighted Moving Average is the volume adjusted average price over a lookb
 // C# usage syntax
 IReadOnlyList<VwmaResult> results =
   bars.ToVwma(lookbackPeriods);
+
+// select a different bar component
+IReadOnlyList<VwmaResult> hl2Results =
+  bars.ToVwma(lookbackPeriods, CandlePart.HL2);
 ```
 
 ## Parameters
@@ -20,6 +24,7 @@ IReadOnlyList<VwmaResult> results =
 | param | description |
 | ----- | ----------- |
 | `lookbackPeriods`<br>_`int`_ | Number of periods (`N`) in the moving average.  Must be greater than 0. |
+| `candlePart`<br>_`CandlePart`_ | Optional bar component to weight by volume.  Default is `CandlePart.Close`; for example, `CandlePart.HL2` uses `(High+Low)/2`.  Volume supplies the weight and cannot be selected as the price. |
 
 ### Historical price bars requirements
 
@@ -70,6 +75,8 @@ This indicator must be generated from `bars` and **cannot** be generated from re
 See [Chaining indicators](/guide/chaining) for more.
 
 ## Streaming
+
+The `candlePart` selection is available in all three styles.  Existing overloads continue to use `Close`.  For another component, use `new VwmaList(lookbackPeriods, CandlePart.HL2)` or `barHub.ToVwmaHub(lookbackPeriods, CandlePart.HL2)`.  When calling `VwmaList.Add(timestamp, price, volume)` directly, `price` is already selected and is not transformed again.
 
 Use the buffer-style `List<T>` when you need incremental calculations without a hub:
 

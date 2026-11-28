@@ -8,11 +8,15 @@ public class VwmaHub
 {
     internal VwmaHub(
         IBarProvider<IBar> provider,
-        int lookbackPeriods) : base(provider)
+        int lookbackPeriods,
+        CandlePart candlePart) : base(provider)
     {
-        Vwma.Validate(lookbackPeriods);
+        Vwma.Validate(lookbackPeriods, candlePart);
         LookbackPeriods = lookbackPeriods;
-        Name = $"VWMA({lookbackPeriods})";
+        CandlePart = candlePart;
+        Name = candlePart == CandlePart.Close
+            ? $"VWMA({lookbackPeriods})"
+            : $"VWMA({lookbackPeriods},{candlePart})";
 
         // Validate cache size for warmup requirements
         ValidateCacheSize(lookbackPeriods, Name);
@@ -22,6 +26,9 @@ public class VwmaHub
 
     /// <inheritdoc/>
     public int LookbackPeriods { get; init; }
+
+    /// <summary>Gets the price component weighted by volume.</summary>
+    public CandlePart CandlePart { get; }
 
 
     /// <inheritdoc />
@@ -47,7 +54,7 @@ public class VwmaHub
             for (int p = index - LookbackPeriods + 1; p <= index; p++)
             {
                 IBar bar = ProviderCache[p];
-                double price = (double)bar.Close;
+                double price = bar.ToBarPartValue(CandlePart);
                 double volume = (double)bar.Volume;
 
                 priceVolumeSum += price * volume;
@@ -80,6 +87,22 @@ public static partial class Vwma
         int lookbackPeriods)
     {
         ArgumentNullException.ThrowIfNull(barProvider);
-        return new(barProvider, lookbackPeriods);
+        return new(barProvider, lookbackPeriods, CandlePart.Close);
+    }
+
+    /// <summary>
+    /// Converts the provider to a VWMA hub using the selected bar component.
+    /// </summary>
+    /// <param name="barProvider">Bar provider.</param>
+    /// <param name="lookbackPeriods">Quantity of periods in lookback window.</param>
+    /// <param name="candlePart">Bar component to weight by volume. Default is Close.</param>
+    /// <returns>A VWMA hub.</returns>
+    public static VwmaHub ToVwmaHub(
+        this IBarProvider<IBar> barProvider,
+        int lookbackPeriods,
+        CandlePart candlePart)
+    {
+        ArgumentNullException.ThrowIfNull(barProvider);
+        return new(barProvider, lookbackPeriods, candlePart);
     }
 }

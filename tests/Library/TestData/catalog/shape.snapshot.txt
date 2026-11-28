@@ -2534,6 +2534,7 @@ Results:
 Method: ToVwma
 Parameters:
   - lookbackPeriods : Int32 : required
+  - candlePart : enum : optional
 Results:
   - Vwma : Default : reusable=true : pane=Price
 
@@ -2541,6 +2542,7 @@ Results:
 Method: ToVwmaList
 Parameters:
   - lookbackPeriods : Int32 : required
+  - candlePart : enum : optional
 Results:
   - Vwma : Default : reusable=true : pane=Price
 
@@ -2548,6 +2550,7 @@ Results:
 Method: ToVwmaHub
 Parameters:
   - lookbackPeriods : Int32 : required
+  - candlePart : enum : optional
 Results:
   - Vwma : Default : reusable=true : pane=Price
 

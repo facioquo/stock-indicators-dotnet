@@ -172,19 +172,26 @@ internal class CatalogListingBuilder
     /// <param name="description">Optional description of the parameter.</param>
     /// <param name="isRequired">Whether the parameter is required.</param>
     /// <param name="defaultValue">Optional default value for the parameter.</param>
+    /// <param name="excluded">Enum values unavailable for this indicator.</param>
     /// <returns>Builder instance for method chaining.</returns>
     internal CatalogListingBuilder AddEnumParameter<T>(
         string parameterName,
         string displayName,
         string? description = null,
         bool isRequired = false,
-        T? defaultValue = default)
+        T? defaultValue = default,
+        T? excluded = null)
         where T : struct, Enum
     {
         // Create enum options dictionary
         Dictionary<int, string> enumOptions = [];
         foreach (T enumValue in Enum.GetValues<T>())
         {
+            if (enumValue.Equals(excluded))
+            {
+                continue;
+            }
+
             enumOptions.Add(Convert.ToInt32(enumValue, CultureInfo.InvariantCulture), enumValue.ToString());
         }
 

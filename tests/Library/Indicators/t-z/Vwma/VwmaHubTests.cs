@@ -198,4 +198,48 @@ public class VwmaHubTests : StreamHubTestBase, ITestBarObserver, ITestChainProvi
         // Results with sufficient data but zero volume should have null VWMA
         sut.Skip(lookbackPeriods - 1).All(static r => r.Vwma == null).Should().BeTrue();
     }
+
+    [TestMethod]
+    [DataRow(CandlePart.Open)]
+    [DataRow(CandlePart.High)]
+    [DataRow(CandlePart.Low)]
+    [DataRow(CandlePart.HLC3)]
+    [DataRow(CandlePart.HL2)]
+    [DataRow(CandlePart.OC2)]
+    [DataRow(CandlePart.OHL3)]
+    [DataRow(CandlePart.OHLC4)]
+    public void ToVwmaHub_SelectedPartWithReplay_MatchesSeriesExactly(CandlePart candlePart)
+    {
+        BarHub hub = new();
+        hub.Add(Bars);
+        VwmaHub observer = hub.ToVwmaHub(14, candlePart);
+        observer.Name.Should().Be($"VWMA(14,{candlePart})");
+        observer.Results.IsExactly(Bars.ToVwma(14, candlePart));
+
+        hub.RemoveAt(495);
+        observer.Results.IsExactly(RevisedBars.ToVwma(14, candlePart));
+        hub.Add(Bars[495]);
+        observer.Results.IsExactly(Bars.ToVwma(14, candlePart));
+
+        observer.Unsubscribe();
+        hub.EndTransmission();
+    }
+
+    [TestMethod]
+    [DataRow(CandlePart.Open)]
+    [DataRow(CandlePart.HLC3)]
+    public void ToVwmaHub_SelectedPartWithPruning_MatchesSeriesExactly(CandlePart candlePart)
+    {
+        IReadOnlyList<Bar> bars = Bars.Take(100).ToList();
+        BarHub hub = new(50);
+        VwmaHub observer = hub.ToVwmaHub(14, candlePart);
+        hub.Add(bars);
+        observer.Results.IsExactly(bars.ToVwma(14, candlePart).TakeLast(50).ToList());
+        observer.Unsubscribe();
+        hub.EndTransmission();
+    }
+    [TestMethod]
+    public void VolumeAsPrice_Throws()
+        => FluentActions.Invoking(() => new BarHub().ToVwmaHub(14, CandlePart.Volume))
+            .Should().ThrowExactly<ArgumentOutOfRangeException>().WithParameterName("candlePart");
 }

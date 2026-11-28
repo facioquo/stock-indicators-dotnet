@@ -274,12 +274,12 @@ public class CatalogBindingTests : TestBase
                 // no-way-to-omit case is already reported above, so this speaks only
                 // where a shorter overload genuinely exists.
                 //
-                // This assumes a shorter overload never merely re-applies the declared
-                // default. That holds across the catalog today — ToPrs drops PrsPercent
-                // and ToVwap derives a start from the data — and reflection cannot tell
-                // the difference, so an overload that did forward the same constant
-                // would have to be marked required or drop its declared default.
-                if (!param.IsRequired && param.DefaultValue is not null && !defaulted && shorter)
+                // VWMA's shorter overload forwards Close. The VWMA tests verify
+                // the omitted and explicit price produce the same results.
+                bool forwardsClose = listing.Uiid == "VWMA"
+                    && param.ParameterName == "candlePart"
+                    && CatalogReflection.DefaultsAgree(CandlePart.Close, param.DefaultValue);
+                if (!param.IsRequired && param.DefaultValue is not null && !defaulted && shorter && !forwardsClose)
                 {
                     violations.Add(
                         $"{identity}: '{param.ParameterName}' is marked optional with default "
@@ -364,6 +364,11 @@ public class CatalogBindingTests : TestBase
                     .ToDictionary(
                         static v => Convert.ToInt32(v, CultureInfo.InvariantCulture),
                         static v => v.ToString()!);
+
+                if (listing.Uiid == "VWMA" && param.ParameterName == "candlePart")
+                {
+                    expected.Remove((int)CandlePart.Volume);
+                }
 
                 if (param.DataType != "enum"
                  || param.EnumOptions?.OrderBy(static kv => kv.Key)
