@@ -46,7 +46,7 @@ function installDevApiProxy(): void {
 export default {
   extends: DefaultTheme,
   Layout: () => {
-    const { frontmatter } = useData()
+    const { frontmatter, page } = useData()
 
     // A `layout: home` page (other than the true homepage) has no markdown H1
     // for the plugin's own markdown-it hook to inject after, so its Copy-page
@@ -61,10 +61,18 @@ export default {
         ? () => h(NuGetBadge, { class: 'nuget-badge-hero' })
         : undefined
 
+    // The style switch only changes indicator pages, so it is offered only there.
+    const isIndicatorPage = page.value.relativePath.startsWith('indicators/') && frontmatter.value.layout !== 'home'
+    const styleSwitchSlots = isIndicatorPage
+      ? {
+          'nav-bar-content-after': () => h(StyleSwitch, { placement: 'nav' }),
+          'nav-screen-content-after': () => h(StyleSwitch, { placement: 'screen' })
+        }
+      : {}
+
     return h(DefaultTheme.Layout, null, {
       'nav-bar-title-after': () => h('span', { class: 'nav-title-below' }, 'for .NET'),
-      'nav-bar-content-after': () => h(StyleSwitch, { placement: 'nav' }),
-      'nav-screen-content-after': () => h(StyleSwitch, { placement: 'screen' }),
+      ...styleSwitchSlots,
       ...(heroInfoAfter ? { 'home-hero-info-after': heroInfoAfter } : {})
     })
   },
