@@ -121,7 +121,7 @@ Add `[.RemoveWarmupPeriods()](/utilities/results#remove-warmup-periods)` before 
 
 Shared text must hold for every style. When styles differ, move the sentence into each container that it is true for (`pvo.md`: Series and Buffer take bars only, while the hub accepts any chain provider). When no style chains in either direction, write the whole section as shared text with no containers: "This indicator is not chain-enabled and must be generated from `bars`.  It **cannot** be used for further processing by other chain-enabled indicators." (`donchian.md`), or the bar-only sentence plus "Results **cannot** be further chained with additional transforms." (`keltner.md`, whose result is `ISeries`). A result based on `IBar` chains in every style (`renko.md`, `heikin-ashi.md`).
 
-Follow `ema.md` for the exact layout, and `adl.md` for a bar-only indicator. Keep `<a id="streaming"></a>` just before the usage containers so old `#streaming` links still land on the examples.
+Follow `ema.md` for the exact layout, and `adl.md` for a bar-only indicator. Keep `<a id="streaming"></a>` just before the usage containers so old `#streaming` links still land on the usage section, which shows the reader's saved style.
 
 ## Secondary analysis pages
 

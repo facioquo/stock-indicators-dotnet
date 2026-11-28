@@ -29,7 +29,7 @@ IReadOnlyList<SmaAnalysisResult> results =
 :::
 
 ::: buffer
-Create a buffer list and add each bar as it arrives:
+Create a buffer list and add each value as it arrives:
 
 ```csharp
 SmaAnalysisList smaAnalysisList = new(lookbackPeriods);

@@ -113,7 +113,7 @@ PairMathHub spread = barHub
 
 A result is added once both providers hold the same timestamp. A timestamp that only one provider holds produces no result, where the Series method throws. Late, revised, or removed values on either side are recalculated like any other correction.
 
-Two-series stream hubs:
+Two-series stream hubs (choose Stream on each page for its example):
 
 - [IndyMath](/indicators/indy-math) two-series methods, such as `.Minus(otherSource)`
 - [Beta coefficient (β)](/indicators/beta)

@@ -92,11 +92,14 @@ test.describe('Markdown normalization', () => {
   test('unwraps indicator-style containers under a label', () => {
     const input = [
       '::: series', '```csharp', 'bars.ToEma(20);', '```', ':::', '',
-      '::: buffer', 'Intro', '', '::: warning', 'b', ':::', ':::', 'after',
+      '::: buffer', 'Intro', '', '::: warning', 'b', ':::', ':::', '', '::: warning', 'shared', ':::',
+      '', '## Next', '::: stream', '- s', '  :::', '## Last',
     ].join('\n')
     expect(renderContainers(input)).toBe([
       '**Series (batch) style:**', '', '```csharp', 'bars.ToEma(20);', '```', '',
-      '**Buffer list style:**', '', 'Intro', '', '> [!WARNING]', '> b', 'after',
+      '**Buffer list style:**', '', 'Intro', '', '> [!WARNING]', '> b', '',
+      '**All styles:**', '', '> [!WARNING]', '> shared',
+      '', '## Next', '**Stream hub style:**', '', '- s', '## Last',
     ].join('\n'))
   })
 
@@ -267,7 +270,7 @@ test.describe('Build output', () => {
   test('Markdown outputs contain no VitePress-only syntax', () => {
     for (const file of [...pageMarkdown(), 'llms.txt', 'llms-full.txt']) {
       const content = prose(read(file))
-      expect(content, file).not.toMatch(/^:::/m)
+      expect(content, file).not.toMatch(/^\s*:::/m)
       expect(content, file).not.toMatch(/\{\{\s*\$frontmatter/)
       expect(content, file).not.toMatch(/^#{1,6}\s.*\{#[\w-]+\}\s*$/m)
       expect(read(file), file).not.toContain('[!code ')

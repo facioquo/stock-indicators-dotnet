@@ -135,21 +135,30 @@ export function stripVitePressSyntax(content: string): string {
  * Rewrites VitePress `::: type Title` containers as GitHub-style alert
  * blockquotes (`details` becomes a plain titled blockquote). Nested
  * containers become nested blockquotes. Indicator-style containers
- * (`::: series`, `::: buffer`, `::: stream`) are unwrapped under a bold label.
+ * (`::: series`, `::: buffer`, `::: stream`) are unwrapped under a bold label,
+ * and shared text after the last one gets an "All styles" label, so it is not
+ * read as part of that style. Markers may be indented up to three spaces,
+ * as the llms plugin indents a closer that directly follows a list.
  */
 export function renderContainers(content: string): string {
   const out: string[] = []
   const open: boolean[] = [] // per open container: true when it is a quote
   let fence: string | undefined
   let depth = 0
+  let afterStyle = false // a style container just closed; shared text may follow
 
   for (const line of content.split('\n')) {
     const quote = '> '.repeat(depth)
     const marker = line.match(FENCE)?.[1]
+    if (afterStyle && line.trim()) {
+      afterStyle = false
+      const nextStyle = isIndicatorStyle(line.match(/^ {0,3}:::\s*(\w+)/)?.[1].toLowerCase())
+      if (!nextStyle && !/^#{1,6}\s/.test(line)) out.push('**All styles:**', '')
+    }
     if (marker && (!fence || marker.startsWith(fence))) {
       fence = fence ? undefined : marker
     } else if (!fence) {
-      const opener = line.match(/^:::\s*(\w+)\s*(.*)$/)
+      const opener = line.match(/^ {0,3}:::\s*(\w+)\s*(.*)$/)
       const name = opener?.[1].toLowerCase()
       const style = isIndicatorStyle(name) ? STYLE_LABELS[name] : undefined
       if (style) {
@@ -167,11 +176,11 @@ export function renderContainers(content: string): string {
         depth++
         continue
       }
-      if (/^:::\s*$/.test(line) && open.length > 0) {
+      if (/^ {0,3}:::\s*$/.test(line) && open.length > 0) {
         if (open.pop()) {
           if (out.at(-1) === quote.trimEnd()) out.pop()
           depth--
-        }
+        } else afterStyle = depth === 0
         continue
       }
     }
