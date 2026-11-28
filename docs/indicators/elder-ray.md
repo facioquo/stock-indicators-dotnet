@@ -144,3 +144,25 @@ var results = bars
 
 See [Chaining indicators](/guide/chaining) for more.
 :::
+
+::: buffer
+Add each new result to another chain-enabled buffer list to process `(BullPower+BearPower)` further.
+
+```csharp
+// example
+ElderRayList elderRayList = new(..);
+EmaList emaList = new(..);
+
+void OnBarReceived(IBar bar)
+{
+    elderRayList.Add(bar);
+    emaList.Add(elderRayList[^1]);
+}
+```
+
+See [Chaining buffer lists](/guide/styles/buffer#chaining-indicators) for more.
+:::
+
+::: stream
+Stream hub results **cannot** be further chained with additional hubs.
+:::

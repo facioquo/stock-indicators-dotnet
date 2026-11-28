@@ -32,15 +32,11 @@ VwmaList vwmaList = new(lookbackPeriods);
 // call from your WebSocket or SSE message handler
 void OnBarReceived(IBar bar) => vwmaList.Add(bar);
 
+// or add a price and volume without a bar
+vwmaList.Add(DateTime.Now, price: 100.50, volume: 1000);
+
 // the list itself holds the results; fills as the handler runs
 IReadOnlyList<VwmaResult> results = vwmaList;
-```
-
-```csharp
-VwmaList vwmaList = new(lookbackPeriods);
-
-// Add individual price and volume data
-vwmaList.Add(DateTime.Now, price: 100.50, volume: 1000);
 ```
 
 **Note:** VWMA requires both price and volume data, so it only supports methods that accept `IBar` or direct price/volume parameters.

@@ -30,8 +30,15 @@ function initialize(): void {
   if (initialized) return
   initialized = true
 
-  const stamped = document.documentElement.dataset.indicatorStyle
-  apply(isIndicatorStyle(stamped) ? stamped : INDICATOR_STYLE_DEFAULT)
+  // Storage, not the attribute stamped at page load: another tab may have
+  // changed the style before any switch mounted here to hear about it.
+  let saved: string | null | undefined
+  try {
+    saved = localStorage.getItem(INDICATOR_STYLE_KEY)
+  } catch {
+    saved = document.documentElement.dataset.indicatorStyle
+  }
+  apply(isIndicatorStyle(saved) ? saved : INDICATOR_STYLE_DEFAULT)
 
   // follow a change made in another open tab
   window.addEventListener('storage', (event) => {
