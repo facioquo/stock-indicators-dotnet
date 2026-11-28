@@ -62,8 +62,6 @@ void OnBarReceived(IBar bar) => barHub.Add(bar);
 IReadOnlyList<VwmaResult> results = observer.Results;
 ```
 
-For volume-weighted calculations, VWMA also supports direct price and volume input:
-
 See [Stream hubs](/guide/styles/stream) for the full usage guide.
 :::
 

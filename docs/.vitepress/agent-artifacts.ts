@@ -3,6 +3,7 @@ import { createHash } from 'crypto'
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'fs'
 import path from 'path'
 import { markdownPath, pageRoute } from './routes.ts'
+import { isIndicatorStyle, type IndicatorStyle } from './theme/indicator-style-keys.ts'
 
 // Post-processes the agent-facing output of vitepress-plugin-llms so the
 // Markdown it emits is portable (no VitePress-only syntax), self-describing
@@ -86,7 +87,7 @@ const ALERTS: Record<string, string> = {
 
 // Indicator-style containers (see style-containers.ts) are unwrapped under a
 // label, so an agent reads every style from the one page.
-const STYLE_LABELS: Record<string, string> = {
+const STYLE_LABELS: Record<IndicatorStyle, string> = {
   series: 'Series (batch) style:',
   buffer: 'Buffer list style:',
   stream: 'Stream hub style:',
@@ -149,7 +150,8 @@ export function renderContainers(content: string): string {
       fence = fence ? undefined : marker
     } else if (!fence) {
       const opener = line.match(/^:::\s*(\w+)\s*(.*)$/)
-      const style = opener && STYLE_LABELS[opener[1].toLowerCase()]
+      const name = opener?.[1].toLowerCase()
+      const style = isIndicatorStyle(name) ? STYLE_LABELS[name] : undefined
       if (style) {
         out.push(`${quote}**${style}**`, quote.trimEnd())
         open.push(false)

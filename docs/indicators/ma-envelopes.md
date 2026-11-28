@@ -155,6 +155,8 @@ See [Utilities and helpers](/utilities/) for more information.
 
 ## Chaining
 
+Results **cannot** be further chained with additional transforms.
+
 ::: series
 This indicator may be generated from any chain-enabled indicator or method.
 
@@ -164,8 +166,6 @@ var results = bars
     .Use(CandlePart.HLC3)
     .ToMaEnvelopes(..);
 ```
-
-Results **cannot** be further chained with additional transforms.
 
 See [Chaining indicators](/guide/chaining) for more.
 :::

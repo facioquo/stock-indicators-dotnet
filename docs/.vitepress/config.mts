@@ -5,7 +5,7 @@ import llmstxt, { copyOrDownloadAsMarkdownButtons } from 'vitepress-plugin-llms'
 import { AGENT_DETAILS, identityBlock, readBuildInfo, SITE_URL, writeAgentArtifacts } from './agent-artifacts.ts'
 import { pageRoute } from './routes.ts'
 import { styleContainers } from './style-containers.ts'
-import { INDICATOR_STYLE_DEFAULT, INDICATOR_STYLE_KEY } from './theme/indicator-style-keys.ts'
+import { INDICATOR_STYLE_DEFAULT, INDICATOR_STYLE_KEY, INDICATOR_STYLES } from './theme/indicator-style-keys.ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -169,7 +169,7 @@ export default defineConfig({
         let style
         try { style = localStorage.getItem('${INDICATOR_STYLE_KEY}') } catch {}
         document.documentElement.dataset.indicatorStyle =
-          style === 'buffer' || style === 'stream' ? style : '${INDICATOR_STYLE_DEFAULT}'
+          ${JSON.stringify(INDICATOR_STYLES)}.includes(style) ? style : '${INDICATOR_STYLE_DEFAULT}'
       })()`],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:image', content: `${SITE_URL}/assets/social-banner.png` }],

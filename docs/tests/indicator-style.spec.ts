@@ -80,9 +80,10 @@ test.describe('indicator style selection', () => {
   })
 })
 
-test('indicator pages keep headings outside style containers', () => {
+test('indicator pages keep style containers balanced and headings outside them', () => {
   // Headings inside a style container would make the outline, anchors, and
-  // search sections differ by style.
+  // search sections differ by style; an unbalanced container hides the rest
+  // of the page from readers of the other styles.
   const offenders: string[] = []
   for (const file of readdirSync(INDICATORS).filter((f) => f.endsWith('.md'))) {
     let depth = 0
@@ -90,11 +91,14 @@ test('indicator pages keep headings outside style containers', () => {
     for (const line of readFileSync(join(INDICATORS, file), 'utf8').split('\n')) {
       if (/^(`{3,}|~{3,})/.test(line)) fence = !fence
       if (fence) continue
-      if (/^:::\s*(series|buffer|stream)\s*$/.test(line)) depth = 1
-      else if (depth && /^:::\s*\S/.test(line)) depth++
+      if (/^:::\s*(series|buffer|stream)\s*$/.test(line)) {
+        if (depth) offenders.push(`${file}: nested style container: ${line}`)
+        depth = 1
+      } else if (depth && /^:::\s*\S/.test(line)) depth++
       else if (depth && /^:::\s*$/.test(line)) depth--
-      else if (depth && /^#{1,6}\s/.test(line)) offenders.push(`${file}: ${line}`)
+      else if (depth && /^#{1,6}\s/.test(line)) offenders.push(`${file}: heading in style container: ${line}`)
     }
+    if (depth) offenders.push(`${file}: unclosed style container`)
   }
   expect(offenders).toEqual([])
 })

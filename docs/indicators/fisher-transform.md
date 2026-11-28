@@ -142,7 +142,7 @@ var results = bars
     .ToFisherTransform(..);
 ```
 
-Results can be further processed on `Alma` with additional chain-enabled indicators.
+Results can be further processed on `Fisher` with additional chain-enabled indicators.
 
 ```csharp
 // example
@@ -169,7 +169,7 @@ void OnBarReceived(IBar bar)
 }
 ```
 
-Add each new result to another chain-enabled buffer list to process `Alma` further.
+Add each new result to another chain-enabled buffer list to process `Fisher` further.
 
 ```csharp
 // example
@@ -196,7 +196,7 @@ FisherTransformHub observer = barHub
     .ToFisherTransformHub(..);
 ```
 
-Subscribe other chain-enabled hubs to it to process `Alma` further.
+Subscribe other chain-enabled hubs to it to process `Fisher` further.
 
 ```csharp
 // example

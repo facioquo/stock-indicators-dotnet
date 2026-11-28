@@ -139,6 +139,39 @@ See [Utilities and helpers](/utilities/) for more information.
 
 ## Chaining
 
-This indicator is not chain-enabled and must be generated from `bars`.  It **cannot** be used for further processing by other chain-enabled indicators.
+This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.
+
+::: series
+Results can be further processed on `AtrStop` with additional chain-enabled indicators.
+
+```csharp
+// example
+var results = bars
+    .ToAtrStop(..)
+    .ToRsi(..);
+```
 
 See [Chaining indicators](/guide/chaining) for more.
+:::
+
+::: buffer
+Add each new result to another chain-enabled buffer list to process `AtrStop` further.
+
+```csharp
+// example
+AtrStopList atrStopList = new(..);
+RsiList rsiList = new(..);
+
+void OnBarReceived(IBar bar)
+{
+    atrStopList.Add(bar);
+    rsiList.Add(atrStopList[^1]);
+}
+```
+
+See [Chaining buffer lists](/guide/styles/buffer#chaining-indicators) for more.
+:::
+
+::: stream
+Stream hub results **cannot** be further chained with additional hubs.
+:::

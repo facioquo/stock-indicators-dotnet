@@ -54,8 +54,6 @@ void OnBarReceived(IBar bar) => barHub.Add(bar);
 IReadOnlyList<CmoResult> results = observer.Results;
 ```
 
-See the [guide](/guide/) for more information.
-
 See [Stream hubs](/guide/styles/stream) for the full usage guide.
 :::
 
