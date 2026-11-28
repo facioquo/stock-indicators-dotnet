@@ -102,6 +102,17 @@ test.describe('indicator style selection', () => {
     await expect(inPageSwitch(page).getByRole('radio', { name: 'Buffer' })).toBeChecked()
   })
 
+  test('reads the saved style when a switch first mounts after navigation', async ({ page }) => {
+    await page.goto('/guide/styles/buffer')
+    await expect(page.locator('.VPContent')).toBeVisible()
+    // another tab saves a style while no switch is mounted to hear it
+    await page.evaluate((key) => localStorage.setItem(key, 'stream'), KEY)
+
+    await page.locator('.vp-doc a[href="/indicators/beta"]').click()
+    await expect(page).toHaveURL(/\/indicators\//)
+    await expect.poll(() => visibleStyles(page)).toEqual(['stream'])
+  })
+
   test('shows Series without JavaScript', async ({ browser }) => {
     const context = await browser.newContext({ javaScriptEnabled: false })
     const page = await context.newPage()

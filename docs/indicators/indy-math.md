@@ -69,7 +69,7 @@ IReadOnlyList<MathResult> results = observer.Results;
 
 Fixed-operand math uses one hub type for every operation, `ScalarMathHub`, such as `barHub.Plus(1)`.
 
-Two-series stream hubs take a second chain provider, such as `.Minus(otherSource)`, built on `PairMathHub`.  A result is added once both providers hold the same timestamp.  A timestamp that only one provider holds produces no result, where the Series method throws.  A value that arrives late, or is revised or removed, on either side is handled by the usual rebuild, and each side stages up to the hub's cache size.  This streams the MACD composite from the example above:
+Two-series stream hubs take a second chain provider, such as `.Minus(otherSource)`, built on `PairMathHub`.  A result is added once both providers hold the same timestamp.  A timestamp that only one provider holds produces no result, where the Series method throws.  A value that arrives late, or is revised or removed, on either side is handled by the usual rebuild, and each side stages up to the hub's cache size.  This streams a MACD composite:
 
 ```csharp
 BarHub barHub = new();
