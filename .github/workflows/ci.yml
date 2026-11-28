@@ -166,3 +166,22 @@ jobs:
 
       - name: Check .NET code formatting
         run: dotnet format --verify-no-changes --severity info --no-restore
+
+  gate:
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+    needs: ["quick-check", "lint-and-test", "lint-full"]
+    if: ${{ !cancelled() && !github.event.pull_request.draft }}
+
+    steps:
+      - name: Require every job to pass
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "Job results: $RESULTS"
+          for result in $RESULTS; do
+            if [ "$result" != "success" ]; then
+              echo "::error::A required job ended with '$result'."
+              exit 1
+            fi
+          done
