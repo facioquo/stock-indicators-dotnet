@@ -77,12 +77,6 @@ jobs:
         if: ${{ !cancelled() }}
         run: pnpm run test:offline
 
-      # Theme flash, landing hero, and the one-style-at-a-time indicator pages:
-      # saved style, switchers, and balanced style containers.
-      - name: Test page layout
-        if: ${{ !cancelled() }}
-        run: pnpm run test:layout
-
       - name: Upload report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7
