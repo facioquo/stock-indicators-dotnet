@@ -8,13 +8,54 @@ description: Created by Quong and Soudack, the Money Flow Index is a price-volum
 Created by Quong and Soudack, the [Money Flow Index](https://en.wikipedia.org/wiki/Money_flow_index) is a price-volume oscillator that shows buying and selling momentum. Values outside of the 80 / 20 thresholds are considered overbought / oversold.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/247 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="Mfi" withOverlay />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax
 IReadOnlyList<MfiResult> results =
   bars.ToMfi(lookbackPeriods);
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+MfiList mfiList = new(lookbackPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => mfiList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<MfiResult> results = mfiList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+MfiHub observer = barHub.ToMfiHub(lookbackPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<MfiResult> results = observer.Results;
+```
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -30,6 +71,8 @@ You must have at least `N+1` historical price bars to cover the warmup periods.
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<MfiResult>
 ```
@@ -38,6 +81,30 @@ IReadOnlyList<MfiResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The first `N` periods will have `null` MFI values since they cannot be calculated.
+:::
+
+::: buffer
+
+```csharp
+MfiList : IReadOnlyList<MfiResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first `N` periods will have `null` MFI values since they cannot be calculated.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<MfiResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first `N` periods will have `null` MFI values since they cannot be calculated.
+:::
 
 ### `MfiResult`
 
@@ -55,37 +122,11 @@ IReadOnlyList<MfiResult>
 
 See [Utilities and helpers](/utilities/) for more information.
 
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
-
-```csharp
-MfiList mfiList = new(lookbackPeriods);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => mfiList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<MfiResult> results = mfiList;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
-
-```csharp
-BarHub barHub = new();
-MfiHub observer = barHub.ToMfiHub(lookbackPeriods);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<MfiResult> results = observer.Results;
-```
-
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.
-
 ## Chaining
 
+This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.
+
+::: series
 Results can be further processed on `Mfi` with additional chain-enabled indicators.
 
 ```csharp
@@ -95,6 +136,36 @@ var results = bars
     .ToRsi(..);
 ```
 
-This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.
-
 See [Chaining indicators](/guide/chaining) for more.
+:::
+
+::: buffer
+Add each new result to another chain-enabled buffer list to process `Mfi` further.
+
+```csharp
+// example
+MfiList mfiList = new(..);
+RsiList rsiList = new(..);
+
+void OnBarReceived(IBar bar)
+{
+    mfiList.Add(bar);
+    rsiList.Add(mfiList[^1]);
+}
+```
+
+See [Chaining buffer lists](/guide/styles/buffer#chaining-indicators) for more.
+:::
+
+::: stream
+Subscribe other chain-enabled hubs to it to process `Mfi` further.
+
+```csharp
+// example
+RsiHub observer = barHub
+    .ToMfiHub(..)
+    .ToRsiHub(..);
+```
+
+See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
+:::

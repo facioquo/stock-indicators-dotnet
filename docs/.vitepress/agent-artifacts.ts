@@ -84,6 +84,14 @@ const ALERTS: Record<string, string> = {
   danger: 'CAUTION',
 }
 
+// Indicator-style containers (see style-containers.ts) are unwrapped under a
+// label, so an agent reads every style from the one page.
+const STYLE_LABELS: Record<string, string> = {
+  series: 'Series (batch) style:',
+  buffer: 'Buffer list style:',
+  stream: 'Stream hub style:',
+}
+
 // Fence markers, including fences quoted inside a rendered container.
 const FENCE = /^(?:\s*>)*\s*(`{3,}|~{3,})/
 
@@ -125,10 +133,12 @@ export function stripVitePressSyntax(content: string): string {
 /**
  * Rewrites VitePress `::: type Title` containers as GitHub-style alert
  * blockquotes (`details` becomes a plain titled blockquote). Nested
- * containers become nested blockquotes.
+ * containers become nested blockquotes. Indicator-style containers
+ * (`::: series`, `::: buffer`, `::: stream`) are unwrapped under a bold label.
  */
 export function renderContainers(content: string): string {
   const out: string[] = []
+  const open: boolean[] = [] // per open container: true when it is a quote
   let fence: string | undefined
   let depth = 0
 
@@ -138,19 +148,28 @@ export function renderContainers(content: string): string {
     if (marker && (!fence || marker.startsWith(fence))) {
       fence = fence ? undefined : marker
     } else if (!fence) {
-      const open = line.match(/^:::\s*(\w+)\s*(.*)$/)
-      if (open) {
-        const alert = ALERTS[open[1].toLowerCase()]
-        const title = open[2].replace(/\{[^}]*\}/g, '').trim() // drops `{no-title}`-style attributes
+      const opener = line.match(/^:::\s*(\w+)\s*(.*)$/)
+      const style = opener && STYLE_LABELS[opener[1].toLowerCase()]
+      if (style) {
+        out.push(`${quote}**${style}**`, quote.trimEnd())
+        open.push(false)
+        continue
+      }
+      if (opener) {
+        const alert = ALERTS[opener[1].toLowerCase()]
+        const title = opener[2].replace(/\{[^}]*\}/g, '').trim() // drops `{no-title}`-style attributes
         const inner = `${quote}>`
         if (alert) out.push(`${inner} [!${alert}]`)
         if (title) out.push(`${inner} **${title}**`, inner)
+        open.push(true)
         depth++
         continue
       }
-      if (/^:::\s*$/.test(line) && depth > 0) {
-        if (out.at(-1) === quote.trimEnd()) out.pop()
-        depth--
+      if (/^:::\s*$/.test(line) && open.length > 0) {
+        if (open.pop()) {
+          if (out.at(-1) === quote.trimEnd()) out.pop()
+          depth--
+        }
         continue
       }
     }

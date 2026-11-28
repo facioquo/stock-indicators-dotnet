@@ -8,13 +8,54 @@ description: Created by Bill Williams, the Awesome Oscillator (AO), also known a
 Created by Bill Williams, the Awesome Oscillator (aka Super AO) is a measure of the gap between a fast and slow period modified moving average.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/282 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="Awesome" withOverlay />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax
 IReadOnlyList<AwesomeResult> results =
   bars.ToAwesome(fastPeriods, slowPeriods);
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+AwesomeList awesomeList = new(fastPeriods, slowPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => awesomeList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<AwesomeResult> results = awesomeList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+AwesomeHub observer = barHub.ToAwesomeHub(fastPeriods, slowPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<AwesomeResult> results = observer.Results;
+```
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -31,6 +72,8 @@ You must have at least `S` periods of `bars` to cover the warmup periods.
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<AwesomeResult>
 ```
@@ -39,6 +82,30 @@ IReadOnlyList<AwesomeResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The first period `S-1` periods will have `null` values since there's not enough data to calculate.
+:::
+
+::: buffer
+
+```csharp
+AwesomeList : IReadOnlyList<AwesomeResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first period `S-1` periods will have `null` values since there's not enough data to calculate.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<AwesomeResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first period `S-1` periods will have `null` values since there's not enough data to calculate.
+:::
 
 ### `AwesomeResult`
 
@@ -59,6 +126,7 @@ See [Utilities and helpers](/utilities/) for more information.
 
 ## Chaining
 
+::: series
 This indicator may be generated from any chain-enabled indicator or method.
 
 ```csharp
@@ -78,32 +146,58 @@ var results = bars
 ```
 
 See [Chaining indicators](/guide/chaining) for more.
+:::
 
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
-
-```csharp
-AwesomeList awesomeList = new(fastPeriods, slowPeriods);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => awesomeList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<AwesomeResult> results = awesomeList;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
+::: buffer
+This indicator may be generated from results of another chain-enabled buffer list.  Add each new result to it yourself.
 
 ```csharp
-BarHub barHub = new();
-AwesomeHub observer = barHub.ToAwesomeHub(fastPeriods, slowPeriods);
+// example
+SmaList smaList = new(..);
+AwesomeList awesomeList = new(..);
 
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<AwesomeResult> results = observer.Results;
+void OnBarReceived(IBar bar)
+{
+    smaList.Add(bar);
+    awesomeList.Add(smaList[^1]);
+}
 ```
 
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.
+Add each new result to another chain-enabled buffer list to process `Oscillator` further.
+
+```csharp
+// example
+AwesomeList awesomeList = new(..);
+RsiList rsiList = new(..);
+
+void OnBarReceived(IBar bar)
+{
+    awesomeList.Add(bar);
+    rsiList.Add(awesomeList[^1]);
+}
+```
+
+See [Chaining buffer lists](/guide/styles/buffer#chaining-indicators) for more.
+:::
+
+::: stream
+This indicator may be subscribed to any chain-enabled hub.
+
+```csharp
+// example
+AwesomeHub observer = barHub
+    .ToBarPartHub(CandlePart.HL2)
+    .ToAwesomeHub(..);
+```
+
+Subscribe other chain-enabled hubs to it to process `Oscillator` further.
+
+```csharp
+// example
+RsiHub observer = barHub
+    .ToAwesomeHub(..)
+    .ToRsiHub(..);
+```
+
+See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
+:::

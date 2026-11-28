@@ -8,15 +8,56 @@ description: Created by Richard Donchian, Donchian Channels, also called Price C
 Created by Richard Donchian, [Donchian Channels](https://en.wikipedia.org/wiki/Donchian_channel), also called Price Channels, are price ranges derived from highest High and lowest Low values.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/257 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="Donchian" />
 
 <ChartKey indicator="Donchian" />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax
 IReadOnlyList<DonchianResult> results =
   bars.ToDonchian(lookbackPeriods);
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+DonchianList donchianList = new(lookbackPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => donchianList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<DonchianResult> results = donchianList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+DonchianHub observer = barHub.ToDonchianHub(lookbackPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<DonchianResult> results = observer.Results;
+```
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -32,6 +73,8 @@ You must have at least `N+1` periods of `bars` to cover the warmup periods.
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<DonchianResult>
 ```
@@ -40,6 +83,30 @@ IReadOnlyList<DonchianResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The first `N` periods will have `null` values since there's not enough data to calculate.
+:::
+
+::: buffer
+
+```csharp
+DonchianList : IReadOnlyList<DonchianResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first `N` periods will have `null` values since there's not enough data to calculate.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<DonchianResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first `N` periods will have `null` values since there's not enough data to calculate.
+:::
 
 ### `DonchianResult`
 
@@ -65,32 +132,3 @@ See [Utilities and helpers](/utilities/) for more information.
 This indicator is not chain-enabled and must be generated from `bars`.  It **cannot** be used for further processing by other chain-enabled indicators.
 
 See [Chaining indicators](/guide/chaining) for more.
-
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
-
-```csharp
-DonchianList donchianList = new(lookbackPeriods);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => donchianList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<DonchianResult> results = donchianList;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
-
-```csharp
-BarHub barHub = new();
-DonchianHub observer = barHub.ToDonchianHub(lookbackPeriods);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<DonchianResult> results = observer.Results;
-```
-
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.

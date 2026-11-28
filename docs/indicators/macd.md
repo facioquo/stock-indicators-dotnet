@@ -8,13 +8,54 @@ description: Created by Gerald Appel, MACD is a simple oscillator view of two co
 Created by Gerald Appel, [MACD](https://en.wikipedia.org/wiki/MACD) is a simple oscillator view of two converging / diverging exponential moving averages and their differences.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/248 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="Macd" withOverlay />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax (with Close price)
 IReadOnlyList<MacdResult> results =
   bars.ToMacd(fastPeriods, slowPeriods, signalPeriods);
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+MacdList macdList = new(fastPeriods, slowPeriods, signalPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => macdList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<MacdResult> results = macdList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+MacdHub observer = barHub.ToMacdHub(fastPeriods, slowPeriods, signalPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<MacdResult> results = observer.Results;
+```
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -32,6 +73,8 @@ You must have at least `2×(S+P)` or `S+P+100` worth of `bars`, whichever is mor
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<MacdResult>
 ```
@@ -40,6 +83,30 @@ IReadOnlyList<MacdResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The first `S-1` slow periods will have `null` values since there's not enough data to calculate.
+:::
+
+::: buffer
+
+```csharp
+MacdList : IReadOnlyList<MacdResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first `S-1` slow periods will have `null` values since there's not enough data to calculate.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<MacdResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first `S-1` slow periods will have `null` values since there's not enough data to calculate.
+:::
 
 ::: warning 🚩 ⚞ Convergence warning
 The first `S+P+250` periods will have decreasing magnitude, convergence-related precision errors that can be as high as ~5% deviation in indicator values for earlier periods.
@@ -67,6 +134,7 @@ See [Utilities and helpers](/utilities/) for more information.
 
 ## Chaining
 
+::: series
 This indicator may be generated from any chain-enabled indicator or method.
 
 ```csharp
@@ -86,32 +154,58 @@ var results = bars
 ```
 
 See [Chaining indicators](/guide/chaining) for more.
+:::
 
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
-
-```csharp
-MacdList macdList = new(fastPeriods, slowPeriods, signalPeriods);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => macdList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<MacdResult> results = macdList;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
+::: buffer
+This indicator may be generated from results of another chain-enabled buffer list.  Add each new result to it yourself.
 
 ```csharp
-BarHub barHub = new();
-MacdHub observer = barHub.ToMacdHub(fastPeriods, slowPeriods, signalPeriods);
+// example
+SmaList smaList = new(..);
+MacdList macdList = new(..);
 
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<MacdResult> results = observer.Results;
+void OnBarReceived(IBar bar)
+{
+    smaList.Add(bar);
+    macdList.Add(smaList[^1]);
+}
 ```
 
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.
+Add each new result to another chain-enabled buffer list to process `Macd` further.
+
+```csharp
+// example
+MacdList macdList = new(..);
+SlopeList slopeList = new(..);
+
+void OnBarReceived(IBar bar)
+{
+    macdList.Add(bar);
+    slopeList.Add(macdList[^1]);
+}
+```
+
+See [Chaining buffer lists](/guide/styles/buffer#chaining-indicators) for more.
+:::
+
+::: stream
+This indicator may be subscribed to any chain-enabled hub.
+
+```csharp
+// example
+MacdHub observer = barHub
+    .ToBarPartHub(CandlePart.HL2)
+    .ToMacdHub(..);
+```
+
+Subscribe other chain-enabled hubs to it to process `Macd` further.
+
+```csharp
+// example
+SlopeHub observer = barHub
+    .ToMacdHub(..)
+    .ToSlopeHub(..);
+```
+
+See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
+:::

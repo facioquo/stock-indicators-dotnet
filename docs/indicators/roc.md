@@ -8,13 +8,54 @@ description: Rate of Change, also known as Momentum Oscillator, is the percent c
 [Rate of Change](https://en.wikipedia.org/wiki/Momentum_(technical_analysis)), also known as Momentum Oscillator, is the percent change of price over a lookback window.  Momentum is the raw price change equivalent.  A [Rate of Change with Bands](/indicators/roc-wb) variant, created by Vitali Apirine, is also available.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/242 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="Roc" withOverlay />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax
 IReadOnlyList<RocResult> results =
   bars.ToRoc(lookbackPeriods);
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+RocList rocList = new(lookbackPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => rocList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<RocResult> results = rocList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+RocHub observer = barHub.ToRocHub(lookbackPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<RocResult> results = observer.Results;
+```
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -30,6 +71,8 @@ You must have at least `N+1` periods of `bars` to cover the warmup periods.
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<RocResult>
 ```
@@ -38,6 +81,30 @@ IReadOnlyList<RocResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The first `N` periods will have `null` values for ROC since there's not enough data to calculate.
+:::
+
+::: buffer
+
+```csharp
+RocList : IReadOnlyList<RocResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first `N` periods will have `null` values for ROC since there's not enough data to calculate.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<RocResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first `N` periods will have `null` values for ROC since there's not enough data to calculate.
+:::
 
 ### `RocResult`
 
@@ -58,6 +125,7 @@ See [Utilities and helpers](/utilities/) for more information.
 
 ## Chaining
 
+::: series
 This indicator may be generated from any chain-enabled indicator or method.
 
 ```csharp
@@ -77,32 +145,58 @@ var results = bars
 ```
 
 See [Chaining indicators](/guide/chaining) for more.
+:::
 
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
-
-```csharp
-RocList rocList = new(lookbackPeriods);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => rocList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<RocResult> results = rocList;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
+::: buffer
+This indicator may be generated from results of another chain-enabled buffer list.  Add each new result to it yourself.
 
 ```csharp
-BarHub barHub = new();
-RocHub observer = barHub.ToRocHub(lookbackPeriods);
+// example
+SmaList smaList = new(..);
+RocList rocList = new(..);
 
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<RocResult> results = observer.Results;
+void OnBarReceived(IBar bar)
+{
+    smaList.Add(bar);
+    rocList.Add(smaList[^1]);
+}
 ```
 
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.
+Add each new result to another chain-enabled buffer list to process `Roc` further.
+
+```csharp
+// example
+RocList rocList = new(..);
+EmaList emaList = new(..);
+
+void OnBarReceived(IBar bar)
+{
+    rocList.Add(bar);
+    emaList.Add(rocList[^1]);
+}
+```
+
+See [Chaining buffer lists](/guide/styles/buffer#chaining-indicators) for more.
+:::
+
+::: stream
+This indicator may be subscribed to any chain-enabled hub.
+
+```csharp
+// example
+RocHub observer = barHub
+    .ToBarPartHub(CandlePart.HL2)
+    .ToRocHub(..);
+```
+
+Subscribe other chain-enabled hubs to it to process `Roc` further.
+
+```csharp
+// example
+EmaHub observer = barHub
+    .ToRocHub(..)
+    .ToEmaHub(..);
+```
+
+See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
+:::

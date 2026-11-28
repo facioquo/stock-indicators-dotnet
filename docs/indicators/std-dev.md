@@ -8,18 +8,55 @@ description: Standard deviation represents the volatility of historical financia
 [Standard deviation](https://en.wikipedia.org/wiki/Standard_deviation) of price over a rolling lookback window.  Also known as Historical Volatility (HV), includes Z-score.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/239 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="StdDev" withOverlay />
 <StockIndicatorChart indicator="StdDevZScore" />
 
+<a id="streaming"></a>
+
+::: series
+
 ```csharp
-// C# usage syntax (series)
+// C# usage syntax
 IReadOnlyList<StdDevResult> results =
   bars.ToStdDev(lookbackPeriods);
+```
 
-// usage with streaming bars
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+StdDevList stdDevList = new(lookbackPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => stdDevList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<StdDevResult> results = stdDevList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
 BarHub barHub = new();
 StdDevHub observer = barHub.ToStdDevHub(lookbackPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<StdDevResult> results = observer.Results;
 ```
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -35,6 +72,8 @@ You must have at least `N` periods of `bars` to cover the warmup periods.
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<StdDevResult>
 ```
@@ -43,6 +82,30 @@ IReadOnlyList<StdDevResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The first `N-1` periods will have `null` values since there's not enough data to calculate.
+:::
+
+::: buffer
+
+```csharp
+StdDevList : IReadOnlyList<StdDevResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first `N-1` periods will have `null` values since there's not enough data to calculate.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<StdDevResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first `N-1` periods will have `null` values since there's not enough data to calculate.
+:::
 
 ### `StdDevResult`
 
@@ -64,6 +127,7 @@ See [Utilities and helpers](/utilities/) for more information.
 
 ## Chaining
 
+::: series
 This indicator may be generated from any chain-enabled indicator or method.
 
 ```csharp
@@ -83,32 +147,58 @@ var results = bars
 ```
 
 See [Chaining indicators](/guide/chaining) for more.
+:::
 
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
-
-```csharp
-StdDevList stdDevList = new(lookbackPeriods);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => stdDevList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<StdDevResult> results = stdDevList;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
+::: buffer
+This indicator may be generated from results of another chain-enabled buffer list.  Add each new result to it yourself.
 
 ```csharp
-BarHub barHub = new();
-StdDevHub observer = barHub.ToStdDevHub(lookbackPeriods);
+// example
+SmaList smaList = new(..);
+StdDevList stdDevList = new(..);
 
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<StdDevResult> results = observer.Results;
+void OnBarReceived(IBar bar)
+{
+    smaList.Add(bar);
+    stdDevList.Add(smaList[^1]);
+}
 ```
 
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.
+Add each new result to another chain-enabled buffer list to process `StdDev` further.
+
+```csharp
+// example
+StdDevList stdDevList = new(..);
+SlopeList slopeList = new(..);
+
+void OnBarReceived(IBar bar)
+{
+    stdDevList.Add(bar);
+    slopeList.Add(stdDevList[^1]);
+}
+```
+
+See [Chaining buffer lists](/guide/styles/buffer#chaining-indicators) for more.
+:::
+
+::: stream
+This indicator may be subscribed to any chain-enabled hub.
+
+```csharp
+// example
+StdDevHub observer = barHub
+    .ToBarPartHub(CandlePart.HL2)
+    .ToStdDevHub(..);
+```
+
+Subscribe other chain-enabled hubs to it to process `StdDev` further.
+
+```csharp
+// example
+SlopeHub observer = barHub
+    .ToStdDevHub(..)
+    .ToSlopeHub(..);
+```
+
+See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
+:::

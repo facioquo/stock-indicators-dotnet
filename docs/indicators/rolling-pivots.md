@@ -8,15 +8,56 @@ description: Rolling Pivot Points is a modern update to traditional fixed calend
 Created by Dave Skender, Rolling Pivot Points is a modern update to traditional fixed calendar window <a href="/indicators/pivot-points/">Pivot Points</a>.  It depicts support and resistance levels, based on a defined _rolling_ window and offset.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/274 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="RollingPivots" />
 
 <ChartKey indicator="RollingPivots" />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax
 IReadOnlyList<RollingPivotsResult> results =
   bars.ToRollingPivots(windowPeriods, offsetPeriods, pointType);
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+RollingPivotsList rollingPivotsList = new(windowPeriods, offsetPeriods, pointType);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => rollingPivotsList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<RollingPivotsResult> results = rollingPivotsList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+RollingPivotsHub observer = barHub.ToRollingPivotsHub(windowPeriods, offsetPeriods, pointType);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<RollingPivotsResult> results = observer.Results;
+```
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -48,6 +89,8 @@ You must have at least `W+F` periods of `bars` to cover the warmup periods.
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<RollingPivotsResult>
 ```
@@ -56,6 +99,30 @@ IReadOnlyList<RollingPivotsResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The first `W+F-1` periods will have `null` values since there's not enough data to calculate.
+:::
+
+::: buffer
+
+```csharp
+RollingPivotsList : IReadOnlyList<RollingPivotsResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first `W+F-1` periods will have `null` values since there's not enough data to calculate.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<RollingPivotsResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first `W+F-1` periods will have `null` values since there's not enough data to calculate.
+:::
 
 ::: warning 🖌️ Repaint warning
 Historical results are a function of the rolling window position and will shift as new bars are added.  Each new period causes the window to move forward, recalculating pivot points based on the new window data.
@@ -89,32 +156,3 @@ See [Utilities and helpers](/utilities/) for more information.
 This indicator is not chain-enabled and must be generated from `bars`.  It **cannot** be used for further processing by other chain-enabled indicators.
 
 See [Chaining indicators](/guide/chaining) for more.
-
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
-
-```csharp
-RollingPivotsList rollingPivotsList = new(windowPeriods, offsetPeriods, pointType);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => rollingPivotsList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<RollingPivotsResult> results = rollingPivotsList;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
-
-```csharp
-BarHub barHub = new();
-RollingPivotsHub observer = barHub.ToRollingPivotsHub(windowPeriods, offsetPeriods, pointType);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<RollingPivotsResult> results = observer.Results;
-```
-
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.

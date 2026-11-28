@@ -8,15 +8,56 @@ description: Pivot Points depict classic support and resistance levels, based on
 [Pivot Points](https://en.wikipedia.org/wiki/Pivot_point_(technical_analysis)) depict support and resistance levels, based on prior calendar windows.  You can specify window size (e.g. month, week, day, etc) and any of the traditional Floor Trading, Camarilla, Demark, Fibonacci, and Woodie variants. See [Rolling Pivot Points](/indicators/rolling-pivots) for lookback window variant.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/274 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="PivotPoints" />
 
 <ChartKey indicator="PivotPoints" />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax
 IReadOnlyList<PivotPointsResult> results =
   bars.ToPivotPoints(windowSize, pointType);
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+PivotPointsList pivotPointsList = new(windowSize, pointType);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => pivotPointsList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<PivotPointsResult> results = pivotPointsList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+PivotPointsHub observer = barHub.ToPivotPointsHub(windowSize, pointType);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<PivotPointsResult> results = observer.Results;
+```
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -55,6 +96,8 @@ You must have at least `2` windows of `bars` to cover the warmup periods.  For e
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<PivotPointsResult>
 ```
@@ -63,6 +106,30 @@ IReadOnlyList<PivotPointsResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The first window will have `null` values since there's not enough data to calculate.
+:::
+
+::: buffer
+
+```csharp
+PivotPointsList : IReadOnlyList<PivotPointsResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first window will have `null` values since there's not enough data to calculate.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<PivotPointsResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first window will have `null` values since there's not enough data to calculate.
+:::
 
 ::: warning 🚩 Incomplete first window
 The second window may be inaccurate if the first window contains incomplete data.  For example, this can occur if you specify a `Month` window size and only provide 45 calendar days (1.5 months) of `bars`.
@@ -100,32 +167,3 @@ See [Utilities and helpers](/utilities/) for more information.
 This indicator is not chain-enabled and must be generated from `bars`.  It **cannot** be used for further processing by other chain-enabled indicators.
 
 See [Chaining indicators](/guide/chaining) for more.
-
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
-
-```csharp
-PivotPointsList pivotPointsList = new(windowSize, pointType);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => pivotPointsList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<PivotPointsResult> results = pivotPointsList;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
-
-```csharp
-BarHub barHub = new();
-PivotPointsHub observer = barHub.ToPivotPointsHub(windowSize, pointType);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<PivotPointsResult> results = observer.Results;
-```
-
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.

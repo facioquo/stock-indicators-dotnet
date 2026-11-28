@@ -7,15 +7,31 @@ description: Zig Zag is a financial market price chart overlay that simplifies t
 
 [Zig Zag](https://www.google.com/search?q=Zig+Zag+(ZIGZAG)+indicator) is a price chart overlay that simplifies the up and down movements and transitions based on a percent change smoothing threshold. [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/226 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="ZigZag" />
 
 <ChartKey indicator="ZigZag" />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax
 IReadOnlyList<ZigZagResult> results =
   bars.ToZigZag(endType, percentChange);
 ```
+
+:::
+
+::: buffer
+Buffer lists are not supported for this indicator.  This indicator requires lookahead to confirm reversal points; output repaints as new data arrives, making incremental results undefined.  Use the Series (batch) implementation with periodic recalculation instead.
+:::
+
+::: stream
+Stream hubs are not supported for this indicator.  This indicator requires lookahead to confirm reversal points; output repaints as new data arrives, making incremental results undefined.  Use the Series (batch) implementation with periodic recalculation instead.
+:::
 
 ## Parameters
 
@@ -38,6 +54,8 @@ You must have at least two periods of `bars` to cover the warmup periods, but no
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<ZigZagResult>
 ```
@@ -48,6 +66,7 @@ IReadOnlyList<ZigZagResult>
 - If you do not supply enough points to cover the percent change, there will be no Zig Zag points or lines.
 - The first line segment starts after the first confirmed point; ZigZag values before the first confirmed point will be `null`.
 - The last line segment is an approximation as the direction is indeterminate.
+:::
 
 ::: warning 🚩 Zero prices
 Depending on the specified `endType`, the indicator cannot be initialized if the first `Bar` in `bars` has a `High`,`Low`, or `Close` value of 0 (zero).
@@ -77,6 +96,9 @@ See [Utilities and helpers](/utilities/) for more information.
 
 ## Chaining
 
+This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.
+
+::: series
 Results can be further processed on `ZigZag` with additional chain-enabled indicators.
 
 ```csharp
@@ -86,10 +108,5 @@ var results = bars
     .ToSlope(..);
 ```
 
-This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.
-
 See [Chaining indicators](/guide/chaining) for more.
-
-## Streaming
-
-Streaming is not supported for this indicator. This indicator requires lookahead to confirm reversal points; output repaints as new data arrives, making incremental results undefined. Use the Series (batch) implementation with periodic recalculation instead.
+:::

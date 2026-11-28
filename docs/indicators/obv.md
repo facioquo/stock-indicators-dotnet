@@ -8,13 +8,54 @@ description: Popularized by Joseph Granville, On-balance Volume is a rolling acc
 Popularized by Joseph Granville, [On-balance Volume](https://en.wikipedia.org/wiki/On-balance_volume) is a rolling accumulation of volume based on Close price direction.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/246 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="Obv" withOverlay />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax
 IReadOnlyList<ObvResult> results =
   bars.ToObv();
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+ObvList obvList = new();
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => obvList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<ObvResult> results = obvList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+ObvHub observer = barHub.ToObvHub();
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<ObvResult> results = observer.Results;
+```
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Historical price bars requirements
 
@@ -24,6 +65,8 @@ You must have at least two historical price bars to cover the warmup periods; ho
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<ObvResult>
 ```
@@ -32,6 +75,30 @@ IReadOnlyList<ObvResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The first period OBV will have a `0` value since there's not enough data to calculate.
+:::
+
+::: buffer
+
+```csharp
+ObvList : IReadOnlyList<ObvResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first period OBV will have a `0` value since there's not enough data to calculate.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<ObvResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first period OBV will have a `0` value since there's not enough data to calculate.
+:::
 
 ### `ObvResult`
 
@@ -54,6 +121,9 @@ See [Utilities and helpers](/utilities/) for more information.
 
 ## Chaining
 
+This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.
+
+::: series
 Results can be further processed on `Obv` with additional chain-enabled indicators.
 
 ```csharp
@@ -63,35 +133,36 @@ var results = bars
     .ToRsi(..);
 ```
 
-This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.
-
 See [Chaining indicators](/guide/chaining) for more.
+:::
 
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
+::: buffer
+Add each new result to another chain-enabled buffer list to process `Obv` further.
 
 ```csharp
+// example
 ObvList obvList = new();
+RsiList rsiList = new(..);
 
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => obvList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<ObvResult> results = obvList;
+void OnBarReceived(IBar bar)
+{
+    obvList.Add(bar);
+    rsiList.Add(obvList[^1]);
+}
 ```
 
-Subscribe to a `BarHub` for advanced streaming scenarios:
+See [Chaining buffer lists](/guide/styles/buffer#chaining-indicators) for more.
+:::
+
+::: stream
+Subscribe other chain-enabled hubs to it to process `Obv` further.
 
 ```csharp
-BarHub barHub = new();
-ObvHub observer = barHub.ToObvHub();
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<ObvResult> results = observer.Results;
+// example
+RsiHub observer = barHub
+    .ToObvHub()
+    .ToRsiHub(..);
 ```
 
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.
+See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
+:::

@@ -17,7 +17,7 @@ Inspect rendered pages with the Playwright MCP tools against the dev server.
 The site serves AI agents alongside people. `pnpm run test:agents` validates everything below against a fresh build.
 
 - `vitepress-plugin-llms` emits `llms.txt`, `llms-full.txt`, and a `.md` twin of every page; `.vitepress/agent-artifacts.ts` post-processes them in `buildEnd` and writes the Agent Skills index.
-  - Post-processing adds identity and provenance frontmatter, rewrites link targets to `.md`, renders containers as GitHub alerts, and resolves `{{ $frontmatter.* }}` templates.
+  - Post-processing adds identity and provenance frontmatter, rewrites link targets to `.md`, renders containers as GitHub alerts, unwraps indicator-style containers under a label, and resolves `{{ $frontmatter.* }}` templates.
 - `agent-artifacts.ts` also writes `search-index.json` from the pages `llms.txt` lists; the WebMCP tools in `theme/webmcp.ts` search it and use it as the allowlist for direct page retrieval.
 - Agent Skills live in `.vitepress/public/.well-known/agent-skills/<name>/SKILL.md`; the index and digests are generated.
 - `.vitepress/routes.ts` owns the route rules (page route, `.md` path) that the config, the artifact writer, and the middleware share; the patched plugin applies the same directory-index rule.
@@ -28,6 +28,7 @@ The site serves AI agents alongside people. `pnpm run test:agents` validates eve
 
 - Put static assets in `.vitepress/public/assets/`.
 - Use Markdown image syntax for local images so VitePress emits `width`/`height`; reserve HTML `<img>` for remote images it cannot measure.
+- Indicator pages wrap style-specific content in `::: series`, `::: buffer`, and `::: stream` containers (`.vitepress/style-containers.ts`); the `StyleSwitch` component and an early head script show only the reader's saved style. The documentation skill owns the rules.
 - Write callouts as VitePress containers (`::: tip`, `::: info`, `::: note`, `::: important`, `::: warning`, `::: caution`, `::: danger`, `::: details`), not GitHub alert blocks. Text after the name replaces the title; `{no-title}` drops it.
 
 ## Boundaries

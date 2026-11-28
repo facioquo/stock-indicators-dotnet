@@ -7,6 +7,12 @@ description: The Renko Chart is a Japanese price transformed candlestick pattern
 
 The [Renko Chart](https://en.m.wikipedia.org/wiki/Renko_chart) is a Japanese price transformed candlestick pattern that uses "bricks" to show a defined increment of change over a non-linear time series.  Transitions can use either `Close` or `High/Low` price values.  An ATR variant is also provided where brick size is determined by current Average True Range values. [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/478 "Community discussion about this indicator")
 
+<StyleSwitch />
+
+<a id="streaming"></a>
+
+::: series
+
 ```csharp
 // C# usage syntax (fixed brick size)
 IReadOnlyList<RenkoResult> results =
@@ -16,6 +22,49 @@ IReadOnlyList<RenkoResult> results =
 IReadOnlyList<RenkoResult> results =
   bars.ToRenkoAtr(atrPeriods, endType);
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+RenkoList renkoList = new(brickSize, endType);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => renkoList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<RenkoResult> results = renkoList;
+```
+
+::: warning 🚩 Fixed brick size only
+The ATR variant, `ToRenkoAtr()`, has no buffer list.  Its brick size is derived from the full dataset and changes as new bars are added, making incremental output undefined.  Use the Series implementation with periodic recalculation instead.
+:::
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+RenkoHub observer = barHub.ToRenkoHub(brickSize, endType);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<RenkoResult> results = observer.Results;
+```
+
+::: warning 🚩 Fixed brick size only
+The ATR variant, `ToRenkoAtr()`, has no stream hub.  Its brick size is derived from the full dataset and changes as new bars are added, making incremental output undefined.  Use the Series implementation with periodic recalculation instead.
+:::
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -47,6 +96,8 @@ IReadOnlyList<RenkoResult> results =
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<RenkoResult>
 ```
@@ -55,6 +106,30 @@ IReadOnlyList<RenkoResult>
 - It does not return a single incremental indicator value.
 - `RenkoResult` is based on `IBar`, so it can be used as a direct replacement for `bars`.
 - Each result record represents one Renko brick.
+:::
+
+::: buffer
+
+```csharp
+RenkoList : IReadOnlyList<RenkoResult>
+```
+
+- The list itself holds the results, one for each brick, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- `RenkoResult` is based on `IBar`, so it can be used as a direct replacement for `bars`.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<RenkoResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each brick, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- `RenkoHub` is a bar provider, so other indicator hubs can subscribe to it as they would to a `BarHub`.
+:::
 
 ::: warning 🚩 Fewer results than bars
 Unlike most indicators in this library, this indicator DOES NOT return the same number of elements as there are in the historical price bars.  Renko bricks are added to the results once the `brickSize` change is achieved.  For example, if it takes 3 days for a $2.50 price change to occur an entry is made on the third day while the first two are skipped.  If a period change occurs at multiples of `brickSize`, multiple bricks are drawn with the same `Timestamp`.  See [online documentation](https://www.investopedia.com/terms/r/renkochart.asp) for more information.
@@ -89,6 +164,9 @@ See [Utilities and helpers](/utilities/) for more information.
 
 ## Chaining
 
+This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.
+
+::: series
 Results are based in `IBar` and can be further used in any indicator.
 
 ```csharp
@@ -98,41 +176,24 @@ var results = bars
     .ToRsi(..);
 ```
 
-This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.
-
 See [Chaining indicators](/guide/chaining) for more.
-
-## Streaming
-
-**Fixed brick size only** — Streaming implementations are available for the fixed brick size variant only.
-
-Use a `BufferList` for incremental processing:
-
-```csharp
-RenkoList buffer = new(brickSize, endType);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => buffer.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<RenkoResult> results = buffer;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
-
-```csharp
-BarHub barHub = new();
-RenkoHub observer = barHub.ToRenkoHub(brickSize);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<RenkoResult> results = observer.Results;
-```
-
-::: warning 🚩 No streaming support
-`ToRenkoAtr()` does not support streaming. The ATR brick size is derived from the full dataset and changes as new bars are added, making incremental output undefined. Use the Series implementation with periodic recalculation instead.
 :::
 
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.
+::: buffer
+Results are based in `IBar`.  One bar can add several bricks or none, so add each new brick to the next buffer list yourself.
+
+See [Chaining buffer lists](/guide/styles/buffer#chaining-indicators) for more.
+:::
+
+::: stream
+Results are based in `IBar`, so any indicator hub can subscribe to the Renko hub.
+
+```csharp
+// example
+RsiHub observer = barHub
+    .ToRenkoHub(..)
+    .ToRsiHub(..);
+```
+
+See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
+:::

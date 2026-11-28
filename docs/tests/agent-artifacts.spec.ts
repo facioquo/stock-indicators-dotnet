@@ -89,6 +89,17 @@ test.describe('Markdown normalization', () => {
     ].join('\n'))
   })
 
+  test('unwraps indicator-style containers under a label', () => {
+    const input = [
+      '::: series', '```csharp', 'bars.ToEma(20);', '```', ':::', '',
+      '::: buffer', 'Intro', '', '::: warning', 'b', ':::', ':::', 'after',
+    ].join('\n')
+    expect(renderContainers(input)).toBe([
+      '**Series (batch) style:**', '', '```csharp', 'bars.ToEma(20);', '```', '',
+      '**Buffer list style:**', '', 'Intro', '', '> [!WARNING]', '> b', 'after',
+    ].join('\n'))
+  })
+
   test('points internal links at Markdown only where it exists', () => {
     const routes = new Set(['/indicators/sma.md', '/utilities.md'])
     const input = [

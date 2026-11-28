@@ -7,13 +7,65 @@ description: Volume Weighted Moving Average is the volume adjusted average price
 
 Volume Weighted Moving Average is the volume adjusted average price over a lookback window. [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/657 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="Vwma" />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax
 IReadOnlyList<VwmaResult> results =
   bars.ToVwma(lookbackPeriods);
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+VwmaList vwmaList = new(lookbackPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => vwmaList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<VwmaResult> results = vwmaList;
+```
+
+```csharp
+VwmaList vwmaList = new(lookbackPeriods);
+
+// Add individual price and volume data
+vwmaList.Add(DateTime.Now, price: 100.50, volume: 1000);
+```
+
+**Note:** VWMA requires both price and volume data, so it only supports methods that accept `IBar` or direct price/volume parameters.
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+VwmaHub observer = barHub.ToVwmaHub(lookbackPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<VwmaResult> results = observer.Results;
+```
+
+For volume-weighted calculations, VWMA also supports direct price and volume input:
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -29,6 +81,8 @@ You must have at least `N` periods of `bars` to cover the warmup periods.
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<VwmaResult>
 ```
@@ -37,6 +91,30 @@ IReadOnlyList<VwmaResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The first `N-1` periods will have `null` values for `Vwma` since there's not enough data to calculate.
+:::
+
+::: buffer
+
+```csharp
+VwmaList : IReadOnlyList<VwmaResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first `N-1` periods will have `null` values for `Vwma` since there's not enough data to calculate.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<VwmaResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first `N-1` periods will have `null` values for `Vwma` since there's not enough data to calculate.
+:::
 
 ### `VwmaResult`
 
@@ -56,6 +134,9 @@ See [Utilities and helpers](/utilities/) for more information.
 
 ## Chaining
 
+This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.
+
+::: series
 Results can be further processed on `Vwma` with additional chain-enabled indicators.
 
 ```csharp
@@ -65,48 +146,36 @@ var results = bars
     .ToRsi(..);
 ```
 
-This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.
-
 See [Chaining indicators](/guide/chaining) for more.
+:::
 
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
-
-```csharp
-VwmaList vwmaList = new(lookbackPeriods);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => vwmaList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<VwmaResult> results = vwmaList;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
+::: buffer
+Add each new result to another chain-enabled buffer list to process `Vwma` further.
 
 ```csharp
-BarHub barHub = new();
-VwmaHub observer = barHub.ToVwmaHub(lookbackPeriods);
+// example
+VwmaList vwmaList = new(..);
+RsiList rsiList = new(..);
 
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<VwmaResult> results = observer.Results;
+void OnBarReceived(IBar bar)
+{
+    vwmaList.Add(bar);
+    rsiList.Add(vwmaList[^1]);
+}
 ```
 
-### Additional buffering methods
+See [Chaining buffer lists](/guide/styles/buffer#chaining-indicators) for more.
+:::
 
-For volume-weighted calculations, VWMA also supports direct price and volume input:
+::: stream
+Subscribe other chain-enabled hubs to it to process `Vwma` further.
 
 ```csharp
-VwmaList vwmaList = new(lookbackPeriods);
-
-// Add individual price and volume data
-vwmaList.Add(DateTime.Now, price: 100.50, volume: 1000);
+// example
+RsiHub observer = barHub
+    .ToVwmaHub(..)
+    .ToRsiHub(..);
 ```
 
-**Note:** VWMA requires both price and volume data, so it only supports methods that accept `IBar` or direct price/volume parameters.
-
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.
+See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
+:::

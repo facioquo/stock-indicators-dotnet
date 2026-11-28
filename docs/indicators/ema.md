@@ -8,13 +8,54 @@ description: Exponentially [weighted] Moving Average is a rolling moving average
 [Exponentially weighted moving average](https://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average) is a rolling moving average that puts more weight on current price.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/256 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="Ema" />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax (with Close price)
 IReadOnlyList<EmaResult> results =
   bars.ToEma(lookbackPeriods);
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+EmaList emaList = new(lookbackPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => emaList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<EmaResult> results = emaList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+EmaHub observer = barHub.ToEmaHub(lookbackPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<EmaResult> results = observer.Results;
+```
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -30,6 +71,8 @@ You must have at least `2×N` or `N+100` periods of `bars`, whichever is more, t
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<EmaResult>
 ```
@@ -38,6 +81,30 @@ IReadOnlyList<EmaResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The first `N-1` periods will have `null` values since there's not enough data to calculate.
+:::
+
+::: buffer
+
+```csharp
+EmaList : IReadOnlyList<EmaResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first `N-1` periods will have `null` values since there's not enough data to calculate.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<EmaResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first `N-1` periods will have `null` values since there's not enough data to calculate.
+:::
 
 ::: warning 🚩 ⚞ Convergence warning
 The first `N+100` periods will have decreasing magnitude, convergence-related precision errors that can be as high as ~5% deviation in indicator values for earlier periods.
@@ -61,6 +128,7 @@ See [Utilities and helpers](/utilities/) for more information.
 
 ## Chaining
 
+::: series
 This indicator may be generated from any chain-enabled indicator or method.
 
 ```csharp
@@ -80,32 +148,58 @@ var results = bars
 ```
 
 See [Chaining indicators](/guide/chaining) for more.
+:::
 
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
-
-```csharp
-EmaList emaList = new(lookbackPeriods);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => emaList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<EmaResult> results = emaList;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
+::: buffer
+This indicator may be generated from results of another chain-enabled buffer list.  Add each new result to it yourself.
 
 ```csharp
-BarHub barHub = new();
-EmaHub observer = barHub.ToEmaHub(lookbackPeriods);
+// example
+SmaList smaList = new(..);
+EmaList emaList = new(..);
 
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<EmaResult> results = observer.Results;
+void OnBarReceived(IBar bar)
+{
+    smaList.Add(bar);
+    emaList.Add(smaList[^1]);
+}
 ```
 
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.
+Add each new result to another chain-enabled buffer list to process `Ema` further.
+
+```csharp
+// example
+EmaList emaList = new(..);
+RsiList rsiList = new(..);
+
+void OnBarReceived(IBar bar)
+{
+    emaList.Add(bar);
+    rsiList.Add(emaList[^1]);
+}
+```
+
+See [Chaining buffer lists](/guide/styles/buffer#chaining-indicators) for more.
+:::
+
+::: stream
+This indicator may be subscribed to any chain-enabled hub.
+
+```csharp
+// example
+EmaHub observer = barHub
+    .ToBarPartHub(CandlePart.HL2)
+    .ToEmaHub(..);
+```
+
+Subscribe other chain-enabled hubs to it to process `Ema` further.
+
+```csharp
+// example
+RsiHub observer = barHub
+    .ToEmaHub(..)
+    .ToRsiHub(..);
+```
+
+See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
+:::

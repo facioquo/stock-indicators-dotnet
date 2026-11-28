@@ -6,6 +6,7 @@ import './custom.scss'
 import Contributors from '../components/Contributors.vue'
 import ChartKey from '../components/ChartKey.vue'
 import NuGetBadge from '../components/NuGetBadge.vue'
+import StyleSwitch from '../components/StyleSwitch.vue'
 import CopyOrDownloadAsMarkdownButtons from 'vitepress-plugin-llms/vitepress-components/CopyOrDownloadAsMarkdownButtons.vue'
 import { setupIndyChartsForVue } from '@facioquo/indy-charts/vue'
 import { DARK_SURFACE, LIGHT_SURFACE } from './chart-theme'
@@ -62,6 +63,8 @@ export default {
 
     return h(DefaultTheme.Layout, null, {
       'nav-bar-title-after': () => h('span', { class: 'nav-title-below' }, 'for .NET'),
+      'nav-bar-content-after': () => h(StyleSwitch, { placement: 'nav' }),
+      'nav-screen-content-after': () => h(StyleSwitch, { placement: 'screen' }),
       ...(heroInfoAfter ? { 'home-hero-info-after': heroInfoAfter } : {})
     })
   },
@@ -88,6 +91,7 @@ export default {
 
     app.component('Contributors', Contributors)
     app.component('ChartKey', ChartKey)
+    app.component('StyleSwitch', StyleSwitch)
     app.component('CopyOrDownloadAsMarkdownButtons', CopyOrDownloadAsMarkdownButtons)
   }
 } satisfies Theme

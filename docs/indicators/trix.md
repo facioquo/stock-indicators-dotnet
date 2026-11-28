@@ -8,13 +8,54 @@ description: Created by Jack Hutson, TRIX is a rolling rate of change for a 3 EM
 Created by Jack Hutson, [TRIX](https://en.wikipedia.org/wiki/Trix_(technical_analysis)) is the rate of change for a 3 EMA smoothing of the price over a lookback window.  TRIX is often confused with [TEMA](/indicators/tema).
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/234 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="Trix" withOverlay />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax for Trix
 IReadOnlyList<TrixResult> results =
   bars.ToTrix(lookbackPeriods);
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+TrixList trixList = new(lookbackPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => trixList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<TrixResult> results = trixList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+TrixHub observer = barHub.ToTrixHub(lookbackPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<TrixResult> results = observer.Results;
+```
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -30,6 +71,8 @@ You must have at least `4×N` or `3×N+100` periods of `bars`, whichever is more
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<TrixResult>
 ```
@@ -38,6 +81,30 @@ IReadOnlyList<TrixResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The first `3×N-3` periods will have `null` values since there's not enough data to calculate.
+:::
+
+::: buffer
+
+```csharp
+TrixList : IReadOnlyList<TrixResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first `3×N-3` periods will have `null` values since there's not enough data to calculate.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<TrixResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first `3×N-3` periods will have `null` values since there's not enough data to calculate.
+:::
 
 ::: warning 🚩 ⚞ Convergence warning
 The first `3×N+250` periods will have decreasing magnitude, convergence-related precision errors that can be as high as ~5% deviation in indicator values for earlier periods.
@@ -62,6 +129,7 @@ See [Utilities and helpers](/utilities/) for more information.
 
 ## Chaining
 
+::: series
 This indicator may be generated from any chain-enabled indicator or method.
 
 ```csharp
@@ -81,32 +149,58 @@ var results = bars
 ```
 
 See [Chaining indicators](/guide/chaining) for more.
+:::
 
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
-
-```csharp
-TrixList trixList = new(lookbackPeriods);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => trixList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<TrixResult> results = trixList;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
+::: buffer
+This indicator may be generated from results of another chain-enabled buffer list.  Add each new result to it yourself.
 
 ```csharp
-BarHub barHub = new();
-TrixHub observer = barHub.ToTrixHub(lookbackPeriods);
+// example
+SmaList smaList = new(..);
+TrixList trixList = new(..);
 
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<TrixResult> results = observer.Results;
+void OnBarReceived(IBar bar)
+{
+    smaList.Add(bar);
+    trixList.Add(smaList[^1]);
+}
 ```
 
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.
+Add each new result to another chain-enabled buffer list to process `Trix` further.
+
+```csharp
+// example
+TrixList trixList = new(..);
+RsiList rsiList = new(..);
+
+void OnBarReceived(IBar bar)
+{
+    trixList.Add(bar);
+    rsiList.Add(trixList[^1]);
+}
+```
+
+See [Chaining buffer lists](/guide/styles/buffer#chaining-indicators) for more.
+:::
+
+::: stream
+This indicator may be subscribed to any chain-enabled hub.
+
+```csharp
+// example
+TrixHub observer = barHub
+    .ToBarPartHub(CandlePart.HL2)
+    .ToTrixHub(..);
+```
+
+Subscribe other chain-enabled hubs to it to process `Trix` further.
+
+```csharp
+// example
+RsiHub observer = barHub
+    .ToTrixHub(..)
+    .ToRsiHub(..);
+```
+
+See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
+:::

@@ -8,15 +8,56 @@ description: Created by Edward William Dreiss, Fractal Chaos Bands outline high 
 Created by Edward William Dreiss, Fractal Chaos Bands outline high and low price channels to depict broad less-chaotic price movements.  FCB is a channelized depiction of [Williams Fractal](/indicators/fractal).
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/347 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="Fcb" />
 
 <ChartKey indicator="Fcb" />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax
 IReadOnlyList<FcbResult> results =
   bars.ToFcb(windowSpan);
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+FcbList fcbList = new(windowSpan);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => fcbList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<FcbResult> results = fcbList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+FcbHub observer = barHub.ToFcbHub(windowSpan);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<FcbResult> results = observer.Results;
+```
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -34,6 +75,8 @@ You must have at least `2×S+1` periods of `bars` to cover the warmup periods; h
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<FcbResult>
 ```
@@ -42,6 +85,30 @@ IReadOnlyList<FcbResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The periods before the first fractal are `null` since they cannot be calculated.
+:::
+
+::: buffer
+
+```csharp
+FcbList : IReadOnlyList<FcbResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The periods before the first fractal are `null` since they cannot be calculated.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<FcbResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The periods before the first fractal are `null` since they cannot be calculated.
+:::
 
 ::: warning 🖌️ Repaint warning
 Fractal Chaos Bands are based on [Williams Fractal](/indicators/fractal), which uses future bars.  This indicator will never identify bands in the last `S` periods of `bars` since fractals are retroactively identified.
@@ -69,32 +136,3 @@ See [Utilities and helpers](/utilities/) for more information.
 This indicator is not chain-enabled and must be generated from `bars`.  It **cannot** be used for further processing by other chain-enabled indicators.
 
 See [Chaining indicators](/guide/chaining) for more.
-
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
-
-```csharp
-FcbList fcbList = new(windowSpan);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => fcbList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<FcbResult> results = fcbList;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
-
-```csharp
-BarHub barHub = new();
-FcbHub observer = barHub.ToFcbHub(windowSpan);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<FcbResult> results = observer.Results;
-```
-
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.

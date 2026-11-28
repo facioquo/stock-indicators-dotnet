@@ -7,11 +7,59 @@ description: Created by Karl Pearson, the correlation coefficient depicts the li
 
 Created by Karl Pearson, the [Correlation coefficient](https://en.wikipedia.org/wiki/Correlation_coefficient) depicts the linear statistical correlation between two price bar histories; includes R-squared (R²) / coefficient of determination, variance, and covariance. [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/259 "Community discussion about this indicator")
 
+<StyleSwitch />
+
+<a id="streaming"></a>
+
+::: series
+
 ```csharp
 // C# usage syntax
 IReadOnlyList<CorrResult> results =
   sourceA.ToCorrelation(sourceB, lookbackPeriods);
 ```
+
+:::
+
+::: buffer
+Create a buffer list.  Add each series separately as its values arrive; either one may run ahead, and a result is added once both hold the same timestamp:
+
+```csharp
+CorrelationList correlationList = new(lookbackPeriods);
+
+// call from each series' message handler
+void OnAReceived(IReusable value) => correlationList.AddSource(value);
+void OnBReceived(IReusable value) => correlationList.AddOther(value);
+
+// the list itself holds the results; fills as the handlers run
+IReadOnlyList<CorrResult> results = correlationList;
+```
+
+A timestamp that only one series holds produces no result, where the Series method throws.  Each series must arrive in strictly increasing order: an older or equal timestamp on a side throws an `InvalidOperationException`.  Each side stages at most `MaxListSize` values, so a side that falls further behind than that loses the pairs the leading side has dropped.
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` for each series and add bars as they arrive:
+
+```csharp
+BarHub hubA = new();
+BarHub hubB = new();
+CorrelationHub observer = hubA.ToCorrelationHub(hubB, lookbackPeriods);
+
+// call from each series' message handler
+void OnAReceived(IBar bar) => hubA.Add(bar);
+void OnBReceived(IBar bar) => hubB.Add(bar);
+
+// results fill as the handlers run
+IReadOnlyList<CorrResult> results = observer.Results;
+```
+
+A result is added once both providers hold the same timestamp.  A value that arrives late, or is revised or removed, on either side is handled by the usual rebuild.  Timestamps match exactly, and the lookback window spans `N` matched timestamps.  Drive both providers from one thread at a time.
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -29,6 +77,8 @@ You must have at least `N` periods for both `sourceA` and `sourceB` to cover the
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<CorrResult>
 ```
@@ -37,6 +87,30 @@ IReadOnlyList<CorrResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The first `N-1` periods will have `null` values since there's not enough data to calculate.
+:::
+
+::: buffer
+
+```csharp
+CorrelationList : IReadOnlyList<CorrResult>
+```
+
+- The list itself holds the results, one for each timestamp both series hold, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first `N-1` periods will have `null` values since there's not enough data to calculate.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<CorrResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each timestamp both providers hold, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first `N-1` periods will have `null` values since there's not enough data to calculate.
+:::
 
 ### `CorrResult`
 
@@ -60,6 +134,7 @@ See [Utilities and helpers](/utilities/) for more information.
 
 ## Chaining
 
+::: series
 This indicator may be generated from any chain-enabled indicator or method.
 
 ```csharp
@@ -83,39 +158,23 @@ var results = bars
 ```
 
 See [Chaining indicators](/guide/chaining) for more.
+:::
 
-## Streaming
+::: buffer
+Add each series from the results of other chain-enabled buffer lists with `AddSource` and `AddOther`.  When a new result appears in this list, add it to the next chain-enabled buffer list yourself.
 
-Use the buffer-style `List<T>` when you need incremental calculations without a hub.  Add each series separately as its values arrive; either one may run ahead, and a result is added once both hold the same timestamp:
+See [Chaining buffer lists](/guide/styles/buffer#chaining-indicators) for more.
+:::
 
-```csharp
-CorrelationList correlationList = new(lookbackPeriods);
-
-// call from each series' message handler
-void OnAReceived(IReusable value) => correlationList.AddSource(value);
-void OnBReceived(IReusable value) => correlationList.AddOther(value);
-
-// the list itself holds the results; fills as the handlers run
-IReadOnlyList<CorrResult> results = correlationList;
-```
-
-A timestamp that only one series holds produces no result, where the Series method throws.  Each series must arrive in strictly increasing order: an older or equal timestamp on a side throws an `InvalidOperationException`.  Each side stages at most `MaxListSize` values, so a side that falls further behind than that loses the pairs the leading side has dropped.
-
-Subscribe to a `BarHub` for each series for advanced streaming scenarios:
+::: stream
+Subscribe other chain-enabled hubs to it to process `Correlation` further.
 
 ```csharp
-BarHub hubA = new();
-BarHub hubB = new();
-CorrelationHub observer = hubA.ToCorrelationHub(hubB, lookbackPeriods);
-
-// call from each series' message handler
-void OnAReceived(IBar bar) => hubA.Add(bar);
-void OnBReceived(IBar bar) => hubB.Add(bar);
-
-// results fill as the handlers run
-IReadOnlyList<CorrResult> results = observer.Results;
+// example
+SlopeHub observer = hubA
+    .ToCorrelationHub(hubB, ..)
+    .ToSlopeHub(..);
 ```
 
-A result is added once both providers hold the same timestamp.  A value that arrives late, or is revised or removed, on either side is handled by the usual rebuild.  Timestamps match exactly, and the lookback window spans `N` matched timestamps.  Drive both providers from one thread at a time.
-
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.
+See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
+:::

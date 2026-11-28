@@ -8,15 +8,56 @@ description: Pivots is an extended customizable version of Williams Fractal that
 Pivots is an extended customizable version of [Williams Fractal](/indicators/fractal) that includes identification of Higher High, Lower Low, Higher Low, and Lower Low trends between pivots in a lookback window.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/436 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="Pivots" />
 
 <ChartKey indicator="Pivots" />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax
 IReadOnlyList<PivotsResult> results =
   bars.ToPivots(leftSpan, rightSpan, maxTrendPeriods, endType);
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+PivotsList pivotsList = new(leftSpan, rightSpan, maxTrendPeriods, endType);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => pivotsList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<PivotsResult> results = pivotsList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+PivotsHub observer = barHub.ToPivotsHub(leftSpan, rightSpan, maxTrendPeriods, endType);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<PivotsResult> results = observer.Results;
+```
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -43,6 +84,8 @@ You must have at least `L+R+1` periods of `bars` to cover the warmup periods; ho
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<PivotsResult>
 ```
@@ -51,6 +94,30 @@ IReadOnlyList<PivotsResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The first `L` and last `R` periods in `bars` are unable to be calculated since there's not enough prior/following data.
+:::
+
+::: buffer
+
+```csharp
+PivotsList : IReadOnlyList<PivotsResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first `L` and last `R` periods in `bars` are unable to be calculated since there's not enough prior/following data.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<PivotsResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first `L` and last `R` periods in `bars` are unable to be calculated since there's not enough prior/following data.
+:::
 
 ::: warning 🖌️ Repaint warning
 This price pattern looks forward and backward in the historical price bars so it will never identify a pivot in the last `R` periods of `bars`.  Pivots are retroactively identified.
@@ -116,32 +183,3 @@ See [Utilities and helpers](/utilities/) for more information.
 This indicator is not chain-enabled and must be generated from `bars`.  It **cannot** be used for further processing by other chain-enabled indicators.
 
 See [Chaining indicators](/guide/chaining) for more.
-
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
-
-```csharp
-PivotsList pivotsList = new(leftSpan, rightSpan, maxTrendPeriods, endType);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => pivotsList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<PivotsResult> results = pivotsList;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
-
-```csharp
-BarHub barHub = new();
-PivotsHub observer = barHub.ToPivotsHub(leftSpan, rightSpan, maxTrendPeriods, endType);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<PivotsResult> results = observer.Results;
-```
-
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.

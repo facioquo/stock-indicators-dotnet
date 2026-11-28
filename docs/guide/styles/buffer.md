@@ -120,9 +120,9 @@ void OnIndexReceived(IReusable value) => correlation.AddOther(value);
 
 Two-series buffer lists:
 
-- [Beta coefficient (β)](/indicators/beta#streaming)
-- [Correlation coefficient](/indicators/correlation#streaming)
-- [Price Relative Strength (PRS)](/indicators/prs#streaming)
+- [Beta coefficient (β)](/indicators/beta)
+- [Correlation coefficient](/indicators/correlation)
+- [Price Relative Strength (PRS)](/indicators/prs)
 
 ## Live feeds and threads
 
