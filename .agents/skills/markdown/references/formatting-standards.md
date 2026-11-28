@@ -28,7 +28,7 @@ Use this when writing or restructuring any Markdown file in this repository. It 
 
 ## Callouts
 
-A **docs-site page** is a Markdown file under `docs/` that VitePress builds. Files that `srcExclude` in `docs/.vitepress/config.mts` excludes — such as `docs/AGENTS.md`, `docs/README.md`, `docs/PRINCIPLES.md`, and `docs/decisions/**` — are rendered by GitHub, not the site.
+A **docs-site page** is a Markdown file under `docs/` that VitePress builds. Files that `srcExclude` in `docs/.vitepress/config.mts` excludes — such as `docs/AGENTS.md`, `docs/README.md`, and `docs/PRINCIPLES.md` — are rendered by GitHub, not the site.
 
 - On a docs-site page, use VitePress containers: `::: tip`, `::: info`, `::: note`, `::: important`, `::: warning`, `::: caution`, `::: danger`, `::: details`. Text after the name replaces the title; `{no-title}` drops it.
 - Everywhere else (README files, AGENTS.md files, skills, `.github/`), use GitHub alerts: `> [!NOTE]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!WARNING]`, `> [!CAUTION]`.

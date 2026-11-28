@@ -602,7 +602,6 @@ export default defineConfig({
   srcExclude: [
     '.offline/**',
     '.vs/**',
-    'decisions/**',
     'assets/**',
     'examples/Backtest/**',
     'examples/ConsoleApp/**',
