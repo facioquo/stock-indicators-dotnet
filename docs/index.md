@@ -14,6 +14,9 @@ hero:
     - theme: alt
       text: indicators
       link: /indicators/
+    - theme: alt
+      text: demo
+      link: https://charts.stockindicators.dev
 ---
 
 <script setup>
