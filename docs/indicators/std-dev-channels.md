@@ -72,15 +72,6 @@ Historical results are a function of the current period window position and will
 | `LowerChannel`<br>_`double?`_ | Lower line is `D` standard deviations below the center line |
 | `BreakPoint`<br>_`bool`_ | Helper information.  Indicates first point in new window. |
 
-### Utilities
-
-- [.Condense()](/utilities/results#condense)
-- [.Find(lookupDate)](/utilities/results#find-by-date)
-- [.RemoveWarmupPeriods()](/utilities/results#remove-warmup-periods)
-- [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
-
-See [Utilities and helpers](/utilities/) for more information.
-
 ## Alternative depiction for full bars variant
 
 If you specify `null` for the `lookbackPeriods`, you will get a regression line over the entire provided `bars`.
@@ -99,3 +90,16 @@ var results = barsEval
 Results **cannot** be further chained with additional transforms.
 
 See [Chaining indicators](/guide/chaining) for more.
+
+## Utilities
+
+::: series
+
+- [.Condense()](/utilities/results#condense)
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.RemoveWarmupPeriods()](/utilities/results#remove-warmup-periods)
+- [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
+
+:::
+
+See [Utilities and helpers](/utilities/) for more information.

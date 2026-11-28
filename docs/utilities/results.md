@@ -88,6 +88,10 @@ When every result is still warming up, the automatic form returns an empty list.
 The parameterless `.RemoveWarmupPeriods()` is available on the indicators whose pages list it. For the others, use the `.RemoveWarmupPeriods(removePeriods)` overload to prune a specific amount.
 :::
 
+::: info Series results only
+Use warmup removal on complete Series results. Buffer lists and stream hubs drop their oldest results once full, so the first result may already be past the warmup and trimming by position would remove valid values. `.Find()` and `.Condense()` work on a buffer list or `observer.Results` as well.
+:::
+
 ::: warning 🚩 Auto-pruning is unstable on chained indicators
 Without a `removePeriods` value, the utility derives the pruning amount from the first calculated value. With unusual results or chained indicators, this can over-prune. Specify an explicit amount when chaining.
 

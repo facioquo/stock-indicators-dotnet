@@ -86,14 +86,6 @@ The last line segment will always be redrawn back to the last known pivot.  Do n
 | `RetraceHigh`<br>_`decimal?`_ | Retrace line for high points |
 | `RetraceLow`<br>_`decimal?`_ | Retrace line for low points |
 
-### Utilities
-
-- [.Condense()](/utilities/results#condense)
-- [.Find(lookupDate)](/utilities/results#find-by-date)
-- [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
-
-See [Utilities and helpers](/utilities/) for more information.
-
 ## Chaining
 
 This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.
@@ -110,3 +102,15 @@ var results = bars
 
 See [Chaining indicators](/guide/chaining) for more.
 :::
+
+## Utilities
+
+::: series
+
+- [.Condense()](/utilities/results#condense)
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
+
+:::
+
+See [Utilities and helpers](/utilities/) for more information.

@@ -122,17 +122,41 @@ Fractal Chaos Bands are based on [Williams Fractal](/indicators/fractal), which 
 | `UpperBand`<br>_`decimal?`_ | FCB upper band |
 | `LowerBand`<br>_`decimal?`_ | FCB lower band |
 
-### Utilities
+## Chaining
+
+This indicator is not chain-enabled and must be generated from `bars`.  It **cannot** be used for further processing by other chain-enabled indicators.
+
+See [Chaining indicators](/guide/chaining) for more.
+
+## Utilities
+
+::: series
 
 - [.Condense()](/utilities/results#condense)
 - [.Find(lookupDate)](/utilities/results#find-by-date)
 - [.RemoveWarmupPeriods()](/utilities/results#remove-warmup-periods)
 - [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
 
+:::
+
+::: buffer
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.Condense()](/utilities/results#condense)
+
+Call these on the list itself, as in `fcbList.Find(lookupDate)`. `.Condense()` returns a new list and leaves `fcbList` unchanged.
+
+Warmup removal is left out. Once the list is full it drops its oldest results, so trimming by position would remove valid values.
+:::
+
+::: stream
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.Condense()](/utilities/results#condense)
+
+Call these on `observer.Results`, as in `observer.Results.Find(lookupDate)`. `.Condense()` returns a new list and leaves the hub's results unchanged.
+
+Warmup removal is left out. Once the cache is full the hub drops its oldest results, so trimming by position would remove valid values.
+:::
+
 See [Utilities and helpers](/utilities/) for more information.
-
-## Chaining
-
-This indicator is not chain-enabled and must be generated from `bars`.  It **cannot** be used for further processing by other chain-enabled indicators.
-
-See [Chaining indicators](/guide/chaining) for more.
