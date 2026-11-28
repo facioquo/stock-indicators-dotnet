@@ -104,12 +104,16 @@ test.describe('indicator style selection', () => {
 
   test('reads the saved style when a switch first mounts after navigation', async ({ page }) => {
     await page.goto('/guide/styles/buffer')
-    await expect(page.locator('.VPContent')).toBeVisible()
+    // wait for hydration so the click is a client-side navigation
+    await page.waitForFunction(() => '__vue_app__' in (document.querySelector('#app') ?? {}))
     // another tab saves a style while no switch is mounted to hear it
     await page.evaluate((key) => localStorage.setItem(key, 'stream'), KEY)
+    // a full page load would clear this marker, and its head script would stamp the style
+    await page.evaluate(() => { (window as Window & { spaMarker?: boolean }).spaMarker = true })
 
     await page.locator('.vp-doc a[href="/indicators/beta"]').click()
     await expect(page).toHaveURL(/\/indicators\//)
+    expect(await page.evaluate(() => (window as Window & { spaMarker?: boolean }).spaMarker)).toBe(true)
     await expect.poll(() => visibleStyles(page)).toEqual(['stream'])
   })
 
