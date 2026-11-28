@@ -16,6 +16,7 @@ The markdown skill owns formatting and linting. The vitepress skill owns `docs/.
 - [ ] Add a `features` card to the category hub page (e.g., `docs/indicators/oscillators.md`) with `title`, `details`, `icon.src` of `/assets/thumbs/indicators/{slug}.png`, and `link`, and add that thumbnail to `docs/.vitepress/public/assets/thumbs/indicators/`.
 - [ ] Add the page to its category list under "Complete list" in `docs/indicators.md`.
 - [ ] Add the [chart block](#chart-block) when the chart API serves the indicator.
+- [ ] Run the docs-site test gates in the code-completion skill; the parity suite checks the page against the catalog and the source.
 - [ ] From `docs/`, run `pnpm run test:links`, which builds the site and checks every link (it needs `htmlproofer` or Docker). Without either, run `pnpm run docs:build` (VS Code task `Build: Website`).
 
 When code changes an existing indicator, update every section it touches: usage syntax for each style, parameter table, bars requirement, null-period bullets, convergence warning, result table, and chaining.
@@ -46,8 +47,9 @@ Each page serves all three indicator styles from one file and one URL. Wrap cont
 <StockIndicatorChart indicator="Ema" />
 ```
 
-- `indicator` is a key of the `indicators` map in `docs/.vitepress/theme/index.ts` — PascalCase (`Ema`, `BollingerBands`, `AtrStop`), not the slug. Every key a page uses must exist there.
+- `indicator` is a key of `CHART_INDICATORS` in `docs/.vitepress/theme/chart-indicators.ts` — PascalCase (`Ema`, `BollingerBands`, `AtrStop`), not the slug. Every key a page uses must exist there.
 - A new key needs a `uiid` that the chart API at `charts-api.stockindicators.dev` serves, a `title`, and `chartType: 'oscillator'` when the API lists it as an oscillator (the hint sizes the reserved chart frame before data loads). When the API does not serve the indicator, omit the chart block; never add a placeholder.
+- The site renders charts from a committed offline snapshot in `docs/.vitepress/public/data/chart-api/`. After adding a key, run `pnpm run snapshot:charts` from `docs/` and commit the new files, or the offline tests fail until the monthly refresh workflow runs.
 - Add `withOverlay` when the indicator plots in its own pane (oscillators such as `Rsi`, `Adx`); omit it for price overlays (`Ema`, `BollingerBands`).
 - Stack related charts on consecutive lines with `withOverlay` on the first only (`std-dev.md`, `sma-analysis.md`). `with="DcPeriods"` adds a companion series to one chart (`ht-trendline.md`).
 - Don't wrap the chart in `<ClientOnly>`. The component renders its sized frames during the static build, so the page doesn't shift when the chart loads.
