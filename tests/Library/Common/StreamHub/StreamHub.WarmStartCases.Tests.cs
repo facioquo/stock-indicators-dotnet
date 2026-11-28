@@ -85,7 +85,7 @@ public abstract class WarmStartCases<TIn, TResult> : TestBase
         {
             (BarHub barHub, StreamHub<TIn, TResult> hub, HubSnapshot<TResult> snapshot) = StartFromSnapshot(bars, split);
 
-            hub.CaptureSnapshot().State.Should().Equal(snapshot.State, "split {0} re-encodes unchanged", split);
+            hub.CaptureSnapshot().State.ToArray().Should().Equal(snapshot.State.ToArray(), "split {0} re-encodes unchanged", split);
 
             barHub.Add(bars.Skip(split).ToList());
             hub.Results.IsExactly(Series(bars), "split {0}", split);
@@ -118,7 +118,7 @@ public abstract class WarmStartCases<TIn, TResult> : TestBase
 
         restored.Results.IsExactly(uninterrupted.Results);
         restoredBars.Cache.Should().Equal(uninterruptedBars.Cache);
-        restored.CaptureSnapshot().State.Should().Equal(uninterrupted.CaptureSnapshot().State);
+        restored.CaptureSnapshot().State.ToArray().Should().Equal(uninterrupted.CaptureSnapshot().State.ToArray());
     }
 
     [TestMethod]
@@ -138,7 +138,7 @@ public abstract class WarmStartCases<TIn, TResult> : TestBase
         barHub.RestoreSnapshot(source.CaptureSnapshot());
         hub.RestoreSnapshot(snapshot);
 
-        hub.CaptureSnapshot().State.Should().Equal(snapshot.State);
+        hub.CaptureSnapshot().State.ToArray().Should().Equal(snapshot.State.ToArray());
 
         // a newest-bar correction now resolves from the restored, non-ascending ring
         bars[Split - 1] = Revise(bars[Split - 1]);
@@ -206,7 +206,7 @@ public abstract class WarmStartCases<TIn, TResult> : TestBase
     {
         (_, StreamHub<TIn, TResult> source) = Chain(Bars.Take(Split));
         HubSnapshot<TResult> snapshot = source.CaptureSnapshot();
-        byte[] state = [.. snapshot.State];
+        byte[] state = [.. snapshot.State.ToArray()];
 
         byte[] otherVersion = [.. state];
         otherVersion[0]++;
@@ -218,13 +218,13 @@ public abstract class WarmStartCases<TIn, TResult> : TestBase
         foreach (byte[] bad in new[] { state[..^1], [.. state, 0], otherVersion })
         {
             (BarHub targetBars, StreamHub<TIn, TResult> target) = Chain(other.Take(Split));
-            byte[] before = target.CaptureSnapshot().State;
+            byte[] before = target.CaptureSnapshot().State.ToArray();
             TResult[] cacheBefore = [.. target.Cache];
 
             Action act = () => target.RestoreSnapshot(snapshot with { State = bad });
             act.Should().ThrowExactly<InvalidDataException>();
 
-            target.CaptureSnapshot().State.Should().Equal(before);
+            target.CaptureSnapshot().State.ToArray().Should().Equal(before);
             target.Cache.Should().Equal(cacheBefore);
 
             targetBars.Add(other.Skip(Split).ToList());
@@ -269,17 +269,26 @@ public abstract class WarmStartCases<TIn, TResult> : TestBase
             }
 
             byte[] expected = stream.ToArray();
-            byte[] state = hub.CaptureSnapshot().State;
+            byte[] state = hub.CaptureSnapshot().State.ToArray();
 
             state[..expected.Length].Should().Equal(expected, "flag {0} set alone", setFlag);
 
-            // the members end where the next count begins, so none is missing from the list
-            BitConverter.ToInt32(state, expected.Length).Should().Be(CountOf(ReadMember(hub, CountMemberAfterState)));
+            if (CountMemberAfterState is null)
+            {
+                // nothing follows the members, so none is missing from the list
+                state.Should().HaveCount(expected.Length);
+            }
+            else
+            {
+                // the members end where the next count begins, so none is missing from the list
+                BitConverter.ToInt32(state, expected.Length).Should().Be(CountOf(ReadMember(hub, CountMemberAfterState)));
+            }
         }
     }
 
     /// <summary>
-    /// Gets the member whose entry count the encoding writes right after the state members.
+    /// Gets the member whose entry count the encoding writes right after the state members,
+    /// or <c>null</c> when the state members end the encoding.
     /// </summary>
     private protected virtual string CountMemberAfterState => "_rollback";
 
@@ -331,6 +340,26 @@ public class RsiWarmStart : WarmStartCases<IReusable, RsiResult>
     private protected override byte StateVersion => 2;
 
     private protected override string[] StateMembers => ["_avgGain", "_avgLoss"];
+}
+
+[TestClass]
+public class EmaWarmStart : WarmStartCases<IReusable, EmaResult>
+{
+    private const int Lookback = 20;
+
+    private protected override StreamHub<IReusable, EmaResult> Subscribe(BarHub barHub) => barHub.ToEmaHub(Lookback);
+
+    private protected override IReadOnlyList<EmaResult> Series(IReadOnlyList<Bar> bars) => bars.ToEma(Lookback);
+
+    // empty hub, mid-warmup, the last bar before the SMA seed, the seed, the first increment
+    private protected override int[] WarmupSplits => [0, 10, Lookback - 1, Lookback, Lookback + 1];
+
+    private protected override byte StateVersion => 1;
+
+    // the result cache is the whole state, so only the version is encoded
+    private protected override string[] StateMembers => [];
+
+    private protected override string CountMemberAfterState => null;
 }
 
 [TestClass]
@@ -423,7 +452,7 @@ public class ParabolicSarWarmStart : WarmStartCases<IBar, ParabolicSarResult>
 
         // version, three doubles and three flags precede the prior-bar count
         const int countOffset = 1 + (3 * sizeof(double)) + 3;
-        byte[] state = [.. snapshot.State];
+        byte[] state = [.. snapshot.State.ToArray()];
         BitConverter.ToInt32(state, countOffset).Should().Be(2);
         BitConverter.GetBytes(count).CopyTo(state, countOffset);
 

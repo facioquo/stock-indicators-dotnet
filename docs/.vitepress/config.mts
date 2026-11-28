@@ -99,7 +99,8 @@ function guideSidebar(withStreamPages: boolean): DefaultTheme.SidebarItem[] {
               items: withStreamPages
                 ? [
                   { text: 'Threading and live feeds', link: '/guide/styles/stream/threading' },
-                  { text: 'Corrections and memory', link: '/guide/styles/stream/corrections' }
+                  { text: 'Corrections and memory', link: '/guide/styles/stream/corrections' },
+                  { text: 'Warm start', link: '/guide/styles/stream/warm-start' }
                 ]
                 : undefined
             }]

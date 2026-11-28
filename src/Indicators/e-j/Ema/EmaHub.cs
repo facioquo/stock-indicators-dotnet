@@ -6,6 +6,8 @@ namespace FacioQuo.Stock.Indicators;
 public class EmaHub
     : ChainHub<IReusable, EmaResult>, IEma
 {
+    private const byte SnapshotStateVersion = 1;
+
     internal EmaHub(
         IChainProvider<IReusable> provider,
         int lookbackPeriods) : base(provider)
@@ -54,6 +56,15 @@ public class EmaHub
 
         return (r, i);
     }
+
+    // each EMA reads only the prior cached result, so the cache is the whole state
+    /// <inheritdoc/>
+    private protected override byte[]? CaptureSnapshotState()
+        => SnapshotCodec.Write(SnapshotStateVersion, static _ => { });
+
+    /// <inheritdoc/>
+    private protected override void RestoreSnapshotState(ReadOnlySpan<byte> state)
+        => SnapshotCodec.Read(state, SnapshotStateVersion, static _ => { });
 }
 
 public static partial class Ema

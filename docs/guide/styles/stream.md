@@ -201,6 +201,7 @@ void OnBarReceived(Bar bar)
 
 - [Threading and live feeds](/guide/styles/stream/threading) for multi-threaded feeds, feed options, and reading results across threads
 - [Corrections and memory](/guide/styles/stream/corrections) for removing bars, refused bars, cache sizing, and fault recovery
+- [Warm start](/guide/styles/stream/warm-start) for resuming a stream after a restart without replaying history
 - [Custom observers](/guide/custom-observers) for pushing results into a UI, database, or alerting pipeline
 - [Streaming aggregator hubs](/utilities/bars#streaming-aggregator-hubs) for combining ticks or bars into larger bars in real time
 - [Buffer lists](/guide/styles/buffer) for simple incremental processing

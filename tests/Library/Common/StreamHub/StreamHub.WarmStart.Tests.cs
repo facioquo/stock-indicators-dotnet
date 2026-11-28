@@ -59,12 +59,12 @@ public class WarmStart : TestBase
         (BarHub barHub, RsiHub rsi) = Chain(Bars.Take(60));
 
         HubSnapshot<RsiResult> snapshot = rsi.CaptureSnapshot();
-        byte[] state = [.. snapshot.State];
+        byte[] state = [.. snapshot.State.ToArray()];
 
         barHub.Add(Bars.Skip(60).Take(20).ToList());
 
         snapshot.Results.Should().HaveCount(60);
-        snapshot.State.Should().Equal(state);
+        snapshot.State.ToArray().Should().Equal(state);
     }
 
     [TestMethod]
@@ -96,7 +96,7 @@ public class WarmStart : TestBase
     {
         (_, RsiHub rsi) = Chain(Bars.Take(60));
         HubSnapshot<RsiResult> snapshot = rsi.CaptureSnapshot();
-        byte[] state = [.. snapshot.State];
+        byte[] state = [.. snapshot.State.ToArray()];
         state[0] = 7;
 
         Action restore = () => rsi.RestoreSnapshot(snapshot with { State = state });
@@ -111,7 +111,7 @@ public class WarmStart : TestBase
         HubSnapshot<RsiResult> snapshot = rsi.CaptureSnapshot();
 
         Action truncated = () => rsi.RestoreSnapshot(snapshot with { State = snapshot.State[..5] });
-        Action extended = () => rsi.RestoreSnapshot(snapshot with { State = [.. snapshot.State, 0] });
+        Action extended = () => rsi.RestoreSnapshot(snapshot with { State = (byte[])[.. snapshot.State.ToArray(), 0] });
 
         truncated.Should().Throw<InvalidDataException>().WithMessage("*shorter*");
         extended.Should().Throw<InvalidDataException>().WithMessage("*longer*");
@@ -264,14 +264,14 @@ public class WarmStart : TestBase
         // other results (scaled closes change the differences), under a state that cannot decode
         (_, RsiHub other) = Chain(Bars.Take(60).Select(static b => new Bar(
             b.Timestamp, b.Open, b.High, b.Low, b.Close * b.Close / 100m, b.Volume)));
-        HubSnapshot<RsiResult> bad = other.CaptureSnapshot() with { State = [2] };
+        HubSnapshot<RsiResult> bad = other.CaptureSnapshot() with { State = new byte[] { 2 } };
         bad.Results.Should().NotEqual(good.Results);
 
         Action restore = () => rsi.RestoreSnapshot(bad);
 
         restore.Should().Throw<InvalidDataException>();
         rsi.Cache.Should().Equal(good.Results);
-        rsi.CaptureSnapshot().State.Should().Equal(good.State);
+        rsi.CaptureSnapshot().State.ToArray().Should().Equal(good.State.ToArray());
 
         // and it still computes correctly afterwards
         barHub.Add(Bars.Skip(60).Take(20).ToList());
@@ -361,7 +361,7 @@ public class WarmStart : TestBase
         (_, RsiHub rsi) = Chain(Bars.Take(60));
         HubSnapshot<RsiResult> snapshot = rsi.CaptureSnapshot();
 
-        Action restore = () => rsi.RestoreSnapshot(snapshot with { State = [] });
+        Action restore = () => rsi.RestoreSnapshot(snapshot with { State = ReadOnlyMemory<byte>.Empty });
 
         restore.Should().Throw<InvalidDataException>().WithMessage("*empty*");
     }
@@ -372,7 +372,7 @@ public class WarmStart : TestBase
         BarHub source = new();
         source.Add(Bars.Take(10).ToList());
         HubSnapshot<IBar> snapshot = source.CaptureSnapshot();
-        byte[] state = [.. snapshot.State];
+        byte[] state = [.. snapshot.State.ToArray()];
         state[0] = 9;
 
         BarHub target = new();
@@ -418,7 +418,7 @@ public class WarmStart : TestBase
         (_, RsiHub rsi) = Chain(Bars.Take(60));
         HubSnapshot<RsiResult> snapshot = rsi.CaptureSnapshot();
 
-        snapshot.State[0].Should().Be(2);
+        snapshot.State.ToArray()[0].Should().Be(2);
 
         // version 1 held only the two averages
         byte[] v1 = [1, .. BitConverter.GetBytes(1.0), .. BitConverter.GetBytes(1.0)];
@@ -456,7 +456,7 @@ public class WarmStart : TestBase
         barHub.RestoreSnapshot(source.CaptureSnapshot());
         rsi.RestoreSnapshot(snapshot with { State = golden });
 
-        rsi.CaptureSnapshot().State.Should().Equal(golden);
+        rsi.CaptureSnapshot().State.ToArray().Should().Equal(golden);
 
         // the next bar continues from the top-level averages
         barHub.Add(bars[60]);
@@ -492,7 +492,7 @@ public class WarmStart : TestBase
         used.RestoreSnapshot(sourceBars);
         usedRsi.RestoreSnapshot(sourceSnapshot);
 
-        usedRsi.CaptureSnapshot().State.Should().Equal(sourceSnapshot.State);
+        usedRsi.CaptureSnapshot().State.ToArray().Should().Equal(sourceSnapshot.State.ToArray());
     }
 
     [TestMethod]
