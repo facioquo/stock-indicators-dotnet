@@ -5,7 +5,8 @@
       "source": "antfu/skills",
       "sourceType": "github",
       "skillPath": "skills/vitepress/SKILL.md",
-      "computedHash": "2a3929e4623d827a084c90d33d1ce32a6a8467e97fe39236207a32f78313a2c2"
+      "computedHash": "2a3929e4623d827a084c90d33d1ce32a6a8467e97fe39236207a32f78313a2c2",
+      "commit": "4a6bb39e7b45e26402eb215393c51ccf5df1ca4c"
     }
   }
 }

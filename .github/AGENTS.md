@@ -6,7 +6,7 @@ This folder holds GitHub Actions workflows, issue templates, and Copilot instruc
 .github/
 ├── workflows/       # CI, website, package deploy, and performance workflows
 ├── instructions/    # Copilot file-pattern routing to skills
-├── ISSUE_TEMPLATE/  # Bug report and feature request forms
+├── ISSUE_TEMPLATE/  # Bug report form
 └── zizmor.yml       # Workflow security-scan configuration
 ```
 

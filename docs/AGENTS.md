@@ -10,15 +10,6 @@ This folder is the VitePress 2 source for [dotnet.stockindicators.dev](https://d
 
 Run from `docs/`. The first `pnpm install` needs GitHub Packages auth for `@facioquo/indy-charts`; set it up once per the [local development steps](README.md#local-development).
 
-```bash
-pnpm install
-pnpm run docs:dev        # http://localhost:5173/
-pnpm run docs:build      # output in .vitepress/dist/
-pnpm run docs:preview    # serve the build on port 4173
-pnpm run test            # Playwright suites; see package.json for per-project scripts
-pnpm run test:links      # broken-link check over a fresh build
-```
-
 Inspect rendered pages with the Playwright MCP tools against the dev server.
 
 ## Agent-facing output

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
+import { useData } from 'vitepress'
 
 import {
   OverlayChart,
@@ -14,14 +15,9 @@ import { SAMPLE_QUOTES } from './sample-quotes'
 
 const quotes = loadStaticQuotes(SAMPLE_QUOTES)
 
+const { isDark } = useData()
 const canvasEl = ref<HTMLCanvasElement | null>(null)
 let overlayChart: OverlayChart | null = null
-let observer: MutationObserver | null = null
-let lastIsDark: boolean | null = null
-
-function isDark(): boolean {
-  return document.documentElement.classList.contains('dark')
-}
 
 function computeEma(closes: number[], period: number): number[] {
   if (!Number.isInteger(period) || period <= 0) {
@@ -66,40 +62,22 @@ function renderChart(): void {
   setupIndyCharts()
   // OverlayChart.destroy() releases the wrapper state and the underlying Chart.js instance.
   overlayChart?.destroy()
-  const dark = isDark()
   overlayChart = new OverlayChart(canvasEl.value, {
-    isDarkTheme: dark,
+    isDarkTheme: isDark.value,
     showTooltips: false
   })
   overlayChart.render(quotes)
-  lastIsDark = dark
 
   // Push an EMA(20) line onto the candlestick + volume chart.
   overlayChart.chart?.data.datasets.push(buildEmaDataset(quotes, 20))
   overlayChart.chart?.update('none')
 }
 
-function onHtmlClassChange(): void {
-  // VitePress mutates `<html>`'s class for things other than dark-mode toggle
-  // (nav-open state, scroll lock, etc.). Re-render only when the theme actually
-  // flips, otherwise every interaction would rebuild the chart.
-  const dark = isDark()
-  if (dark === lastIsDark) return
-  renderChart()
-}
+watch(isDark, renderChart)
 
-onMounted(() => {
-  renderChart()
-  observer = new MutationObserver(onHtmlClassChange)
-  observer.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['class']
-  })
-})
+onMounted(renderChart)
 
 onBeforeUnmount(() => {
-  observer?.disconnect()
-  observer = null
   overlayChart?.destroy()
   overlayChart = null
 })

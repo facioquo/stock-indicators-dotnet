@@ -2,7 +2,6 @@
 
 This repository is the production source for the [FacioQuo.Stock.Indicators](https://www.nuget.org/packages/FacioQuo.Stock.Indicators) NuGet package: financial market technical analysis indicators built for accuracy, performance, and ergonomics.
 
-- Multi-targets `net11.0` and `net10.0`, with analyzers enforcing strict code quality.
 - Every indicator ships in up to three styles: Series (batch), BufferList (incremental), and StreamHub (real-time).
 - The `docs/` folder is the source for [dotnet.stockindicators.dev](https://dotnet.stockindicators.dev).
 
@@ -27,28 +26,9 @@ Agents are the primary contributors; humans set direction, make architectural de
 
 During discovery and planning, read this repository's [Discussions](https://github.com/facioquo/stock-indicators-dotnet/discussions) alongside the roadmap, Issues, and other sources: they hold indicator requests, ideas, and concepts the roadmap does not carry yet, or carries with less detail. Read them only; the community and maintainers post there, not agents.
 
-## Repository layout
-
-```plaintext
-.
-├── src/                    # Library source
-│   ├── Common/             # Streaming framework, catalog, shared types
-│   ├── Indicators/         # Indicators in a-b, c-d, e-j, k-q, r-s, t-z folders
-│   ├── Obsolete/           # Migration shims for renamed or removed APIs
-│   └── Indicators.csproj
-├── tests/                  # Unit, regression, public-API, integration tests
-├── tools/                  # Benchmarks, baselines, simulators, scripts
-├── docs/                   # Documentation site (VitePress)
-├── .agents/skills/         # Agent skills (.claude/skills links here)
-└── Stock.Indicators.sln
-```
-
 ## Commands
 
 ```bash
-# Build
-dotnet build "Stock.Indicators.sln" -v minimal --nologo
-
 # Unit tests (excludes regression and integration categories)
 dotnet test tests/Library/Tests.Indicators.csproj --no-restore --settings tests/tests.unit.runsettings
 

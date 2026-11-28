@@ -1,4 +1,5 @@
 import { Octokit } from '@octokit/rest'
+import { defineLoader } from 'vitepress'
 import { getGitHubToken } from './utils/github.js'
 
 export interface Contributor {
@@ -28,7 +29,7 @@ function extractCoAuthorUsername(line: string): string | null {
   return null
 }
 
-export default {
+export default defineLoader({
   async load(): Promise<Contributor[]> {
     try {
       const token = getGitHubToken({ verbose: false })
@@ -137,4 +138,4 @@ export default {
       return []
     }
   }
-}
+})

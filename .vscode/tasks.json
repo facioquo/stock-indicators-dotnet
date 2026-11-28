@@ -87,8 +87,31 @@
     // Install and update dependencies
     // ===================================
     {
-      "label": "Initialize: Pull, rebuild, fixers, and unit test",
-      "detail": "Pull latest, clean, rebuild non-incremental, fix all, and test",
+      "label": "Initialize: All",
+      "detail": "Git pull, rebuild, fixers, and full test suites",
+      "dependsOn": [
+        "Initialize: Docs",
+        "Initialize: .NET"
+      ],
+      "dependsOrder": "sequence"
+    },
+    {
+      "label": "Initialize: Docs",
+      "detail": "Doc site only: Pull latest, clean, fix all, and run full test suites",
+      "group": "build",
+      "dependsOn": [
+        "Git: pull",
+        "Install: Node packages",
+        "Clean: Docs (full)",
+        "Install: Browsers for website tests",
+        "Lint: Markdown (fix)",
+        "Test: All (website)"
+      ],
+      "dependsOrder": "sequence"
+    },
+    {
+      "label": "Initialize: .NET",
+      "detail": ".NET projects only: Pull latest, clean, rebuild non-incremental, fix all, and test",
       "group": "build",
       "dependsOn": [
         "Git: pull",
@@ -141,13 +164,11 @@
       "label": "Update: All code dependencies",
       "detail": "Update (upgrade) .NET and NPM packages",
       "dependsOn": [
-        "Update: .NET tools",
         "Update: .NET packages",
         "Update: Node packages",
-        "Install: Browsers for website tests",
         "Update: Skills"
       ],
-      "dependsOrder": "parallel"
+      "dependsOrder": "sequence"
     },
     {
       "label": "Install: Browsers for website tests",
@@ -184,8 +205,21 @@
       "label": "Update: .NET packages",
       "detail": "Upgrade outdated NuGet packages in the root solution using dotnet-outdated",
       "type": "shell",
-      "command": "dotnet tool run dotnet-outdated --upgrade && dotnet tool run dotnet-outdated --upgrade --exclude FacioQuo.Stock.Indicators docs/examples",
-      "dependsOn": "Install: .NET tools"
+      "command": "dotnet outdated --upgrade",
+      "dependsOn": [
+        "Install: .NET tools",
+        "Install: .NET packages"
+      ]
+    },
+    {
+      "label": "Update: .NET packages (examples)",
+      "detail": "Upgrade outdated NuGet packages in the Examples using dotnet-outdated",
+      "type": "shell",
+      "command": "dotnet outdated docs/examples --upgrade",
+      "dependsOn": [
+        "Install: .NET tools",
+        "Install: .NET packages"
+      ]
     },
     {
       "label": "Check: Node packages",
@@ -220,16 +254,7 @@
       "label": "Update: Skills",
       "detail": "Update external agents skills defined in skills-lock.json",
       "type": "shell",
-      "command": "npx skills update --project --all"
-    },
-    {
-      "label": "Clean: Website build cache",
-      "detail": "Delete the dist build outputs cache.",
-      "type": "shell",
-      "command": "rm -rf dist",
-      "options": {
-        "cwd": "${workspaceFolder}/docs"
-      }
+      "command": "pnpm dlx skills update --project --all"
     },
     {
       "label": "Clean: .NET Solution (dotnet clean)",
@@ -244,6 +269,15 @@
       "type": "shell",
       "command": "bash tools/scripts/dotnet-clean.sh",
       "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Clean: Docs website build cache",
+      "detail": "Delete the dist build outputs cache.",
+      "type": "shell",
+      "command": "rm -rf dist",
+      "options": {
+        "cwd": "${workspaceFolder}/docs"
+      }
     },
     {
       "label": "Clean: Docs (vitepress)",
@@ -271,7 +305,8 @@
       "dependsOn": [
         "Stop: All hosted servers",
         "Clean: Docs (node)",
-        "Clean: Docs (vitepress)"
+        "Clean: Docs (vitepress)",
+        "Clean: Docs website build cache"
       ],
       "dependsOrder": "sequence"
     },
@@ -322,7 +357,7 @@
       "detail": "Regenerate docs/.vitepress/public/FacioQuo.Stock.Indicators-Examples.zip from docs/examples (source files only)",
       "type": "shell",
       "command": "bash tools/scripts/examples-zip.sh",
-      "problemMatcher": []
+      "dependsOn": "Update: .NET packages (examples)"
     },
     // ===================================
     // Test, lint, and format
@@ -611,46 +646,6 @@
     // ===================================
     // Code review and verification
     // ===================================
-    {
-      "label": "Review: CodeRabbit CLI (plain)",
-      "detail": "Perform a full code review with CodeRabbit CLI in plain text response mode",
-      "type": "shell",
-      "command": "coderabbit",
-      "args": [
-        "--plain"
-      ]
-    },
-    {
-      "label": "Review: CodeRabbit CLI (prompt-only)",
-      "detail": "Perform a full code review with CodeRabbit CLI in prompt-only response mode",
-      "type": "shell",
-      "command": "coderabbit",
-      "args": [
-        "--prompt-only"
-      ]
-    },
-    {
-      "label": "Review: CodeRabbit CLI (uncommitted, plain)",
-      "detail": "Perform a code review on uncommitted with CodeRabbit CLI in plain text response mode",
-      "type": "shell",
-      "command": "coderabbit",
-      "args": [
-        "--plain",
-        "--type",
-        "uncommitted"
-      ]
-    },
-    {
-      "label": "Review: CodeRabbit CLI (uncommitted, prompt-only)",
-      "detail": "Perform a code review on uncommitted with CodeRabbit CLI in prompt-only response mode",
-      "type": "shell",
-      "command": "coderabbit",
-      "args": [
-        "--prompt-only",
-        "--type",
-        "uncommitted"
-      ]
-    },
     {
       "label": "Verify: Quick checks (build + lint + unit test)",
       "detail": "Complete CI verification: build, lint, and test",

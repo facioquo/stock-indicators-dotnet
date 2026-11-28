@@ -1,6 +1,6 @@
 ---
 title: Custom chart (bring your own data)
-description: Render a candlestick + volume chart from your own quote data using OverlayChart, with a locally computed EMA(20) overlay - no API required.
+description: Render a candlestick + volume chart from your own price bar data using OverlayChart, with a locally computed EMA(20) overlay - no API required.
 ---
 
 <script setup>
@@ -9,7 +9,7 @@ import StaticChart from './StaticChart.vue'
 
 # Custom chart (bring your own data)
 
-Render a candlestick + volume chart **and** a technical indicator overlay directly from your own quote data - no API required. Useful for offline demos, internal dashboards, or static documentation sites.
+Render a candlestick + volume chart **and** a technical indicator overlay directly from your own price bar data - no API required. Useful for offline demos, internal dashboards, or static documentation sites.
 
 ## Live demo
 
@@ -17,7 +17,7 @@ Render a candlestick + volume chart **and** a technical indicator overlay direct
   <StaticChart />
 </ClientOnly>
 
-The chart above plots OHLC + volume from a hard-coded `Quote[]` array, with an EMA(20) line computed locally. Everything ships in the page bundle - no network calls; see [`docs/examples/StaticChart.vue`](https://github.com/facioquo/stock-indicators-dotnet/blob/main/docs/examples/StaticChart.vue) for the source.
+The chart above plots OHLC + volume from a hard-coded `Bar[]` array, with an EMA(20) line computed locally. Everything ships in the page bundle - no network calls; see [`docs/examples/StaticChart.vue`](https://github.com/facioquo/stock-indicators-dotnet/blob/main/docs/examples/StaticChart.vue) for the source.
 
 ## How it works
 
