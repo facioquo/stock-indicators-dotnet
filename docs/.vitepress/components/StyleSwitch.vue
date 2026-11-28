@@ -142,6 +142,19 @@ const name = `indicator-style-${useId()}`
   outline-offset: 1px;
 }
 
+/* every segment carries a Canvas border, so the Highlight border on the
+   active one (custom.scss) keeps the segment size */
+@media (forced-colors: active) {
+  .style-switch__option span {
+    padding: 0 8px;
+    border: 2px solid Canvas;
+  }
+
+  .style-switch--screen .style-switch__option span {
+    padding: 0 6px;
+  }
+}
+
 /* the mobile menu carries its own copy */
 @media (max-width: 767px) {
   .style-switch--nav {

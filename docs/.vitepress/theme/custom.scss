@@ -473,13 +473,12 @@ html:not(.dark) body {
   background-color: var(--vp-c-default-soft);
 }
 
-/* Windows High Contrast replaces color and background, so outline the active
-   segment in a system color to keep the selection visible */
+/* Windows High Contrast replaces color and background, so mark the active
+   segment with a Highlight border; outline stays free for the focus ring */
 @media (forced-colors: active) {
   :root:not([data-indicator-style='buffer']):not([data-indicator-style='stream']) .style-switch__option[data-option='series'] span,
   :root[data-indicator-style='buffer'] .style-switch__option[data-option='buffer'] span,
   :root[data-indicator-style='stream'] .style-switch__option[data-option='stream'] span {
-    outline: 2px solid Highlight;
-    outline-offset: -2px;
+    border-color: Highlight;
   }
 }
