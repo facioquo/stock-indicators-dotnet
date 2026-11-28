@@ -111,20 +111,6 @@ IReadOnlyList<HeikinAshiResult> results = observer.Results;
 | `Close`<br>_`decimal`_ | Modified close price |
 | `Volume`<br>_`decimal`_ | Volume (same as `bars`) |
 
-### Utilities
-
-- [.Find(lookupDate)](/utilities/results#find-by-date)
-- [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
-- .ToBars() to convert to a `Bar` collection.  Example:
-
-  ```csharp
-  IReadOnlyList<Bar> results = bars
-    .ToHeikinAshi()
-    .ToBars();
-  ```
-
-See [Utilities and helpers](/utilities/) for more information.
-
 ## Chaining
 
 This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.
@@ -172,3 +158,39 @@ RsiHub observer = barHub
 
 See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
 :::
+
+## Utilities
+
+::: series
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
+- .ToBars() to convert to a `Bar` collection.  Example:
+
+  ```csharp
+  IReadOnlyList<Bar> results = bars
+    .ToHeikinAshi()
+    .ToBars();
+  ```
+
+:::
+
+::: buffer
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+
+Call it on the list itself, as in `heikinAshiList.Find(lookupDate)`.
+
+Warmup removal is left out. Once the list is full it drops its oldest results, so trimming by position would remove valid values.
+:::
+
+::: stream
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+
+Call it on `observer.Results`, as in `observer.Results.Find(lookupDate)`.
+
+Warmup removal is left out. Once the cache is full the hub drops its oldest results, so trimming by position would remove valid values.
+:::
+
+See [Utilities and helpers](/utilities/) for more information.

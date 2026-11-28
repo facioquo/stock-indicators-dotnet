@@ -113,15 +113,6 @@ IReadOnlyList<SmaResult> results = observer.Results;
 | `Timestamp`<br>_`DateTime`_ | Date from evaluated `TBar` |
 | `Sma`<br>_`double?`_ | Simple moving average |
 
-### Utilities
-
-- [.Condense()](/utilities/results#condense)
-- [.Find(lookupDate)](/utilities/results#find-by-date)
-- [.RemoveWarmupPeriods()](/utilities/results#remove-warmup-periods)
-- [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
-
-See [Utilities and helpers](/utilities/) for more information.
-
 ## Analysis
 
 This indicator has an extended version with more analysis.  See [SMA with extended analysis](/indicators/sma-analysis) for the full documentation including streaming support.
@@ -219,3 +210,36 @@ RsiHub observer = barHub
 
 See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
 :::
+
+## Utilities
+
+::: series
+
+- [.Condense()](/utilities/results#condense)
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.RemoveWarmupPeriods()](/utilities/results#remove-warmup-periods)
+- [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
+
+:::
+
+::: buffer
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.Condense()](/utilities/results#condense)
+
+Call these on the list itself, as in `smaList.Find(lookupDate)`. `.Condense()` returns a new list and leaves `smaList` unchanged.
+
+Warmup removal is left out. Once the list is full it drops its oldest results, so trimming by position would remove valid values.
+:::
+
+::: stream
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.Condense()](/utilities/results#condense)
+
+Call these on `observer.Results`, as in `observer.Results.Find(lookupDate)`. `.Condense()` returns a new list and leaves the hub's results unchanged.
+
+Warmup removal is left out. Once the cache is full the hub drops its oldest results, so trimming by position would remove valid values.
+:::
+
+See [Utilities and helpers](/utilities/) for more information.

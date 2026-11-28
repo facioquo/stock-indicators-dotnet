@@ -155,13 +155,6 @@ When using the `ToRenkoAtr()` variant, the last [Average True Range (ATR)](/indi
 When multiple bricks are drawn from a single `bar` period, the extra information about `High` and `Low` wicks and `Volume` is potentially confusing to interpret.  `High` and `Low` wicks will be the same across the multiple bricks; and `Volume` is portioning evenly across the number of bricks.  For example, if within one `bar` period 3 bricks are drawn, the `Volume` for each brick will be `(sum of bars Volume since last brick) / 3`.
 :::
 
-### Utilities
-
-- [.Find(lookupDate)](/utilities/results#find-by-date)
-- [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
-
-See [Utilities and helpers](/utilities/) for more information.
-
 ## Chaining
 
 This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.
@@ -197,3 +190,32 @@ RsiHub observer = barHub
 
 See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
 :::
+
+## Utilities
+
+::: series
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
+
+:::
+
+::: buffer
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+
+Call it on the list itself, as in `renkoList.Find(lookupDate)`.
+
+Warmup removal is left out. Once the list is full it drops its oldest results, so trimming by position would remove valid values.
+:::
+
+::: stream
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+
+Call it on `observer.Results`, as in `observer.Results.Find(lookupDate)`.
+
+Warmup removal is left out. Once the cache is full the hub drops its oldest results, so trimming by position would remove valid values.
+:::
+
+See [Utilities and helpers](/utilities/) for more information.

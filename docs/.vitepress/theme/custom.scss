@@ -246,9 +246,9 @@ html:not(.dark) body {
 // config.mts rather than CSS; VitePress's defaults already cover comments.
 
 // Page actions from vitepress-plugin-llms render as a block after the page
-// title. From tablet width up, lift them level with the title's first line,
+// title. Above phone width, lift them level with the title's first line,
 // and reserve that width so a long title wraps before reaching them.
-@media (width >= 48rem) {
+@media (width >= 40rem) {
   .vp-doc h1:has(+ .markdown-copy-buttons) {
     padding-right: 240px;
   }
@@ -276,7 +276,7 @@ html:not(.dark) body {
 // H1 for the plugin's own injection point, so the theme places the control
 // directly in the hero instead (see `home-hero-info-after` in theme/index.ts).
 // `.VPHero .main` is already `position: relative` in VitePress's own styles.
-@media (width >= 48rem) {
+@media (width >= 45rem) {
   .VPHero .main > .markdown-copy-buttons {
     position: absolute;
     top: 0;

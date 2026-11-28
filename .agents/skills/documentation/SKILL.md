@@ -16,6 +16,7 @@ The markdown skill owns formatting and linting. The vitepress skill owns `docs/.
 - [ ] Add a `features` card to the category hub page (e.g., `docs/indicators/oscillators.md`) with `title`, `details`, `icon.src` of `/assets/thumbs/indicators/{slug}.png`, and `link`, and add that thumbnail to `docs/.vitepress/public/assets/thumbs/indicators/`.
 - [ ] Add the page to its category list under "Complete list" in `docs/indicators.md`.
 - [ ] Add the [chart block](#chart-block) when the chart API serves the indicator.
+- [ ] Run the docs-site test gates in the code-completion skill; the parity suite checks the page against the catalog and the source.
 - [ ] From `docs/`, run `pnpm run test:links`, which builds the site and checks every link (it needs `htmlproofer` or Docker). Without either, run `pnpm run docs:build` (VS Code task `Build: Website`).
 
 When code changes an existing indicator, update every section it touches: usage syntax for each style, parameter table, bars requirement, null-period bullets, convergence warning, result table, and chaining.
@@ -30,7 +31,7 @@ Each page serves all three indicator styles from one file and one URL. Wrap cont
 
 - Never put a heading inside a style container, so the outline, anchors, and search sections are the same for every style.
 - Put a blank line between a container marker and a code fence (markdownlint MD031). Nest a `::: warning` inside a style container when it applies to that style only.
-- Usage, Response, and Chaining are per-style; everything else is shared.
+- Usage, Response, Chaining, and Utilities are per-style; everything else is shared.
 - Put `<StyleSwitch />` on its own line after the intro paragraph, before the chart block.
 
 ### Frontmatter and heading
@@ -46,8 +47,9 @@ Each page serves all three indicator styles from one file and one URL. Wrap cont
 <StockIndicatorChart indicator="Ema" />
 ```
 
-- `indicator` is a key of the `indicators` map in `docs/.vitepress/theme/index.ts` — PascalCase (`Ema`, `BollingerBands`, `AtrStop`), not the slug. Every key a page uses must exist there.
+- `indicator` is a key of `CHART_INDICATORS` in `docs/.vitepress/theme/chart-indicators.ts` — PascalCase (`Ema`, `BollingerBands`, `AtrStop`), not the slug. Every key a page uses must exist there.
 - A new key needs a `uiid` that the chart API at `charts-api.stockindicators.dev` serves, a `title`, and `chartType: 'oscillator'` when the API lists it as an oscillator (the hint sizes the reserved chart frame before data loads). When the API does not serve the indicator, omit the chart block; never add a placeholder.
+- The site renders charts from a committed offline snapshot in `docs/.vitepress/public/data/chart-api/`. After adding a key, run `pnpm run snapshot:charts` from `docs/` and commit the new files, or the offline tests fail until the monthly refresh workflow runs.
 - Add `withOverlay` when the indicator plots in its own pane (oscillators such as `Rsi`, `Adx`); omit it for price overlays (`Ema`, `BollingerBands`).
 - Stack related charts on consecutive lines with `withOverlay` on the first only (`std-dev.md`, `sma-analysis.md`). `with="DcPeriods"` adds a companion series to one chart (`ht-trendline.md`).
 - Don't wrap the chart in `<ClientOnly>`. The component renders its sized frames during the static build, so the page doesn't shift when the chart loads.
@@ -105,12 +107,6 @@ The first `N+100` periods will have decreasing magnitude, convergence-related pr
 
 An enum table in `docs/shared/` has an `| enum / value | description |` header; the first cell holds the member name in code, a `<br>`, then its numeric value.
 
-### Utilities
-
-`### Utilities` lists `[.Condense()](/utilities/results#condense)`, `[.Find(lookupDate)](/utilities/results#find-by-date)`, and `[.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)`, then "See [Utilities and helpers](/utilities/) for more information."
-
-Add `[.RemoveWarmupPeriods()](/utilities/results#remove-warmup-periods)` before the `removePeriods` form when the no-argument overload removes the warmup: the indicator has its own overload in `{Name}.Utilities.cs`, or its result is `IReusable` and its first non-null value ends the warmup.
-
 ### Chaining
 
 `## Chaining`. Shared, before the containers: the bar-only sentence ("This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.") and, when the result has several values, the reusable one ("Note: `TenkanSen` is the primary reusable value for chaining purposes."). Then one container per style, each describing the directions it supports with an example:
@@ -122,6 +118,16 @@ Add `[.RemoveWarmupPeriods()](/utilities/results#remove-warmup-periods)` before 
 Shared text must hold for every style. When styles differ, move the sentence into each container that it is true for (`pvo.md`: Series and Buffer take bars only, while the hub accepts any chain provider). When no style chains in either direction, write the whole section as shared text with no containers: "This indicator is not chain-enabled and must be generated from `bars`.  It **cannot** be used for further processing by other chain-enabled indicators." (`donchian.md`), or the bar-only sentence plus "Results **cannot** be further chained with additional transforms." (`keltner.md`, whose result is `ISeries`). A result based on `IBar` chains in every style (`renko.md`, `heikin-ashi.md`).
 
 Follow `ema.md` for the exact layout, and `adl.md` for a bar-only indicator. Keep `<a id="streaming"></a>` just before the usage containers so old `#streaming` links still land on the usage section, which shows the reader's saved style.
+
+### Utilities
+
+`## Utilities`, after Chaining (before References when a page has them). One container per style, then the shared line "See [Utilities and helpers](/utilities/) for more information."
+
+- `::: series` — lists `[.Condense()](/utilities/results#condense)`, `[.Find(lookupDate)](/utilities/results#find-by-date)`, and `[.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)`. Add `[.RemoveWarmupPeriods()](/utilities/results#remove-warmup-periods)` before the `removePeriods` form when the no-argument overload removes the warmup: the indicator has its own overload in `{Name}.Utilities.cs`, or its result is `IReusable` and its first non-null value ends the warmup.
+- `::: buffer` — lists only `.Find(lookupDate)` and `.Condense()`, then "Call these on the list itself, as in `{name}List.Find(lookupDate)`. `.Condense()` returns a new list and leaves `{name}List` unchanged." and "Warmup removal is left out. Once the list is full it drops its oldest results, so trimming by position would remove valid values."
+- `::: stream` — the same two links, then "Call these on `observer.Results`, as in `observer.Results.Find(lookupDate)`. `.Condense()` returns a new list and leaves the hub's results unchanged." and "Warmup removal is left out. Once the cache is full the hub drops its oldest results, so trimming by position would remove valid values."
+
+Drop the `.Condense()` sentence when the page has no `Condense`, and the warmup sentence when the Series list has no `RemoveWarmupPeriods`. Omit a style's container when that style is not implemented (`zig-zag.md`).
 
 ## Secondary analysis pages
 

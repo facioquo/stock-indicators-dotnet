@@ -121,15 +121,6 @@ The first `N+100` periods will have decreasing magnitude, convergence-related pr
 | `Timestamp`<br>_`DateTime`_ | Date from evaluated `TBar` |
 | `ChandelierExit`<br>_`double?`_ | Exit line |
 
-### Utilities
-
-- [.Condense()](/utilities/results#condense)
-- [.Find(lookupDate)](/utilities/results#find-by-date)
-- [.RemoveWarmupPeriods()](/utilities/results#remove-warmup-periods)
-- [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
-
-See [Utilities and helpers](/utilities/) for more information.
-
 ## Chaining
 
 This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.
@@ -177,3 +168,36 @@ EmaHub observer = barHub
 
 See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
 :::
+
+## Utilities
+
+::: series
+
+- [.Condense()](/utilities/results#condense)
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.RemoveWarmupPeriods()](/utilities/results#remove-warmup-periods)
+- [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
+
+:::
+
+::: buffer
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.Condense()](/utilities/results#condense)
+
+Call these on the list itself, as in `chandelierList.Find(lookupDate)`. `.Condense()` returns a new list and leaves `chandelierList` unchanged.
+
+Warmup removal is left out. Once the list is full it drops its oldest results, so trimming by position would remove valid values.
+:::
+
+::: stream
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.Condense()](/utilities/results#condense)
+
+Call these on `observer.Results`, as in `observer.Results.Find(lookupDate)`. `.Condense()` returns a new list and leaves the hub's results unchanged.
+
+Warmup removal is left out. Once the cache is full the hub drops its oldest results, so trimming by position would remove valid values.
+:::
+
+See [Utilities and helpers](/utilities/) for more information.

@@ -115,12 +115,6 @@ IReadOnlyList<TimeValue> results = observer.Results;
 | `Timestamp`<br>_`DateTime`_ | Date from evaluated `TBar` |
 | `Value`<br>_`double`_ | Price of `CandlePart` option |
 
-### Utilities
-
-- [.Find(lookupDate)](/utilities/results#find-by-date)
-
-See [Utilities and helpers](/utilities/) for more information.
-
 ## Chaining
 
 This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.
@@ -168,3 +162,27 @@ RsiHub observer = barHub
 
 See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
 :::
+
+## Utilities
+
+::: series
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+
+:::
+
+::: buffer
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+
+Call it on the list itself, as in `barPartList.Find(lookupDate)`.
+:::
+
+::: stream
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+
+Call it on `observer.Results`, as in `observer.Results.Find(lookupDate)`.
+:::
+
+See [Utilities and helpers](/utilities/) for more information.

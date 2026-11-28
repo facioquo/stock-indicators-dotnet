@@ -126,15 +126,6 @@ The first `JP+JO+100` periods will have decreasing magnitude, convergence-relate
 | `Teeth`<br>_`double?`_ | Alligator's Teeth |
 | `Lips`<br>_`double?`_ | Alligator's Lips |
 
-### Utilities
-
-- [.Condense()](/utilities/results#condense)
-- [.Find(lookupDate)](/utilities/results#find-by-date)
-- [.RemoveWarmupPeriods()](/utilities/results#remove-warmup-periods)
-- [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
-
-See [Utilities and helpers](/utilities/) for more information.
-
 ## Chaining
 
 Results **cannot** be further chained with additional transforms.
@@ -182,3 +173,36 @@ AlligatorHub observer = barHub
 
 See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
 :::
+
+## Utilities
+
+::: series
+
+- [.Condense()](/utilities/results#condense)
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.RemoveWarmupPeriods()](/utilities/results#remove-warmup-periods)
+- [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
+
+:::
+
+::: buffer
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.Condense()](/utilities/results#condense)
+
+Call these on the list itself, as in `alligatorList.Find(lookupDate)`. `.Condense()` returns a new list and leaves `alligatorList` unchanged.
+
+Warmup removal is left out. Once the list is full it drops its oldest results, so trimming by position would remove valid values.
+:::
+
+::: stream
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.Condense()](/utilities/results#condense)
+
+Call these on `observer.Results`, as in `observer.Results.Find(lookupDate)`. `.Condense()` returns a new list and leaves the hub's results unchanged.
+
+Warmup removal is left out. Once the cache is full the hub drops its oldest results, so trimming by position would remove valid values.
+:::
+
+See [Utilities and helpers](/utilities/) for more information.

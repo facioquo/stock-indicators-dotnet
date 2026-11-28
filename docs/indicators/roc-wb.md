@@ -112,10 +112,6 @@ IReadOnlyList<RocWbResult> results = observer.Results;
 | `UpperBand`<br>_`double?`_ | Upper band of ROC (overbought indicator) |
 | `LowerBand`<br>_`double?`_ | Lower band of ROC (oversold indicator) |
 
-### Utilities
-
-See [Utilities and helpers](/utilities/) for more information.
-
 ## Chaining
 
 ::: series
@@ -193,3 +189,27 @@ EmaHub observer = barHub
 
 See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
 :::
+
+## Utilities
+
+::: series
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+
+:::
+
+::: buffer
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+
+Call it on the list itself, as in `rocWbList.Find(lookupDate)`.
+:::
+
+::: stream
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+
+Call it on `observer.Results`, as in `observer.Results.Find(lookupDate)`.
+:::
+
+See [Utilities and helpers](/utilities/) for more information.

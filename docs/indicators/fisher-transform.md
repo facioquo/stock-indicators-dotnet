@@ -115,21 +115,6 @@ The first `N+15` warmup periods will have unusable decreasing magnitude, converg
 | `Fisher`<br>_`double`_ | Fisher Transform |
 | `Trigger`<br>_`double?`_ | FT offset by one period |
 
-### Utilities
-
-- [.Condense()](/utilities/results#condense)
-- [.Find(lookupDate)](/utilities/results#find-by-date)
-- [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
-
-For pruning of warmup periods, we recommend using the following guidelines:
-
-```csharp
-bars.ToFisherTransform(lookbackPeriods)
-  .RemoveWarmupPeriods(lookbackPeriods+15);
-```
-
-See [Utilities and helpers](/utilities/) for more information.
-
 ## Chaining
 
 ::: series
@@ -207,3 +192,42 @@ RsiHub observer = barHub
 
 See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
 :::
+
+## Utilities
+
+::: series
+
+- [.Condense()](/utilities/results#condense)
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
+
+For pruning of warmup periods, we recommend using the following guidelines:
+
+```csharp
+bars.ToFisherTransform(lookbackPeriods)
+  .RemoveWarmupPeriods(lookbackPeriods+15);
+```
+
+:::
+
+::: buffer
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.Condense()](/utilities/results#condense)
+
+Call these on the list itself, as in `fisherList.Find(lookupDate)`. `.Condense()` returns a new list and leaves `fisherList` unchanged.
+
+Warmup removal is left out. Once the list is full it drops its oldest results, so trimming by position would remove valid values.
+:::
+
+::: stream
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.Condense()](/utilities/results#condense)
+
+Call these on `observer.Results`, as in `observer.Results.Find(lookupDate)`. `.Condense()` returns a new list and leaves the hub's results unchanged.
+
+Warmup removal is left out. Once the cache is full the hub drops its oldest results, so trimming by position would remove valid values.
+:::
+
+See [Utilities and helpers](/utilities/) for more information.

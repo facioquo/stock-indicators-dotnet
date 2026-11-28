@@ -114,10 +114,34 @@ IReadOnlyList<CandleResult> results = observer.Results;
 
 <!--@include: ../shared/candle-result.md-->
 
-### Utilities
+## Utilities
+
+::: series
 
 - [.Condense()](/utilities/results#condense)
 - [.Find(lookupDate)](/utilities/results#find-by-date)
 - [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
+
+:::
+
+::: buffer
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.Condense()](/utilities/results#condense)
+
+Call these on the list itself, as in `marubozuList.Find(lookupDate)`. `.Condense()` returns a new list and leaves `marubozuList` unchanged.
+
+Warmup removal is left out. Once the list is full it drops its oldest results, so trimming by position would remove valid values.
+:::
+
+::: stream
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.Condense()](/utilities/results#condense)
+
+Call these on `observer.Results`, as in `observer.Results.Find(lookupDate)`. `.Condense()` returns a new list and leaves the hub's results unchanged.
+
+Warmup removal is left out. Once the cache is full the hub drops its oldest results, so trimming by position would remove valid values.
+:::
 
 See [Utilities and helpers](/utilities/) for more information.

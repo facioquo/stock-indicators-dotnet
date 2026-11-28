@@ -126,14 +126,6 @@ IReadOnlyList<PrsResult> results = observer.Results;
 At period `i`, `Prs` is `Eval[i] / Base[i]` and `PrsPercent` is the difference in `Eval` percent change and `Base` percent change over the prior `N` periods. Example: if `Eval` gains 10% and `Base` gains 3%, `PrsPercent` depicts +7% relative outperformance.
 :::
 
-### Utilities
-
-- [.Condense()](/utilities/results#condense)
-- [.Find(lookupDate)](/utilities/results#find-by-date)
-- [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
-
-See [Utilities and helpers](/utilities/) for more information.
-
 ## Chaining
 
 ::: series
@@ -180,3 +172,35 @@ SlopeHub observer = evalHub
 
 See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
 :::
+
+## Utilities
+
+::: series
+
+- [.Condense()](/utilities/results#condense)
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
+
+:::
+
+::: buffer
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.Condense()](/utilities/results#condense)
+
+Call these on the list itself, as in `prsList.Find(lookupDate)`. `.Condense()` returns a new list and leaves `prsList` unchanged.
+
+Warmup removal is left out. Once the list is full it drops its oldest results, so trimming by position would remove valid values.
+:::
+
+::: stream
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.Condense()](/utilities/results#condense)
+
+Call these on `observer.Results`, as in `observer.Results.Find(lookupDate)`. `.Condense()` returns a new list and leaves the hub's results unchanged.
+
+Warmup removal is left out. Once the cache is full the hub drops its oldest results, so trimming by position would remove valid values.
+:::
+
+See [Utilities and helpers](/utilities/) for more information.

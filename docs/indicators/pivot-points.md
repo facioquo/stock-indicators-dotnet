@@ -154,16 +154,38 @@ The last window is repainted when it does not contain a full window of data.
 | `S3`<br>_`double?`_ | Support level 3 |
 | `S4`<br>_`double?`_ | Support level 4 (Camarilla only) |
 
-### Utilities
-
-- [.Find(lookupDate)](/utilities/results#find-by-date)
-- [.RemoveWarmupPeriods()](/utilities/results#remove-warmup-periods)
-- [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
-
-See [Utilities and helpers](/utilities/) for more information.
-
 ## Chaining
 
 This indicator is not chain-enabled and must be generated from `bars`.  It **cannot** be used for further processing by other chain-enabled indicators.
 
 See [Chaining indicators](/guide/chaining) for more.
+
+## Utilities
+
+::: series
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+- [.RemoveWarmupPeriods()](/utilities/results#remove-warmup-periods)
+- [.RemoveWarmupPeriods(removePeriods)](/utilities/results#remove-warmup-periods)
+
+:::
+
+::: buffer
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+
+Call it on the list itself, as in `pivotPointsList.Find(lookupDate)`.
+
+Warmup removal is left out. Once the list is full it drops its oldest results, so trimming by position would remove valid values.
+:::
+
+::: stream
+
+- [.Find(lookupDate)](/utilities/results#find-by-date)
+
+Call it on `observer.Results`, as in `observer.Results.Find(lookupDate)`.
+
+Warmup removal is left out. Once the cache is full the hub drops its oldest results, so trimming by position would remove valid values.
+:::
+
+See [Utilities and helpers](/utilities/) for more information.
