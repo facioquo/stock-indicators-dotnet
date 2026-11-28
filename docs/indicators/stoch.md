@@ -8,7 +8,13 @@ description: Created by George Lane, the Stochastic Oscillator, also known as KD
 Created by George Lane, the [Stochastic Oscillator](https://en.wikipedia.org/wiki/Stochastic_oscillator), also known as KDJ Index, is a momentum oscillator that compares current price with recent highs and lows and is presented on a scale of 0 to 100.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/237 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="Stoch" withOverlay />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax (standard)
@@ -20,6 +26,41 @@ IReadOnlyList<StochResult> results =
   bars.ToStoch(lookbackPeriods, signalPeriods, smoothPeriods,
                   kFactor, dFactor, movingAverageType);
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+StochList stochList = new(lookbackPeriods, signalPeriods, smoothPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => stochList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<StochResult> results = stochList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+StochHub observer = barHub.ToStochHub(lookbackPeriods, signalPeriods, smoothPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<StochResult> results = observer.Results;
+```
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -49,6 +90,8 @@ These are the supported moving average types:
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<StochResult>
 ```
@@ -57,6 +100,30 @@ IReadOnlyList<StochResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The first `N+S-2` periods will have `null` Oscillator values since there's not enough data to calculate.
+:::
+
+::: buffer
+
+```csharp
+StochList : IReadOnlyList<StochResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first `N+S-2` periods will have `null` Oscillator values since there's not enough data to calculate.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<StochResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first `N+S-2` periods will have `null` Oscillator values since there's not enough data to calculate.
+:::
 
 ::: warning 🚩 ⚞ Convergence warning
 The first `N+100` periods will have decreasing magnitude, convergence-related precision errors that can be as high as ~5% deviation in indicator values for earlier periods when using `MaType.SMMA`.  Standard use of `MaType.SMA` does not have convergence-related precision errors.
@@ -84,6 +151,9 @@ See [Utilities and helpers](/utilities/) for more information.
 
 ## Chaining
 
+This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.
+
+::: series
 Results can be further processed on `Oscillator` with additional chain-enabled indicators.
 
 ```csharp
@@ -93,35 +163,27 @@ var results = bars
     .ToSlope(..);
 ```
 
-This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.
-
 See [Chaining indicators](/guide/chaining) for more.
+:::
 
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
-
-```csharp
-StochList stochList = new(lookbackPeriods, signalPeriods, smoothPeriods);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => stochList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<StochResult> results = stochList;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
+::: buffer
+Add each new result to another chain-enabled buffer list to process `Oscillator` further.
 
 ```csharp
-BarHub barHub = new();
-StochHub observer = barHub.ToStochHub(lookbackPeriods, signalPeriods, smoothPeriods);
+// example
+StochList stochList = new(..);
+SlopeList slopeList = new(..);
 
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<StochResult> results = observer.Results;
+void OnBarReceived(IBar bar)
+{
+    stochList.Add(bar);
+    slopeList.Add(stochList[^1]);
+}
 ```
 
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.
+See [Chaining buffer lists](/guide/styles/buffer#chaining-indicators) for more.
+:::
+
+::: stream
+Stream hub results **cannot** be further chained with additional hubs.
+:::

@@ -8,15 +8,56 @@ description: Created by Manning Stoller, the Stoller Average Range Channel (STAR
 Created by Manning Stoller, the [Stoller Average Range Channel (STARC) Bands](https://www.investopedia.com/terms/s/starc.asp), are price ranges based on an SMA centerline and ATR band widths.  See also [Keltner Channels](/indicators/keltner) for an EMA centerline equivalent.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/292 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="StarcBands" />
 
 <ChartKey indicator="StarcBands" />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax
 IReadOnlyList<StarcBandsResult> results =
   bars.ToStarcBands(smaPeriods, multiplier, atrPeriods);
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+StarcBandsList starcBandsList = new(smaPeriods, multiplier, atrPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => starcBandsList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<StarcBandsResult> results = starcBandsList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+StarcBandsHub observer = barHub.ToStarcBandsHub(smaPeriods, multiplier, atrPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<StarcBandsResult> results = observer.Results;
+```
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -34,6 +75,8 @@ You must have at least `S` or `A+100` periods of `bars`, whichever is more, to c
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<StarcBandsResult>
 ```
@@ -42,6 +85,30 @@ IReadOnlyList<StarcBandsResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The first `N-1` periods will have `null` values since there's not enough data to calculate, where `N` is the greater of `S` or `A`.
+:::
+
+::: buffer
+
+```csharp
+StarcBandsList : IReadOnlyList<StarcBandsResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first `N-1` periods will have `null` values since there's not enough data to calculate, where `N` is the greater of `S` or `A`.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<StarcBandsResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first `N-1` periods will have `null` values since there's not enough data to calculate, where `N` is the greater of `S` or `A`.
+:::
 
 ::: warning 🚩 ⚞ Convergence warning
 The first `A+150` periods will have decreasing magnitude, convergence-related precision errors that can be as high as ~5% deviation in indicator values for earlier periods.
@@ -70,32 +137,3 @@ See [Utilities and helpers](/utilities/) for more information.
 This indicator is not chain-enabled and must be generated from `bars`.  It **cannot** be used for further processing by other chain-enabled indicators.
 
 See [Chaining indicators](/guide/chaining) for more.
-
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
-
-```csharp
-StarcBandsList starcBandsList = new(smaPeriods, multiplier, atrPeriods);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => starcBandsList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<StarcBandsResult> results = starcBandsList;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
-
-```csharp
-BarHub barHub = new();
-StarcBandsHub observer = barHub.ToStarcBandsHub(smaPeriods, multiplier, atrPeriods);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<StarcBandsResult> results = observer.Results;
-```
-
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.

@@ -8,15 +8,31 @@ description: Standard Deviation Channels are price ranges based on an linear reg
 Standard Deviation Channels are prices ranges based on an linear regression centerline and standard deviations band widths.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/368 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="StdDevChannels" />
 
 <ChartKey indicator="StdDevChannels" />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax
 IReadOnlyList<StdDevChannelsResult> results =
   bars.ToStdDevChannels(lookbackPeriods, stdDeviations);
 ```
+
+:::
+
+::: buffer
+Buffer lists are not supported for this indicator.  Its reverse-window algorithm recalculates the entire dataset on each new data point, so the cost grows quadratically (O(n²)) with the dataset size.  Use the Series implementation (`ToStdDevChannels()`) with periodic recalculation instead, such as at the end of each period or every `N` bars rather than on every tick.
+:::
+
+::: stream
+Stream hubs are not supported for this indicator.  Its reverse-window algorithm recalculates the entire dataset on each new data point, so the cost grows quadratically (O(n²)) with the dataset size.  Use the Series implementation (`ToStdDevChannels()`) with periodic recalculation instead, such as at the end of each period or every `N` bars rather than on every tick.
+:::
 
 ## Parameters
 
@@ -83,9 +99,3 @@ var results = barsEval
 Results **cannot** be further chained with additional transforms.
 
 See [Chaining indicators](/guide/chaining) for more.
-
-## Streaming
-
-**⚠️ Streaming not supported**: Due to the reverse-window algorithm that recalculates the entire dataset on each new data point, Standard Deviation Channels is only available as a batch Series implementation. The computational cost grows quadratically (O(n²)) as the dataset size increases, making it impractical for incremental streaming (StreamHub) or buffer (BufferList) scenarios.
-
-**Recommendation**: Use the Series implementation (`ToStdDevChannels()`) with periodic batch recalculation. For real-time scenarios, consider recalculating at appropriate intervals (e.g., end of period, every N bars) rather than on every tick.

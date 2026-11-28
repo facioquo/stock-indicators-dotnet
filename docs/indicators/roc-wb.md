@@ -8,13 +8,54 @@ description: Rate of Change with Bands, created by Vitali Apirine, is a volatili
 Rate of Change (ROC) with Bands, created by Vitali Apirine, is a volatility banded variant of [Rate of Change (ROC)](/indicators/roc).
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/242 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="RocWb" withOverlay />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax
 IReadOnlyList<RocWbResult> results =
   bars.ToRocWb(lookbackPeriods, emaPeriods, stdDevPeriods);
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+RocWbList rocWbList = new(lookbackPeriods, emaPeriods, stdDevPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => rocWbList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<RocWbResult> results = rocWbList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+RocWbHub observer = barHub.ToRocWbHub(lookbackPeriods, emaPeriods, stdDevPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<RocWbResult> results = observer.Results;
+```
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -32,9 +73,34 @@ You must have at least `N+1` periods of `bars` to cover the warmup periods.
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<RocWbResult>
 ```
+
+:::
+
+::: buffer
+
+```csharp
+RocWbList : IReadOnlyList<RocWbResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<RocWbResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+:::
 
 ### `RocWbResult`
 
@@ -50,37 +116,9 @@ IReadOnlyList<RocWbResult>
 
 See [Utilities and helpers](/utilities/) for more information.
 
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
-
-```csharp
-RocWbList rocWbList = new(lookbackPeriods, emaPeriods, stdDevPeriods);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => rocWbList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<RocWbResult> results = rocWbList;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
-
-```csharp
-BarHub barHub = new();
-RocWbHub observer = barHub.ToRocWbHub(lookbackPeriods, emaPeriods, stdDevPeriods);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<RocWbResult> results = observer.Results;
-```
-
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.
-
 ## Chaining
 
+::: series
 This indicator may be generated from any chain-enabled indicator or method.
 
 ```csharp
@@ -100,3 +138,58 @@ var results = bars
 ```
 
 See [Chaining indicators](/guide/chaining) for more.
+:::
+
+::: buffer
+This indicator may be generated from results of another chain-enabled buffer list.  Add each new result to it yourself.
+
+```csharp
+// example
+SmaList smaList = new(..);
+RocWbList rocWbList = new(..);
+
+void OnBarReceived(IBar bar)
+{
+    smaList.Add(bar);
+    rocWbList.Add(smaList[^1]);
+}
+```
+
+Add each new result to another chain-enabled buffer list to process `Roc` further.
+
+```csharp
+// example
+RocWbList rocWbList = new(..);
+EmaList emaList = new(..);
+
+void OnBarReceived(IBar bar)
+{
+    rocWbList.Add(bar);
+    emaList.Add(rocWbList[^1]);
+}
+```
+
+See [Chaining buffer lists](/guide/styles/buffer#chaining-indicators) for more.
+:::
+
+::: stream
+This indicator may be subscribed to any chain-enabled hub.
+
+```csharp
+// example
+RocWbHub observer = barHub
+    .ToBarPartHub(CandlePart.HL2)
+    .ToRocWbHub(..);
+```
+
+Subscribe other chain-enabled hubs to it to process `Roc` further.
+
+```csharp
+// example
+EmaHub observer = barHub
+    .ToRocWbHub(..)
+    .ToEmaHub(..);
+```
+
+See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
+:::

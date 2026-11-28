@@ -454,3 +454,31 @@ html:not(.dark) body {
     vertical-align: -1px;
   }
 }
+
+/* Indicator style (Series, Buffer, Stream): show only the reader's chosen
+   style. The early head script in config.mts sets <html data-indicator-style>
+   before first paint; with no attribute (no JS), Series shows. */
+:root[data-indicator-style='buffer'] .style-series,
+:root[data-indicator-style='stream'] .style-series,
+:root:not([data-indicator-style='buffer']) .style-buffer,
+:root:not([data-indicator-style='stream']) .style-stream {
+  display: none;
+}
+
+/* active segment of every StyleSwitch, driven by the same attribute */
+:root:not([data-indicator-style='buffer']):not([data-indicator-style='stream']) .style-switch__option[data-option='series'] span,
+:root[data-indicator-style='buffer'] .style-switch__option[data-option='buffer'] span,
+:root[data-indicator-style='stream'] .style-switch__option[data-option='stream'] span {
+  color: var(--vp-c-text-1);
+  background-color: var(--vp-c-default-soft);
+}
+
+/* Windows High Contrast replaces color and background, so mark the active
+   segment with a Highlight border; outline stays free for the focus ring */
+@media (forced-colors: active) {
+  :root:not([data-indicator-style='buffer']):not([data-indicator-style='stream']) .style-switch__option[data-option='series'] span,
+  :root[data-indicator-style='buffer'] .style-switch__option[data-option='buffer'] span,
+  :root[data-indicator-style='stream'] .style-switch__option[data-option='stream'] span {
+    border-color: Highlight;
+  }
+}

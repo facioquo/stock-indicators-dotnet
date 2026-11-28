@@ -8,7 +8,13 @@ description: The Volume Weighted Average Price is a volume weighted average of p
 The [Volume Weighted Average Price](https://en.wikipedia.org/wiki/Volume-weighted_average_price) is a Volume weighted average of price, typically used on intraday data.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/310 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="Vwap" />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax
@@ -19,6 +25,41 @@ IReadOnlyList<VwapResult> results =
 IReadOnlyList<VwapResult> results =
   bars.ToVwap(startDate);
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+VwapList vwapList = new(startDate);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => vwapList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<VwapResult> results = vwapList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+VwapHub observer = barHub.ToVwapHub(startDate);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<VwapResult> results = observer.Results;
+```
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -34,6 +75,8 @@ You must have at least one historical bar to calculate; however, more is often n
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<VwapResult>
 ```
@@ -43,6 +86,32 @@ IReadOnlyList<VwapResult>
 - It does not return a single incremental indicator value.
 - The first period or the `startDate` will have a `Vwap = Close` value since it is the initial starting point.
 - `Vwap` values before `startDate`, if specified, will be `null`.
+:::
+
+::: buffer
+
+```csharp
+VwapList : IReadOnlyList<VwapResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first period or the `startDate` will have a `Vwap = Close` value since it is the initial starting point.
+- `Vwap` values before `startDate`, if specified, will be `null`.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<VwapResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first period or the `startDate` will have a `Vwap = Close` value since it is the initial starting point.
+- `Vwap` values before `startDate`, if specified, will be `null`.
+:::
 
 ### `VwapResult`
 
@@ -62,6 +131,9 @@ See [Utilities and helpers](/utilities/) for more information.
 
 ## Chaining
 
+This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.
+
+::: series
 Results can be further processed on `Vwap` with additional chain-enabled indicators.
 
 ```csharp
@@ -71,35 +143,36 @@ var results = bars
     .ToRsi(..);
 ```
 
-This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.
-
 See [Chaining indicators](/guide/chaining) for more.
+:::
 
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
-
-```csharp
-VwapList vwapList = new(startDate);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => vwapList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<VwapResult> results = vwapList;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
+::: buffer
+Add each new result to another chain-enabled buffer list to process `Vwap` further.
 
 ```csharp
-BarHub barHub = new();
-VwapHub observer = barHub.ToVwapHub(startDate);
+// example
+VwapList vwapList = new(..);
+RsiList rsiList = new(..);
 
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<VwapResult> results = observer.Results;
+void OnBarReceived(IBar bar)
+{
+    vwapList.Add(bar);
+    rsiList.Add(vwapList[^1]);
+}
 ```
 
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.
+See [Chaining buffer lists](/guide/styles/buffer#chaining-indicators) for more.
+:::
+
+::: stream
+Subscribe other chain-enabled hubs to it to process `Vwap` further.
+
+```csharp
+// example
+RsiHub observer = barHub
+    .ToVwapHub(..)
+    .ToRsiHub(..);
+```
+
+See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
+:::

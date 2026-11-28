@@ -8,6 +8,12 @@ description: Arithmetic and rolling-window math on chainable indicator results �
 IndyMath combines or transforms chainable indicator results — any series of `IReusable` values, including price bars — so simple custom indicators need no hand-written loop.  It adds, subtracts, multiplies, or divides two series or a series and a fixed amount, takes the larger or smaller of two series, and finds a rolling highest, lowest, or median value.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/977 "Community discussion about this indicator")
 
+<StyleSwitch />
+
+<a id="streaming"></a>
+
+::: series
+
 ```csharp
 // C# usage syntax (two series)
 IReadOnlyList<MathResult> results =
@@ -28,6 +34,62 @@ IReadOnlyList<MathResult> results =
   source.RollingMax(lookbackPeriods);
   // also .RollingMin, .RollingMedian
 ```
+
+:::
+
+::: buffer
+The rolling-window methods also have a buffer-style form, `.ToRollingMaxList(lookbackPeriods)`, `.ToRollingMinList(lookbackPeriods)`, and `.ToRollingMedianList(lookbackPeriods)`.  Fixed-amount and two-series math has no buffer list.  Plain `double` arithmetic on the values you hold gives `NaN` or infinity where these methods give `null`, such as for a warmup value or a zero divisor, and does not pair two series by timestamp; use the Series method or a stream hub to match these results.
+
+```csharp
+RollingMaxList rollingMaxList = new(lookbackPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => rollingMaxList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<MathResult> results = rollingMaxList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Every method streams through a stream hub, which keeps the Series name and is chosen by its receiver: called on a hub, `.Minus(otherSource)` or `.RollingMax(lookbackPeriods)` returns a stream hub, so a Series chain such as `bars.ToSma(10).Minus(bars.ToSma(20))` streams as `barHub.ToSmaHub(10).Minus(barHub.ToSmaHub(20))`.
+
+```csharp
+BarHub barHub = new();
+RollingMaxHub observer = barHub.RollingMax(lookbackPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<MathResult> results = observer.Results;
+```
+
+Fixed-operand math uses one hub type for every operation, `ScalarMathHub`, such as `barHub.Plus(1)`.
+
+Two-series stream hubs take a second chain provider, such as `.Minus(otherSource)`, built on `PairMathHub`.  A result is added once both providers hold the same timestamp.  A timestamp that only one provider holds produces no result, where the Series method throws.  A value that arrives late, or is revised or removed, on either side is handled by the usual rebuild, and each side stages up to the hub's cache size.  This streams a MACD composite:
+
+```csharp
+BarHub barHub = new();
+MacdHub macd = barHub.ToMacdHub(12, 26, 9);
+
+PairMathHub composite = macd
+    .Minus(macd.ToEmaHub(9))
+    .Plus(barHub.ToSmaHub(9));
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<MathResult> results = composite.Results;
+```
+
+Timestamps match exactly; there is no tolerance for clock skew between the two series.  Drive both providers from one thread at a time, as when both descend from one `BarHub`.
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 | method | returns |
 | ------ | ------- |
@@ -63,6 +125,8 @@ Fixed-amount and two-series methods need no warmup.  Rolling windows need at lea
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<MathResult>
 ```
@@ -70,6 +134,29 @@ IReadOnlyList<MathResult>
 - This method returns a time series of all available indicator values for the `source` provided.
 - The Series method always returns the same number of elements as there are in the source series.
 - It does not return a single incremental indicator value.
+:::
+
+::: buffer
+
+```csharp
+RollingMaxList : IReadOnlyList<MathResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<MathResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each matched timestamp in the hub cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+:::
+
 - A period is `null` where an input is `null`, such as an indicator warmup period, and where a two-series divisor is 0.  Rolling windows are also `null` for the first `N-1` periods and while the window holds a `null` value.
 
 ### `MathResult`
@@ -90,6 +177,7 @@ See [Utilities and helpers](/utilities/) for more information.
 
 ## Chaining
 
+::: series
 This indicator may be generated from any chain-enabled indicator or method.
 
 ```csharp
@@ -128,55 +216,36 @@ IReadOnlyList<EmaResult> drawdown = bars
 ```
 
 See [Chaining indicators](/guide/chaining) for more.
+:::
 
-## Streaming
-
-Every method streams through a stream hub, which keeps the Series name and is chosen by its receiver: called on a hub, `.Minus(otherSource)` or `.RollingMax(lookbackPeriods)` returns a stream hub, so a Series chain such as `bars.ToSma(10).Minus(bars.ToSma(20))` streams as `barHub.ToSmaHub(10).Minus(barHub.ToSmaHub(20))`.
-
-The rolling-window methods also have a buffer-style form, `.ToRollingMaxList(lookbackPeriods)`, `.ToRollingMinList(lookbackPeriods)`, and `.ToRollingMedianList(lookbackPeriods)`, for incremental calculations without a hub.  Fixed-amount and two-series math has no buffer list.  Plain `double` arithmetic on the values you hold gives `NaN` or infinity where these methods give `null`, such as for a warmup value or a zero divisor, and does not pair two series by timestamp; use the Series method or a stream hub to match these results.
+::: buffer
+The rolling-window lists may be generated from results of another chain-enabled buffer list, and their results added to the next one.  Add each new result yourself.
 
 ```csharp
-RollingMaxList rollingMaxList = new(lookbackPeriods);
+// example: highest RSI over the last 20 periods
+RsiList rsiList = new(14);
+RollingMaxList rollingMaxList = new(20);
 
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => rollingMaxList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<MathResult> results = rollingMaxList;
+void OnBarReceived(IBar bar)
+{
+    rsiList.Add(bar);
+    rollingMaxList.Add(rsiList[^1]);
+}
 ```
 
-Subscribe to a `BarHub` for advanced streaming scenarios:
+See [Chaining buffer lists](/guide/styles/buffer#chaining-indicators) for more.
+:::
+
+::: stream
+Every method may be subscribed to any chain-enabled hub, and other chain-enabled hubs may subscribe to it.
 
 ```csharp
-BarHub barHub = new();
-RollingMaxHub observer = barHub.RollingMax(lookbackPeriods);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<MathResult> results = observer.Results;
+// RSI of the spread between a fast and a slow moving average
+RsiHub spreadRsi = barHub
+    .ToSmaHub(10)
+    .Minus(barHub.ToSmaHub(20))
+    .ToRsiHub(14);
 ```
 
-Fixed-operand math uses one hub type for every operation, `ScalarMathHub`, such as `barHub.Plus(1)`.
-
-Two-series stream hubs take a second chain provider, such as `.Minus(otherSource)`, built on `PairMathHub`.  A result is added once both providers hold the same timestamp.  A timestamp that only one provider holds produces no result, where the Series method throws.  A value that arrives late, or is revised or removed, on either side is handled by the usual rebuild, and each side stages up to the hub's cache size.  This streams the MACD composite from the example above:
-
-```csharp
-BarHub barHub = new();
-MacdHub macd = barHub.ToMacdHub(12, 26, 9);
-
-PairMathHub composite = macd
-    .Minus(macd.ToEmaHub(9))
-    .Plus(barHub.ToSmaHub(9));
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<MathResult> results = composite.Results;
-```
-
-Timestamps match exactly; there is no tolerance for clock skew between the two series.  Drive both providers from one thread at a time, as when both descend from one `BarHub`.
-
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.
+See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
+:::

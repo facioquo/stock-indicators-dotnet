@@ -4,6 +4,8 @@ import { defineConfig, type DefaultTheme, type HeadConfig } from 'vitepress'
 import llmstxt, { copyOrDownloadAsMarkdownButtons } from 'vitepress-plugin-llms'
 import { AGENT_DETAILS, identityBlock, readBuildInfo, SITE_URL, writeAgentArtifacts } from './agent-artifacts.ts'
 import { pageRoute } from './routes.ts'
+import { styleContainers } from './style-containers.ts'
+import { INDICATOR_STYLE_DEFAULT, INDICATOR_STYLE_KEY, INDICATOR_STYLES } from './theme/indicator-style-keys.ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -158,6 +160,16 @@ export default defineConfig({
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
         if (!preference || preference === 'auto' ? prefersDark : preference === 'dark')
           document.documentElement.classList.add('dark')
+      })()`],
+    // Applies the reader's saved indicator style (Series, Buffer, or Stream)
+    // before first paint, so `custom.scss` hides the other styles' content
+    // with no flash. Same Rocket Loader opt-out as the dark-mode script above.
+    ['script', { id: 'check-indicator-style-early', 'data-cfasync': 'false' },
+      `;(() => {
+        let style
+        try { style = localStorage.getItem('${INDICATOR_STYLE_KEY}') } catch {}
+        document.documentElement.dataset.indicatorStyle =
+          ${JSON.stringify(INDICATOR_STYLES)}.includes(style) ? style : '${INDICATOR_STYLE_DEFAULT}'
       })()`],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:image', content: `${SITE_URL}/assets/social-banner.png` }],
@@ -524,6 +536,9 @@ export default defineConfig({
     languageAlias: { prompt: 'txt' },
     config(md) {
       md.use(copyOrDownloadAsMarkdownButtons)
+
+      // ::: series / ::: buffer / ::: stream blocks; see style-containers.ts
+      md.use(styleContainers)
 
       // name the copy control for what it copies; custom.scss shows it as a labelled button
       const fence = md.renderer.rules.fence!

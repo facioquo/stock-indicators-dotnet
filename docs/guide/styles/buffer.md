@@ -118,11 +118,11 @@ void OnIndexReceived(IReusable value) => correlation.AddOther(value);
 - Each series must arrive in strictly increasing order: an older or equal timestamp on either side throws `InvalidOperationException`.
 - Each side holds at most `MaxListSize` values waiting for a match, so a side that falls further behind than that loses pairs.
 
-Two-series buffer lists:
+Two-series buffer lists (choose Buffer on each page for its example):
 
-- [Beta coefficient (β)](/indicators/beta#streaming)
-- [Correlation coefficient](/indicators/correlation#streaming)
-- [Price Relative Strength (PRS)](/indicators/prs#streaming)
+- [Beta coefficient (β)](/indicators/beta)
+- [Correlation coefficient](/indicators/correlation)
+- [Price Relative Strength (PRS)](/indicators/prs)
 
 ## Live feeds and threads
 

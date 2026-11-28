@@ -8,13 +8,54 @@ description: Created by Alexander Elder, the Force Index depicts volume-based bu
 Created by Alexander Elder, the [Force Index](https://en.wikipedia.org/wiki/Force_index) depicts volume-based buying and selling pressure based on the change in price.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/382 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="ForceIndex" withOverlay />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax
 IReadOnlyList<ForceIndexResult> results =
   bars.ToForceIndex(lookbackPeriods);
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+ForceIndexList forceIndexList = new(lookbackPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => forceIndexList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<ForceIndexResult> results = forceIndexList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+ForceIndexHub observer = barHub.ToForceIndexHub(lookbackPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<ForceIndexResult> results = observer.Results;
+```
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -30,6 +71,8 @@ You must have at least `N+100` for `2×N` periods of `bars`, whichever is more, 
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<ForceIndexResult>
 ```
@@ -38,6 +81,30 @@ IReadOnlyList<ForceIndexResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The first `N` periods will be `null` since they cannot be calculated.
+:::
+
+::: buffer
+
+```csharp
+ForceIndexList : IReadOnlyList<ForceIndexResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first `N` periods will be `null` since they cannot be calculated.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<ForceIndexResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first `N` periods will be `null` since they cannot be calculated.
+:::
 
 ::: warning 🚩 ⚞ Convergence warning
 The first `N+100` periods will have decreasing magnitude, convergence-related precision errors that can be as high as ~5% deviation in indicator values for earlier periods.
@@ -61,6 +128,9 @@ See [Utilities and helpers](/utilities/) for more information.
 
 ## Chaining
 
+This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.
+
+::: series
 Results can be further processed on `ForceIndex` with additional chain-enabled indicators.
 
 ```csharp
@@ -70,35 +140,36 @@ var results = bars
     .ToEma(..);
 ```
 
-This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.
-
 See [Chaining indicators](/guide/chaining) for more.
+:::
 
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
-
-```csharp
-ForceIndexList forceIndexList = new(lookbackPeriods);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => forceIndexList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<ForceIndexResult> results = forceIndexList;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
+::: buffer
+Add each new result to another chain-enabled buffer list to process `ForceIndex` further.
 
 ```csharp
-BarHub barHub = new();
-ForceIndexHub observer = barHub.ToForceIndexHub(lookbackPeriods);
+// example
+ForceIndexList forceIndexList = new(..);
+EmaList emaList = new(..);
 
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<ForceIndexResult> results = observer.Results;
+void OnBarReceived(IBar bar)
+{
+    forceIndexList.Add(bar);
+    emaList.Add(forceIndexList[^1]);
+}
 ```
 
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.
+See [Chaining buffer lists](/guide/styles/buffer#chaining-indicators) for more.
+:::
+
+::: stream
+Subscribe other chain-enabled hubs to it to process `ForceIndex` further.
+
+```csharp
+// example
+EmaHub observer = barHub
+    .ToForceIndexHub(..)
+    .ToEmaHub(..);
+```
+
+See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
+:::

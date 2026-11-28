@@ -8,13 +8,54 @@ description: Created by Arnaud Legoux and Dimitrios Kouzis-Loukas, ALMA is a nor
 Created by Arnaud Legoux and Dimitrios Kouzis-Loukas, [ALMA](https://github.com/facioquo/stock-indicators-dotnet/files/5654531/ALMA-Arnaud-Legoux-Moving-Average.pdf) is a normal Gaussian distribution weighted moving average of price.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/209 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="Alma" />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax
 IReadOnlyList<AlmaResult> results =
   bars.ToAlma(lookbackPeriods, offset, sigma);
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+AlmaList almaList = new(lookbackPeriods, offset, sigma);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => almaList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<AlmaResult> results = almaList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+AlmaHub observer = barHub.ToAlmaHub(lookbackPeriods, offset, sigma);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<AlmaResult> results = observer.Results;
+```
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -32,6 +73,8 @@ You must have at least `N` periods of `bars` to cover the warmup periods.
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<AlmaResult>
 ```
@@ -40,6 +83,30 @@ IReadOnlyList<AlmaResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The first `N-1` periods will have `null` values since there's not enough data to calculate.
+:::
+
+::: buffer
+
+```csharp
+AlmaList : IReadOnlyList<AlmaResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first `N-1` periods will have `null` values since there's not enough data to calculate.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<AlmaResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first `N-1` periods will have `null` values since there's not enough data to calculate.
+:::
 
 ### `AlmaResult`
 
@@ -59,6 +126,7 @@ See [Utilities and helpers](/utilities/) for more information.
 
 ## Chaining
 
+::: series
 This indicator may be generated from any chain-enabled indicator or method.
 
 ```csharp
@@ -78,32 +146,58 @@ var results = bars
 ```
 
 See [Chaining indicators](/guide/chaining) for more.
+:::
 
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
-
-```csharp
-AlmaList almaList = new(lookbackPeriods, offset, sigma);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => almaList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<AlmaResult> results = almaList;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
+::: buffer
+This indicator may be generated from results of another chain-enabled buffer list.  Add each new result to it yourself.
 
 ```csharp
-BarHub barHub = new();
-AlmaHub observer = barHub.ToAlmaHub(lookbackPeriods, offset, sigma);
+// example
+SmaList smaList = new(..);
+AlmaList almaList = new(..);
 
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<AlmaResult> results = observer.Results;
+void OnBarReceived(IBar bar)
+{
+    smaList.Add(bar);
+    almaList.Add(smaList[^1]);
+}
 ```
 
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.
+Add each new result to another chain-enabled buffer list to process `Alma` further.
+
+```csharp
+// example
+AlmaList almaList = new(..);
+RsiList rsiList = new(..);
+
+void OnBarReceived(IBar bar)
+{
+    almaList.Add(bar);
+    rsiList.Add(almaList[^1]);
+}
+```
+
+See [Chaining buffer lists](/guide/styles/buffer#chaining-indicators) for more.
+:::
+
+::: stream
+This indicator may be subscribed to any chain-enabled hub.
+
+```csharp
+// example
+AlmaHub observer = barHub
+    .ToBarPartHub(CandlePart.HL2)
+    .ToAlmaHub(..);
+```
+
+Subscribe other chain-enabled hubs to it to process `Alma` further.
+
+```csharp
+// example
+RsiHub observer = barHub
+    .ToAlmaHub(..)
+    .ToRsiHub(..);
+```
+
+See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
+:::

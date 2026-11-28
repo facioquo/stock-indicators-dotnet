@@ -8,15 +8,56 @@ description: Created by Oliver Seban, the SuperTrend indicator attempts to deter
 Created by Oliver Seban, the SuperTrend indicator attempts to determine the primary trend of prices by using [Average True Range (ATR)](/indicators/atr) band thresholds around an HL2 midline.  It can indicate a buy/sell signal or a trailing stop when the trend changes.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/235 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="SuperTrend" />
 
 <ChartKey indicator="SuperTrend" />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax
 IReadOnlyList<SuperTrendResult> results =
   bars.ToSuperTrend(lookbackPeriods, multiplier);
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+SuperTrendList superTrendList = new(lookbackPeriods, multiplier);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => superTrendList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<SuperTrendResult> results = superTrendList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+SuperTrendHub observer = barHub.ToSuperTrendHub(lookbackPeriods, multiplier);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<SuperTrendResult> results = observer.Results;
+```
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -33,6 +74,8 @@ You must have at least `N+100` periods of `bars` to cover the [warmup and conver
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<SuperTrendResult>
 ```
@@ -41,6 +84,30 @@ IReadOnlyList<SuperTrendResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The first `N` periods will have `null` SuperTrend values since there's not enough data to calculate.
+:::
+
+::: buffer
+
+```csharp
+SuperTrendList : IReadOnlyList<SuperTrendResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first `N` periods will have `null` SuperTrend values since there's not enough data to calculate.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<SuperTrendResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first `N` periods will have `null` SuperTrend values since there's not enough data to calculate.
+:::
 
 ::: warning 🚩 ⚞ Convergence warning
 the line segment before the first reversal and the first `N+100` periods are unreliable due to an initial guess of trend direction and precision convergence for the underlying ATR values.
@@ -71,32 +138,3 @@ See [Utilities and helpers](/utilities/) for more information.
 This indicator is not chain-enabled and must be generated from `bars`.  It **cannot** be used for further processing by other chain-enabled indicators.
 
 See [Chaining indicators](/guide/chaining) for more.
-
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
-
-```csharp
-SuperTrendList superTrendList = new(lookbackPeriods, multiplier);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => superTrendList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<SuperTrendResult> results = superTrendList;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
-
-```csharp
-BarHub barHub = new();
-SuperTrendHub observer = barHub.ToSuperTrendHub(lookbackPeriods, multiplier);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<SuperTrendResult> results = observer.Results;
-```
-
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.

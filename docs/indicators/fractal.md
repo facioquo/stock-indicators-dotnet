@@ -8,15 +8,56 @@ description: Created by Bill Williams, Fractal is a retrospective price pattern 
 Created by Bill Williams in _Trading Chaos_ (1995), [Fractal](https://www.investopedia.com/terms/f/fractal.asp) is a retrospective price pattern that identifies a central high or low point chevron.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/255 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="Fractal" />
 
 <ChartKey indicator="Fractal" />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax
 IReadOnlyList<FractalResult> results =
   bars.ToFractal(windowSpan);
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+FractalList fractalList = new(windowSpan);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => fractalList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<FractalResult> results = fractalList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+FractalHub observer = barHub.ToFractalHub(windowSpan);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<FractalResult> results = observer.Results;
+```
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -39,6 +80,8 @@ You must have at least `2×S+1` periods of `bars` (`leftSpan+rightSpan+1` for th
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<FractalResult>
 ```
@@ -48,6 +91,32 @@ IReadOnlyList<FractalResult>
 - It does not return a single incremental indicator value.
 - The first and last `S` periods in `bars` are unable to be calculated since there's not enough prior/following data.
 - Per Williams' definition the middle bar must be strictly beyond both wings, so when two or more bars tie for the extreme value, no fractal is identified.
+:::
+
+::: buffer
+
+```csharp
+FractalList : IReadOnlyList<FractalResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first and last `S` periods in `bars` are unable to be calculated since there's not enough prior/following data.
+- Per Williams' definition the middle bar must be strictly beyond both wings, so when two or more bars tie for the extreme value, no fractal is identified.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<FractalResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first and last `S` periods in `bars` are unable to be calculated since there's not enough prior/following data.
+- Per Williams' definition the middle bar must be strictly beyond both wings, so when two or more bars tie for the extreme value, no fractal is identified.
+:::
 
 ::: warning 🖌️ Repaint warning
 This price pattern uses future bars and will never identify a `fractal` in the last `S` periods of `bars`.  Fractals are retroactively identified.
@@ -74,32 +143,3 @@ See [Utilities and helpers](/utilities/) for more information.
 This indicator is not chain-enabled and must be generated from `bars`.  It **cannot** be used for further processing by other chain-enabled indicators.
 
 See [Chaining indicators](/guide/chaining) for more.
-
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
-
-```csharp
-FractalList fractalList = new(windowSpan);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => fractalList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<FractalResult> results = fractalList;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
-
-```csharp
-BarHub barHub = new();
-FractalHub observer = barHub.ToFractalHub(windowSpan);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<FractalResult> results = observer.Results;
-```
-
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.

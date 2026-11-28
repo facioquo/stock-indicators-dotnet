@@ -7,13 +7,61 @@ description: Beta coefficient with Beta+/Beta- shows how strongly one asset's pr
 
 [Beta](https://en.wikipedia.org/wiki/Beta_(finance)) shows how strongly one asset's price responds to systemic volatility of the entire market. Beta measures an asset's non-diversifiable systematic risk — its market exposure — not its idiosyncratic, asset-specific risk. [Upside Beta](https://en.wikipedia.org/wiki/Upside_beta) (Beta+) and [Downside Beta](https://en.wikipedia.org/wiki/Downside_beta) (Beta-), [popularized by Harry M. Markowitz](https://www.jstor.org/stable/j.ctt1bh4c8h), are also included.  Beta+ and Beta- capture asymmetric sensitivity during rising and falling markets. [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/268 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="Beta" withOverlay />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax
 IReadOnlyList<BetaResult> results = barsEval
   .ToBeta(barsMarket, lookbackPeriods, type);
 ```
+
+:::
+
+::: buffer
+Create a buffer list.  Add each series separately as its values arrive; either one may run ahead, and a result is added once both hold the same timestamp:
+
+```csharp
+BetaList betaList = new(lookbackPeriods, type);
+
+// call from each series' message handler
+void OnEvalReceived(IReusable value) => betaList.AddSource(value);
+void OnMarketReceived(IReusable value) => betaList.AddOther(value);
+
+// the list itself holds the results; fills as the handlers run
+IReadOnlyList<BetaResult> results = betaList;
+```
+
+A timestamp that only one series holds produces no result, where the Series method throws.  Each series must arrive in strictly increasing order: an older or equal timestamp on a side throws an `InvalidOperationException`.  Each side stages at most `MaxListSize` values, so a side that falls further behind than that loses the pairs the leading side has dropped.
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` for each series and add bars as they arrive:
+
+```csharp
+BarHub evalHub = new();
+BarHub marketHub = new();
+BetaHub observer = evalHub.ToBetaHub(marketHub, lookbackPeriods, type);
+
+// call from each series' message handler
+void OnEvalReceived(IBar bar) => evalHub.Add(bar);
+void OnMarketReceived(IBar bar) => marketHub.Add(bar);
+
+// results fill as the handlers run
+IReadOnlyList<BetaResult> results = observer.Results;
+```
+
+A result is added once both providers hold the same timestamp.  A value that arrives late, or is revised or removed, on either side is handled by the usual rebuild.  Timestamps match exactly: each return is measured from the previous matched timestamp, and the lookback window spans `N` matched returns.  Drive both providers from one thread at a time.
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -47,6 +95,8 @@ Financial institutions often depict a single number for Beta on their sites.  To
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<BetaResult>
 ```
@@ -55,6 +105,30 @@ IReadOnlyList<BetaResult>
 - It always returns the same number of elements as there are in the historical price bars.
 - It does not return a single incremental indicator value.
 - The first `N-1` periods will have `null` values since there's not enough data to calculate.
+:::
+
+::: buffer
+
+```csharp
+BetaList : IReadOnlyList<BetaResult>
+```
+
+- The list itself holds the results, one for each timestamp both series hold, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first `N-1` periods will have `null` values since there's not enough data to calculate.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<BetaResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each timestamp both providers hold, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first `N-1` periods will have `null` values since there's not enough data to calculate.
+:::
 
 ### `BetaResult`
 
@@ -80,6 +154,7 @@ See [Utilities and helpers](/utilities/) for more information.
 
 ## Chaining
 
+::: series
 This indicator may be generated from any chain-enabled indicator or method.
 
 ```csharp
@@ -103,39 +178,23 @@ var results = barsEval
 ```
 
 See [Chaining indicators](/guide/chaining) for more.
+:::
 
-## Streaming
+::: buffer
+Add each series from the results of other chain-enabled buffer lists with `AddSource` and `AddOther`.  When a new result appears in this list, add it to the next chain-enabled buffer list yourself.
 
-Use the buffer-style `List<T>` when you need incremental calculations without a hub.  Add each series separately as its values arrive; either one may run ahead, and a result is added once both hold the same timestamp:
+See [Chaining buffer lists](/guide/styles/buffer#chaining-indicators) for more.
+:::
 
-```csharp
-BetaList betaList = new(lookbackPeriods, type);
-
-// call from each series' message handler
-void OnEvalReceived(IReusable value) => betaList.AddSource(value);
-void OnMarketReceived(IReusable value) => betaList.AddOther(value);
-
-// the list itself holds the results; fills as the handlers run
-IReadOnlyList<BetaResult> results = betaList;
-```
-
-A timestamp that only one series holds produces no result, where the Series method throws.  Each series must arrive in strictly increasing order: an older or equal timestamp on a side throws an `InvalidOperationException`.  Each side stages at most `MaxListSize` values, so a side that falls further behind than that loses the pairs the leading side has dropped.
-
-Subscribe to a `BarHub` for each series for advanced streaming scenarios:
+::: stream
+Subscribe other chain-enabled hubs to it to process `Beta` further.
 
 ```csharp
-BarHub evalHub = new();
-BarHub marketHub = new();
-BetaHub observer = evalHub.ToBetaHub(marketHub, lookbackPeriods, type);
-
-// call from each series' message handler
-void OnEvalReceived(IBar bar) => evalHub.Add(bar);
-void OnMarketReceived(IBar bar) => marketHub.Add(bar);
-
-// results fill as the handlers run
-IReadOnlyList<BetaResult> results = observer.Results;
+// example
+SlopeHub observer = evalHub
+    .ToBetaHub(marketHub, ..)
+    .ToSlopeHub(..);
 ```
 
-A result is added once both providers hold the same timestamp.  A value that arrives late, or is revised or removed, on either side is handled by the usual rebuild.  Timestamps match exactly: each return is measured from the previous matched timestamp, and the lookback window spans `N` matched returns.  Drive both providers from one thread at a time.
-
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.
+See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
+:::

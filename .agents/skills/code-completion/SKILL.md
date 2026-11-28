@@ -5,7 +5,7 @@ description: Quality gates for finishing work in this repository — dead-code c
 
 # Code completion
 
-Run these gates before reporting any implementation cycle as done. The VS Code task behind each gate, and the configuration and CI files that define them, are in the [quality gates reference](references/quality-gates.md); load it when a single gate fails.
+Run these gates before reporting any implementation cycle as done; Step 7 applies only when `docs/` changed. The VS Code task behind each gate, and the configuration and CI files that define them, are in the [quality gates reference](references/quality-gates.md); load it when a single gate fails.
 
 CI builds `src/Indicators.csproj` and `tests/Library/Tests.Indicators.csproj` with `-warnAsError`, so a warning that passes a local build fails CI.
 
@@ -58,6 +58,17 @@ echo y | npx markdownlint-cli2
 ```
 
 VS Code task: `Verify: Quick checks (build + lint + unit test)` covers build, `dotnet format --verify-no-changes`, markdownlint, and unit tests. When a `{Name}Hub.cs` or its test changed, also run `bash tools/scripts/audit-streamhub.sh`, which CI runs in the quick check.
+
+### Step 7: Test the docs site
+
+When anything under `docs/` changed, run the site's Playwright suites locally from `docs/` in Git Bash. No pull request workflow runs them, so a local run is the only gate:
+
+```bash
+PARITY_ONLY=1 pnpm exec playwright test --project=parity
+pnpm exec playwright test --project=layout --project=agent-features --project=a11y --project=analytics --project=offline
+```
+
+The second command builds the site first. Install the browser once with the VS Code task `Install: Browsers for website tests`. Run `pnpm run test:links` as well when links or anchors changed; failures from external hosts returning 429 or 503 are transient.
 
 ## Migration shims
 

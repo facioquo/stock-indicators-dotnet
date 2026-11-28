@@ -3,6 +3,7 @@ import { createHash } from 'crypto'
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'fs'
 import path from 'path'
 import { markdownPath, pageRoute } from './routes.ts'
+import { isIndicatorStyle, type IndicatorStyle } from './theme/indicator-style-keys.ts'
 
 // Post-processes the agent-facing output of vitepress-plugin-llms so the
 // Markdown it emits is portable (no VitePress-only syntax), self-describing
@@ -84,6 +85,14 @@ const ALERTS: Record<string, string> = {
   danger: 'CAUTION',
 }
 
+// Indicator-style containers (see style-containers.ts) are unwrapped under a
+// label, so an agent reads every style from the one page.
+const STYLE_LABELS: Record<IndicatorStyle, string> = {
+  series: 'Series (batch) style:',
+  buffer: 'Buffer list style:',
+  stream: 'Stream hub style:',
+}
+
 // Fence markers, including fences quoted inside a rendered container.
 const FENCE = /^(?:\s*>)*\s*(`{3,}|~{3,})/
 
@@ -125,32 +134,53 @@ export function stripVitePressSyntax(content: string): string {
 /**
  * Rewrites VitePress `::: type Title` containers as GitHub-style alert
  * blockquotes (`details` becomes a plain titled blockquote). Nested
- * containers become nested blockquotes.
+ * containers become nested blockquotes. Indicator-style containers
+ * (`::: series`, `::: buffer`, `::: stream`) are unwrapped under a bold label,
+ * and shared text after the last one gets an "All styles" label, so it is not
+ * read as part of that style. Markers may be indented up to three spaces,
+ * as the llms plugin indents a closer that directly follows a list.
  */
 export function renderContainers(content: string): string {
   const out: string[] = []
+  const open: boolean[] = [] // per open container: true when it is a quote
   let fence: string | undefined
   let depth = 0
+  let afterStyle = false // a style container just closed; shared text may follow
 
   for (const line of content.split('\n')) {
     const quote = '> '.repeat(depth)
     const marker = line.match(FENCE)?.[1]
+    if (afterStyle && line.trim()) {
+      afterStyle = false
+      const nextStyle = isIndicatorStyle(line.match(/^ {0,3}:::\s*(\w+)/)?.[1].toLowerCase())
+      if (!nextStyle && !/^#{1,6}\s/.test(line)) out.push('**All styles:**', '')
+    }
     if (marker && (!fence || marker.startsWith(fence))) {
       fence = fence ? undefined : marker
     } else if (!fence) {
-      const open = line.match(/^:::\s*(\w+)\s*(.*)$/)
-      if (open) {
-        const alert = ALERTS[open[1].toLowerCase()]
-        const title = open[2].replace(/\{[^}]*\}/g, '').trim() // drops `{no-title}`-style attributes
+      const opener = line.match(/^ {0,3}:::\s*(\w+)\s*(.*)$/)
+      const name = opener?.[1].toLowerCase()
+      const style = isIndicatorStyle(name) ? STYLE_LABELS[name] : undefined
+      if (style) {
+        out.push(`${quote}**${style}**`, quote.trimEnd())
+        open.push(false)
+        continue
+      }
+      if (opener) {
+        const alert = ALERTS[opener[1].toLowerCase()]
+        const title = opener[2].replace(/\{[^}]*\}/g, '').trim() // drops `{no-title}`-style attributes
         const inner = `${quote}>`
         if (alert) out.push(`${inner} [!${alert}]`)
         if (title) out.push(`${inner} **${title}**`, inner)
+        open.push(true)
         depth++
         continue
       }
-      if (/^:::\s*$/.test(line) && depth > 0) {
-        if (out.at(-1) === quote.trimEnd()) out.pop()
-        depth--
+      if (/^ {0,3}:::\s*$/.test(line) && open.length > 0) {
+        if (open.pop()) {
+          if (out.at(-1) === quote.trimEnd()) out.pop()
+          depth--
+        } else afterStyle = depth === 0
         continue
       }
     }

@@ -1,6 +1,6 @@
 ---
 name: documentation
-description: Author indicator reference pages on the VitePress documentation site — page section order, parameter and result tables, warmup and convergence wording, chaining and streaming examples, the StockIndicatorChart block, and the sidebar, category, and index entries a new page needs. Use when creating or editing a docs/indicators/*.md page, when an indicator's parameters, results, warmup, chainability, or streaming support changes, or when adding an indicator chart to the site.
+description: Author indicator reference pages on the VitePress documentation site — page section order, parameter and result tables, warmup and convergence wording, per-style (Series, Buffer, Stream) containers and examples, the StockIndicatorChart block, and the sidebar, category, and index entries a new page needs. Use when creating or editing a docs/indicators/*.md page, when an indicator's parameters, results, warmup, chainability, or streaming support changes, or when adding an indicator chart to the site.
 ---
 
 # Indicator documentation pages
@@ -18,11 +18,20 @@ The markdown skill owns formatting and linting. The vitepress skill owns `docs/.
 - [ ] Add the [chart block](#chart-block) when the chart API serves the indicator.
 - [ ] From `docs/`, run `pnpm run test:links`, which builds the site and checks every link (it needs `htmlproofer` or Docker). Without either, run `pnpm run docs:build` (VS Code task `Build: Website`).
 
-When code changes an existing indicator, update every section it touches: usage syntax, parameter table, bars requirement, null-period bullet, convergence warning, result table, chaining, and streaming.
+When code changes an existing indicator, update every section it touches: usage syntax for each style, parameter table, bars requirement, null-period bullets, convergence warning, result table, and chaining.
 
 ## Page structure
 
 Sections appear in this order. Prose separates sentences with two spaces, matching existing pages.
+
+### Style containers
+
+Each page serves all three indicator styles from one file and one URL. Wrap content that applies to one style in a `::: series`, `::: buffer`, or `::: stream` container; content outside them is shared. The reader's chosen style hides the other two (`docs/.vitepress/style-containers.ts`, `theme/indicator-style.ts`), and the agent-facing `.md` twin unwraps all three under a label.
+
+- Never put a heading inside a style container, so the outline, anchors, and search sections are the same for every style.
+- Put a blank line between a container marker and a code fence (markdownlint MD031). Nest a `::: warning` inside a style container when it applies to that style only.
+- Usage, Response, and Chaining are per-style; everything else is shared.
+- Put `<StyleSwitch />` on its own line after the intro paragraph, before the chart block.
 
 ### Frontmatter and heading
 
@@ -45,7 +54,20 @@ Sections appear in this order. Prose separates sentences with two spaces, matchi
 
 ### Usage syntax
 
-A `csharp` block opening with `// C# usage syntax`, plus a qualifier when useful (`(with Close price)`), then `IReadOnlyList<{Name}Result> results =` with `bars.To{Name}(params);` on the next line. When an indicator has several meaningful overloads or variants, show each in the same block under its own comment (`ichimoku.md`, `renko.md`).
+Right after the chart block, one container per style:
+
+- `::: series` — a `csharp` block opening with `// C# usage syntax`, plus a qualifier when useful (`(with Close price)`), then `IReadOnlyList<{Name}Result> results =` with `bars.To{Name}(params);` on the next line. When an indicator has several meaningful overloads or variants, show each in the same block under its own comment (`ichimoku.md`, `renko.md`).
+- `::: buffer` — "Create a buffer list and add each bar as it arrives:" then `{Name}List {name}List = new(params);`, a handler that adds each bar (`// call from your WebSocket or SSE message handler` above `void OnBarReceived(IBar bar) => {name}List.Add(bar);`), then `// the list itself holds the results; fills as the handler runs` above `IReadOnlyList<{Name}Result> results = {name}List;`. End with "See [Buffer lists](/guide/styles/buffer) for the full usage guide."
+- `::: stream` — "Subscribe to a `BarHub` and add each bar as it arrives:" then `BarHub barHub = new();`, `{Name}Hub observer = barHub.To{Name}Hub(params);`, the same handler calling `barHub.Add(bar)`, and `// results fill as the handler runs` above `observer.Results`. End with "See [Stream hubs](/guide/styles/stream) for the full usage guide."
+
+Two-series indicators (`correlation.md`, `beta.md`, `prs.md`) show `AddSource`/`AddOther` and one `BarHub` per series, each followed by its pairing caveats.
+
+When a style is not implemented, its usage container holds one paragraph: "Buffer lists are not supported for this indicator." (or "Stream hubs …") plus one sentence of architectural reason, then "Use the Series (batch) implementation with periodic recalculation instead." Existing reasons:
+
+- Lookahead and repaint (`zig-zag.md`): "This indicator requires lookahead to confirm reversal points; output repaints as new data arrives, making incremental results undefined."
+- Quadratic recalculation (`std-dev-channels.md`).
+
+When only one variant supports a style (`renko.md`), show its example and nest a `::: warning 🚩` stating which method lacks it and why. Omit that style's Response and Chaining containers when it is not implemented.
 
 ### Parameters
 
@@ -63,10 +85,13 @@ An H3 under Parameters, or an H2 when Parameters is omitted (`adl.md`, `obv.md`,
 
 ### Response
 
-- A `csharp` block with the return type.
-- The three standard bullets: returns a time series of all available values for the `bars` provided; always returns the same number of elements as the bars; does not return a single incremental value.
-- A fourth bullet naming the warmup nulls in formula variables ("The first `N-1` periods will have `null` values since there's not enough data to calculate."); omit it when no warmup period returns null.
-- For smoothing or recursive algorithms, a convergence warning right after the bullets, with the period count and deviation adjusted to the indicator:
+One container per style, each with a `csharp` block and bullets, ending with the same warmup bullet naming the nulls in formula variables ("The first `N-1` periods will have `null` values since there's not enough data to calculate."); omit that bullet when no warmup period returns null.
+
+- `::: series` — `IReadOnlyList<{Name}Result>`, then the three standard bullets: returns a time series of all available values for the `bars` provided; always returns the same number of elements as the bars; does not return a single incremental value.
+- `::: buffer` — `{Name}List : IReadOnlyList<{Name}Result>`, then "The list itself holds the results, one for each bar or value added, in timestamp order." and "It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer."
+- `::: stream` — `IReadOnlyList<{Name}Result> results = observer.Results;`, then "`observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.", "Results update as bars arrive, including bars that arrive late or are revised.", and "The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer."
+
+Two-series pages say "one for each timestamp both series hold" (buffer) and "both providers hold" (stream). For smoothing or recursive algorithms, a shared convergence warning follows the containers, with the period count and deviation adjusted to the indicator:
 
 ```markdown
 ::: warning 🚩 ⚞ Convergence warning
@@ -88,25 +113,15 @@ Add `[.RemoveWarmupPeriods()](/utilities/results#remove-warmup-periods)` before 
 
 ### Chaining
 
-`## Chaining`, ending with "See [Chaining indicators](/guide/chaining) for more." Describe each direction the indicator supports:
+`## Chaining`. Shared, before the containers: the bar-only sentence ("This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method.") and, when the result has several values, the reusable one ("Note: `TenkanSen` is the primary reusable value for chaining purposes."). Then one container per style, each describing the directions it supports with an example:
 
-- **Input** — "This indicator may be generated from any chain-enabled indicator or method." with a `.Use(CandlePart.HL2).To{Name}(..)` example; or, for bar-only indicators, "This indicator must be generated from `bars` and **cannot** be generated from results of another chain-enabled indicator or method."
-- **Output** — "Results can be further processed on `{Property}` with additional chain-enabled indicators." with a `.To{Name}(..).ToRsi(..)` example. When the result has several values, name the reusable one ("Note: `TenkanSen` is the primary reusable value for chaining purposes.").
+- `::: series` — **Input**: "This indicator may be generated from any chain-enabled indicator or method." with a `.Use(CandlePart.HL2).To{Name}(..)` example.  **Output**: "Results can be further processed on `{Property}` with additional chain-enabled indicators." with a `.To{Name}(..).ToRsi(..)` example.  End with "See [Chaining indicators](/guide/chaining) for more."
+- `::: buffer` — the reader passes results along: an `OnBarReceived` handler that adds the bar to one list and `[^1]` of it to the next (`smaList` into `{name}List` for input; `{name}List` into `rsiList` for output). Input needs `{Name}List` to implement `IIncrementFromChain`. End with "See [Chaining buffer lists](/guide/styles/buffer#chaining-indicators) for more."
+- `::: stream` — input: `barHub.ToBarPartHub(CandlePart.HL2).To{Name}Hub(..)` when `To{Name}Hub` extends `IChainProvider<IReusable>`; output: `barHub.To{Name}Hub(..).ToRsiHub(..)` when `{Name}Hub` derives from `ChainHub`. When the hub derives from `StreamHub` directly, write "Stream hub results **cannot** be further chained with additional hubs." End with "See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more."
 
-### Streaming
+Shared text must hold for every style. When styles differ, move the sentence into each container that it is true for (`pvo.md`: Series and Buffer take bars only, while the hub accepts any chain provider). When no style chains in either direction, write the whole section as shared text with no containers: "This indicator is not chain-enabled and must be generated from `bars`.  It **cannot** be used for further processing by other chain-enabled indicators." (`donchian.md`), or the bar-only sentence plus "Results **cannot** be further chained with additional transforms." (`keltner.md`, whose result is `ISeries`). A result based on `IBar` chains in every style (`renko.md`, `heikin-ashi.md`).
 
-`## Streaming` with two examples, ending with "See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides."
-
-- "Use the buffer-style `List<T>` when you need incremental calculations without a hub:" then `{Name}List {name}List = new(params);`, a handler that adds each bar (`// call from your WebSocket or SSE message handler` above `void OnBarReceived(IBar bar) => {name}List.Add(bar);`), then `// the list itself holds the results; fills as the handler runs` above `IReadOnlyList<{Name}Result> results = {name}List;`.
-- "Subscribe to a `BarHub` for advanced streaming scenarios:" then `BarHub barHub = new();`, `{Name}Hub observer = barHub.To{Name}Hub(params);`, the same handler calling `barHub.Add(bar)`, and `// results fill as the handler runs` above `observer.Results`.
-
-Follow `ema.md` for the exact layout. Show only the styles the indicator implements.
-
-When no streaming style exists, write one paragraph under `## Streaming`: "Streaming is not supported for this indicator." plus one sentence of architectural reason, then "Use the Series (batch) implementation with periodic recalculation instead." Existing reasons:
-
-- Lookahead and repaint (`zig-zag.md`): "This indicator requires lookahead to confirm reversal points; output repaints as new data arrives, making incremental results undefined."
-
-When only one variant streams (`renko.md`), show its examples and add a `::: warning 🚩` stating which method does not stream and why. Keep all streaming content under the one `## Streaming` heading.
+Follow `ema.md` for the exact layout, and `adl.md` for a bar-only indicator. Keep `<a id="streaming"></a>` just before the usage containers so old `#streaming` links still land on the usage section, which shows the reader's saved style.
 
 ## Secondary analysis pages
 

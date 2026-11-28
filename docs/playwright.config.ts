@@ -9,7 +9,7 @@ import { defineConfig, devices } from '@playwright/test'
  *   a11y           - axe-core WCAG 2.1 A/AA scan of every page in the sitemap
  *   agent-features - llms.txt, Markdown page actions, and WebMCP tools
  *   analytics      - controls that keep test runs out of production analytics
- *   layout         - page layout behavior (theme flash, landing hero)
+ *   layout         - page layout behavior (theme flash, landing hero, indicator style)
  *   parity         - indicator page tables against the library source
  *
  * Run via the package scripts, or drive Playwright directly:
@@ -68,7 +68,7 @@ export default defineConfig({
     },
     {
       name: 'layout',
-      testMatch: /(theme-flash|landing)\.spec\.ts/,
+      testMatch: /(theme-flash|landing|indicator-style)\.spec\.ts/,
       fullyParallel: true,
       use: { ...devices['Desktop Chrome'] },
     },

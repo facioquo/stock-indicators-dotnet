@@ -8,13 +8,54 @@ description: Created by William Blau, the True Strength Index is a momentum osci
 Created by William Blau, the [True Strength Index](https://en.wikipedia.org/wiki/True_strength_index) is a momentum oscillator that uses a series of exponential moving averages to depicts trends in price changes.
 [[Discuss] &#128172;](https://github.com/facioquo/stock-indicators-dotnet/discussions/300 "Community discussion about this indicator")
 
+<StyleSwitch />
+
 <StockIndicatorChart indicator="Tsi" withOverlay />
+
+<a id="streaming"></a>
+
+::: series
 
 ```csharp
 // C# usage syntax
 IReadOnlyList<TsiResult> results =
   bars.ToTsi(lookbackPeriods, smoothPeriods, signalPeriods);
 ```
+
+:::
+
+::: buffer
+Create a buffer list and add each bar as it arrives:
+
+```csharp
+TsiList tsiList = new(lookbackPeriods, smoothPeriods, signalPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => tsiList.Add(bar);
+
+// the list itself holds the results; fills as the handler runs
+IReadOnlyList<TsiResult> results = tsiList;
+```
+
+See [Buffer lists](/guide/styles/buffer) for the full usage guide.
+:::
+
+::: stream
+Subscribe to a `BarHub` and add each bar as it arrives:
+
+```csharp
+BarHub barHub = new();
+TsiHub observer = barHub.ToTsiHub(lookbackPeriods, smoothPeriods, signalPeriods);
+
+// call from your WebSocket or SSE message handler
+void OnBarReceived(IBar bar) => barHub.Add(bar);
+
+// results fill as the handler runs
+IReadOnlyList<TsiResult> results = observer.Results;
+```
+
+See [Stream hubs](/guide/styles/stream) for the full usage guide.
+:::
 
 ## Parameters
 
@@ -32,6 +73,8 @@ You must have at least `N+M+100` periods of `bars` to cover the [warmup and conv
 
 ## Response
 
+::: series
+
 ```csharp
 IReadOnlyList<TsiResult>
 ```
@@ -41,6 +84,32 @@ IReadOnlyList<TsiResult>
 - It does not return a single incremental indicator value.
 - The first `N+M-1` periods will have `null` values since there's not enough data to calculate.
 - `Signal` will be `null` for all periods if `signalPeriods=0`.
+:::
+
+::: buffer
+
+```csharp
+TsiList : IReadOnlyList<TsiResult>
+```
+
+- The list itself holds the results, one for each bar or value added, in timestamp order.
+- It keeps up to 100,000 results by default and drops the oldest beyond that; set `MaxListSize` to keep fewer.
+- The first `N+M-1` periods will have `null` values since there's not enough data to calculate.
+- `Signal` will be `null` for all periods if `signalPeriods=0`.
+:::
+
+::: stream
+
+```csharp
+IReadOnlyList<TsiResult> results = observer.Results;
+```
+
+- `observer.Results` holds the results, one for each bar in the `BarHub` cache, in timestamp order.
+- Results update as bars arrive, including bars that arrive late or are revised.
+- The cache keeps up to 100,000 results by default; set `maxCacheSize` on the `BarHub` to keep fewer.
+- The first `N+M-1` periods will have `null` values since there's not enough data to calculate.
+- `Signal` will be `null` for all periods if `signalPeriods=0`.
+:::
 
 ::: warning 🚩 ⚞ Convergence warning
 The first `N+M+250` periods will have decreasing magnitude, convergence-related precision errors that can be as high as ~5% deviation in indicator values for earlier periods.
@@ -63,37 +132,9 @@ The first `N+M+250` periods will have decreasing magnitude, convergence-related 
 
 See [Utilities and helpers](/utilities/) for more information.
 
-## Streaming
-
-Use the buffer-style `List<T>` when you need incremental calculations without a hub:
-
-```csharp
-TsiList tsiList = new(lookbackPeriods, smoothPeriods, signalPeriods);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => tsiList.Add(bar);
-
-// the list itself holds the results; fills as the handler runs
-IReadOnlyList<TsiResult> results = tsiList;
-```
-
-Subscribe to a `BarHub` for advanced streaming scenarios:
-
-```csharp
-BarHub barHub = new();
-TsiHub observer = barHub.ToTsiHub(lookbackPeriods, smoothPeriods, signalPeriods);
-
-// call from your WebSocket or SSE message handler
-void OnBarReceived(IBar bar) => barHub.Add(bar);
-
-// results fill as the handler runs
-IReadOnlyList<TsiResult> results = observer.Results;
-```
-
-See [Buffer lists](/guide/styles/buffer) and [Stream hubs](/guide/styles/stream) for full usage guides.
-
 ## Chaining
 
+::: series
 This indicator may be generated from any chain-enabled indicator or method.
 
 ```csharp
@@ -113,3 +154,58 @@ var results = bars
 ```
 
 See [Chaining indicators](/guide/chaining) for more.
+:::
+
+::: buffer
+This indicator may be generated from results of another chain-enabled buffer list.  Add each new result to it yourself.
+
+```csharp
+// example
+SmaList smaList = new(..);
+TsiList tsiList = new(..);
+
+void OnBarReceived(IBar bar)
+{
+    smaList.Add(bar);
+    tsiList.Add(smaList[^1]);
+}
+```
+
+Add each new result to another chain-enabled buffer list to process `Tsi` further.
+
+```csharp
+// example
+TsiList tsiList = new(..);
+SlopeList slopeList = new(..);
+
+void OnBarReceived(IBar bar)
+{
+    tsiList.Add(bar);
+    slopeList.Add(tsiList[^1]);
+}
+```
+
+See [Chaining buffer lists](/guide/styles/buffer#chaining-indicators) for more.
+:::
+
+::: stream
+This indicator may be subscribed to any chain-enabled hub.
+
+```csharp
+// example
+TsiHub observer = barHub
+    .ToBarPartHub(CandlePart.HL2)
+    .ToTsiHub(..);
+```
+
+Subscribe other chain-enabled hubs to it to process `Tsi` further.
+
+```csharp
+// example
+SlopeHub observer = barHub
+    .ToTsiHub(..)
+    .ToSlopeHub(..);
+```
+
+See [Chaining stream hubs](/guide/styles/stream#chaining-indicators) for more.
+:::
